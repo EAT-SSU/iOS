@@ -68,9 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       // 지정된 시간에 알림 발송 예약
       NotificationManager.shared.scheduleHelloWorldNotification()
       
-      // 알림 테스트
-      NotificationManager.shared.scheduleTestNotification()
-      
       return true
     }
 

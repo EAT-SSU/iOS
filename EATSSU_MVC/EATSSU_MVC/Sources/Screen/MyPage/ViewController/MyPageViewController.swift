@@ -75,7 +75,11 @@ final class MyPageViewController: BaseViewController {
         mypageView.myPageTableView.delegate = self
     }
     
-    private func showAlert() {
+  /*
+   해야 할 일
+   - 알림 팝업을 띄우는 코드를 모듈화
+   */
+    private func logoutShowAlert() {
         let alert = UIAlertController(title: "로그아웃",
                                       message: "정말 로그아웃 하시겠습니까?",
                                       preferredStyle: UIAlertController.Style.alert
@@ -158,6 +162,37 @@ extension MyPageViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+      
+      switch indexPath.row {
+      case MyPageLabels.MyReview.rawValue:
+            let myReviewViewController = MyReviewViewController()
+            self.navigationController?.pushViewController(myReviewViewController, animated: true)
+      case MyPageLabels.Inquiry.rawValue:
+          if let kakaoChannelLink = URL(string: "http://pf.kakao.com/_ZlVAn") {
+            UIApplication.shared.open(kakaoChannelLink)
+          } else {
+            showAlertController(title: "다시 시도하세요", message: "에러가 발생했습니다", style: .default)
+          }
+      case MyPageLabels.TermsOfUse.rawValue:
+           let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
+            provisionViewController.navigationTitle = TextLiteral.termsOfUse
+            self.navigationController?.pushViewController(provisionViewController, animated: true)
+      case MyPageLabels.PrivacyTermsOfUse.rawValue:
+            let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
+            provisionViewController.navigationTitle = TextLiteral.privacyTermsOfUse
+            self.navigationController?.pushViewController(provisionViewController, animated: true)
+      case MyPageLabels.Logout.rawValue:
+        self.logoutShowAlert()
+      case MyPageLabels.Withdraw.rawValue:
+           let userWithdrawViewController = UserWithdrawViewController()
+            userWithdrawViewController.getUsernickName(nickName: self.nickName)
+            self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
+      case MyPageLabels.Creator.rawValue:
+        let creatorViewController = CreatorViewController()
+        navigationController?.pushViewController(creatorViewController, animated: true)
+      default:
+        fatalError("마이페이지에서 문제가 발생했습니다.")
+      }
 
         if indexPath.row == 0 {
             let myReviewViewController = MyReviewViewController()
@@ -179,7 +214,7 @@ extension MyPageViewController: UITableViewDelegate {
             provisionViewController.navigationTitle = TextLiteral.privacyTermsOfUse
             self.navigationController?.pushViewController(provisionViewController, animated: true)
         } else if indexPath.row == 4 {
-            showAlert()
+            logoutShowAlert()
         } else if indexPath.row == 5 {
             let userWithdrawViewController = UserWithdrawViewController()
             userWithdrawViewController.getUsernickName(nickName: self.nickName)
