@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "noticeLogo.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

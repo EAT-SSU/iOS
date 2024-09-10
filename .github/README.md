@@ -1,6 +1,12 @@
-# EatSSU-iOS
+# EATSSU iOS APP
 
 "숭실대에서 먹자!" 숭실대학교 학식 리뷰 iOS 앱
+
+## Issue Title
+
+``` zsh
+[Commit Type] 이슈 제목
+```
 
 ## Commit Type
 
@@ -22,13 +28,7 @@
 
 `Chore` 빌드 업무 수정, 패키지 매니저 수정, 파일 이동 및 이름 변경 등 (production code 변경이 없는 경우)
 
-## **Issue Title**
-
-``` zsh
-[Commit Type] 이슈 제목
-```
-
-## **커밋 메세지 Description**
+## Commit Message Conventions
 
 ``` zsh
 [#이슈번호] 커밋메시지
@@ -37,7 +37,13 @@
 - [#2] Add AlermBar
 ```
 
-## **Code Convention**
+## Branch Title Conventions
+
+```zsh
+Commit Type / issue number
+```
+
+## Code Convention**
 
 ### 1. 네이밍
 
@@ -63,10 +69,4 @@
 
 - `///` 를 사용해서 문서화에 사용되는 주석 남기기
 - `// MARK:` 를 사용해서 연관된 코드를 구분짓기
-
-### 4. Swift-Format
-
-- [Apple Swift Format](https://github.com/apple/swift-format) 프로그램을 꼭 `push` 이전에 수행하기.
-- `SPM`으로 `import` 되어 있는 프로그램이므로, 수행하면 됨.
-- 주기적으로 `Swift-Format`을 수행해서 일관된 코드 스타일 유지하기.
-![사용방법](image/swift-format-usage.png)
+- 가능한 코드 안에서 문서화를 진행해서 생산성을 올릴 수 있도록 정리하기
