@@ -25,8 +25,8 @@ let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
           ]
       ]
   ],
-  // 배포용 앱 한글 이름
-  "CFBundleDisplayName": "EAT-SSU: 숭실대 학식 리뷰 앱",
+  // 배포용 앱 이름
+  "CFBundleDisplayName": "EAT-SSU",
   // 다크모드 제한
   "UIUserInterfaceStyle": "Light",
   // iPhone Orientation 지정
