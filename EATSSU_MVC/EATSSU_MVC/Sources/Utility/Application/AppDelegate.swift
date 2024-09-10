@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
       
       if let kakaoAPIKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO API KEY") as? String {
-        KakaoSDK().initialize(appKey: kakaoAPIKey, sdkType: .Swift)
+        KakaoSDK.initSDK(appKey: kakaoAPIKey)
       } else {
         /*
          해야 할 일
@@ -61,7 +61,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         
         sleep(1)
-        return true
+      
+      // 앱 실행 시 알림 허용 권한 확인
+      NotificationManager.shared.requestAuthorization()
+      
+      // 지정된 시간에 알림 발송 예약
+      NotificationManager.shared.scheduleHelloWorldNotification()
+      
+      // 알림 테스트
+      NotificationManager.shared.scheduleTestNotification()
+      
+      return true
     }
 
     // MARK: UISceneSession Lifecycle

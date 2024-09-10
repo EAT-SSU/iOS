@@ -3,7 +3,7 @@ import ProjectDescription
 let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
   "UILaunchStoryboardName": "LaunchScreen",
   "BASE_URL": "https://$(BASE_URL)",
-  "KAKAO API KEY" : "$(KAKAO API KEY)",
+  "KAKAO API KEY" : "$(KAKAO_API_KEY)",
   "CFBundleURLTypes": [
       [
           "CFBundleTypeRole": "Editor",
