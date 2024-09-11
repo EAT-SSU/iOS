@@ -62,12 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         sleep(1)
       
-      // 앱 실행 시 알림 허용 권한 확인
-      NotificationManager.shared.requestAuthorization()
-      
-      // 지정된 시간에 알림 발송 예약
-      NotificationManager.shared.scheduleHelloWorldNotification()
-      
       return true
     }
 
