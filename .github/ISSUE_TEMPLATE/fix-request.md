@@ -2,7 +2,7 @@
 name: Fix Request
 about: 고쳐야 할 일을 생성해주세요.
 title: "[Fix]"
-labels: "\U0001F9F0 Fix"
+labels: ''
 assignees: ''
 
 ---
