@@ -23,12 +23,11 @@ class CreatorViewController: BaseViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    self.connectView()
   }
   
   // MARK: - Methods
-
-  private func connectView() {
+  
+  override func configureUI() {
     view.addSubview(creatorsView)
     
     creatorsView.snp.makeConstraints { make in
@@ -36,5 +35,10 @@ class CreatorViewController: BaseViewController {
       make.leading.trailing.equalToSuperview().inset(24)
       make.bottom.equalToSuperview().inset(52)
     }
+  }
+
+  override func setCustomNavigationBar() {
+    super.setCustomNavigationBar()
+    navigationItem.title = "만든 사람들"
   }
 }
