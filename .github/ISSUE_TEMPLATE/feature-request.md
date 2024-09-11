@@ -1,19 +1,19 @@
 ---
 name: Feature Request
 about: 할 일을 생성해주세요.
-title: ''
-labels: ''
+title: "[Feature] "
+labels: "\U0001F4F2 Feat"
 assignees: ''
 
 ---
 
-# 🍎 iOS 이슈 발행
+# 📲 Feature Request
 
 ## 💡 세부업무
 
 > 해야 할 업무에 대해서 설명해주세요!
 
-- [ ] 예시
+- 
 
 ## 📝 ETC
 

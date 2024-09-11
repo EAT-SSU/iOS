@@ -12,13 +12,15 @@ struct MyPageLocalData: AppData {
 }
 
 extension MyPageLocalData {
-    static let myPageServiceLabelList = [MyPageLocalData(titleLabel: TextLiteral.myReview),
-                                         MyPageLocalData(titleLabel: TextLiteral.inquiry),
-                                         MyPageLocalData(titleLabel: TextLiteral.termsOfUse),
-                                         MyPageLocalData(titleLabel: TextLiteral.privacyTermsOfUse),
-                                         MyPageLocalData(titleLabel: TextLiteral.logout),
-                                         MyPageLocalData(titleLabel: TextLiteral.withdraw),
-                                         MyPageLocalData(titleLabel: TextLiteral.appVersion)]
+    static let myPageServiceLabelList = [
+      MyPageLocalData(titleLabel: TextLiteral.myReview),
+      MyPageLocalData(titleLabel: TextLiteral.inquiry),
+      MyPageLocalData(titleLabel: TextLiteral.termsOfUse),
+      MyPageLocalData(titleLabel: TextLiteral.privacyTermsOfUse),
+      MyPageLocalData(titleLabel: TextLiteral.logout),
+      MyPageLocalData(titleLabel: TextLiteral.withdraw),
+      MyPageLocalData(titleLabel: TextLiteral.creators),
+      MyPageLocalData(titleLabel: TextLiteral.appVersion)]
 }
 
 struct MyPageRightItemData: AppData {

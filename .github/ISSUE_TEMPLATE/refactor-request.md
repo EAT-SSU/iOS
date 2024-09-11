@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-# 🪄 Refactor issue request
+# 🪄 Refactor request
 
 ## 설명
 

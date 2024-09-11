@@ -3,7 +3,7 @@ import ProjectDescription
 let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
   "UILaunchStoryboardName": "LaunchScreen",
   "BASE_URL": "https://$(BASE_URL)",
-  "KAKAO API KEY" : "$(KAKAO API KEY)",
+  "KAKAO API KEY" : "$(KAKAO_API_KEY)",
   "CFBundleURLTypes": [
       [
           "CFBundleTypeRole": "Editor",
@@ -25,8 +25,8 @@ let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
           ]
       ]
   ],
-  // 배포용 앱 한글 이름
-  "CFBundleDisplayName": "EAT-SSU: 숭실대 학식 리뷰 앱",
+  // 배포용 앱 이름
+  "CFBundleDisplayName": "EAT-SSU",
   // 다크모드 제한
   "UIUserInterfaceStyle": "Light",
   // iPhone Orientation 지정
@@ -60,6 +60,7 @@ let project = Project(
             destinations: [.iPhone],
             product: .app,
             bundleId: "com.jiwoo.EatSSU",
+            deploymentTargets: .iOS("15.0"),
             infoPlist: eatSSUInfoPlist,
             sources: ["EATSSU_MVC/Sources/**"],
             resources: ["EATSSU_MVC/Resources/**"],
