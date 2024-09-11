@@ -64,7 +64,7 @@ final class ChoiceMenuTableViewCell: UITableViewCell {
         checkButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(27)
-            $0.height.width.equalTo(25)
+            $0.height.width.equalTo(24)
         }
         
         menuLabel.snp.makeConstraints {
@@ -86,7 +86,6 @@ extension ChoiceMenuTableViewCell {
     }
     
     func tapped() {
-        let image = isChecked ? EATSSUAsset.Images.Version2.icSelected.image : ImageLiteral.uncheckedIcon
-            checkButton.setImage(image, for: .normal)
+        let image = isChecked ? EATSSUAsset.Images.Version2.icCheck.image : EATSSUAsset.Images.Version2.icUncheck.image
         }
 }
