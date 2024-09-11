@@ -1,8 +1,8 @@
 ---
 name: Bug Report
 about: 버그를 신고해주세요.
-title: "[Fix]"
-labels: "\U0001F9F0 Fix"
+title: "[Fix] "
+labels: "\U0001F6E0️ Fix"
 assignees: ''
 
 ---
