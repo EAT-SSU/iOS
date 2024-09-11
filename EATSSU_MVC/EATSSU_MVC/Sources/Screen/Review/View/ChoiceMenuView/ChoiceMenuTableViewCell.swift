@@ -87,5 +87,6 @@ extension ChoiceMenuTableViewCell {
     
     func tapped() {
         let image = isChecked ? EATSSUAsset.Images.Version2.icCheck.image : EATSSUAsset.Images.Version2.icUncheck.image
-        }
+        checkButton.setImage(image, for: .normal)
+    }
 }
