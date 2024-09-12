@@ -7,7 +7,7 @@ let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
   "CFBundleURLTypes": [
       [
           "CFBundleTypeRole": "Editor",
-          "CFBundleURLSchemes": ["$(KAKAO_API_KEY)"]
+          "CFBundleURLSchemes": "$(KAKAO_API_KEY)"
       ]
   ],
   "LSApplicationQueriesSchemes": ["kakaokompassauth", "kakaolink"],
@@ -60,6 +60,7 @@ let project = Project(
             destinations: [.iPhone],
             product: .app,
             bundleId: "com.jiwoo.EatSSU",
+            deploymentTargets: .iOS("15.0"),
             infoPlist: eatSSUInfoPlist,
             sources: ["EATSSU_MVC/Sources/**"],
             resources: ["EATSSU_MVC/Resources/**"],
