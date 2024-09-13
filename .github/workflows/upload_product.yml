@@ -1,0 +1,13 @@
+name: Upload Product
+
+on:
+  push:
+    branches:
+      - cd-automation
+
+jobs:
+  upload:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
