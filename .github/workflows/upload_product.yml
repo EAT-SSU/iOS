@@ -35,6 +35,15 @@ jobs:
           cat Release.xcconfig
           mv Release.xcconfig EATSSU_MVC/EATSSU_MVC/Resources
 
+          echo "// Configuration settings file format documentation can be found at:" > Debug.xcconfig
+          echo "// https://help.apple.com/xcode/#/dev745c5c974" >> Debug.xcconfig
+          echo "// API 엔드 포인트 주소" >> Debug.xcconfig
+          echo "BASE_URL = $BASE_URL" >> Debug.xcconfig
+          echo "// 카카오 API 키" >> Debug.xcconfig
+          echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Debug.xcconfig
+          cat Debug.xcconfig
+          mv Debug.xcconfig EATSSU_MVC/EATSSU_MVC/Resources
+
       - name: Tuist Build
         run: |
           tuist install
