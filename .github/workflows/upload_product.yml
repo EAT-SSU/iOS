@@ -1,6 +1,10 @@
-name: Upload Product
+name: Upload iOS App Product
 
 on:
+  pull_request:
+    branches:
+      - qa
+  
   push:
     branches:
       - cd-automation
