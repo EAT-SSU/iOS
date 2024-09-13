@@ -15,3 +15,7 @@ jobs:
       - name: Install Tuist
         run: |
           bash <(curl -Ls https://install.tuist.io)
+
+      - name: Install Dependencies
+        run: |
+          tuist install
