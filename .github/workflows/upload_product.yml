@@ -6,8 +6,9 @@ on:
       - cd-automation
 
 jobs:
-  upload:
+  Distribute:
     runs-on: macos-latest
+    environment: Configuration Files
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -16,6 +17,10 @@ jobs:
         run: |
           bash <(curl -Ls https://install.tuist.io)
 
-      - name: Install Dependencies
+      - name: Make Configuration File
         run: |
-          tuist install
+          touch Release.xcconfig
+          echo ${{ secrets.RELEASE }} >> Release.xcconfig
+          mv Release.xcconfig cd EATSSU_MVC/EATSSU_MVC/Resources
+
+      
