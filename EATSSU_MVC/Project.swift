@@ -7,7 +7,7 @@ let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
   "CFBundleURLTypes": [
       [
           "CFBundleTypeRole": "Editor",
-          "CFBundleURLSchemes": "$(KAKAO_API_KEY)"
+          "CFBundleURLSchemes": ["kakao$(KAKAO_API_KEY)"]
       ]
   ],
   "LSApplicationQueriesSchemes": ["kakaokompassauth", "kakaolink"],
