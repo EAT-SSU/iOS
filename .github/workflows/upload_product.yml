@@ -21,10 +21,16 @@ jobs:
         run: |
           bash <(curl -Ls https://install.tuist.io)
 
-      - name: Make Configuration File
+      - name: Create Release.xcconfig
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
         run: |
-          touch Release.xcconfig
-          echo ${{ secrets.RELEASE }} >> Release.xcconfig
-          mv Release.xcconfig cd EATSSU_MVC/EATSSU_MVC/Resources
+          echo "// Configuration settings file format documentation can be found at:" > Release.xcconfig
+          echo "// https://help.apple.com/xcode/#/dev745c5c974" >> Release.xcconfig
+          echo "// API 엔드 포인트 주소" >> Release.xcconfig
+          echo "BASE_URL = $BASE_URL" >> Release.xcconfig
+          echo "// 카카오 API 키" >> Release.xcconfig
+          echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Release.xcconfig
 
       
