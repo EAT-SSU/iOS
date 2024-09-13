@@ -44,15 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // 로그인 페이지로 이동
         }
       
-      if let kakaoAPIKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO API KEY") as? String {
-        KakaoSDK.initSDK(appKey: kakaoAPIKey)
-      } else {
-        /*
-         해야 할 일
-         - Configuration File에서 카카오 API 키를 불러오지 못했을 때 처리해야 하는 로직
-         */
-      }
-        
+      let kakaoAPIKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO API KEY") as! String
+      KakaoSDK.initSDK(appKey: kakaoAPIKey)
         
         #if DEBUG
         var newArguments = ProcessInfo.processInfo.arguments
