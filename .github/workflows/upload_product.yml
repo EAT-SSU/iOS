@@ -10,13 +10,8 @@ jobs:
     runs-on: macos-latest
     environment: Configuration Files
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Checkout tuist
-        uses: tuist/tuist-action@0.13.0
-        with:
-          command: "build"
+      - uses: actions/checkout@v3
+      - uses: jdx/mise-action@v2
 
       - name: Debug Directory Location
         run: |
@@ -39,5 +34,10 @@ jobs:
           echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Release.xcconfig
           cat Release.xcconfig
           mv Release.xcconfig EATSSU_MVC/EATSSU_MVC/Resources
+
+      - name: Tuist Build
+        run: |
+          tuist install
+          tuist build
 
       
