@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Checkout tuist
+        uses: tuist/tuist-action@0.13.0
+        with:
+          command: "build"
+
       - name: Debug Directory Location
         run: |
           ls -la
