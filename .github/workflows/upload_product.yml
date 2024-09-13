@@ -44,9 +44,10 @@ jobs:
           cat Debug.xcconfig
           mv Debug.xcconfig EATSSU_MVC/EATSSU_MVC/Resources
 
-      - name: Tuist Build
+      - name: Install Dependencies
         run: |
           tuist install
-          tuist build
-
       
+      - name: Build Project
+        run: |
+          tuist build
