@@ -63,7 +63,7 @@ final class HomeViewController: BaseViewController {
     }
     
     private func setnavigation() {
-      navigationItem.titleView = UIImageView(image: EATSSUAsset.Images.Version2.mainLogo.image)
+      navigationItem.titleView = UIImageView(image: EATSSUAsset.Images.Version2.mainLogoSmall.image)
       
         let rightButton = UIBarButtonItem(
             image: EATSSUAsset.Images.myPageIcon.image,
