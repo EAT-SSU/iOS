@@ -23,7 +23,7 @@ let package = Package(
       .package(url: "https://github.com/Moya/Moya", branch: "master"),
       .package(url: "https://github.com/devxoul/Then", from: "3.0.0"),
       .package(url: "https://github.com/WenchaoD/FSCalendar", from: "2.8.3"),
-      .package(url: "https://github.com/kakao/kakao-ios-sdk", from: "2.22.5"),
+      .package(url: "https://github.com/kakao/kakao-ios-sdk", exact: "2.22.5"),
       .package(url: "https://github.com/onevcat/Kingfisher", from: "7.12.0"),
       .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.1.0"),
       .package(url: "https://github.com/google/GoogleAppMeasurement", from: "11.1.0"),
