@@ -16,6 +16,10 @@ jobs:
         with:
           ruby-version: 3.3.0
 
+      - name: Install Fastlane
+        run: |
+          gem install fastlane
+
       - name: Install Ruby Dependencies
         run: |
           bundle install
