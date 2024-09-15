@@ -14,11 +14,11 @@ jobs:
       - uses: jdx/mise-action@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          ruby-version: 3.3.0
 
-      # - name: Install Tuist
-      #   run: |
-      #     bash <(curl -Ls https://install.tuist.io)
+      - name: Install Ruby Dependencies
+        run: |
+          bundle install
 
       - name: Create Release & Debug Configuration Files
         env:
