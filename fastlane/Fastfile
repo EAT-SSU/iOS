@@ -23,6 +23,9 @@ platform :ios do
 
   desc "Run tests"
   lane :tests do
-    run_tests(scheme: "EATSSU")
+    run_tests(
+      devices: ["iPhone 15 Pro"],
+      scheme: "EATSSU",
+    )
   end
 end
