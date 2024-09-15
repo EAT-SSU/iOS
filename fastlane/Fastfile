@@ -20,4 +20,9 @@ platform :ios do
   lane :screenshots do
     capture_screenshots(scheme: "EATSSU")
   end
+
+  desc "Run tests"
+  lane :tests do
+    run_tests(scheme: "EATSSU")
+  end
 end
