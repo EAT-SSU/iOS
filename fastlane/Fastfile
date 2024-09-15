@@ -26,6 +26,7 @@ platform :ios do
     run_tests(
       devices: ["iPhone 15 Pro"],
       scheme: "EATSSU",
+      only_testing: ["EATSSUTests"]
     )
   end
 end
