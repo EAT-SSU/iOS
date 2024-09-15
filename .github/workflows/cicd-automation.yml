@@ -51,10 +51,6 @@ jobs:
         run: |
           tuist build
 
-      - name: Run Tests via Tuist
-        run: |
-          tuist test EATSSU --device "iPhone 15 Pro"
-
       - name: Run Tests via Fastlane
         run: |
           fastlane tests
