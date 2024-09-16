@@ -32,12 +32,10 @@ final class HomeRestaurantViewController: BaseViewController {
     private let sectionHeaderRestaurant = [TextLiteral.dormitoryRestaurant,
                                            TextLiteral.dodamRestaurant,
                                            TextLiteral.studentRestaurant,
-                                           TextLiteral.foodCourt,
                                            TextLiteral.snackCorner]
     let restaurantButtonTitleToName = [TextLiteral.dormitoryRestaurant: "DORMITORY",
                                         TextLiteral.dodamRestaurant: "DODAM",
                                         TextLiteral.studentRestaurant: "HAKSIK",
-                                        TextLiteral.foodCourt: "FOOD_COURT",
                                         TextLiteral.snackCorner: "SNACK_CORNER"]
     var currentRestaurant = ""
     var isWeekend = false
@@ -112,7 +110,6 @@ final class HomeRestaurantViewController: BaseViewController {
         let restaurantRawValue = [TextLiteral.dormitoryRawValue,
                                   TextLiteral.dodamRawValue,
                                   TextLiteral.studentRestaurantRawValue,
-                                  TextLiteral.foodCourtRawValue,
                                   TextLiteral.snackCornerRawValue]
         return restaurantRawValue.firstIndex(of: restaurant)
     }
@@ -121,7 +118,6 @@ final class HomeRestaurantViewController: BaseViewController {
         let restaurantRawValue = [TextLiteral.dormitoryRawValue,
                                   TextLiteral.dodamRawValue,
                                   TextLiteral.studentRestaurantRawValue,
-                                  TextLiteral.foodCourtRawValue,
                                   TextLiteral.snackCornerRawValue]
         return restaurantRawValue[section]
     }
@@ -138,13 +134,10 @@ final class HomeRestaurantViewController: BaseViewController {
         if time == TextLiteral.lunchRawValue {
 
             if !weekday.isWeekend {
-                getFixMenuData(restaurant: TextLiteral.foodCourtRawValue) {}
-//                getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
+                getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
             } else {
-                currentRestaurant = TextLiteral.foodCourtRawValue
-                self.fixMenuTableViewData[TextLiteral.foodCourtRawValue] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
-//                currentRestaurant = TextLiteral.snackCornerRawValue
-//                self.fixMenuTableViewData[TextLiteral.snackCornerRawValue] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
+                currentRestaurant = TextLiteral.snackCornerRawValue
+                self.fixMenuTableViewData[TextLiteral.snackCornerRawValue] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
             }
         }
     }
@@ -200,17 +193,6 @@ extension HomeRestaurantViewController: UITableViewDataSource {
                     cell.model = .change(data)
                 }
             } else if indexPath.section == 3 {
-                if let data = fixMenuTableViewData[TextLiteral.foodCourtRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
-                    if data.price != nil {
-                        isSelectable = true
-                        cell.model = .fix(data)
-                        cell.selectionStyle = .default
-                    } else {
-                        isSelectable = false
-                        cell.selectionStyle = .none
-                    }
-                }
-            } else if indexPath.section == 4 {
                 if let data = fixMenuTableViewData[TextLiteral.snackCornerRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
                     if data.price != nil {
                         isSelectable = true

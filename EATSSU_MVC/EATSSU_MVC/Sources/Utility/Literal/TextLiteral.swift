@@ -34,12 +34,10 @@ enum TextLiteral {
     static let dormitoryRestaurant: String = "기숙사 식당"
     static let dodamRestaurant: String = "도담 식당"
     static let studentRestaurant: String = "학생 식당"
-    static let foodCourt: String = "푸드 코트"
     static let snackCorner: String = "스낵 코너"
     static let dormitoryRawValue: String = "DORMITORY"
     static let dodamRawValue: String = "DODAM"
     static let studentRestaurantRawValue: String = "HAKSIK"
-    static let foodCourtRawValue: String = "FOOD_COURT"
     static let snackCornerRawValue: String = "SNACK_CORNER"
     static let lunchRawValue: String = "LUNCH"
 
