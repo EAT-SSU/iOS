@@ -5,9 +5,27 @@
 //  Created by 최지우 on 2023/06/27.
 //
 
-import UIKit
+import Foundation
+
+/*
+ 해야 할 일
+ - 하위 enum을 사용해서 세분화
+ - 마크업 주석으로 해당 리터럴이 의미하는 실제 문자열 기록
+ */
 
 enum TextLiteral {
+  
+  // MARK: - Notification
+  
+  enum Notification {
+    
+    /// 🤔 오늘 밥 뭐 먹지…
+    static let dailyWeekdayNotificationTitle: String = "🤔 오늘 밥 뭐 먹지…"
+    
+    /// 오늘의 학식을 확인해보세요!
+    static let dailyWeekdayNotificationBody: String = "오늘의 학식을 확인해보세요!"
+  }
+
     
     // MARK: - Sign In
     
@@ -34,12 +52,10 @@ enum TextLiteral {
     static let dormitoryRestaurant: String = "기숙사 식당"
     static let dodamRestaurant: String = "도담 식당"
     static let studentRestaurant: String = "학생 식당"
-    static let foodCourt: String = "푸드 코트"
     static let snackCorner: String = "스낵 코너"
     static let dormitoryRawValue: String = "DORMITORY"
     static let dodamRawValue: String = "DODAM"
     static let studentRestaurantRawValue: String = "HAKSIK"
-    static let foodCourtRawValue: String = "FOOD_COURT"
     static let snackCornerRawValue: String = "SNACK_CORNER"
     static let lunchRawValue: String = "LUNCH"
 
