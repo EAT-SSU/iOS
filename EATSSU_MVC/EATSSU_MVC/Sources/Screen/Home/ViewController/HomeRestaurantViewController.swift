@@ -138,13 +138,10 @@ final class HomeRestaurantViewController: BaseViewController {
         if time == TextLiteral.lunchRawValue {
 
             if !weekday.isWeekend {
-                getFixMenuData(restaurant: TextLiteral.foodCourtRawValue) {}
-//                getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
+                getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
             } else {
-                currentRestaurant = TextLiteral.foodCourtRawValue
-                self.fixMenuTableViewData[TextLiteral.foodCourtRawValue] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
-//                currentRestaurant = TextLiteral.snackCornerRawValue
-//                self.fixMenuTableViewData[TextLiteral.snackCornerRawValue] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
+                currentRestaurant = TextLiteral.snackCornerRawValue
+                self.fixMenuTableViewData[TextLiteral.snackCornerRawValue] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
             }
         }
     }
