@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: 할 일을 생성해주세요.
-title: "[Feature] "
+title: "[Feat] "
 labels: "\U0001F4F2 Feat"
 assignees: ''
 

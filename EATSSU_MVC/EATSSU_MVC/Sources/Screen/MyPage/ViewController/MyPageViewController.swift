@@ -191,36 +191,7 @@ extension MyPageViewController: UITableViewDelegate {
         let creatorViewController = CreatorViewController()
         navigationController?.pushViewController(creatorViewController, animated: true)
       default:
-        fatalError("마이페이지에서 문제가 발생했습니다.")
+        return
       }
-
-        if indexPath.row == 0 {
-            let myReviewViewController = MyReviewViewController()
-            self.navigationController?.pushViewController(myReviewViewController, animated: true)
-        } else if indexPath.row == 1 {
-          if let kakaoChannelLink = URL(string: "http://pf.kakao.com/_ZlVAn") {
-            UIApplication.shared.open(kakaoChannelLink)
-          } else {
-            showAlertController(title: "다시 시도하세요", message: "에러가 발생했습니다", style: .default)
-          }
-          // 서비스 이용약관
-        } else if indexPath.row == 2 {
-          let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
-            provisionViewController.navigationTitle = TextLiteral.termsOfUse
-            self.navigationController?.pushViewController(provisionViewController, animated: true)
-          // 개인정보처리방침
-        } else if indexPath.row == 3 {
-          let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
-            provisionViewController.navigationTitle = TextLiteral.privacyTermsOfUse
-            self.navigationController?.pushViewController(provisionViewController, animated: true)
-        } else if indexPath.row == 4 {
-            logoutShowAlert()
-        } else if indexPath.row == 5 {
-            let userWithdrawViewController = UserWithdrawViewController()
-            userWithdrawViewController.getUsernickName(nickName: self.nickName)
-            self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
-        } else {
-            return
-        }
     }
 }
