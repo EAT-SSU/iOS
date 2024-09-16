@@ -85,5 +85,27 @@ let project = Project(
             ],
             settings: eatSSUSettings
         ),
+        .target(
+          /// UITests의 이름은 "앱 이름 + UiTests" 형식을 지켜야합니다.
+          name: "EATSSUUITests",
+          destinations: [.iPhone],
+          product: .uiTests,
+          bundleId: "com.EATSSU.UITests",
+          sources: ["EATSSU_MVC/UITests/**"],
+          dependencies: [
+            .target(name: "EATSSU", condition: .none)
+          ]
+        ),
+        .target(
+          /// UnitTests의 이름은 "앱 이름 + Tests" 형식을 지켜야 합니다.
+          name: "EATSSUTests",
+          destinations: [.iPhone],
+          product: .unitTests,
+          bundleId: "com.EATSSU.UnitTests",
+          sources: ["EATSSU_MVC/UnitTests/**"],
+          dependencies: [
+            .target(name: "EATSSU", condition: .none)
+          ]
+        )
     ]
 )

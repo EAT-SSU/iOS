@@ -1,31 +1,30 @@
-name: Upload iOS App Product
+name: CI/CD Automation Tests
 
 on:
-  pull_request:
-    branches:
-      - qa
-  
   push:
     branches:
-      - cd-automation
+      - cicd-automation
 
 jobs:
-  Distribute:
+  CICD_Automation_Tests:
     runs-on: macos-latest
     environment: Configuration Files
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
 
-      - name: Debug Directory Location
+      - name: Install Fastlane
         run: |
-          ls -la
+          gem install fastlane
 
-      - name: Install Tuist
+      - name: Install Ruby Dependencies
         run: |
-          bash <(curl -Ls https://install.tuist.io)
+          bundle install
 
-      - name: Create Release.xcconfig
+      - name: Create Release & Debug Configuration Files
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
@@ -55,3 +54,7 @@ jobs:
       - name: Build Project
         run: |
           tuist build
+
+      - name: Run Tests via Fastlane
+        run: |
+          fastlane tests
