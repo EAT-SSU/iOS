@@ -15,15 +15,28 @@ import KakaoSDKCommon
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+      
+      // 푸시 알림 권한 요청
+      NotificationManager.shared.requestNotificationPermission()
+      NotificationManager.shared.scheduleWeekday11AMNotification()
+      
+      /*
+       해야 할 일
+       - NetworkMonitor 클래스에 대한 문서화를 작성
+       */
+      
+      // 디버그 콘솔에서 네트워크 연결 상태 모니터링을 위한 메소드
+      NetworkMonitor.shared.startMonitoring()
         
-        NetworkMonitor.shared.startMonitoring()
+      // Firebase SDK를 사용하기 위한 처리
+      FirebaseApp.configure()
         
-        FirebaseApp.configure()
+      // Apple 사용자 인증을 위한 처리
+      let appleIDProvider = ASAuthorizationAppleIDProvider()
         
-        let appleIDProvider = ASAuthorizationAppleIDProvider()
-        
-        //forUserID = userIdentifier
-        appleIDProvider.getCredentialState(forUserID: "001281.9301aaa1f617423c9c7a64b671b6eb84.0758") { (credentialState, error) in
+      //forUserID = userIdentifier
+      appleIDProvider.getCredentialState(
+        forUserID: "001281.9301aaa1f617423c9c7a64b671b6eb84.0758") { credentialState, error in
             switch credentialState {
             case .authorized:
                 // The Apple ID credential is valid.
@@ -38,27 +51,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 break
             }
         }
-        //앱 실행 중 강제로 연결 취소 시
-        NotificationCenter.default.addObserver(forName: ASAuthorizationAppleIDProvider.credentialRevokedNotification, object: nil, queue: nil) { (Notification) in
+      
+      /*
+       해야 할 일
+       - "앱 실행 중 강제로 연결 취소 시" 동작하는 로직이 특별히 없는 것 같습니다.
+       - 최지우님 설명 부탁드립니다. 최지웅 작성.
+       */
+      
+      //앱 실행 중 강제로 연결 취소 시
+      NotificationCenter.default.addObserver(
+          forName: ASAuthorizationAppleIDProvider.credentialRevokedNotification, 
+          object: nil, 
+          queue: nil) { Notification in
             print("Revoked Notification")
-            // 로그인 페이지로 이동
         }
       
+      // 카카오 SDK 사용을 위한 처리
       let kakaoAPIKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO API KEY") as! String
       KakaoSDK.initSDK(appKey: kakaoAPIKey)
+      
+      /*
+       해야 할 일
+       - 아래 전처리문에 대한 설명을 해주셨으면 합니다.
+       - 디버그 상황에서만 수행되는 코드인데, 왜 그런지 궁금하네요.
+       - 최지우님 설명 부탁드립니다. 최지웅 작성.
+       */
+      
+      #if DEBUG
+      var newArguments = ProcessInfo.processInfo.arguments
+      newArguments.append("-FIRDebugEnabled")
+      ProcessInfo.processInfo.setValue(newArguments, forKey: "arguments")
+      #endif
         
-        #if DEBUG
-        var newArguments = ProcessInfo.processInfo.arguments
-        newArguments.append("-FIRDebugEnabled")
-        ProcessInfo.processInfo.setValue(newArguments, forKey: "arguments")
-        #endif
-        
-        sleep(1)
+      sleep(1)
       
       return true
     }
 
-    // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
