@@ -8,6 +8,8 @@
 import Foundation
 
 extension Int {
+    
+    /// Int 타입 숫자에서 commas(,)를 추가한 String타입을 반환하는 메소드입니다.
     var formattedWithCommas: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
