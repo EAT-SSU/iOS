@@ -71,16 +71,23 @@ let project = Project(
               .external(name: "Moya", condition: .none),
               .external(name: "Then", condition: .none),
               .external(name: "FSCalendar", condition: .none),
-              .external(name: "KakaoSDKAuth", condition: .none),
-              .external(name: "KakaoSDKUser", condition: .none),
-              .external(name: "KakaoSDKCommon", condition: .none),
               .external(name: "Kingfisher", condition: .none),
-              .external(name: "FirebaseCrashlytics", condition: .none),
-              .external(name: "FirebaseAnalytics", condition: .none),
-              .external(name: "FirebaseRemoteConfig", condition: .none),
               .external(name: "GoogleAppMeasurement", condition: .none),
               .external(name: "Realm", condition: .none),
               .external(name: "RealmSwift", condition: .none),
+              
+              // Firebase Module
+              .external(name: "FirebaseCrashlytics", condition: .none),
+              .external(name: "FirebaseAnalytics", condition: .none),
+              .external(name: "FirebaseRemoteConfig", condition: .none),
+              
+              // KakakSDK Module
+              .external(name: "KakaoSDKAuth", condition: .none),
+              .external(name: "KakaoSDKUser", condition: .none),
+              .external(name: "KakaoSDKCommon", condition: .none),
+              .external(name: "KakaoSDKTalk", condition: .none),
+              
+              // EATSSU Module
               .project(target: "EATSSUComponents", path:.relativeToRoot("../EATSSUComponents"), condition: .none)
             ],
             settings: eatSSUSettings
