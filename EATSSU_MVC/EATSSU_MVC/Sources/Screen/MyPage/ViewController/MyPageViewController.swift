@@ -15,6 +15,8 @@ import SnapKit
 import UIKit
 import Moya
 import Realm
+import KakaoSDKCommon
+import KakaoSDKTalk
 
 final class MyPageViewController: BaseViewController {
     
@@ -164,29 +166,49 @@ extension MyPageViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
       
       switch indexPath.row {
+      // "내가 쓴 리뷰" 스크린으로 이동
       case MyPageLabels.MyReview.rawValue:
             let myReviewViewController = MyReviewViewController()
             self.navigationController?.pushViewController(myReviewViewController, animated: true)
+      // "문의하기" 스크린으로 이동
       case MyPageLabels.Inquiry.rawValue:
+        TalkApi.shared.chatChannel(channelPublicId: "_ZlVAn") { [weak self] error in
+          if let error = error {
+            /*
+             해야 할 일
+             - 에러가 발생했을 때, 앱에서 처리해야 할 일이 있는지 확인
+             */
+          } else {
+            /*
+             해야 할 일
+             - 정상적으로 코드가 동작할 때, 앱에서 처리해야 할 일이 있는지 확인
+             */
+          }
+        }
           if let kakaoChannelLink = URL(string: "http://pf.kakao.com/_ZlVAn") {
             UIApplication.shared.open(kakaoChannelLink)
           } else {
             showAlertController(title: "다시 시도하세요", message: "에러가 발생했습니다", style: .default)
           }
+      // "서비스 이용약관" 스크린으로 이동
       case MyPageLabels.TermsOfUse.rawValue:
            let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
             provisionViewController.navigationTitle = TextLiteral.termsOfUse
             self.navigationController?.pushViewController(provisionViewController, animated: true)
+      // "개인정보 이용약관" 스크린으로 이동
       case MyPageLabels.PrivacyTermsOfUse.rawValue:
             let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
             provisionViewController.navigationTitle = TextLiteral.privacyTermsOfUse
             self.navigationController?.pushViewController(provisionViewController, animated: true)
+      // "로그아웃" 팝업알림 표시
       case MyPageLabels.Logout.rawValue:
         self.logoutShowAlert()
+      // "탈퇴하기" 스크린으로 이동
       case MyPageLabels.Withdraw.rawValue:
            let userWithdrawViewController = UserWithdrawViewController()
             userWithdrawViewController.getUsernickName(nickName: self.nickName)
             self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
+      // "만든사람들" 스크린으로 이동
       case MyPageLabels.Creator.rawValue:
         let creatorViewController = CreatorViewController()
         navigationController?.pushViewController(creatorViewController, animated: true)
