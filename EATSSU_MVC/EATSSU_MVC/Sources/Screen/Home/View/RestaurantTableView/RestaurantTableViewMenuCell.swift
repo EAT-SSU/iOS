@@ -12,7 +12,6 @@ import SnapKit
 class RestaurantTableViewMenuCell: BaseTableViewCell {
     
     // MARK: - Properties
-    
     static let identifier = "RestaurantTableViewMenuCell"
     
     var model: MenuTypeInfo? {
@@ -24,50 +23,48 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
     }
     
     // MARK: - UI Components
-    
-    lazy var menuIDLabel = UILabel()
-    lazy var nameLabel = UILabel().then {
-        $0.font = .body3
-        $0.numberOfLines = 0
-        $0.lineBreakMode = .byWordWrapping 
-    }
-    lazy var priceLabel = UILabel().then {
-        $0.font = .body3
-    }
-    lazy var ratingLabel = UILabel().then {
-        $0.font = .body3
-        $0.textAlignment = .center
-    }
+    private let contentStackView = UIStackView()
+    private let nameLabel = UILabel()
+    private let priceLabel = UILabel()
+    private let ratingLabel = UILabel()
     
     // MARK: - Life Cycle
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setViewProperties()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-
         nameLabel.text = nil
         priceLabel.text = nil
         ratingLabel.text = nil
     }
     
     // MARK: - Functions
-    
     override func configureUI() {
-        super.configureUI()
-        contentView.addSubviews(nameLabel,
+        contentView.addSubview(contentStackView)
+        contentStackView.addSubviews(nameLabel,
                                 priceLabel,
                                 ratingLabel)
     }
 
     override func setLayout() {
+        contentStackView.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(12)
+        }
         nameLabel.snp.makeConstraints {
-            $0.leading.equalTo(contentView.snp.leading).offset(16)
             $0.top.equalTo(contentView.snp.top).offset(11)
             $0.width.equalTo(210)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
         }
         priceLabel.snp.makeConstraints {
-            $0.trailing.equalTo(ratingLabel.snp.leading)
-            $0.width.equalTo(55)
+            $0.leading.equalTo(nameLabel.snp.trailing)
+            $0.width.equalTo(60)
             $0.centerY.equalTo(nameLabel)
         }
         ratingLabel.snp.makeConstraints {
@@ -76,11 +73,33 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
             $0.centerY.equalTo(nameLabel)
         }
     }
+}
+
+extension RestaurantTableViewMenuCell {
+    private func setViewProperties() {
+        contentStackView.do {
+            $0.axis = .horizontal
+            $0.alignment = .center
+        }
+        nameLabel.do {
+            $0.font = .body3
+            $0.numberOfLines = 0
+            $0.lineBreakMode = .byWordWrapping
+        }
+        priceLabel.do {
+            $0.font = .body3
+            $0.textAlignment = .center
+        }
+        ratingLabel.do {
+            $0.font = .body3
+            $0.textAlignment = .center
+        }
+    }
     
-    func bind(_ model: MenuTypeInfo) {
+    public func bind(_ model: MenuTypeInfo) {
         switch model {
         case .change(let data):
-            priceLabel.text = data.price != nil ? String(data.price!) : ""
+            priceLabel.text = data.price != nil ? data.price?.formattedWithCommas : ""
 
             if data.mainRating != nil {
                 let formatRating = String(format: "%.1f", data.mainRating ?? 0)
@@ -98,7 +117,7 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
         
         case .fix(let data):
             if let price = data.price {
-                priceLabel.text = String(price)
+                priceLabel.text = price.formattedWithCommas
                 let formatRating = String(format: "%.1f", data.mainRating ?? 0)
                 ratingLabel.text = formatRating != "0.0" ? formatRating : "-"
                 nameLabel.text = data.name
