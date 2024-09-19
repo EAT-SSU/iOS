@@ -172,9 +172,9 @@ extension MyPageViewController: UITableViewDelegate {
             self.navigationController?.pushViewController(myReviewViewController, animated: true)
       // "문의하기" 스크린으로 이동
       case MyPageLabels.Inquiry.rawValue:
-        TalkApi.shared.chatChannel(channelPublicId: "_ZlVAn") { [weak self] error in
+        TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
           if error != nil {
-            if let kakaoChannelLink = URL(string: "http://pf.kakao.com/_ZlVAn") {
+            if let kakaoChannelLink = URL(string: "http://pf.kakao.com/\(TextLiteral.KakaoChannel.id)") {
               UIApplication.shared.open(kakaoChannelLink)
             } else {
               self?.showAlertController(title: "다시 시도하세요", message: "에러가 발생했습니다", style: .default)

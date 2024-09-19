@@ -10,7 +10,12 @@ let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
           "CFBundleURLSchemes": ["kakao$(KAKAO_API_KEY)"]
       ]
   ],
-  "LSApplicationQueriesSchemes": ["kakaokompassauth", "kakaolink"],
+  "LSApplicationQueriesSchemes": [
+    "kakaokompassauth",
+    "kakaolink",
+    "kakaoplus",
+    "kakaotalk"
+  ],
   "NSAppTransportSecurity": [
       "NSAllowsArbitraryLoads": true
   ],
