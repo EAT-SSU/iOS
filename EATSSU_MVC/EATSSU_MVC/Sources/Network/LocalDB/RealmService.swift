@@ -13,6 +13,10 @@ class RealmService{
     static let shared = RealmService()
     
     let realm = try! Realm()
+    
+    init() {
+        print("Realm Location: ", realm.configuration.fileURL ?? "cannot find location.")
+    }
 
     func addToken(accessToken:String,refreshToken:String) {
         let token = Token(accessToken: accessToken,refreshToken: refreshToken)
@@ -40,20 +44,19 @@ class RealmService{
         try! realm.write {
             realm.deleteAll()
         }
-        
     }
-
-    func addUser(accessToken: String, nickName: String) {
-        let nickName = NickName(accessToken: accessToken, nickName: nickName)
-        try! realm.write {
-            realm.add(nickName)
+    
+    func deleteAll<T: Object>(_ objectType: T.Type) {
+        do {
+            let objects = realm.objects(objectType)
+            try realm.write {
+                realm.delete(objects)
+                print("Successfully deleted all objects of type \(objectType)")
+            }
+        } catch let error {
+            print(error)
         }
     }
-
-    init() {
-        print("Realm Location: ", realm.configuration.fileURL ?? "cannot find location.")
-    }
-
 }
 
 
