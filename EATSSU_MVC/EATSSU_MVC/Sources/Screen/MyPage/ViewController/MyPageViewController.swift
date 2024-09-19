@@ -24,7 +24,8 @@ final class MyPageViewController: BaseViewController {
     
     private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
     private var nickName = String()
-    
+	private let myPageTableLabelList = MyPageLocalData.myPageTableLabelList
+	
     // MARK: - UI Components
     
     let mypageView = MyPageView()
@@ -48,7 +49,7 @@ final class MyPageViewController: BaseViewController {
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = TextLiteral.myPage
+        navigationItem.title = TextLiteral.MyPage.myPage
     }
     
     override func configureUI() {
@@ -62,8 +63,17 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func setButtonEvent() {
-        mypageView.userNicknameButton.addTarget(self, action: #selector(didTappedChangeNicknameButton), for: .touchUpInside)
+        mypageView.userNicknameButton
+			.addTarget(
+				self,
+				action: #selector(didTappedChangeNicknameButton),
+				for: .touchUpInside)
     }
+	
+	@objc
+	func toggleSwitchTapped() {
+		
+	}
     
     @objc
     func didTappedChangeNicknameButton() {
@@ -77,10 +87,10 @@ final class MyPageViewController: BaseViewController {
         mypageView.myPageTableView.delegate = self
     }
     
-  /*
-   해야 할 일
-   - 알림 팝업을 띄우는 코드를 모듈화
-   */
+    /*
+     해야 할 일
+     - 알림 팝업을 띄우는 코드를 모듈화
+     */
     private func logoutShowAlert() {
         let alert = UIAlertController(title: "로그아웃",
                                       message: "정말 로그아웃 하시겠습니까?",
@@ -99,7 +109,7 @@ final class MyPageViewController: BaseViewController {
             let loginViewController = LoginViewController()
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-              keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
+                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
             }
         })
         
@@ -136,85 +146,95 @@ extension MyPageViewController {
 extension MyPageViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return mypageView.myPageServiceLabelList.count
+        return myPageTableLabelList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: MyPageServiceCell.identifier,
-                                                       for: indexPath)
-                as? MyPageServiceCell else {
-            return MyPageServiceCell()
-        }
-
-        let title = mypageView.myPageServiceLabelList[indexPath.row].titleLabel
-        cell.serviceLabel.text = title
-        if title == TextLiteral.myReview || title == TextLiteral.termsOfUse || title == TextLiteral.privacyTermsOfUse || title == TextLiteral.inquiry {
-            cell.rightItemLabel.text = mypageView.myPageRightItemListDate[0].rightArrow
-        } else if title == TextLiteral.appVersion {
-            cell.rightItemLabel.text = mypageView.myPageRightItemListDate[0].appVersion
-            cell.selectionStyle = .none
-        }
-        return cell
+		if indexPath.row == MyPageLabels.NotificationSetting.rawValue {
+			let cell = tableView
+				.dequeueReusableCell(
+					withIdentifier: NotificationSettingTableViewCell.identifier,
+					for: indexPath) as! NotificationSettingTableViewCell
+			
+			cell.toggleSwitch.addTarget(self, action: #selector(toggleSwitchTapped), for: .valueChanged)
+			
+			return cell
+		} else {
+			let cell = tableView
+				.dequeueReusableCell(
+					withIdentifier: MyPageTableDefaultCell.identifier,
+					for: indexPath) as! MyPageTableDefaultCell
+			
+			let title = myPageTableLabelList[indexPath.row].titleLabel
+			cell.serviceLabel.text = title
+			return cell
+		}
     }
 }
 
 // MARK: - UITableView Delegate
 
 extension MyPageViewController: UITableViewDelegate {
+	
+	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		return 60
+	}
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
       
-      switch indexPath.row {
-      // "내가 쓴 리뷰" 스크린으로 이동
-      case MyPageLabels.MyReview.rawValue:
+        switch indexPath.row {
+        // "내가 쓴 리뷰" 스크린으로 이동
+        case MyPageLabels.MyReview.rawValue:
             let myReviewViewController = MyReviewViewController()
             self.navigationController?.pushViewController(myReviewViewController, animated: true)
-      // "문의하기" 스크린으로 이동
-      case MyPageLabels.Inquiry.rawValue:
-        TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
-          if error != nil {
-            if let kakaoChannelLink = URL(string: "http://pf.kakao.com/\(TextLiteral.KakaoChannel.id)") {
-              UIApplication.shared.open(kakaoChannelLink)
-            } else {
-              self?.showAlertController(title: "다시 시도하세요", message: "에러가 발생했습니다", style: .default)
+		
+		// "푸시 알림 설정" 스위치 토글
+		case MyPageLabels.NotificationSetting.rawValue:
+			if let cell = tableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell {
+				// TODO: 스위치 값을 앱 저장소에 보관하고, 값에 따라 알림을 보내는 여부를 제어하는 코드를 설계할 것
+				cell.toggleSwitch.isOn.toggle()
+			}
+			
+        // "문의하기" 스크린으로 이동
+        case MyPageLabels.Inquiry.rawValue:
+            TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
+                if error != nil {
+                    if let kakaoChannelLink = URL(string: "http://pf.kakao.com/\(TextLiteral.KakaoChannel.id)") {
+                        UIApplication.shared.open(kakaoChannelLink)
+                    } else {
+                        self?.showAlertController(
+							title: "다시 시도하세요",
+							message: "에러가 발생했습니다",
+							style: .default)
+                    }
+                  } else {
+					  // TODO: 카카오톡 채널 채팅방으로 연결 성공했을 때, 앱에서 동작되어야 하는 로직 고민
+				}
             }
-            /*
-             해야 할 일
-             - 채팅방에 진입하지 못했을 때, 앱에서 어떻게 처리해야 할 지 고민해야 합니다
-             - 지금은 웹으로 연결되게 조치해두었습니다만, 어떻게 해봐야 할 지 고민을 해봐야 한다고 생각합니다.
-             */
-          } else {
-            /*
-             해야 할 일
-             - 정상적으로 코드가 동작할 때, 앱에서 처리해야 할 일이 있는지 확인
-             */
-          }
-        }
-      // "서비스 이용약관" 스크린으로 이동
-      case MyPageLabels.TermsOfUse.rawValue:
-           let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
-            provisionViewController.navigationTitle = TextLiteral.termsOfUse
+        
+        // "서비스 이용약관" 스크린으로 이동
+        case MyPageLabels.TermsOfUse.rawValue:
+            let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
+            provisionViewController.navigationTitle = TextLiteral.MyPage.termsOfUse
             self.navigationController?.pushViewController(provisionViewController, animated: true)
-      // "개인정보 이용약관" 스크린으로 이동
-      case MyPageLabels.PrivacyTermsOfUse.rawValue:
+        
+        // "개인정보 이용약관" 스크린으로 이동
+        case MyPageLabels.PrivacyTermsOfUse.rawValue:
             let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
-            provisionViewController.navigationTitle = TextLiteral.privacyTermsOfUse
+            provisionViewController.navigationTitle = TextLiteral.MyPage.privacyTermsOfUse
             self.navigationController?.pushViewController(provisionViewController, animated: true)
-      // "로그아웃" 팝업알림 표시
-      case MyPageLabels.Logout.rawValue:
-        self.logoutShowAlert()
-      // "탈퇴하기" 스크린으로 이동
-      case MyPageLabels.Withdraw.rawValue:
-           let userWithdrawViewController = UserWithdrawViewController()
-            userWithdrawViewController.getUsernickName(nickName: self.nickName)
-            self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
-      // "만든사람들" 스크린으로 이동
-      case MyPageLabels.Creator.rawValue:
-        let creatorViewController = CreatorViewController()
-        navigationController?.pushViewController(creatorViewController, animated: true)
-      default:
-        return
-      }
+			
+		// "만든사람들" 스크린으로 이동
+        case MyPageLabels.Creator.rawValue:
+            let creatorViewController = CreatorViewController()
+            navigationController?.pushViewController(creatorViewController, animated: true)
+			
+		// "로그아웃" 팝업알림 표시
+        case MyPageLabels.Logout.rawValue:
+            self.logoutShowAlert()
+        default:
+            return
+        }
     }
 }

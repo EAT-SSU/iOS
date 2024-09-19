@@ -99,6 +99,8 @@ class BaseViewController: UIViewController {
 		fatalError("setLayout() must be overridden")
 	}
     
+	// TODO: setButtonEvent를 setButtonAction으로 변경했으면 합니다.
+	
 	/// UIViewController에서 버튼이 있다면 버튼 액션을 연결해주세요.
 	///
 	/// 버튼이 있다면 오버라이딩해서 버튼 액션을 연결해주세요.
