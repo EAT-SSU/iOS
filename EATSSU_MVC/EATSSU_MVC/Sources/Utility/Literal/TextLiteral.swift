@@ -25,6 +25,12 @@ enum TextLiteral {
     /// 오늘의 학식을 확인해보세요!
     static let dailyWeekdayNotificationBody: String = "오늘의 학식을 확인해보세요!"
   }
+  
+  enum KakaoChannel {
+    
+    /// EATSSU 카카오 채널 ID
+    static let id: String = "_ZlVAn"
+  }
 
     
     // MARK: - Sign In
