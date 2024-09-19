@@ -8,9 +8,6 @@
 import UIKit
 
 import Moya
-import SnapKit
-import Then
-import Realm
 
 final class SetNickNameViewController: BaseViewController {
     
@@ -121,6 +118,9 @@ extension SetNickNameViewController {
             switch response {
             case .success(let moyaResponse):
                 do {
+                    if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
+                        UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
+                    }
                     self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
                         if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
                             self.navigationController?.popToViewController(myPageViewController, animated: true)
