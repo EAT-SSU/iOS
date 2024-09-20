@@ -16,29 +16,7 @@ final class MyPageView: BaseUIView {
     
     let myPageServiceLabelList = MyPageLocalData.myPageServiceLabelList
     let myPageRightItemListDate = MyPageRightItemData.myPageRightItemList
-    private var dataModel: MyInfoResponse? {
-        didSet {
-            if let nickname = dataModel?.nickname {
-                userNicknameButton.addTitleAttribute(
-                  title: "\(nickname)  >",
-                  titleColor: .black,
-                  fontName: .semiBold(size: 20)
-                )
-            }
-            
-            switch dataModel?.provider {
-            case "KAKAO":
-                accountLabel.text = "카카오"
-                accountImage.image = ImageLiteral.signInWithKakao
-            case "APPLE":
-                accountLabel.text = "APPLE"
-                accountImage.image = ImageLiteral.signInWithApple
-            default:
-                return
-            }
-        }
-    }
-    
+
     // MARK: - UI Components
     
   // 사용자 이미지
@@ -54,7 +32,6 @@ final class MyPageView: BaseUIView {
         fontName: EATSSUFontFamily.Pretendard.regular.font(size: 16))
     }
     
-  //
     public let accountTitleLabel = UILabel().then {
         $0.text = TextLiteral.linkedAccount
       $0.font = EATSSUFontFamily.Pretendard.regular.font(size: 14)
@@ -103,6 +80,7 @@ final class MyPageView: BaseUIView {
                          totalAccountStackView,
                          myPageTableView)
     }
+    
     override func setLayout() {
         userImage.snp.makeConstraints {
             $0.top.equalToSuperview().offset(127)
@@ -126,12 +104,26 @@ final class MyPageView: BaseUIView {
         }
     }
     
-    func register() {
+    private func register() {
         myPageTableView.register(MyPageServiceCell.self, forCellReuseIdentifier: MyPageServiceCell.identifier)
     }
     
-    func dataBind(model: MyInfoResponse) {
-        dataModel = model
+    public func setUserInfo(nickname: String) {
+        userNicknameButton.addTitleAttribute(
+          title: "\(nickname)  >",
+          titleColor: .black,
+          fontName: .semiBold(size: 20)
+        )
+        if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
+            switch accountType {
+            case .apple:
+                accountLabel.text = "APPLE"
+                accountImage.image = ImageLiteral.signInWithApple
+            case .kakao:
+                accountLabel.text = "카카오"
+                accountImage.image = ImageLiteral.signInWithKakao
+            }
+        }
     }
 }
 

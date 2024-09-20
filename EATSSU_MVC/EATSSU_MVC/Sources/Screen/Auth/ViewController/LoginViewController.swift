@@ -135,6 +135,9 @@ final class LoginViewController: BaseViewController {
         case nil:
             self.pushToNicknameVC()
         default:
+            if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
+                UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: info.nickname ?? "")
+            }
             self.changeIntoHomeViewController()
         }
     }
@@ -194,6 +197,7 @@ extension LoginViewController {
                     let responseData = try moyaResponse.map(BaseResponse<SignResponse>.self)
                     self.addTokenInRealm(accessToken: responseData.result.accessToken,
                                          refreshToken: responseData.result.refreshToken)
+                    let userInfo = UserInfoManager.shared.createUserInfo(accountType: .kakao)
                     self.getMyInfo()
                 } catch(let err) {
                     self.presentBottomAlert(err.localizedDescription)
@@ -231,6 +235,7 @@ extension LoginViewController {
                   let responseData = try JSONDecoder().decode(BaseResponse<SignResponse>.self, from: moyaResponse.data)
                     self.addTokenInRealm(accessToken: responseData.result.accessToken,
                                          refreshToken: responseData.result.refreshToken)
+                    let userInfo = UserInfoManager.shared.createUserInfo(accountType: .apple)
                     self.getMyInfo()
                 } catch(let err) {
                     self.presentBottomAlert(err.localizedDescription)

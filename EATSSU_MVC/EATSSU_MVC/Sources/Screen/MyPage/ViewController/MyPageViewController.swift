@@ -23,7 +23,7 @@ final class MyPageViewController: BaseViewController {
     // MARK: - Properties
     
     private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
-    private var nickName = String()
+    private var nickName: String = ""
     
     // MARK: - UI Components
     
@@ -41,7 +41,8 @@ final class MyPageViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        getMyInfo()
+        nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "fail"
+        mypageView.setUserInfo(nickname: nickName)
     }
     
     // MARK: - Functions
@@ -107,27 +108,6 @@ final class MyPageViewController: BaseViewController {
         alert.addAction(fixAction)
 
         present(alert, animated: true, completion: nil)
-    }
-}
-
-// MARK: - Server
-
-extension MyPageViewController {
-    private func getMyInfo() {
-        self.myProvider.request(.myInfo) { response in
-            switch response {
-            case .success(let moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
-                    self.mypageView.dataBind(model: responseData.result)
-                    self.nickName = responseData.result.nickname ?? ""
-                } catch(let err) {
-                    print(err.localizedDescription)
-                }
-            case .failure(let err):
-                print(err.localizedDescription)
-            }
-        }
     }
 }
 
@@ -206,9 +186,9 @@ extension MyPageViewController: UITableViewDelegate {
         self.logoutShowAlert()
       // "탈퇴하기" 스크린으로 이동
       case MyPageLabels.Withdraw.rawValue:
-           let userWithdrawViewController = UserWithdrawViewController()
-            userWithdrawViewController.getUsernickName(nickName: self.nickName)
-            self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
+          let userWithdrawViewController = UserWithdrawViewController()
+          userWithdrawViewController.getUsernickName(nickName: self.nickName)
+          self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
       // "만든사람들" 스크린으로 이동
       case MyPageLabels.Creator.rawValue:
         let creatorViewController = CreatorViewController()
