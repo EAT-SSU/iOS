@@ -96,4 +96,3 @@ enum TextLiteral {
     static let send = "전송하기"
 }
 
- 

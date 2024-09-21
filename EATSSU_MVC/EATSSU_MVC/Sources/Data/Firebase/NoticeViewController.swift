@@ -9,7 +9,8 @@ import UIKit
 
 import SnapKit
 
-class NoticeViewController:BaseViewController {
+/// FirebaseRemoteConfig 관련 ViewController
+class NoticeViewController: BaseViewController {
     
     // MARK: - Properties
     var noticeMessage: String
