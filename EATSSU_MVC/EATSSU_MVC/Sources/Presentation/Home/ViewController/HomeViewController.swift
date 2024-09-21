@@ -66,7 +66,8 @@ final class HomeViewController: BaseViewController {
       navigationItem.titleView = UIImageView(image: EATSSUAsset.Images.Version2.mainLogoSmall.image)
       
         let rightButton = UIBarButtonItem(
-            image: EATSSUAsset.Images.myPageIcon.image,
+			// FIXME: myPageIcon은 Version 1 소속 이미지 파일입니다. 앞으로도 사용한다면 Version 2로 옮겨주세요.
+			image: EATSSUAsset.Images.Version1.myPageIcon.image,
             style: .plain, target: self,
             action: #selector(rightBarButtonTapped))
         navigationItem.rightBarButtonItem = rightButton
