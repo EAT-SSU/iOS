@@ -70,7 +70,10 @@ enum TextLiteral {
 
     /// "마이페이지" 텍스트 리터럴
     enum MyPage {
-        
+		
+		/// "푸시 알림 사용자 설정 접근 키"
+		static let pushNotificationUserSettingKey: String = "pushNotificationUserSettingKey"
+		
         /// "푸시 알림 설정"
 		static let pushNotificationSetting: String = "푸시 알림 설정"
 		

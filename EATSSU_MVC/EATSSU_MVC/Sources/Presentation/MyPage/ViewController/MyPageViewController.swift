@@ -33,6 +33,8 @@ final class MyPageViewController: BaseViewController {
     
     private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
     private var nickName = ""
+	private var switchState = false
+	private let userDefaultsKey = TextLiteral.MyPage.pushNotificationUserSettingKey
 	private let myPageTableLabelList = MyPageLocalData.myPageTableLabelList
 	
     // MARK: - UI Components
@@ -44,14 +46,15 @@ final class MyPageViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setDelegate()
-        Analytics.logEvent("MypageViewControllerLoad", parameters: nil)
+		Analytics.logEvent("MypageViewControllerLoad", parameters: nil)
+        setTableViewDelegate()
+		loadSwitchStateFromUserDefaults()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
      
-		nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "fail"
+		nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "실패"
 		mypageView.setUserInfo(nickname: nickName)
     }
     
@@ -79,28 +82,20 @@ final class MyPageViewController: BaseViewController {
 				action: #selector(didTappedChangeNicknameButton),
 				for: .touchUpInside)
     }
-	
-	@objc
-	func toggleSwitchTapped() {
-		
-	}
     
     @objc
-    func didTappedChangeNicknameButton() {
-        
+    private func didTappedChangeNicknameButton() {
         let setNickNameVC = SetNickNameViewController()
         self.navigationController?.pushViewController(setNickNameVC, animated: true)
     }
     
-    func setDelegate() {
+	/// TableViewDelegate & DataSource를 해당 클래스로 할당합니다.
+    private func setTableViewDelegate() {
         mypageView.myPageTableView.dataSource = self
         mypageView.myPageTableView.delegate = self
     }
     
-    /*
-     해야 할 일
-     - 알림 팝업을 띄우는 코드를 모듈화
-     */
+	/// 로그아웃 Alert를 스크린에 표시하는 메소드
     private func logoutShowAlert() {
         let alert = UIAlertController(title: "로그아웃",
                                       message: "정말 로그아웃 하시겠습니까?",
@@ -128,6 +123,18 @@ final class MyPageViewController: BaseViewController {
 
         present(alert, animated: true, completion: nil)
     }
+	
+	/// UserDefaults에 스위치 상태 저장
+	private func saveSwitchStateToUserDefaults() {
+		print("사용자 푸시 알림 값을 앱 저장소에 보관합니다.")
+		UserDefaults.standard.set(switchState, forKey: userDefaultsKey)
+	}
+
+	/// UserDefaults에서 스위치 상태 불러오기
+	private func loadSwitchStateFromUserDefaults() {
+		print("사용자 푸시 알림 값을 앱 저장소에서 불러옵니다.")
+		switchState = UserDefaults.standard.bool(forKey: userDefaultsKey)
+	}
 }
 
 // MARK: - TableView DataSource
@@ -145,7 +152,7 @@ extension MyPageViewController: UITableViewDataSource {
 					withIdentifier: NotificationSettingTableViewCell.identifier,
 					for: indexPath) as! NotificationSettingTableViewCell
 			
-			cell.toggleSwitch.addTarget(self, action: #selector(toggleSwitchTapped), for: .valueChanged)
+			cell.toggleSwitch.isOn = switchState
 			
 			return cell
 		} else {
@@ -173,6 +180,7 @@ extension MyPageViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
       
         switch indexPath.row {
+			
         // "내가 쓴 리뷰" 스크린으로 이동
         case MyPageLabels.MyReview.rawValue:
             let myReviewViewController = MyReviewViewController()
@@ -181,8 +189,24 @@ extension MyPageViewController: UITableViewDelegate {
 		// "푸시 알림 설정" 스위치 토글
 		case MyPageLabels.NotificationSetting.rawValue:
 			if let cell = tableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell {
-				// TODO: 스위치 값을 앱 저장소에 보관하고, 값에 따라 알림을 보내는 여부를 제어하는 코드를 설계할 것
-				cell.toggleSwitch.isOn.toggle()
+				
+				// 현재 스위치 상태를 반전
+				let newSwitchState = !switchState
+				cell.toggleSwitch.setOn(newSwitchState, animated: true)
+				
+				// 스위치 상태를 업데이트
+				switchState = newSwitchState
+				
+				if switchState {
+					print("푸시 알림을 발송합니다.")
+					NotificationManager.shared.scheduleWeekday11AMNotification()
+				} else {
+					print("푸시 알림을 발송하지 않습니다.")
+					NotificationManager.shared.cancelWeekday11AMNotification()
+				}
+				
+				// UserDefaults에 상태 저장
+				saveSwitchStateToUserDefaults()
 			}
 			
         // "문의하기" 스크린으로 이동

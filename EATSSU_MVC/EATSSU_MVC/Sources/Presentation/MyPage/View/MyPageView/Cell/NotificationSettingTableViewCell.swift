@@ -43,6 +43,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
 	internal let toggleSwitch: UISwitch = {
 		let toggleSwitch = UISwitch()
 		toggleSwitch.onTintColor = EATSSUAsset.Color.Main.primary.color
+		toggleSwitch.isOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
 		return toggleSwitch
 	}()
 
