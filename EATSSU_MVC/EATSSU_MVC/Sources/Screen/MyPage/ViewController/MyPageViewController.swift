@@ -18,12 +18,21 @@ import Realm
 import KakaoSDKCommon
 import KakaoSDKTalk
 
+// TODO: "탈퇴하기" 로직 연결
+
+/*
+ 아래 코드를 탈퇴하기 버튼에 연결
+let userWithdrawViewController = UserWithdrawViewController()
+userWithdrawViewController.getUsernickName(nickName: self.nickName)
+self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
+ */
+
 final class MyPageViewController: BaseViewController {
     
     // MARK: - Properties
     
     private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
-    private var nickName = String()
+    private var nickName = ""
 	private let myPageTableLabelList = MyPageLocalData.myPageTableLabelList
 	
     // MARK: - UI Components
@@ -41,8 +50,9 @@ final class MyPageViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        getMyInfo()
+     
+		nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "fail"
+		mypageView.setUserInfo(nickname: nickName)
     }
     
     // MARK: - Functions
@@ -117,27 +127,6 @@ final class MyPageViewController: BaseViewController {
         alert.addAction(fixAction)
 
         present(alert, animated: true, completion: nil)
-    }
-}
-
-// MARK: - Server
-
-extension MyPageViewController {
-    private func getMyInfo() {
-        self.myProvider.request(.myInfo) { response in
-            switch response {
-            case .success(let moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
-                    self.mypageView.dataBind(model: responseData.result)
-                    self.nickName = responseData.result.nickname ?? ""
-                } catch(let err) {
-                    print(err.localizedDescription)
-                }
-            case .failure(let err):
-                print(err.localizedDescription)
-            }
-        }
     }
 }
 

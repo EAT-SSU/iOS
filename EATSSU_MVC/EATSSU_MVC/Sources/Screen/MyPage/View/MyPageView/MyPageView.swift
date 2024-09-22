@@ -13,29 +13,6 @@ import Then
 final class MyPageView: BaseUIView {
     
     // MARK: - Properties
-	
-    private var dataModel: MyInfoResponse? {
-        didSet {
-            if let nickname = dataModel?.nickname {
-                userNicknameButton.addTitleAttribute(
-                  title: "\(nickname)  >",
-                  titleColor: .black,
-                  fontName: .semiBold(size: 20)
-                )
-            }
-            
-            switch dataModel?.provider {
-            case "KAKAO":
-                accountTypeDefaultLabel.text = "카카오"
-                accountTypeImage.image = ImageLiteral.signInWithKakao
-            case "APPLE":
-                accountTypeDefaultLabel.text = "APPLE"
-                accountTypeImage.image = ImageLiteral.signInWithApple
-            default:
-                return
-            }
-        }
-    }
     
     // MARK: - UI Components
     
@@ -59,7 +36,7 @@ final class MyPageView: BaseUIView {
     }
     
 	// 서버에서 계정 정보를 가져오기 전 기본값
-    internal var accountTypeDefaultLabel = UILabel().then {
+    internal var accountTypeLabel = UILabel().then {
         $0.text = "없음"
 		$0.font = EATSSUFontFamily.Pretendard.regular.font(size: 14)
         $0.font = .bold(size: 14)
@@ -76,7 +53,7 @@ final class MyPageView: BaseUIView {
     }
     
     internal lazy var accountStackView = UIStackView(
-      arrangedSubviews: [accountTypeDefaultLabel,accountTypeImage]).then {
+      arrangedSubviews: [accountTypeLabel,accountTypeImage]).then {
         $0.alignment = .bottom
         $0.axis = .horizontal
         $0.spacing = 5
@@ -197,7 +174,21 @@ final class MyPageView: BaseUIView {
 			forCellReuseIdentifier: NotificationSettingTableViewCell.identifier)
     }
     
-    func dataBind(model: MyInfoResponse) {
-        dataModel = model
-    }
+	public func setUserInfo(nickname: String) {
+			userNicknameButton.addTitleAttribute(
+			  title: "\(nickname)  >",
+			  titleColor: .black,
+			  fontName: .semiBold(size: 20)
+			)
+			if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
+				switch accountType {
+				case .apple:
+					accountTypeLabel.text = "APPLE"
+					accountTypeImage.image = ImageLiteral.signInWithApple
+				case .kakao:
+					accountTypeLabel.text = "카카오"
+					accountTypeImage.image = ImageLiteral.signInWithKakao
+				}
+			}
+		}
 }
