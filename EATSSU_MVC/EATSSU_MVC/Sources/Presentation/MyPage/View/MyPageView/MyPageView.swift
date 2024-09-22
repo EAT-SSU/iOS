@@ -78,26 +78,16 @@ final class MyPageView: BaseUIView {
 		label.textColor = EATSSUAsset.Color.GrayScale.gray400.color
 	}
 	
-	// "탈퇴하기"
-	private let withdrawLabel = UILabel().then { label in
-		label.text = TextLiteral.MyPage.withdraw
-		label.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
-		label.textColor = EATSSUAsset.Color.GrayScale.gray400.color
-	}
-	
-	// "탈퇴하기" 옆 아이콘
-	private let withdrawIconImageView = UIImageView().then { imageView in
-		imageView.image = EATSSUAsset.Images.Version2.withdrawIcon.image
-		imageView.tintColor = EATSSUAsset.Color.GrayScale.gray400.color
-	}
-	
-	// "탈퇴하기" 레이블과 탈퇴하기 아이콘
-	private let withdrawStackView: UIStackView = {
-		let stackView = UIStackView()
-		stackView.axis = .horizontal
-		return stackView
+	/// "탈퇴하기" 레이블과 탈퇴하기 아이콘
+	internal let userWithdrawButton: UIButton = {
+		let button = UIButton()
+		button.setTitle(TextLiteral.MyPage.withdraw, for: .normal)
+		button.setImage(EATSSUAsset.Images.Version2.withdrawIcon.image, for: .normal)
+		button.setTitleColor(EATSSUAsset.Color.GrayScale.gray400.color, for: .normal)
+		button.titleLabel?.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
+		return button
 	}()
-    
+	
     // MARK: - Intializer
     
     override init(frame: CGRect) {
@@ -115,9 +105,7 @@ final class MyPageView: BaseUIView {
 					myPageTableView,
 					appVersionStringLabel,
 					appVersionLabel,
-					withdrawLabel,
-					withdrawIconImageView,
-					withdrawStackView
+					userWithdrawButton
 		)
     }
 	
@@ -157,8 +145,7 @@ final class MyPageView: BaseUIView {
 		}
 		
 		// TODO: withdrawStackView를 프로퍼티로 선언할 때, lazy를 사용하면 레이아웃이 한 타임 늦게 잡히는 문제로 인해서 여기에서 스택 안에 들어갈 뷰를 추가함. 개선 방법이 없는지 확인.
-		withdrawStackView.addArrangedSubviews([withdrawLabel, withdrawIconImageView])
-		withdrawStackView.snp.makeConstraints { make in
+		userWithdrawButton.snp.makeConstraints { make in
 			make.top.equalTo(appVersionLabel.snp.bottom).offset(16)
 			make.trailing.equalToSuperview().inset(24)
 		}

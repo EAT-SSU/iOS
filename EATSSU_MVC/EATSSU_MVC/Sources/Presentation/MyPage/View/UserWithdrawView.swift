@@ -41,12 +41,10 @@ final class UserWithdrawView: BaseUIView {
     init(nickName: String) {
         super.init(frame: CGRect())
         self.userNickname = nickName
-        self.inputNickNameTextField.placeholder = nickName
-      
-      
-      self.setTextFieldDelegate()
-      self.setProperties()
-      self.configureUI()
+		self.inputNickNameTextField.placeholder = nickName
+		self.setTextFieldDelegate()
+		self.setProperties()
+		self.configureUI()
     }
     
     // MARK: - Functions
@@ -136,13 +134,13 @@ final class UserWithdrawView: BaseUIView {
     private func setValidationLabel(state: ValidationLabelState) {
         switch state {
         case .corrected:
-          nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
+			nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
             nickNameStateGuideLabel.textColor = .systemGreen
             completeSignOutButton.isEnabled = true
         case .unCorrected:
             nickNameStateGuideLabel.do {
-                $0.isHidden = false
-              $0.text = TextLiteral.MyPage.invalidNicknameMessage
+				$0.isHidden = false
+				$0.text = TextLiteral.MyPage.invalidNicknameMessage
                 $0.textColor = .primary
             }
             completeSignOutButton.isEnabled = false
@@ -191,7 +189,6 @@ private extension UserWithdrawView {
     }
     
     func checkIsNickNameCorrect(_ textField: UITextField) {
-        
         if let userNickname = textField.text {
             if userNickname == self.userNickname {
                 setValidationLabel(state: .corrected)

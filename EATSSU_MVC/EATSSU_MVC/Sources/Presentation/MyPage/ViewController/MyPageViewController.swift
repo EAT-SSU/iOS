@@ -77,10 +77,10 @@ final class MyPageViewController: BaseViewController {
     
     override func setButtonEvent() {
         mypageView.userNicknameButton
-			.addTarget(
-				self,
-				action: #selector(didTappedChangeNicknameButton),
-				for: .touchUpInside)
+			.addTarget(self, action: #selector(didTappedChangeNicknameButton),for: .touchUpInside)
+		
+		mypageView.userWithdrawButton
+			.addTarget(self, action: #selector(userWithdrawButtonTapped), for: .touchUpInside)
     }
     
     @objc
@@ -88,6 +88,12 @@ final class MyPageViewController: BaseViewController {
         let setNickNameVC = SetNickNameViewController()
         self.navigationController?.pushViewController(setNickNameVC, animated: true)
     }
+	
+	@objc
+	private func userWithdrawButtonTapped() {
+		let userWithdrawViewController = UserWithdrawViewController(nickName: nickName)
+		self.navigationController?.pushViewController(userWithdrawViewController, animated: true)
+	}
     
 	/// TableViewDelegate & DataSource를 해당 클래스로 할당합니다.
     private func setTableViewDelegate() {
