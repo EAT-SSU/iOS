@@ -71,6 +71,10 @@ enum TextLiteral {
     /// "마이페이지" 텍스트 리터럴
     enum MyPage {
 		
+		// TODO: PM으로부터 받은 메시지로 교체합니다.
+		/// "평일 오전 11시에 푸시 알림을 수신합니다.
+		static let pushNotificationToastMessage: String = "평일 오전 11시에 푸시 알림을 수신합니다."
+		
 		/// "푸시 알림 사용자 설정 접근 키"
 		static let pushNotificationUserSettingKey: String = "pushNotificationUserSettingKey"
 		

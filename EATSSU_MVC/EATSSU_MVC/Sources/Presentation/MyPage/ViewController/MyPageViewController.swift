@@ -206,6 +206,8 @@ extension MyPageViewController: UITableViewDelegate {
 				if switchState {
 					print("푸시 알림을 발송합니다.")
 					NotificationManager.shared.scheduleWeekday11AMNotification()
+					// TODO: PM으로부터 전달받은 메시지를 입력합니다.
+					view.showToast(message: TextLiteral.MyPage.pushNotificationToastMessage)
 				} else {
 					print("푸시 알림을 발송하지 않습니다.")
 					NotificationManager.shared.cancelWeekday11AMNotification()
