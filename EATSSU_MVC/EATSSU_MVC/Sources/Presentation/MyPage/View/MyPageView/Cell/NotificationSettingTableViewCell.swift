@@ -10,8 +10,8 @@ import UIKit
 import SnapKit
 
 class NotificationSettingTableViewCell: UITableViewCell {
-	
 	// MARK: - Properties
+
 	static let identifier = "NotificationSettingTableViewCell"
 	
 	// MARK: - UI Components
@@ -40,13 +40,12 @@ class NotificationSettingTableViewCell: UITableViewCell {
 		return stackView
 	}()
 	
-	internal let toggleSwitch: UISwitch = {
+	let toggleSwitch: UISwitch = {
 		let toggleSwitch = UISwitch()
 		toggleSwitch.onTintColor = EATSSUAsset.Color.Main.primary.color
 		toggleSwitch.isOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
 		return toggleSwitch
 	}()
-
 
 	// MARK: - Initializer
 
@@ -57,6 +56,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
 		setupLayout()
 	}
 	
+	@available(*, unavailable)
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
@@ -85,5 +85,4 @@ class NotificationSettingTableViewCell: UITableViewCell {
 			make.centerY.equalToSuperview()
 		}
 	}
-
 }
