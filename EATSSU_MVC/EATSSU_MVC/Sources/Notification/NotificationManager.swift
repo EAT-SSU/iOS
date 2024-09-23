@@ -9,63 +9,65 @@ import Foundation
 import UserNotifications
 
 class NotificationManager {
-    static let shared = NotificationManager()
-    
-  /// 지정된 시간에 알림을 발송하는 메소드
-    func scheduleHelloWorldNotification() {
-        let content = UNMutableNotificationContent()
-        content.title = "Hello World"
-        content.body = "11시가 되었습니다!"
-        content.sound = .default
-        
-        var dateComponents = DateComponents()
-        dateComponents.hour = 11
-        dateComponents.minute = 0
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        
-        let request = UNNotificationRequest(identifier: "helloWorldNotification", content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Hello World 알림 예약 실패: \(error.localizedDescription)")
-            } else {
-                print("Hello World 알림이 성공적으로 예약되었습니다.")
-            }
-        }
-    }
-    
-  /// 앱 실행 시 알림 발송 권한을 요청하는 팝업 호출 메소드
-    func requestAuthorization() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                print("알림 권한 승인됨")
-            } else {
-                print("알림 권한 거부됨")
-            }
-        }
-    }
-  
-  /// 개발자 도구 : 시뮬레이터에서 지속적으로 알림을 확인하기 위한 메소드
-  ///
-  /// 해당 메소드는 배포 시 호출되면 안됩니다.
-  func scheduleTestNotification() {
-      let content = UNMutableNotificationContent()
-      content.title = "Hello World"
-      content.body = "테스트 알림입니다!"
-      content.sound = .default
-      
-      // 3초 후에 알림 발생
-      let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 60, repeats: true)
-      
-      let request = UNNotificationRequest(identifier: "testNotification", content: content, trigger: trigger)
-      
-      UNUserNotificationCenter.current().add(request) { error in
-          if let error = error {
-              print("테스트 알림 예약 실패: \(error.localizedDescription)")
-          } else {
-              print("테스트 알림이 성공적으로 예약되었습니다.")
-          }
-      }
-  }
+	// MARK: - Properties
+
+	static let shared = NotificationManager()
+
+	// MARK: - Methods
+
+	/// 평일 11시에 앱의 유입을 유도하는 푸시 알림을 발송하는 메소드
+	///
+	/// - Title : 🤔 오늘 밥 뭐 먹지…
+	/// - Body : 오늘의 학식을 확인해보세요!
+	func scheduleWeekday11AMNotification() {
+		let center = UNUserNotificationCenter.current()
+
+		// 알림 콘텐츠 설정
+		let content = UNMutableNotificationContent()
+
+		content.title = TextLiteral.Notification.dailyWeekdayNotificationTitle
+		content.body = TextLiteral.Notification.dailyWeekdayNotificationBody
+		content.sound = .default
+
+		// 반복할 요일 및 시간 설정 (평일 오전 11시)
+		let weekdays = [2, 3, 4, 5, 6] // 월, 화, 수, 목, 금 (Calendar에서 1이 일요일)
+
+		for weekday in weekdays {
+			var dateComponents = DateComponents()
+			dateComponents.hour = 11
+			dateComponents.minute = 0
+			dateComponents.weekday = weekday
+
+			let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+
+			// 고유한 식별자를 위해 weekday를 사용
+			let identifier = "weekdayNotification-\(weekday)"
+			let request = UNNotificationRequest(
+				identifier: identifier, content: content, trigger: trigger)
+
+			// 알림 등록
+			center.add(request) { error in
+				if let error = error {
+					print("알림 등록 간 에러 메시지: \(error.localizedDescription)")
+				}
+			}
+		}
+	}
+
+	/// 평일 11시에 앱의 유입을 유도하는 푸시 알림을 취소하는 메소드
+	func cancelWeekday11AMNotification() {
+		let weekday = [2, 3, 4, 5, 6]
+		let identifier = "weekdayNotification-\(weekday)"
+
+		let center = UNUserNotificationCenter.current()
+		center.removePendingNotificationRequests(withIdentifiers: [identifier])
+	}
+
+	/// 앱 실행 시 알림 발송 권한을 요청하는 팝업 호출 메소드
+	func requestNotificationPermission(completion: @escaping (_ granted : Bool) -> Void) {
+		UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+			granted, _ in
+			completion(granted)
+		}
+	}
 }

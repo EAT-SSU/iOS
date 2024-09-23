@@ -7,4 +7,8 @@
 
 import Foundation
 
-protocol AppData {}
+// TODO: 해당 프로토콜이 왜 필요한 지 마크업 주석으로 명세를 남겨주세요.
+
+protocol AppData {
+	
+}

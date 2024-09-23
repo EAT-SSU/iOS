@@ -10,7 +10,12 @@ let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
           "CFBundleURLSchemes": ["kakao$(KAKAO_API_KEY)"]
       ]
   ],
-  "LSApplicationQueriesSchemes": ["kakaokompassauth", "kakaolink"],
+  "LSApplicationQueriesSchemes": [
+    "kakaokompassauth",
+    "kakaolink",
+    "kakaoplus",
+    "kakaotalk"
+  ],
   "NSAppTransportSecurity": [
       "NSAllowsArbitraryLoads": true
   ],
@@ -43,8 +48,8 @@ let eatSSUSettings: Settings = .settings(
     "DEVELOPMENT_LANGUAGE": "ko"
   ],
   configurations: [
-  .debug(name: "Debug", xcconfig: "EATSSU_MVC/Resources/Debug.xcconfig"),
-  .release(name: "Release", xcconfig: "EATSSU_MVC/Resources/Release.xcconfig"),
+  .debug(name: "Debug", xcconfig: "EATSSU_MVC/Resources/Secrets/Debug.xcconfig"),
+  .release(name: "Release", xcconfig: "EATSSU_MVC/Resources/Secrets/Release.xcconfig"),
   ]
 )
 
@@ -71,19 +76,48 @@ let project = Project(
               .external(name: "Moya", condition: .none),
               .external(name: "Then", condition: .none),
               .external(name: "FSCalendar", condition: .none),
-              .external(name: "KakaoSDKAuth", condition: .none),
-              .external(name: "KakaoSDKUser", condition: .none),
-              .external(name: "KakaoSDKCommon", condition: .none),
               .external(name: "Kingfisher", condition: .none),
-              .external(name: "FirebaseCrashlytics", condition: .none),
-              .external(name: "FirebaseAnalytics", condition: .none),
-              .external(name: "FirebaseRemoteConfig", condition: .none),
               .external(name: "GoogleAppMeasurement", condition: .none),
               .external(name: "Realm", condition: .none),
               .external(name: "RealmSwift", condition: .none),
+              
+              // Firebase Module
+              .external(name: "FirebaseCrashlytics", condition: .none),
+              .external(name: "FirebaseAnalytics", condition: .none),
+              .external(name: "FirebaseRemoteConfig", condition: .none),
+              
+              // KakakSDK Module
+              .external(name: "KakaoSDKAuth", condition: .none),
+              .external(name: "KakaoSDKUser", condition: .none),
+              .external(name: "KakaoSDKCommon", condition: .none),
+              .external(name: "KakaoSDKTalk", condition: .none),
+              
+              // EATSSU Module
               .project(target: "EATSSUComponents", path:.relativeToRoot("../EATSSUComponents"), condition: .none)
             ],
             settings: eatSSUSettings
         ),
+        .target(
+          /// UITests의 이름은 "앱 이름 + UiTests" 형식을 지켜야합니다.
+          name: "EATSSUUITests",
+          destinations: [.iPhone],
+          product: .uiTests,
+          bundleId: "com.EATSSU.UITests",
+          sources: ["EATSSU_MVC/UITests/**"],
+          dependencies: [
+            .target(name: "EATSSU", condition: .none)
+          ]
+        ),
+        .target(
+          /// UnitTests의 이름은 "앱 이름 + Tests" 형식을 지켜야 합니다.
+          name: "EATSSUTests",
+          destinations: [.iPhone],
+          product: .unitTests,
+          bundleId: "com.EATSSU.UnitTests",
+          sources: ["EATSSU_MVC/UnitTests/**"],
+          dependencies: [
+            .target(name: "EATSSU", condition: .none)
+          ]
+        )
     ]
 )
