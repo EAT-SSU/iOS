@@ -5,17 +5,23 @@
 //  Created by 박윤빈 on 2023/03/15.
 //
 
-/*
- 해야 할 일
- - BaseUIView 코드 모듈화 간 재정비
- */
+// TODO: BaseUIView 코드 Utility 모듈로 모듈화 간 재정비
 
 import UIKit
 
+/// EATSSU 앱에서 스크린으로 사용될 UIView 클래스의 BaseView 클래스입니다.
+///
+/// # 소속 메소드
+/// - configureUI
+/// - setLayout
+///
+/// - Important: configureUI()와 setLayout() 메소드를 오버라이딩 해야 합니다.
+/// 오버라이딩 하지 않으면 런타임 에러가 발생합니다.
 class BaseUIView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+		
         configureUI()
         setLayout()
     }
@@ -25,20 +31,36 @@ class BaseUIView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-  /*
-   해야 할 일
-   - 아래 메소드들은 꼭 필요한 성격을 가지는 메소드이다.
-   - 그럼에도 불구하고 꼭 오버라이드 해야 한다는 옵션을 주고 있지 않기 때문에 해당 함수를 꼭 사용해야 한다는 메시지가 담긴 추상화가 부족함.
-   - 추상화가 부족하기 때문에 3자가 봤을 때 중복되는 함수를 설계할 가능성이 높음.
-   - 그러므로 Swift 고유의 문법인 Protocol로 해당 부분을 개편할 것
-   */
-  
+	/// 서브뷰를 추가하는 코드를 오버라이딩하여 작성해주세요.
+	///
+	///	# Example
+	///
+	/// ```swift
+	///	override func configureUI() {
+	///		addSubviews(view1, view2)
+	///	}
+	/// ```
+	///
+	/// - 위의 형식과 같이 서브뷰로 사용할 UIView 클래스를 추가해주시면 됩니다.
     func configureUI() {
-        
+		fatalError("configureUI() must be overridden")
     }
     
+	/// 추가한 서브뷰의 레이아웃을 조정하는 코드를 오버라이딩하여 작성해주세요.
+	///
+	/// # Example
+	///
+	/// ```swift
+	///	override func setLayout() {
+	///		view1.snp.makeConstraints { make in
+	///			make.center.equalToSuperview()
+	///		}
+	///	}
+	/// ```
+	///
+	/// - 위의 형식과 같이 추가한 서브뷰의 레이아웃을 조정하는 메소드를 작성해주세요.
     func setLayout() {
-        
+		fatalError("setLayout() must be overridden")
     }
 }
 

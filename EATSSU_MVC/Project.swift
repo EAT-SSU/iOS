@@ -48,8 +48,8 @@ let eatSSUSettings: Settings = .settings(
     "DEVELOPMENT_LANGUAGE": "ko"
   ],
   configurations: [
-  .debug(name: "Debug", xcconfig: "EATSSU_MVC/Resources/Debug.xcconfig"),
-  .release(name: "Release", xcconfig: "EATSSU_MVC/Resources/Release.xcconfig"),
+  .debug(name: "Debug", xcconfig: "EATSSU_MVC/Resources/Secrets/Debug.xcconfig"),
+  .release(name: "Release", xcconfig: "EATSSU_MVC/Resources/Secrets/Release.xcconfig"),
   ]
 )
 
