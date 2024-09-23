@@ -41,12 +41,10 @@ final class UserWithdrawView: BaseUIView {
     init(nickName: String) {
         super.init(frame: CGRect())
         self.userNickname = nickName
-        self.inputNickNameTextField.placeholder = nickName
-      
-      
-      self.setTextFieldDelegate()
-      self.setProperties()
-      self.configureUI()
+		self.inputNickNameTextField.placeholder = nickName
+		self.setTextFieldDelegate()
+		self.setProperties()
+		self.configureUI()
     }
     
     // MARK: - Functions
@@ -90,12 +88,12 @@ final class UserWithdrawView: BaseUIView {
     
     private func setProperties() {
         nickNameLabel.do {
-            $0.text = TextLiteral.signOut
+          $0.text = TextLiteral.MyPage.confirmWithdrawal
             $0.font = .bold(size: 16)
         }
         
         subscription.do {
-            $0.text = TextLiteral.signOutSubscription
+          $0.text = TextLiteral.MyPage.withdrawalNotice
             $0.numberOfLines = 2
             $0.font = .medium(size: 12)
             $0.textColor = .gray700
@@ -121,7 +119,7 @@ final class UserWithdrawView: BaseUIView {
         }
         
         completeSignOutButton.do {
-            $0.addTitleAttribute(title: TextLiteral.withdraw,
+          $0.addTitleAttribute(title: TextLiteral.MyPage.withdraw,
                                  titleColor: .white,
                                  fontName: .bold(size: 18))
             $0.setRoundBorder(borderColor: .gray300, borderWidth: 0, cornerRadius: 10)
@@ -136,13 +134,13 @@ final class UserWithdrawView: BaseUIView {
     private func setValidationLabel(state: ValidationLabelState) {
         switch state {
         case .corrected:
-            nickNameStateGuideLabel.text = TextLiteral.correctInput
+			nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
             nickNameStateGuideLabel.textColor = .systemGreen
             completeSignOutButton.isEnabled = true
         case .unCorrected:
             nickNameStateGuideLabel.do {
-                $0.isHidden = false
-                $0.text = TextLiteral.uncorrectNickName
+				$0.isHidden = false
+				$0.text = TextLiteral.MyPage.invalidNicknameMessage
                 $0.textColor = .primary
             }
             completeSignOutButton.isEnabled = false
@@ -191,7 +189,6 @@ private extension UserWithdrawView {
     }
     
     func checkIsNickNameCorrect(_ textField: UITextField) {
-        
         if let userNickname = textField.text {
             if userNickname == self.userNickname {
                 setValidationLabel(state: .corrected)

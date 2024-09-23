@@ -16,7 +16,7 @@ class NotificationManager {
 
   // MARK: - Methods
 
-  /// 평일 11시에 앱의 유입을 유도하는 알림을 발송하는 메소드
+  /// 평일 11시에 앱의 유입을 유도하는 푸시 알림을 발송하는 메소드
   ///
   /// - Title : 🤔 오늘 밥 뭐 먹지…
   /// - Body : 오늘의 학식을 확인해보세요!
@@ -31,7 +31,6 @@ class NotificationManager {
     content.sound = .default
 
     // 반복할 요일 및 시간 설정 (평일 오전 11시)
-    let calendar = Calendar.current
     let weekdays = [2, 3, 4, 5, 6]  // 월, 화, 수, 목, 금 (Calendar에서 1이 일요일)
 
     for weekday in weekdays {
@@ -55,6 +54,15 @@ class NotificationManager {
       }
     }
   }
+	
+	/// 평일 11시에 앱의 유입을 유도하는 푸시 알림을 취소하는 메소드
+	func cancelWeekday11AMNotification() {
+		let weekday = [2, 3, 4, 5, 6]
+		let identifier = "weekdayNotification-\(weekday)"
+		
+		let center = UNUserNotificationCenter.current()
+		center.removePendingNotificationRequests(withIdentifiers: [identifier])
+	}
 
   /// 앱 실행 시 알림 발송 권한을 요청하는 팝업 호출 메소드
   func requestNotificationPermission() {

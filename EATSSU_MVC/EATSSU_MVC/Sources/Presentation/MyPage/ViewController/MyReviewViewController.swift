@@ -52,7 +52,7 @@ final class MyReviewViewController: BaseViewController {
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = TextLiteral.myReview
+      navigationItem.title = TextLiteral.MyPage.myReview
     }
     
     override func configureUI() {
