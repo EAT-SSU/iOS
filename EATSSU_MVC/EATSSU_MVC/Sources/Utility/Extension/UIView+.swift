@@ -30,6 +30,7 @@ extension UIView {
 	/// 	- message: 토스트 메시지로 전달할 문자열
     public func showToast(message: String) {
         let toastLabel = UILabel()
+		toastLabel.numberOfLines = 2
         toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         toastLabel.textColor = UIColor.white
         toastLabel.textAlignment = .center
