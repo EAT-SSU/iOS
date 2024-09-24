@@ -22,15 +22,17 @@ jobs:
           BASE_URL: ${{ secrets.BASE_URL }}
           KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
         run: |
+          cd EATSSU_MVC/EATSSU_MVC/Resources
+          mkdir Secrets
+          cd Secrets
+
           echo "BASE_URL = $BASE_URL" >> Release.xcconfig
           echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Release.xcconfig
           cat Release.xcconfig
-          mv Release.xcconfig EATSSU_MVC/EATSSU_MVC/Resources/Secrets
 
           echo "BASE_URL = $BASE_URL" >> Debug.xcconfig
           echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Debug.xcconfig
           cat Debug.xcconfig
-          mv Debug.xcconfig EATSSU_MVC/EATSSU_MVC/Resources/Secrets
 
       - name: Install Dependencies
         run: |

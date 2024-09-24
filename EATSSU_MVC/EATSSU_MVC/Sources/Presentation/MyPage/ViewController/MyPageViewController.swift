@@ -146,7 +146,7 @@ extension MyPageViewController: UITableViewDataSource {
 			
 			NotificationManager.shared.checkNotificationSetting { setting in
 				switch setting.authorizationStatus {
-				case .authorized,.notDetermined, .provisional, .ephemeral:
+				case .authorized, .notDetermined, .provisional, .ephemeral:
 					DispatchQueue.main.async {
 						cell.toggleSwitch.setOn(self.switchState, animated: true)
 					}
