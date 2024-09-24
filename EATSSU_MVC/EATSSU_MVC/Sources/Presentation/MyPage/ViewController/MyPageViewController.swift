@@ -22,7 +22,6 @@ final class MyPageViewController: BaseViewController {
 	private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
 	private var nickName = ""
 	private var switchState = false
-	private let userDefaultsKey = TextLiteral.MyPage.pushNotificationUserSettingKey
 	private let myPageTableLabelList = MyPageLocalData.myPageTableLabelList
 	
 	// MARK: - UI Components
@@ -121,13 +120,13 @@ final class MyPageViewController: BaseViewController {
 	/// UserDefaults에 스위치 상태 저장
 	private func saveSwitchStateToUserDefaults() {
 		print("사용자 푸시 알림 값을 앱 저장소에 보관합니다.")
-		UserDefaults.standard.set(switchState, forKey: userDefaultsKey)
+		UserDefaults.standard.set(switchState, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
 	}
 
 	/// UserDefaults에서 스위치 상태 불러오기
 	private func loadSwitchStateFromUserDefaults() {
 		print("사용자 푸시 알림 값을 앱 저장소에서 불러옵니다.")
-		switchState = UserDefaults.standard.bool(forKey: userDefaultsKey)
+		switchState = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
 	}
 }
 
@@ -145,7 +144,20 @@ extension MyPageViewController: UITableViewDataSource {
 					withIdentifier: NotificationSettingTableViewCell.identifier,
 					for: indexPath) as! NotificationSettingTableViewCell
 			
-			cell.toggleSwitch.isOn = switchState
+			NotificationManager.shared.checkNotificationSetting { setting in
+				switch setting.authorizationStatus {
+				case .authorized,.notDetermined, .provisional, .ephemeral:
+					DispatchQueue.main.async {
+						cell.toggleSwitch.setOn(self.switchState, animated: true)
+					}
+				case .denied:
+					DispatchQueue.main.async {
+						cell.toggleSwitch.setOn(false, animated: true)
+					}
+				@unknown default:
+					fatalError()
+				}
+			}
 			
 			return cell
 		} else {
@@ -170,37 +182,52 @@ extension MyPageViewController: UITableViewDelegate {
     
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		tableView.deselectRow(at: indexPath, animated: true)
-      
+		
 		switch indexPath.row {
+		// "푸시 알림 설정" 스위치 토글
+		case MyPageLabels.NotificationSetting.rawValue:
+			NotificationManager.shared.checkNotificationSetting { setting in
+				switch setting.authorizationStatus {
+				case .denied:
+					DispatchQueue.main.async {
+						self.view.showToast(message: TextLiteral.MyPage.authorizeNotificationSettingMessage)
+					}
+				default:
+					DispatchQueue.main.async {
+						guard let cell = tableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell else { return }
+						// 현재 스위치 상태를 반전
+						let newSwitchState = !self.switchState
+						cell.toggleSwitch.setOn(newSwitchState, animated: true)
+				
+						// 스위치 상태를 업데이트
+						self.switchState = newSwitchState
+						
+						let currentDate = Date()
+						let dateFormatter = DateFormatter()
+						dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+						let formattedDate = dateFormatter.string(from: currentDate)
+				
+						if self.switchState {
+							print("푸시 알림을 발송합니다.")
+							NotificationManager.shared.scheduleWeekday11AMNotification()
+							self.view.showToast(message: "EAT-SSU 알림 수신을 동의하였습니다.\n(\(formattedDate))")
+						} else {
+							print("푸시 알림을 발송하지 않습니다.")
+							NotificationManager.shared.cancelWeekday11AMNotification()
+							self.view.showToast(message: "EAT-SSU 알림 수신을 거절하였습니다.\n(\(formattedDate))")
+						}
+				
+						// UserDefaults에 상태 저장
+						self.saveSwitchStateToUserDefaults()
+					}
+				}
+			}
+			
 		// "내가 쓴 리뷰" 스크린으로 이동
 		case MyPageLabels.MyReview.rawValue:
 			let myReviewViewController = MyReviewViewController()
 			navigationController?.pushViewController(myReviewViewController, animated: true)
-		
-		// "푸시 알림 설정" 스위치 토글
-		case MyPageLabels.NotificationSetting.rawValue:
-			if let cell = tableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell {
-				// 현재 스위치 상태를 반전
-				let newSwitchState = !switchState
-				cell.toggleSwitch.setOn(newSwitchState, animated: true)
-				
-				// 스위치 상태를 업데이트
-				switchState = newSwitchState
-				
-				if switchState {
-					print("푸시 알림을 발송합니다.")
-					NotificationManager.shared.scheduleWeekday11AMNotification()
-					// TODO: PM으로부터 전달받은 메시지를 입력합니다.
-					view.showToast(message: TextLiteral.MyPage.pushNotificationToastMessage)
-				} else {
-					print("푸시 알림을 발송하지 않습니다.")
-					NotificationManager.shared.cancelWeekday11AMNotification()
-				}
-				
-				// UserDefaults에 상태 저장
-				saveSwitchStateToUserDefaults()
-			}
-			
+	
 		// "문의하기" 스크린으로 이동
 		case MyPageLabels.Inquiry.rawValue:
 			TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
