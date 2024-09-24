@@ -56,11 +56,13 @@ class NotificationManager {
 
 	/// 평일 11시에 앱의 유입을 유도하는 푸시 알림을 취소하는 메소드
 	func cancelWeekday11AMNotification() {
-		let weekday = [2, 3, 4, 5, 6]
-		let identifier = "weekdayNotification-\(weekday)"
+		let weekdays = [2, 3, 4, 5, 6]
 
-		let center = UNUserNotificationCenter.current()
-		center.removePendingNotificationRequests(withIdentifiers: [identifier])
+		for weekday in weekdays {
+			let identifier = "weekdayNotification-\(weekday)"
+			let center = UNUserNotificationCenter.current()
+			center.removePendingNotificationRequests(withIdentifiers: [identifier])
+		}
 	}
 
 	/// 앱 실행 시 알림 발송 권한을 요청하는 팝업 호출 메소드
