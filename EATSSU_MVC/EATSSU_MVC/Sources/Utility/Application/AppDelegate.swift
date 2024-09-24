@@ -16,11 +16,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		// 푸시 알림 권한 요청
 		NotificationManager.shared.requestNotificationPermission { granted in
+			let notificationSettingValue = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+	
+			// OS 단계에서 푸시 알림 허용 여부
 			if granted {
-				NotificationManager.shared.scheduleWeekday11AMNotification()
-				UserDefaults.standard.set(true, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+				// OS 단계에서 푸시 알림 허용
+				if notificationSettingValue {
+					// 앱 단계에서 푸시 알림 값이 허용
+					NotificationManager.shared.scheduleWeekday11AMNotification()
+					UserDefaults.standard.set(true, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+				} else {
+					// 앱 단계에서 푸시 알림 값이 거절
+					NotificationManager.shared.cancelWeekday11AMNotification()
+					UserDefaults.standard.set(false, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+				}
 			} else {
-				// 
+				// OS 단계에서 푸시 알림 거부
+				// 앱 단계에서 푸시 알림 설정 거부
+				NotificationManager.shared.cancelWeekday11AMNotification()
+				UserDefaults.standard.set(false, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
 			}
 		}
 			
