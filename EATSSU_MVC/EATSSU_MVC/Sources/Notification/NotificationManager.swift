@@ -64,10 +64,21 @@ class NotificationManager {
 	}
 
 	/// 앱 실행 시 알림 발송 권한을 요청하는 팝업 호출 메소드
-	func requestNotificationPermission(completion: @escaping (_ granted : Bool) -> Void) {
+	func requestNotificationPermission(completion: @escaping (_ granted: Bool) -> Void) {
 		UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
 			granted, _ in
 			completion(granted)
+		}
+	}
+
+	/// OS 단계에서 알림 수신 설정을 확인하는 메소드
+	func checkNotificationSetting(completion: @escaping (_ setting: UNNotificationSettings) -> Void) {
+		// 현재 UNUserNotificationCenter 인스턴스 가져오기
+		let notificationCenter = UNUserNotificationCenter.current()
+
+		// 알림 설정을 비동기적으로 확인
+		notificationCenter.getNotificationSettings { settings in
+			completion(settings)
 		}
 	}
 }
