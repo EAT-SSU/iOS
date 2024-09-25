@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
-//        self.checkAndUpdateIfNeeded()
+        self.checkAndUpdateIfNeeded()
     }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -44,7 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             } else {
             self?.window?.rootViewController = navigationController
             self?.window?.makeKeyAndVisible()
-//            self?.checkAndUpdateIfNeeded()
+            self?.checkAndUpdateIfNeeded()
             }
         }
     }
