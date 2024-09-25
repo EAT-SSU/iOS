@@ -21,11 +21,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		}
 	}
     
-	func sceneWillEnterForeground(_ scene: UIScene) {
-		// Called as the scene transitions from the background to the foreground.
-		// Use this method to undo the changes made on entering the background.
-		// self.checkAndUpdateIfNeeded()
-	}
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        // Called as the scene transitions from the background to the foreground.
+        // Use this method to undo the changes made on entering the background.
+        self.checkAndUpdateIfNeeded()
+    }
     
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -35,17 +35,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
 		var navigationController = UINavigationController(rootViewController: LoginViewController())
 
-		FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
-			if result != nil {
-				navigationController =
-					UINavigationController(rootViewController: NoticeViewController(noticeMessage: result ?? ""))
-			} else {
-				self?.window?.rootViewController = navigationController
-				self?.window?.makeKeyAndVisible()
-				// self?.checkAndUpdateIfNeeded()
-			}
-		}
-	}
+        FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
+            if result != nil {
+                navigationController = 
+              UINavigationController(rootViewController: NoticeViewController(noticeMessage: result ?? ""))
+            } else {
+            self?.window?.rootViewController = navigationController
+            self?.window?.makeKeyAndVisible()
+            self?.checkAndUpdateIfNeeded()
+            }
+        }
+    }
     
 	// 업데이트가 필요한지 확인 후 업데이트 알럿을 띄우는 메소드
 	func checkAndUpdateIfNeeded() {
