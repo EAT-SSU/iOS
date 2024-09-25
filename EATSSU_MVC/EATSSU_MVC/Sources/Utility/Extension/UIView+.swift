@@ -23,8 +23,14 @@ extension UIView {
 }
 
 extension UIView {
-    func showToast(message: String) {
+	
+	/// 파라미터로 입력받은 문자열을 토스트 메시지를 전달합니다.
+	///
+	/// - Parameters:
+	/// 	- message: 토스트 메시지로 전달할 문자열
+    public func showToast(message: String) {
         let toastLabel = UILabel()
+		toastLabel.numberOfLines = 2
         toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         toastLabel.textColor = UIColor.white
         toastLabel.textAlignment = .center

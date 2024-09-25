@@ -23,7 +23,7 @@ final class UserWithdrawViewController: BaseViewController {
 
     // MARK: - UI Components
     
-    private lazy var deleteAccountView = UserWithdrawView(nickName: nickName)
+    private lazy var userWithdrawView = UserWithdrawView(nickName: nickName)
     
     // MARK: - Life Cycles
     
@@ -40,15 +40,27 @@ final class UserWithdrawViewController: BaseViewController {
     override func viewWillDisappear(_ animated: Bool) {
         self.removeKeyboardNotifications()
     }
+	
+	// MARK: - Initializer
+	
+	init(nickName: String) {
+		self.nickName = nickName
+		
+		super.init(nibName: nil, bundle: nil)
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
     
     // MARK: - Functions
     
     override func configureUI() {
-        view.addSubviews(deleteAccountView)
+        view.addSubviews(userWithdrawView)
     }
     
     override func setLayout() {
-        deleteAccountView.snp.makeConstraints {
+        userWithdrawView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
@@ -59,21 +71,17 @@ final class UserWithdrawViewController: BaseViewController {
     }
     
     override func setButtonEvent() {
-        deleteAccountView.completeSignOutButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
+        userWithdrawView.completeSignOutButton.addTarget(self, action: #selector(completeNickNameButtonTapped), for: .touchUpInside)
     }
     
     @objc
-    func tappedCompleteNickNameButton() {
-        deleteUser()
+    func completeNickNameButtonTapped() {
+		deleteUser()
     }
+      
+    // MARK: - 디바이스 키보드 감지
     
-    func getUsernickName(nickName: String) {
-        self.nickName = nickName
-    }
-    
-    // MARK: - keyboard 감지
-    
-    func addKeyboardNotifications() {
+    private func addKeyboardNotifications() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(self.keyboardWillShow(_:)),
                                                name: UIResponder.keyboardWillShowNotification,
@@ -83,7 +91,7 @@ final class UserWithdrawViewController: BaseViewController {
                                                object: nil)
     }
 
-    func removeKeyboardNotifications() {
+    private func removeKeyboardNotifications() {
         NotificationCenter.default.removeObserver(self,
                                                   name: UIResponder.keyboardWillShowNotification,
                                                   object: nil)
@@ -93,21 +101,22 @@ final class UserWithdrawViewController: BaseViewController {
     }
 
     @objc
-    func keyboardWillShow(_ notification: Notification) {
+    private func keyboardWillShow(_ notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
             let updateKeyboardHeight = keyboardSize.height
             let difference = updateKeyboardHeight - currentKeyboardHeight
             
-            deleteAccountView.completeSignOutButton.frame.origin.y -= difference
+            userWithdrawView.completeSignOutButton.frame.origin.y -= difference
             currentKeyboardHeight = updateKeyboardHeight
         }
     }
 
-    @objc func keyboardWillHide(_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
-            deleteAccountView.completeSignOutButton.frame.origin.y += currentKeyboardHeight
+    @objc
+	private func keyboardWillHide(_ notification: Notification) {
+		// TODO: keyboardSize 변수는 사용하지 않아서 _ 로 대체했지만, 해당 로직이 왜 필요한 지 연구
+        if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            userWithdrawView.completeSignOutButton.frame.origin.y += currentKeyboardHeight
             currentKeyboardHeight = 0.0
         }
     }

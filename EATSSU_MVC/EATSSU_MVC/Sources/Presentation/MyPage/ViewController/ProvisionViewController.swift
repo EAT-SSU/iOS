@@ -16,7 +16,7 @@ final class ProvisionViewController: BaseViewController {
     
     // MARK: - Properties
     
-    internal var navigationTitle = TextLiteral.defaultTerms
+  internal var navigationTitle = TextLiteral.MyPage.defaultTerms
     
     // MARK: - UI Components
     
