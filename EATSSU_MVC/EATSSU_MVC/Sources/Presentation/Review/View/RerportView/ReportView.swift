@@ -82,33 +82,25 @@ final class ReportView: BaseUIView {
   /// "EAT SSU 팀에게 보내기" 버튼
   internal let sendToEATSSUButton = ESButton(size: .big, title: "EAT SSU 팀에게 보내기")
   
-  // MARK: - Initializer
-
-  init() {
-    super.init(frame: .zero)
+  // MARK: - Functions
     
-    self.setLayout()
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
+    override func configureUI() {
+        self.addSubviews(
+          reviewReportReasonLabel,
+          singleReportPerDayLabel,
+          unrelatedToMenuButton,
+          inappropriateContentButton,
+          inappropriatePromotionButton,
+          offTopicContentButton,
+          copyrightInfringementButton,
+          otherReasonButton,
+          reviewReportReasonTextView,
+          characterCountLabel,
+          sendToEATSSUButton
+        )
+    }
   
   internal override func setLayout() {
-    self.addSubviews(
-      reviewReportReasonLabel,
-      singleReportPerDayLabel,
-      unrelatedToMenuButton,
-      inappropriateContentButton,
-      inappropriatePromotionButton,
-      offTopicContentButton,
-      copyrightInfringementButton,
-      otherReasonButton,
-      reviewReportReasonTextView,
-      characterCountLabel,
-      sendToEATSSUButton
-    )
-    
     reviewReportReasonLabel.snp.makeConstraints { make in
       make.leading.equalTo(self).inset(24)
       make.trailing.equalTo(self).inset(166)

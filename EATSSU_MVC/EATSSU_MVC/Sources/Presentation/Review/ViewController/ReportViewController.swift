@@ -39,7 +39,8 @@ final class ReportViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
       
-      self.connectView()
+      self.configureUI()
+      self.setLayout()
       self.setScrollViewSetting()
       self.setDelegate()
       self.addArray()
@@ -54,7 +55,7 @@ final class ReportViewController: BaseViewController {
 
   // MARK: - Methods
   
-  private func connectView() {
+  override func configureUI() {
     view.addSubview(scrollView)
     scrollView.snp.makeConstraints { make in
       make.edges.equalTo(view.safeAreaLayoutGuide)
@@ -68,6 +69,10 @@ final class ReportViewController: BaseViewController {
       make.height.equalTo(800)
     }
   }
+    
+    override func setLayout() {
+        super.setLayout()
+    }
   
   private func setScrollViewSetting() {
     self.scrollView.frame = self.view.bounds
