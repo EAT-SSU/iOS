@@ -17,7 +17,7 @@ class FirebaseRemoteConfig {
         remoteConfig = RemoteConfig.remoteConfig()
         let settings = RemoteConfigSettings()
         
-        settings.minimumFetchInterval = 3600
+        settings.minimumFetchInterval = 600
         remoteConfig.configSettings = settings
     }
     
