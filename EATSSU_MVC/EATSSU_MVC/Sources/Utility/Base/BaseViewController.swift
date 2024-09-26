@@ -23,47 +23,44 @@ import SnapKit
 /// - Important: configureUI와 setLayout 메소드는 필수로 오버라이딩 해야 합니다.
 /// 오버라이딩 하지 않으면 런타임 에러가 발생합니다.
 class BaseViewController: UIViewController {
+	// MARK: - Properties
     
-    // MARK: - Properties
+	private(set) lazy var className: String = type(of: self).description().components(separatedBy: ".").last ?? ""
     
-    lazy private(set) var className: String = {
-      return type(of: self).description().components(separatedBy: ".").last ?? ""
-    }()
+	// MARK: - Initialize
     
-    // MARK: - Initialize
+	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+		super.init(nibName: nil, bundle: nil)
+	}
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+	@available(*, unavailable)
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
     
 	// TODO: deinit 메소드의 목적이 무엇인지 알아보기
-    deinit {
-        print("DEINIT: \(className)")
-    }
+	deinit {
+		print("DEINIT: \(className)")
+	}
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+	override func viewDidLoad() {
+		super.viewDidLoad()
 
-        configureUI()
-        setLayout()
-        setButtonEvent()
+		configureUI()
+		setLayout()
+		setButtonEvent()
 		setCustomNavigationBar()
-        view.backgroundColor = .systemBackground
-    }
+		view.backgroundColor = .systemBackground
+	}
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
         
-        if !NetworkMonitor.shared.isConnected {
-            print("네트워크 오류")
-            self.showAlertController(title: "오류", message: "네트워크를 확인해주세요", style: .destructive)
-        }
-    }
+		if !NetworkMonitor.shared.isConnected {
+			print("네트워크 오류")
+			showAlertController(title: "오류", message: "네트워크를 확인해주세요", style: .destructive)
+		}
+	}
     
 	// MARK: - Functions
   
@@ -79,7 +76,7 @@ class BaseViewController: UIViewController {
 	///	}
 	/// ```
 	func configureUI() {
-		fatalError("configureUI() must be overridden")
+		// FIXME: 컴파일 타임에서 오버라이딩 의무화 여부를 확인하는 방법으로 재설계
 	}
 	
 	/// 연결된 UIView 클래스의 레이아웃을 UIViewController의 View 프로퍼티를 기준으로 레이아웃을 조정합니다.
@@ -96,7 +93,7 @@ class BaseViewController: UIViewController {
 	///	}
 	///	```
 	func setLayout() {
-		fatalError("setLayout() must be overridden")
+		// FIXME: 컴파일 타임에서 오버라이딩 의무화 여부를 확인하는 방법으로 재설계
 	}
     
 	// TODO: setButtonEvent를 setButtonAction으로 변경했으면 합니다.
@@ -116,7 +113,6 @@ class BaseViewController: UIViewController {
 	/// # 네비게이션 백버튼 속성
 	/// - `gray500`으로 백버튼 색상을 설정합니다.
 	func setCustomNavigationBar() {
-  
 		// 네비게이션 바 타이틀 속성
 		navigationController?.navigationBar.titleTextAttributes = [
 			.foregroundColor: EATSSUAsset.Color.GrayScale.gray700.color,
@@ -127,7 +123,5 @@ class BaseViewController: UIViewController {
 		let backButton = UIBarButtonItem()
 		backButton.tintColor = EATSSUAsset.Color.GrayScale.gray500.color
 		navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
-    }
+	}
 }
-
-
