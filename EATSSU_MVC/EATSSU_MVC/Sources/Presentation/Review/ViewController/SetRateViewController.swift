@@ -340,12 +340,13 @@ final class SetRateViewController: BaseViewController {
                 )
                 
                 /// 리뷰 데이터는 현재 페이지가 어디든 상관 없이 저장되어야 함
-                reviewList[currentPage] = (param, userPickedImage)
+//                reviewList[currentPage] = (param, userPickedImage)
                 
                 switch reviewId {
                 case .none:
                     
                     /// 현재 페이지가 마지막 메뉴에 대한 리뷰페이지일 때의 액션
+                    reviewList[currentPage] = (param, userPickedImage)
                     if currentPage == selectedList.count - 1 {
                         self.navigationController?.isNavigationBarHidden = false
                         sendDataIfCurrentPageIsLast()
