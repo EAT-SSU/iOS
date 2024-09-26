@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-#  📝 Setting request
+#  📝 Setting Request
 
 ## 설명
 
