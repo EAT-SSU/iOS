@@ -41,13 +41,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             } else {
             self?.window?.rootViewController = navigationController
             self?.window?.makeKeyAndVisible()
-            self?.checkAndUpdateIfNeeded()
             }
         }
     }
     
-	// 업데이트가 필요한지 확인 후 업데이트 알럿을 띄우는 메소드
-	func checkAndUpdateIfNeeded() {
+	/// 업데이트가 필요한지 확인 후 업데이트 알럿을 띄우는 메소드
+	private func checkAndUpdateIfNeeded() {
 		DispatchQueue.global(qos: .background).async {
 			let marketingVersion = AppStoreCheck().latestVersion()
             
@@ -69,8 +68,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		}
 	}
 
-	// 알럿을 띄우는 메소드
-	func showUpdateAlert(version: String) {
+	/// 알럿을 띄우는 메소드
+	private func showUpdateAlert(version: String) {
 		let alert = UIAlertController(
 			title: "업데이트 알림",
 			message: "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!",
@@ -78,7 +77,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		)
         
 		let updateAction = UIAlertAction(title: "업데이트", style: .default) { _ in
-            
 			// 업데이트 버튼을 누르면 해당 앱스토어로 이동한다.
 			AppStoreCheck().openAppStore()
 		}
