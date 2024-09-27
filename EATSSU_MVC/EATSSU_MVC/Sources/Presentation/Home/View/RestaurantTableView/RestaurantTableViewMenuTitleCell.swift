@@ -16,18 +16,20 @@ class RestaurantTableViewMenuTitleCell: BaseTableViewCell {
     // MARK: - UI Components
     
     private let nameLabel = UILabel().then {
-        $0.text = TextLiteral.menu
+        $0.text = TextLiteral.Home.todayMenu
         $0.font = .body2
     }
     
     private let priceLabel = UILabel().then {
-        $0.text = TextLiteral.price
+        $0.text = TextLiteral.Home.price
         $0.font = .body2
+        $0.textAlignment = .center
     }
     
     private let ratingLabel = UILabel().then {
-        $0.text = TextLiteral.rating
+        $0.text = TextLiteral.Home.rating
         $0.font = .body2
+        $0.textAlignment = .center
     }
     
     private let lineView = UIView().then {
@@ -39,7 +41,8 @@ class RestaurantTableViewMenuTitleCell: BaseTableViewCell {
                                 priceLabel, 
                                 ratingLabel])
         $0.axis = .horizontal
-        $0.setCustomSpacing(35, after: priceLabel)
+        $0.alignment = .center
+        $0.spacing = 24
     }
     
     // MARK: - Functions
@@ -52,12 +55,20 @@ class RestaurantTableViewMenuTitleCell: BaseTableViewCell {
     
     override func setLayout() {
         infoTableStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(15)
-            $0.leading.equalToSuperview().inset(15)
-            $0.trailing.equalToSuperview().inset(32)
+            $0.top.equalToSuperview().offset(18)
+            $0.horizontalEdges.equalToSuperview().inset(12)
+        }
+        nameLabel.snp.makeConstraints {
+            $0.width.equalTo(210)
+        }
+        priceLabel.snp.makeConstraints {
+            $0.width.equalTo(47)
+        }
+        ratingLabel.snp.makeConstraints {
+            $0.width.equalTo(25)
         }
         lineView.snp.makeConstraints {
-            $0.top.equalTo(infoTableStackView.snp.bottom).offset(10)
+            $0.top.equalTo(infoTableStackView.snp.bottom).offset(11)
             $0.horizontalEdges.equalToSuperview().inset(8)
             $0.height.equalTo(1)
             $0.bottom.equalToSuperview()
