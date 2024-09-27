@@ -48,12 +48,26 @@ enum TextLiteral {
     static let completeLabel: String = "완료하기"
 
 	// MARK: - Home
-		
-	static let menu: String = "오늘의 메뉴"
-	static let price: String = "가격"
-	static let rating: String = "평점"
-	static let emptyRating: String = "  -"
-		
+    
+    enum Home {
+        
+        /// 오늘의 메뉴
+        static let todayMenu: String = "오늘의 메뉴"
+        
+        /// 가격
+        static let price: String = "가격"
+        
+        /// 평점
+        static let rating: String = "평점"
+        
+        /// -
+        static let emptyRating: String = "  -"
+        
+        /// 제공되는 메뉴가 없습니다
+        static let noMenuProvidedMessage: String = "제공되는 메뉴가 없습니다"
+
+    }
+				
 	// MARK: - Restaurant
 		
 	static let dormitoryRestaurant: String = "기숙사 식당"
