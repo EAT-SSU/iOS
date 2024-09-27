@@ -24,9 +24,9 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
     
     // MARK: - UI Components
     private let contentStackView = UIStackView()
-    private let nameLabel = UILabel()
-    private let priceLabel = UILabel()
-    private let ratingLabel = UILabel()
+    private var nameLabel = UILabel()
+    private var priceLabel = UILabel()
+    private var ratingLabel = UILabel()
     
     // MARK: - Life Cycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -48,29 +48,27 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
     // MARK: - Functions
     override func configureUI() {
         contentView.addSubview(contentStackView)
-        contentStackView.addSubviews(nameLabel,
-                                priceLabel,
-                                ratingLabel)
+        contentStackView.addArrangedSubviews([nameLabel,
+                                            priceLabel,
+                                            ratingLabel])
+//        contentStackView.backgroundColor = .yellow
+//        contentView.backgroundColor = .green
     }
 
     override func setLayout() {
         contentStackView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(11)
             $0.horizontalEdges.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(5)
         }
         nameLabel.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(11)
             $0.width.equalTo(210)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
         }
         priceLabel.snp.makeConstraints {
-            $0.leading.equalTo(nameLabel.snp.trailing)
-            $0.width.equalTo(60)
-            $0.centerY.equalTo(nameLabel)
+            $0.width.equalTo(47)
         }
         ratingLabel.snp.makeConstraints {
-            $0.trailing.equalTo(contentView.snp.trailing).inset(28)
-            $0.width.equalTo(30)
-            $0.centerY.equalTo(nameLabel)
+            $0.width.equalTo(25)
         }
     }
 }
@@ -80,19 +78,23 @@ extension RestaurantTableViewMenuCell {
         contentStackView.do {
             $0.axis = .horizontal
             $0.alignment = .center
+            $0.spacing = 24
         }
         nameLabel.do {
             $0.font = .body3
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
+//            $0.backgroundColor = .red
         }
         priceLabel.do {
             $0.font = .body3
             $0.textAlignment = .center
+//            $0.backgroundColor = .blue
         }
         ratingLabel.do {
             $0.font = .body3
             $0.textAlignment = .center
+//            $0.backgroundColor = .green
         }
     }
     
@@ -105,7 +107,7 @@ extension RestaurantTableViewMenuCell {
                 let formatRating = String(format: "%.1f", data.mainRating ?? 0)
                 ratingLabel.text = formatRating
             } else {
-                ratingLabel.text = TextLiteral.emptyRating
+                ratingLabel.text = TextLiteral.Home.emptyRating
             }
             
             if data.menusInformationList.isEmpty {

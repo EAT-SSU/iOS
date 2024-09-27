@@ -176,8 +176,10 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: RestaurantTableViewMenuTitleCell.identifier, for: indexPath)
             cell.selectionStyle = .none
             return cell
+        }
+        
         /// Menu Cell
-        } else {
+        else {
             let cell = tableView.dequeueReusableCell(withIdentifier: RestaurantTableViewMenuCell.identifier, for: indexPath) as! RestaurantTableViewMenuCell
             // MARK: 섹션지정
             if indexPath.section == 0 {
