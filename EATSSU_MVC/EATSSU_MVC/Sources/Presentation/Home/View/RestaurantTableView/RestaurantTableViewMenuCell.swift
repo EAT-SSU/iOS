@@ -51,8 +51,6 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
         contentStackView.addArrangedSubviews([nameLabel,
                                             priceLabel,
                                             ratingLabel])
-//        contentStackView.backgroundColor = .yellow
-//        contentView.backgroundColor = .green
     }
 
     override func setLayout() {
@@ -84,17 +82,14 @@ extension RestaurantTableViewMenuCell {
             $0.font = .body3
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
-//            $0.backgroundColor = .red
         }
         priceLabel.do {
             $0.font = .body3
             $0.textAlignment = .center
-//            $0.backgroundColor = .blue
         }
         ratingLabel.do {
             $0.font = .body3
             $0.textAlignment = .center
-//            $0.backgroundColor = .green
         }
     }
     

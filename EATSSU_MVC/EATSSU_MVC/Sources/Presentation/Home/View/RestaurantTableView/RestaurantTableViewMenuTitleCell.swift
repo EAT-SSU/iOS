@@ -18,21 +18,18 @@ class RestaurantTableViewMenuTitleCell: BaseTableViewCell {
     private let nameLabel = UILabel().then {
         $0.text = TextLiteral.Home.todayMenu
         $0.font = .body2
-//        $0.backgroundColor = .red
     }
     
     private let priceLabel = UILabel().then {
         $0.text = TextLiteral.Home.price
         $0.font = .body2
         $0.textAlignment = .center
-//        $0.backgroundColor = .blue
     }
     
     private let ratingLabel = UILabel().then {
         $0.text = TextLiteral.Home.rating
         $0.font = .body2
         $0.textAlignment = .center
-//        $0.backgroundColor = .green
     }
     
     private let lineView = UIView().then {
