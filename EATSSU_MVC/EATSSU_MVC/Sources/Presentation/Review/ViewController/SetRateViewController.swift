@@ -11,24 +11,29 @@ import SnapKit
 import Then
 import Moya
 
-final class SetRateViewController: BaseViewController, UINavigationControllerDelegate {
+final class SetRateViewController: BaseViewController {
     
     // MARK: - Properties
 
     private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(plugins: [MoyaLoggingPlugin()])
     private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [MoyaLoggingPlugin()])
-    private var userPickedImage: UIImage?
-    private var selectedIDList: [Int] = []
-    private var lastID: Int = Int()
-    private var reviewId: Int?
-    private var selectedList: [String] = [] {
+    private var currentPage: Int = 0 {
         didSet {
-            menuLabel.text = "\(selectedList[0]) 을/를 추천하시겠어요?"
-            if selectedList.count == 1 {
+            menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
+            if currentPage == selectedList.count - 1 {
                 self.nextButton.setTitle("리뷰 남기기", for: .normal)
             }
         }
     }
+    private var userPickedImage: UIImage?
+    private var reviewList: [(BeforeSelectedImageDTO, UIImage?)] = []
+    private var selectedIDList: [Int] = []
+    private var selectedList: [String] = []
+
+    
+    /// [리뷰 수정하기]에 필요한 reviewID
+    /// 해당 값이 존재하지 않으면, 리뷰 작성하기 기능을 수행 중인 것이다
+    private var reviewId: Int?
     
     // MARK: - UI Components
     
@@ -287,15 +292,25 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
     }
     
-    func dataBind(list: [String], idList: [Int]) {
+    func dataBind(list: [String], idList: [Int], reviewList: [(BeforeSelectedImageDTO, UIImage?)]?, currentPage: Int) {
         self.selectedList = list
         self.selectedIDList = idList
-        self.lastID = idList.last ?? 0
+        if let reviewList = reviewList {
+            self.reviewList = reviewList
+        } else {
+            self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
+                                                                       amountRating: 0,
+                                                                       tasteRating: 0,
+                                                                       content: ""),
+                                                nil), count: idList.count)
+        }
+        self.currentPage = currentPage
     }
     
     func dataBindForFix(list: [String], reivewId: Int) {
         self.selectedList = list
         self.reviewId = reivewId
+        menuLabel.text = "\(selectedList[0]) 을/를 추천하시겠어요?"
         selectImageButton.isHidden = true
         deleteMethodLabel.isHidden = true
         nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
@@ -309,8 +324,6 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         userReviewTextView.delegate = self
     }
     
-    // FIXME: - alert 추가
-    
     @objc
     func tappedNextButton() {
         
@@ -319,31 +332,28 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         } else {
             
             if (rateView.currentStar != 0) && (quantityRateView.currentStar != 0) && (tasteRateView.currentStar != 0) {
+                // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
                 let param = BeforeSelectedImageDTO.init(mainRating: rateView.currentStar,
-                                                    amountRating: quantityRateView.currentStar,
-                                                    tasteRating: tasteRateView.currentStar,
-                                                    content: userReviewTextView.text
-                                                    )
+                                                        amountRating: quantityRateView.currentStar,
+                                                        tasteRating: tasteRateView.currentStar,
+                                                        content: userReviewTextView.text
+                )
+                
+                /// 리뷰 데이터는 현재 페이지가 어디든 상관 없이 저장되어야 함
+//                reviewList[currentPage] = (param, userPickedImage)
+                
                 switch reviewId {
                 case .none:
-                    if selectedList.count == 1 {
+                    
+                    /// 현재 페이지가 마지막 메뉴에 대한 리뷰페이지일 때의 액션
+                    reviewList[currentPage] = (param, userPickedImage)
+                    if currentPage == selectedList.count - 1 {
                         self.navigationController?.isNavigationBarHidden = false
+                        sendDataIfCurrentPageIsLast()
+                    } else {
+                        prepareForNextReview()
                     }
                     
-                    if userPickedImage != nil {
-                        postReviewImage(param: param,
-                                        image: userPickedImage,
-                                        menuId: selectedIDList[0])
-                    } else {
-                        let reviewDTO = WriteReviewRequest(content: param, imageURL: "")
-                        postNewWriteReview(param: reviewDTO,
-                                           menuID: selectedIDList[0])
-                    }
-
-//                    postWriteReview(param: param,
-//                                    image: [userPickedImage],
-//                                    menuId: selectedIDList[0]
-//                    )
                 case .some(let reviewID):
                     patchFixedReview(reviewId: reviewID, param: param)
                 }
@@ -354,55 +364,22 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
     }
     
-    // 키보드가 나타났다는 알림을 받으면 실행할 메서드
-    @objc
-    func keyboardWillShow(_ noti: NSNotification) {
-        // 키보드의 높이만큼 화면을 올려준다.
-        if let keyboardFrame: NSValue = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            UIView.animate(
-                withDuration: 0.3,
-                animations: {
-                    self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
-                    self.navigationController?.isNavigationBarHidden = true
-                }
-            )
+    private func sendDataIfCurrentPageIsLast() {
+        for (index, review) in reviewList.enumerated() {
+            let (reviewDTO, image) = review
+            if image != nil {
+                postReviewImage(param: reviewDTO,
+                                image: image,
+                                menuId: selectedIDList[index])
+            } else {
+                let reviewDTO = WriteReviewRequest(content: reviewDTO, imageURL: "")
+                postNewWriteReview(param: reviewDTO,
+                                   menuID: selectedIDList[index])
+            }
         }
     }
-
-    // 키보드가 사라졌다는 알림을 받으면 실행할 메서드
-    @objc
-    func keyboardWillHide(_ noti: NSNotification) {
-        self.view.transform = .identity
-        self.navigationController?.isNavigationBarHidden = false
-    }
     
-    // 노티피케이션을 추가하는 메서드
-    func addKeyboardNotifications() {
-        // 키보드가 나타날 때 앱에게 알리는 메서드 추가
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(self.keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        // 키보드가 사라질 때 앱에게 알리는 메서드 추가
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
-    }
 
-    // 노티피케이션을 제거하는 메서드
-    func removeKeyboardNotifications() {
-        // 키보드가 나타날 때 앱에게 알리는 메서드 제거
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillShowNotification,
-                                                  object: nil)
-        // 키보드가 사라질 때 앱에게 알리는 메서드 제거
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillHideNotification,
-                                                  object: nil)
-    }
-    
-    // imagePicker
     @objc
     func didSelectedImage() {
         self.present(imagePickerController, animated: true, completion: nil)
@@ -415,13 +392,15 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     }
     
     private func prepareForNextReview() {
-        selectedList.remove(at: 0)
-        selectedIDList.remove(at: 0)
         let setRateVC = SetRateViewController()
-        setRateVC.dataBind(list: selectedList, idList: selectedIDList)
+        setRateVC.dataBind(list: selectedList,
+                           idList: selectedIDList,
+                           reviewList: reviewList,
+                           currentPage: currentPage + 1)
         navigationController?.pushViewController(setRateVC, animated: true)
     }
     
+    // 리뷰 리스트 보는 화면으로 넘어가도록 하는 함수
     private func moveToReviewVC() {
         if let reviewViewController = self.navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) {
             self.navigationController?.popToViewController(reviewViewController, animated: true)
@@ -479,10 +458,8 @@ extension SetRateViewController {
             switch response {
             case .success(_):
                 do {
-                    if self.selectedList.count == 1 {
+                    if self.currentPage == self.reviewList.count - 1 {
                         self.moveToReviewVC()
-                    } else {
-                        self.prepareForNextReview()
                     }
                 }
                 
@@ -527,6 +504,8 @@ extension SetRateViewController {
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate
+
 extension SetRateViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
@@ -536,6 +515,8 @@ extension SetRateViewController: UIImagePickerControllerDelegate {
         picker.dismiss(animated: true, completion: nil)
     }
 }
+
+// MARK: - UITextViewDelegate
 
 extension SetRateViewController: UITextViewDelegate {
     
@@ -561,4 +542,64 @@ extension SetRateViewController: UITextViewDelegate {
             textView.textColor = .gray500
         }
     }
+}
+
+// MARK: - UINavigationControllerDelegate
+
+extension SetRateViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        if viewController == self {
+            // Pop 되기 직전의 로직을 여기서 실행
+            print("Back button pressed, will pop the current view controller")
+        }
+    }
+
+    // 키보드가 나타났다는 알림을 받으면 실행할 메서드
+    @objc
+    func keyboardWillShow(_ noti: NSNotification) {
+        // 키보드의 높이만큼 화면을 올려준다.
+        if let keyboardFrame: NSValue = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            UIView.animate(
+                withDuration: 0.3,
+                animations: {
+                    self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
+                    self.navigationController?.isNavigationBarHidden = true
+                }
+            )
+        }
+    }
+
+    // 키보드가 사라졌다는 알림을 받으면 실행할 메서드
+    @objc
+    func keyboardWillHide(_ noti: NSNotification) {
+        self.view.transform = .identity
+        self.navigationController?.isNavigationBarHidden = false
+    }
+    
+    // 노티피케이션을 추가하는 메서드
+    func addKeyboardNotifications() {
+        // 키보드가 나타날 때 앱에게 알리는 메서드 추가
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(self.keyboardWillShow(_:)),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        // 키보드가 사라질 때 앱에게 알리는 메서드 추가
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
+    }
+
+    // 노티피케이션을 제거하는 메서드
+    func removeKeyboardNotifications() {
+        // 키보드가 나타날 때 앱에게 알리는 메서드 제거
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIResponder.keyboardWillShowNotification,
+                                                  object: nil)
+        // 키보드가 사라질 때 앱에게 알리는 메서드 제거
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIResponder.keyboardWillHideNotification,
+                                                  object: nil)
+    }
+
 }

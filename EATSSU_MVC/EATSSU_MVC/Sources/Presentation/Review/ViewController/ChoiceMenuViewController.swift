@@ -132,7 +132,10 @@ final class ChoiceMenuViewController: BaseViewController {
             view.showToast(message: "리뷰를 작성할 메뉴를 선택해주세요!")
         } else {
             let setRateVC = SetRateViewController()
-            setRateVC.dataBind(list: self.selectedList, idList: selectedIDList)
+            setRateVC.dataBind(list: self.selectedList,
+                               idList: selectedIDList,
+                               reviewList: nil,
+                               currentPage: 0)
             self.navigationController?.pushViewController(setRateVC, animated: true)
         }
     }

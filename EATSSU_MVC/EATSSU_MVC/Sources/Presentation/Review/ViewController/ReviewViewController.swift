@@ -115,7 +115,8 @@ final class ReviewViewController: BaseViewController {
     @objc
     func refreshTable(refresh: UIRefreshControl) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.reviewTableView.reloadData()
+            self.getReviewRate()
+            self.getReviewList(type: self.type, menuId: self.menuID)
             refresh.endRefreshing()
         }
     }
@@ -191,14 +192,20 @@ final class ReviewViewController: BaseViewController {
                     if menuIDList == nil {
                         let setRateViewController = SetRateViewController()
                         menuIDList = [menuID]
-                        setRateViewController.dataBind(list: menuNameList, idList: menuIDList ?? [])
+                        setRateViewController.dataBind(list: menuNameList,
+                                                       idList: menuIDList ?? [],
+                                                       reviewList: nil,
+                                                       currentPage: 0)
                         self.activityIndicatorView.stopAnimating()
                         self.navigationController?.pushViewController(setRateViewController, animated: true)
                     } else {
                         // 고정메뉴이고, 메뉴가 1개일때 선택창으로 안가고 바로 작성창으로 가도록
                         if menuIDList?.count == 1 {
                             let setRateViewController = SetRateViewController()
-                            setRateViewController.dataBind(list: menuNameList, idList: menuIDList ?? [])
+                            setRateViewController.dataBind(list: menuNameList,
+                                                           idList: menuIDList ?? [],
+                                                           reviewList: nil,
+                                                           currentPage: 0)
                             self.activityIndicatorView.stopAnimating()
                             self.navigationController?.pushViewController(setRateViewController, animated: true)
                         } else {

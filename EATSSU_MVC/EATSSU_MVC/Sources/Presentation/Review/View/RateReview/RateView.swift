@@ -49,7 +49,6 @@ final class RateView: BaseUIView {
     // MARK: - Functions
     
     override func configureUI() {
-        super.configureUI()
         self.addSubview(starStackView)
     }
     
