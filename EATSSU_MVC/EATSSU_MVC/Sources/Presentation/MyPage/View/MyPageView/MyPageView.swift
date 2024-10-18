@@ -15,6 +15,12 @@ final class MyPageView: BaseUIView {
     
 	// MARK: - UI Components
     
+    /// MyPageView 전체 스크롤뷰
+    private let scrollView = UIScrollView()
+    
+    /// 스크롤뷰 안에 들어갈 콘텐츠 뷰
+    private let contentView = UIView()
+    
 	// 사용자 이미지
 	var userImage = UIImageView().then {
 		$0.image = ImageLiteral.profileIcon
@@ -97,19 +103,34 @@ final class MyPageView: BaseUIView {
     
 	// MARK: - Functions
     
-	override func configureUI() {
-		addSubviews(userImage,
-		            userNicknameButton,
-		            totalAccountStackView,
-		            myPageTableView,
-		            appVersionStringLabel,
-		            appVersionLabel,
-		            userWithdrawButton)
+    override func configureUI() {
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        // 콘텐츠 뷰에 기존 UI 요소 추가
+        contentView.addSubviews(
+            userImage,
+            userNicknameButton,
+            totalAccountStackView,
+            myPageTableView,
+            appVersionStringLabel,
+            appVersionLabel,
+            userWithdrawButton
+        )
 	}
 	
 	override func setLayout() {
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(scrollView)
+        }
+        
 		userImage.snp.makeConstraints {
-			$0.top.equalToSuperview().offset(127)
+			$0.top.equalToSuperview().offset(24)
 			$0.centerX.equalToSuperview()
 			$0.height.width.equalTo(100)
 		}
@@ -146,6 +167,7 @@ final class MyPageView: BaseUIView {
 		userWithdrawButton.snp.makeConstraints { make in
 			make.top.equalTo(appVersionLabel.snp.bottom).offset(16)
 			make.trailing.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview().inset(70)
 		}
 	}
     
