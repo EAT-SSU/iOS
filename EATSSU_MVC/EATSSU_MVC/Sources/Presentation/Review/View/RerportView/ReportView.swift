@@ -16,9 +16,6 @@ import EATSSUComponents
 
 final class ReportView: BaseUIView {
   
-  // MARK: - Properties
-  
-  
   // MARK: - UI Components
   
   /// "리뷰 신고 사유를 알려주세요" 레이블
