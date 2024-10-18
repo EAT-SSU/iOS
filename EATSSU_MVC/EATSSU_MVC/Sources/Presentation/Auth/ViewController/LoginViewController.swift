@@ -39,7 +39,7 @@ final class LoginViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Analytics.logEvent("LoginViewControllerLoad", parameters: nil)
+        setFirebaseTask()
     }
     
     // MARK: - Functions
@@ -64,7 +64,14 @@ final class LoginViewController: BaseViewController {
         loginView.appleLoginButton.addTarget(self, action: #selector(appleLoginButtonDidTapped), for: .touchUpInside)
         loginView.lookingWithNoSignInButton.addTarget(self, action: #selector(lookingWithNoSignInButtonDidTapped), for: .touchUpInside)
     }
-
+    
+    private func setFirebaseTask() {
+#if DEBUG
+#else
+        Analytics.logEvent("LoginViewControllerLoad", parameters: nil)
+#endif
+    }
+    
     private func getUserInfo() {
         UserApi.shared.me { user, error in
             if let error = error {

@@ -33,7 +33,6 @@ final class MyPageViewController: BaseViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
         
-		Analytics.logEvent("MypageViewControllerLoad", parameters: nil)
 		setTableViewDelegate()
 		loadSwitchStateFromUserDefaults()
 	}
@@ -69,6 +68,15 @@ final class MyPageViewController: BaseViewController {
 		mypageView.userWithdrawButton
 			.addTarget(self, action: #selector(userWithdrawButtonTapped), for: .touchUpInside)
 	}
+    
+    private func setFirebaseTask() {
+        FirebaseRemoteConfig.shared.fetchRestaurantInfo()
+        
+#if DEBUG
+#else
+        Analytics.logEvent("MypageViewControllerLoad", parameters: nil)
+#endif
+    }
     
 	@objc
 	private func didTappedChangeNicknameButton() {
