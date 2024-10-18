@@ -84,8 +84,16 @@ final class MyPageView: BaseUIView {
 		button.setImage(EATSSUAsset.Images.Version2.withdrawIcon.image, for: .normal)
 		button.setTitleColor(EATSSUAsset.Color.GrayScale.gray400.color, for: .normal)
 		button.titleLabel?.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
+        button.tintColor = .red
 		return button
 	}()
+    
+    /// "탈퇴하기" 레이블 underline
+    private let underLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = EATSSUAsset.Color.GrayScale.gray400.color
+        return view
+    }()
 	
 	// MARK: - Intializer
     
@@ -104,7 +112,8 @@ final class MyPageView: BaseUIView {
 		            myPageTableView,
 		            appVersionStringLabel,
 		            appVersionLabel,
-		            userWithdrawButton)
+		            userWithdrawButton,
+                    underLineView)
 	}
 	
 	override func setLayout() {
@@ -147,6 +156,12 @@ final class MyPageView: BaseUIView {
 			make.top.equalTo(appVersionLabel.snp.bottom).offset(16)
 			make.trailing.equalToSuperview().inset(24)
 		}
+        
+        underLineView.snp.makeConstraints {
+            $0.top.equalTo(userWithdrawButton.snp.bottom)
+            $0.leading.trailing.equalTo(userWithdrawButton)
+            $0.height.equalTo(0.5)
+        }
 	}
     
 	private func registerTableViewCells() {
