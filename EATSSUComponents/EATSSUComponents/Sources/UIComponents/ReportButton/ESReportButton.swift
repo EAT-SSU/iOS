@@ -72,6 +72,9 @@ final public class ESReportButton: UIButton {
     self.setTitle(title, for: .normal)
     self.setTitleColor(.black, for: .normal)
     self.titleLabel?.font = EATSSUComponentsFontFamily.Pretendard.medium.font(size: 14)
+      self.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.left
+      // TODO: Deprecated. UIButtonConfiguration 속성 사용할 경우 해당사항 적용안됨 / Configuration 속성으로 수정 필요
+      self.titleEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
   }
   
   private func setupButton() {
