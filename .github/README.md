@@ -70,3 +70,47 @@ Commit Type / issue number
 - `///` 를 사용해서 문서화에 사용되는 주석 남기기
 - `// MARK:` 를 사용해서 연관된 코드를 구분짓기
 - 가능한 코드 안에서 문서화를 진행해서 생산성을 올릴 수 있도록 정리하기
+
+## Folder Structure
+```
+IOS
+ ┣ EATSSU_MVC
+ ┃  ┣ EATSSU_MVC
+ ┃  ┃  ┗ Sources
+ ┃  ┃     ┣ Data
+ ┃  ┃     ┃  ┣ Firebase
+ ┃  ┃     ┃  ┣ LocalDB
+ ┃  ┃     ┃  ┗ Network
+ ┃  ┃     ┣ Notification
+ ┃  ┃     ┣ Presentation
+ ┃  ┃     ┃  ┣ Auth
+ ┃  ┃     ┃  ┃  ┣ Enum
+ ┃  ┃     ┃  ┃  ┣ View
+ ┃  ┃     ┃  ┃  ┗ ViewController
+ ┃  ┃     ┃  ┣ Home
+ ┃  ┃     ┃  ┃  ┣ Enum
+ ┃  ┃     ┃  ┃  ┣ Model
+ ┃  ┃     ┃  ┃  ┣ Protocol
+ ┃  ┃     ┃  ┃  ┣ View
+ ┃  ┃     ┃  ┃  ┗ ViewController
+ ┃  ┃     ┃  ┣ MyPage
+ ┃  ┃     ┃  ┃  ┣ Enum
+ ┃  ┃     ┃  ┃  ┣ Model
+ ┃  ┃     ┃  ┃  ┣ View
+ ┃  ┃     ┃  ┃  ┗ ViewController
+ ┃  ┃     ┃  ┗ Review
+ ┃  ┃     ┃     ┣ View
+ ┃  ┃     ┃     ┗ ViewController
+ ┃  ┃     ┗ Utility
+ ┃  ┗ UnitTests
+ ┣ EATSSU_MVVM
+ ┃  ┗ EATSSU_MVVM
+ ┃     ┗ Sources
+ ┣ EATSSUComponents
+ ┃  ┗ EATSSUComponents
+ ┃     ┗ Sources
+ ┃        ┗ Extension
+ ┣ fastlane
+ ┣ Tuist
+ ┗ 기타 파일들
+```
