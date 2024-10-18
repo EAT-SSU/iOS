@@ -103,7 +103,6 @@ final class ReportView: BaseUIView {
   internal override func setLayout() {
     reviewReportReasonLabel.snp.makeConstraints { make in
       make.leading.equalTo(self).inset(24)
-      make.trailing.equalTo(self).inset(166)
       make.top.equalTo(safeAreaLayoutGuide.snp.top)
     }
     
