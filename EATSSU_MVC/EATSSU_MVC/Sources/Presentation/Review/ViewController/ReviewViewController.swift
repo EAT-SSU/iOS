@@ -56,7 +56,7 @@ final class ReviewViewController: BaseViewController {
         
         setTableView()
         initRefresh()
-        Analytics.logEvent("ReviewViewControllerLoad", parameters: nil)
+        setFirebaseTask()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -93,6 +93,15 @@ final class ReviewViewController: BaseViewController {
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = "리뷰"
+    }
+    
+    private func setFirebaseTask() {
+        FirebaseRemoteConfig.shared.fetchRestaurantInfo()
+        
+#if DEBUG
+#else
+        Analytics.logEvent("ReviewViewControllerLoad", parameters: nil)
+#endif
     }
     
     func setTableView() {

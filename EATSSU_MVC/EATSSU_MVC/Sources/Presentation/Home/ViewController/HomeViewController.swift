@@ -59,28 +59,32 @@ final class HomeViewController: BaseViewController {
     
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
+        
+#if DEBUG
+#else
         Analytics.logEvent("HomeViewControllerLoad", parameters: nil)
+#endif
     }
     
     private func setnavigation() {
-      navigationItem.titleView = UIImageView(image: EATSSUAsset.Images.Version2.mainLogoSmall.image)
-      
+        navigationItem.titleView = UIImageView(image: EATSSUAsset.Images.Version2.mainLogoSmall.image)
+        
         let rightButton = UIBarButtonItem(
-			// FIXME: myPageIcon은 Version 1 소속 이미지 파일입니다. 앞으로도 사용한다면 Version 2로 옮겨주세요.
-			image: EATSSUAsset.Images.Version1.myPageIcon.image,
+            // FIXME: myPageIcon은 Version 1 소속 이미지 파일입니다. 앞으로도 사용한다면 Version 2로 옮겨주세요.
+            image: EATSSUAsset.Images.Version1.myPageIcon.image,
             style: .plain, target: self,
             action: #selector(rightBarButtonTapped))
         navigationItem.rightBarButtonItem = rightButton
         navigationItem.rightBarButtonItem?.tintColor = EATSSUAsset.Color.Main.primary.color
-      
-      navigationController?.isNavigationBarHidden = false
+        
+        navigationController?.isNavigationBarHidden = false
     }
     
     private func registerTabman() {
         
         // 자식 뷰 컨트롤러로 추가
         addChild(tabmanController)
-
+        
         // 자식 뷰를 부모 뷰에 추가
         view.addSubview(tabmanController.view)
         
