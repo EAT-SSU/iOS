@@ -122,7 +122,8 @@ final class MyPageView: BaseUIView {
           myPageTableView,
           appVersionStringLabel,
           appVersionLabel,
-          userWithdrawButton
+          userWithdrawButton,
+          underLineView
       )
 	}
 	
