@@ -93,7 +93,7 @@ let project = Project(
               .external(name: "KakaoSDKTalk", condition: .none),
               
               // EATSSU Module
-              .project(target: "EATSSUComponents", path:.relativeToRoot("../EATSSUComponents"), condition: .none)
+              .project(target: "EATSSUDesign", path:.relativeToRoot("../EATSSUDesign"), condition: .none)
             ],
             settings: eatSSUSettings
         ),

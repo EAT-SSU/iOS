@@ -1,13 +1,13 @@
 import ProjectDescription
 
 let project = Project(
-    name: "EATSSUComponents",
+    name: "EATSSUDesign",
     targets: [
         .target(
-            name: "EATSSUComponents",
+            name: "EATSSUDesign",
             destinations: .iOS,
             product: .framework,
-            bundleId: "io.tuist.EATSSUComponents",
+            bundleId: "com.EATSSU.Design",
             deploymentTargets: .iOS("15.0"),
             infoPlist: .extendingDefault(
                 with: [
@@ -17,8 +17,8 @@ let project = Project(
                     ],
                 ]
             ),
-            sources: ["EATSSUComponents/Sources/**"],
-            resources: ["EATSSUComponents/Resources/**"],
+            sources: ["EATSSUDesign/Sources/**"],
+            resources: ["EATSSUDesign/Resources/**"],
             dependencies: [
               .external(name: "SnapKit", condition: .none),
               .external(name: "Kingfisher", condition: .none),
