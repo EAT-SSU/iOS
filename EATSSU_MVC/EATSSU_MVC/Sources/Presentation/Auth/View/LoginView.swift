@@ -1,75 +1,74 @@
 //
 //  LoginView.swift
-//  EatSSU-iOS
+//  iOS
 //
 //  Created by 최지우 on 2023/06/26.
 //
 
-// Swift Module
 import UIKit
 
-// External Module
 import SnapKit
 import Then
 
-final class LoginView: BaseUIView {
-    
-    // MARK: - UI Components
-    
-  private let logoImage = UIImageView().then {
-    $0.image = EATSSUAsset.Images.Version2.authLogo.image
-  }
-  
-  private let logoSubTitle = UIImageView().then { imageView in
-    imageView.image = EATSSUAsset.Images.Version2.authSubTitle.image
-  }
-    
-    let appleLoginButton = UIButton().then {
-      $0.setImage(EATSSUAsset.Images.Version2.appleLoginButton.image, for: .normal)
-    }
+import EATSSUDesign
 
-    let kakaoLoginButton = UIButton().then {
-      $0.setImage(EATSSUAsset.Images.Version2.kakaoLoginButton.image, for: .normal)
-    }
+final class LoginView: BaseUIView {
+	// MARK: - UI Components
     
-    let lookingWithNoSignInButton = UIButton().then {
-      $0.setImage(EATSSUAsset.Images.Version2.lookAroundButton.image, for: .normal)
-    }
+	private let logoImage = UIImageView().then {
+		$0.image = EATSSUAsset.Images.Version2.authLogo.image
+	}
+  
+	private let logoSubTitle = UIImageView().then { imageView in
+		imageView.image = EATSSUAsset.Images.Version2.authSubTitle.image
+	}
     
-    override func configureUI() {
-        self.addSubviews(
-          logoImage,
-          logoSubTitle,
-          appleLoginButton,
-          kakaoLoginButton,
-          lookingWithNoSignInButton
-        )
-    }
+	let appleLoginButton = UIButton().then { button in
+		button.setImage(EATSSUAsset.Images.Version2.appleLoginButton.image, for: .normal)
+	}
+
+	let kakaoLoginButton = UIButton().then { button in
+		button.setImage(EATSSUAsset.Images.Version2.kakaoLoginButton.image, for: .normal)
+	}
     
-    override func setLayout() {
-        logoImage.snp.makeConstraints { make in
-          make.centerX.equalToSuperview()
-          make.top.equalToSuperview().inset(223)
-        }
+	let lookingWithNoSignInButton = UIButton().then { button in
+		button.setImage(EATSSUAsset.Images.Version2.lookAroundButton.image, for: .normal)
+	}
+    
+	override func configureUI() {
+		addSubviews(
+			logoImage,
+			logoSubTitle,
+			appleLoginButton,
+			kakaoLoginButton,
+			lookingWithNoSignInButton
+		)
+	}
+    
+	override func setLayout() {
+		logoImage.snp.makeConstraints { make in
+			make.centerX.equalToSuperview()
+			make.top.equalToSuperview().inset(223)
+		}
         
-      logoSubTitle.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.top.equalTo(logoImage.snp.bottom)
-      }
+		logoSubTitle.snp.makeConstraints { make in
+			make.centerX.equalToSuperview()
+			make.top.equalTo(logoImage.snp.bottom)
+		}
      
-      appleLoginButton.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.bottom.equalTo(self.safeAreaLayoutGuide).inset(151)
-      }
+		appleLoginButton.snp.makeConstraints { make in
+			make.centerX.equalToSuperview()
+			make.bottom.equalTo(self.safeAreaLayoutGuide).inset(151)
+		}
       
-      kakaoLoginButton.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.bottom.equalTo(self.safeAreaLayoutGuide).inset(90)
-      }
+		kakaoLoginButton.snp.makeConstraints { make in
+			make.centerX.equalToSuperview()
+			make.bottom.equalTo(self.safeAreaLayoutGuide).inset(90)
+		}
       
-      lookingWithNoSignInButton.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.bottom.equalTo(self.safeAreaLayoutGuide).inset(30)
-      }
-    }
+		lookingWithNoSignInButton.snp.makeConstraints { make in
+			make.centerX.equalToSuperview()
+			make.bottom.equalTo(self.safeAreaLayoutGuide).inset(30)
+		}
+	}
 }
