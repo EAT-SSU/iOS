@@ -26,4 +26,17 @@ enum Restaurant {
             return .fix
         }
     }
+
+    var identifier: String {
+        switch self {
+        case .dodamRestaurant:
+            return "DODAM"
+        case .dormitoryRestaurant:
+            return "DORMITORY"
+        case .studentRestaurant:
+            return "HAKSIK"
+        case .snackCorner:
+            return "SNACK_CORNER"
+        }
+    }
 }
