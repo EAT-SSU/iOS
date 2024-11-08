@@ -91,7 +91,7 @@ class FirebaseRemoteConfig {
                 self.remoteConfig.activate()
                 
                 self.isVacationPeriod = self.remoteConfig["isVacationPeriod"].boolValue
-                print("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥Is vacation period: \(self.isVacationPeriod)")
+                print("Is vacation period: \(self.isVacationPeriod)")
             } else {
                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
             }

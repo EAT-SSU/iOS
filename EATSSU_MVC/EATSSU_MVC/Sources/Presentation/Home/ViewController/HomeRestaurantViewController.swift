@@ -107,26 +107,26 @@ final class HomeRestaurantViewController: BaseViewController {
     }
     
     func getSectionIndex(for restaurant: String) -> Int? {
-        let restaurantRawValue = [TextLiteral.dormitoryRawValue,
-                                  TextLiteral.dodamRawValue,
-                                  TextLiteral.studentRestaurantRawValue,
-                                  TextLiteral.snackCornerRawValue]
+        let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
+                                  Restaurant.dodamRestaurant.identifier,
+                                  Restaurant.studentRestaurant.identifier,
+                                  Restaurant.snackCorner.identifier]
         return restaurantRawValue.firstIndex(of: restaurant)
     }
     
     func getSectionKey(for section: Int) -> String {
-        let restaurantRawValue = [TextLiteral.dormitoryRawValue,
-                                  TextLiteral.dodamRawValue,
-                                  TextLiteral.studentRestaurantRawValue,
-                                  TextLiteral.snackCornerRawValue]
+        let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
+                                  Restaurant.dodamRestaurant.identifier,
+                                  Restaurant.studentRestaurant.identifier,
+                                  Restaurant.snackCorner.identifier]
         return restaurantRawValue[section]
     }
 
     func fetchData(date: Date, time: String) {
         let formatDate = changeDateFormat(date: date)
-        getChageMenuData(date: formatDate, restaurant: TextLiteral.dormitoryRawValue, time: time) {}
-        getChageMenuData(date: formatDate, restaurant: TextLiteral.dodamRawValue, time: time) {}
-        getChageMenuData(date: formatDate, restaurant: TextLiteral.studentRestaurantRawValue, time: time) {}
+        getChageMenuData(date: formatDate, restaurant: Restaurant.dormitoryRestaurant.identifier, time: time) {}
+        getChageMenuData(date: formatDate, restaurant: Restaurant.dodamRestaurant.identifier, time: time) {}
+        getChageMenuData(date: formatDate, restaurant: Restaurant.studentRestaurant.identifier, time: time) {}
         
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend
@@ -136,8 +136,8 @@ final class HomeRestaurantViewController: BaseViewController {
             if !FirebaseRemoteConfig.shared.isVacationPeriod && !weekday.isWeekend {
                 getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
             } else {
-                currentRestaurant = TextLiteral.snackCornerRawValue
-                self.fixMenuTableViewData[TextLiteral.snackCornerRawValue] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
+                currentRestaurant = Restaurant.snackCorner.identifier
+                self.fixMenuTableViewData[Restaurant.snackCorner.identifier] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
             }
         }
     }
