@@ -133,7 +133,7 @@ final class HomeRestaurantViewController: BaseViewController {
 
         if time == TextLiteral.lunchRawValue {
 
-            if !weekday.isWeekend {
+            if !FirebaseRemoteConfig.shared.isVacationPeriod && !weekday.isWeekend {
                 getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
             } else {
                 currentRestaurant = TextLiteral.snackCornerRawValue

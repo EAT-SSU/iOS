@@ -20,6 +20,7 @@ final class LoginViewController: BaseViewController {
     // MARK: - Properties
     
     var loginAfterlooking = true
+    static public let isVacationPeriod = false
     
     // MARK: - UI Components
     
@@ -66,6 +67,8 @@ final class LoginViewController: BaseViewController {
     }
     
     private func setFirebaseTask() {
+        FirebaseRemoteConfig.shared.fetchIsVacationPeriod()
+        
 #if DEBUG
 #else
         Analytics.logEvent("LoginViewControllerLoad", parameters: nil)
