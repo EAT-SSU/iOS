@@ -12,6 +12,7 @@ import Firebase
 class FirebaseRemoteConfig {
     static let shared = FirebaseRemoteConfig()
     var remoteConfig: RemoteConfig
+    var isVacationPeriod = false
     
     private init() {
         remoteConfig = RemoteConfig.remoteConfig()
@@ -59,7 +60,7 @@ class FirebaseRemoteConfig {
 
     func fetchRestaurantInfo() {
         // 1. fetch
-        remoteConfig.fetch() { (status, error) -> Void in
+        remoteConfig.fetch(withExpirationDuration: 0) { (status, error) -> Void in
             if status == .success {
                 // 2. activate: 컨피그 값 가져옴
                 self.remoteConfig.activate()
@@ -80,6 +81,19 @@ class FirebaseRemoteConfig {
             }
             else {
                 print("Error: \(error?.localizedDescription ?? "No error available.")")
+            }
+        }
+    }
+    
+    func fetchIsVacationPeriod() {
+        remoteConfig.fetch(withExpirationDuration: 0) { (status, error) -> Void in
+            if status == .success {
+                self.remoteConfig.activate()
+                
+                self.isVacationPeriod = self.remoteConfig["isVacationPeriod"].boolValue
+                print("Is vacation period: \(self.isVacationPeriod)")
+            } else {
+                print("Error: \(error?.localizedDescription ?? "Unknown error")")
             }
         }
     }
