@@ -38,6 +38,7 @@ final class LoginModel {
 		#endif
 	}
 
+	/// EATSSU 서버에 회원가입한 사용자 정보 전송
 	func postKakaoLoginRequest(email: String, id: String) -> Promise<Void> {
 		return Promise { seal in
 			authProvider.request(.kakaoLogin(param: KakaoLoginRequest(email: email, providerId: id))) { response in
@@ -62,6 +63,7 @@ final class LoginModel {
 		}
 	}
 
+	// TODO: 로그인 로직 간 정확히 무슨 동작을 하는지 파악 후 문서 작성
 	func getMyInfo() -> Promise<BaseResponse<MyInfoResponse>> {
 		return Promise { seal in
 			myProvider.request(.myInfo) { response in
@@ -80,6 +82,9 @@ final class LoginModel {
 		}
 	}
 
+	/// EATSSU 서버에 Apple로 회원가입한 사용자 로그인 전송
+	///
+	/// - Parameter token : Apple 소셜로그인으로 생성된 토큰값
 	func postAppleLoginRequest(token: String) -> Promise<Void> {
 		return Promise { seal in
 			authProvider.request(.appleLogin(param: AppleLoginRequest(identityToken: token))) { response in
