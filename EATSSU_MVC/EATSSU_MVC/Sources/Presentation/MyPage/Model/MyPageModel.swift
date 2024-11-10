@@ -9,6 +9,6 @@ import Foundation
 
 class MyPageModel {
 	var nickName = ""
-	var switchState = false
+	var notificationState = false
 	let myPageTableLabelList = MyPageLocalData.myPageTableLabelList
 }

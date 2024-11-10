@@ -121,13 +121,13 @@ final class MyPageViewController: BaseViewController {
 	/// UserDefaults에 스위치 상태 저장
 	private func saveSwitchStateToUserDefaults() {
 		print("사용자 푸시 알림 값을 앱 저장소에 보관합니다.")
-		UserDefaults.standard.set(myPageModel.switchState, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+		UserDefaults.standard.set(myPageModel.notificationState, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
 	}
 
 	/// UserDefaults에서 스위치 상태 불러오기
 	private func loadSwitchStateFromUserDefaults() {
 		print("사용자 푸시 알림 값을 앱 저장소에서 불러옵니다.")
-		myPageModel.switchState = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+		myPageModel.notificationState = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
 	}
 }
 
@@ -150,7 +150,7 @@ extension MyPageViewController: UITableViewDataSource {
 				switch setting.authorizationStatus {
 				case .authorized, .notDetermined, .provisional, .ephemeral:
 					DispatchQueue.main.async {
-						cell.toggleSwitch.setOn(self.myPageModel.switchState, animated: true)
+						cell.toggleSwitch.setOn(self.myPageModel.notificationState, animated: true)
 					}
 				case .denied:
 					DispatchQueue.main.async {
@@ -201,18 +201,18 @@ extension MyPageViewController: UITableViewDelegate {
 					DispatchQueue.main.async {
 						guard let cell = tableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell else { return }
 						// 현재 스위치 상태를 반전
-						let newSwitchState = !self.myPageModel.switchState
+						let newSwitchState = !self.myPageModel.notificationState
 						cell.toggleSwitch.setOn(newSwitchState, animated: true)
 				
 						// 스위치 상태를 업데이트
-						self.myPageModel.switchState = newSwitchState
+						self.myPageModel.notificationState = newSwitchState
 						
 						let currentDate = Date()
 						let dateFormatter = DateFormatter()
 						dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
 						let formattedDate = dateFormatter.string(from: currentDate)
 				
-						if self.myPageModel.switchState {
+						if self.myPageModel.notificationState {
 							print("푸시 알림을 발송합니다.")
 							NotificationManager.shared.scheduleWeekday11AMNotification()
 							self.view.showToast(message: "EAT-SSU 알림 수신을 동의하였습니다.\n(\(formattedDate))")
