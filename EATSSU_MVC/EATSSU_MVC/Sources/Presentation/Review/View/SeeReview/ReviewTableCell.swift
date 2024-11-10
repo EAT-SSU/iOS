@@ -227,6 +227,8 @@ final class ReviewTableCell: UITableViewCell {
 // MARK: - Data Bind
 
 extension ReviewTableCell {
+	
+	// FIXME: dataBind 메소드 이름은 목적이 너무 추상적임. 적절한 이름으로 변경할 것. 또한 메소드 문서를 작성할 것.
     func dataBind(response: MenuDataList) {
         menuNameLabel.text = response.menu
         menuName = response.menu
@@ -251,7 +253,7 @@ extension ReviewTableCell {
 
     }
     
-	/// 마이페이지에서 "내가 작성한 리뷰"를 확인하기 위해서 사용하는 
+	// FIXME: myPageDataBind 메소드 이름은 목적이 너무 추상적임. 적절한 이름으로 변경할 것. 또한 메소드 문서를 작성할 것.
     func myPageDataBind(response: MyDataList, nickname: String) {
         userNameLabel.text = "\(nickname)"
         menuNameLabel.text = response.menuName
