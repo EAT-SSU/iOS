@@ -1,7 +1,7 @@
 ---
 name: Fix Request
 about: 고쳐야 할 일을 생성해주세요.
-title: "[Fix]"
+title: "[Fix] "
 labels: "\U0001F6E0️ Fix"
 assignees: ''
 
@@ -11,7 +11,9 @@ assignees: ''
 
 ## 📝 설명
 
-- 할 일을 적어주세요.
+> 할 일을 적어주세요.
+
+- 
 
 ## 🗂️ 첨부자료
 
