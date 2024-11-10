@@ -251,6 +251,7 @@ extension ReviewTableCell {
 
     }
     
+	/// 마이페이지에서 "내가 작성한 리뷰"를 확인하기 위해서 사용하는 
     func myPageDataBind(response: MyDataList, nickname: String) {
         userNameLabel.text = "\(nickname)"
         menuNameLabel.text = response.menuName

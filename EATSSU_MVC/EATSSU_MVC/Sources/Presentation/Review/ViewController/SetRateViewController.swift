@@ -307,9 +307,9 @@ final class SetRateViewController: BaseViewController {
         self.currentPage = currentPage
     }
     
-    func dataBindForFix(list: [String], reivewId: Int) {
+    func dataBindForFix(list: [String], reviewId: Int) {
         self.selectedList = list
-        self.reviewId = reivewId
+        self.reviewId = reviewId
         menuLabel.text = "\(selectedList[0]) 을/를 추천하시겠어요?"
         selectImageButton.isHidden = true
         deleteMethodLabel.isHidden = true
