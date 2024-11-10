@@ -72,16 +72,20 @@ final class MyReviewViewController: BaseViewController {
 	}
     
 	private func showFixOrDeleteAlert(reviewID: Int, menuName: String) {
+		
+		// FIXME: title, message 파라미터로 사용된 문자열 리소스를 다국어 지원과 하드코딩 제거
 		let alert = UIAlertController(title: "리뷰 수정 혹은 삭제",
 		                              message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
 		                              preferredStyle: UIAlertController.Style.actionSheet)
 		
+		// FIXME: title 파라미터로 사용된 문자열 리소스를 다국어 지원과 하드코딩 제거
 		let fixAction = UIAlertAction(title: "수정하기", style: .default) { _ in
 			let setRateViewController = SetRateViewController()
 			setRateViewController.dataBindForFix(list: [menuName], reviewId: reviewID)
 			self.navigationController?.pushViewController(setRateViewController, animated: true)
 		}
         
+		// FIXME: title 파라미터로 사용된 문자열 리소스를 다국어 지원과 하드코딩 제거
 		let deleteAction = UIAlertAction(title: "삭제하기",
 		                                 style: .default)
 		{ _ in
@@ -90,10 +94,13 @@ final class MyReviewViewController: BaseViewController {
 					self.checkReviewCount()
 					self.myReviewView.myReviewTableView.reloadData()
 				}
+				
+				// FIXME: message 파라미터로 된 사용된 문자열 리소스를 다국어 지원과 하드코딩 제거
 				self.view.showToast(message: "삭제되었어요!")
 			}
 		}
 		
+		// FIXME: title 파라미터로 사용된 문자열 리소스를 다국어 지원과 하드코딩 제거
 		let cancelAction = UIAlertAction(title: "취소하기",
 		                                 style: .cancel,
 		                                 handler: nil)
