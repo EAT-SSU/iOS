@@ -1,15 +1,15 @@
-// swift-tools-version: 5.9
-import PackageDescription
+// swift-tools-version: 6.0
+@preconcurrency import PackageDescription
 
 #if TUIST
-	import ProjectDescription
+import ProjectDescription
 
-	let packageSettings = PackageSettings(
-		// Customize the product types for specific package product
-		// Default is .staticFramework
-		// productTypes: ["Alamofire": .framework,]
-		productTypes: ["SnapKit": .framework, "Kingfisher": .framework]
-	)
+let packageSettings = PackageSettings(
+	// Customize the product types for specific package product
+	// Default is .staticFramework
+	// productTypes: ["Alamofire": .framework,]
+	productTypes: ["SnapKit": .framework, "Kingfisher": .framework]
+)
 #endif
 
 let package = Package(
@@ -29,5 +29,6 @@ let package = Package(
 		.package(url: "https://github.com/google/GoogleAppMeasurement", from: "11.1.0"),
 		.package(url: "https://github.com/realm/realm-swift", from: "20.0.0"),
 		.package(url: "https://github.com/ReactiveX/RxSwift", from: "6.7.1"),
+		.package(url: "https://github.com/Swinject/Swinject", from: "2.9.1"),
 	]
 )

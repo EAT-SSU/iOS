@@ -80,6 +80,7 @@ let project = Project(
               .external(name: "GoogleAppMeasurement", condition: .none),
               .external(name: "Realm", condition: .none),
               .external(name: "RealmSwift", condition: .none),
+			  .external(name: "Swinject", condition: .none),
               
               // Firebase Module
               .external(name: "FirebaseCrashlytics", condition: .none),
