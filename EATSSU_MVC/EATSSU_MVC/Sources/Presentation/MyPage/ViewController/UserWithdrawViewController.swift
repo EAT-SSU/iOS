@@ -15,13 +15,13 @@ import Then
 final class UserWithdrawViewController: BaseViewController {
 	// MARK: - Properties
 	
-	var userWithdrawModel = UserWithdrawModel()
+	var model = UserWithdrawModel()
 	
 	private var currentKeyboardHeight: CGFloat = 0.0
 
 	// MARK: - UI Components
     
-	private lazy var userWithdrawView = UserWithdrawView(nickName: nickName)
+	private lazy var userWithdrawView = UserWithdrawView(nickName: model.nickName)
     
 	// MARK: - Life Cycles
     
@@ -42,7 +42,7 @@ final class UserWithdrawViewController: BaseViewController {
 	// MARK: - Initializer
 	
 	init(nickName: String) {
-		self.nickName = nickName
+		model.nickName = nickName
 		
 		super.init(nibName: nil, bundle: nil)
 	}
@@ -75,7 +75,14 @@ final class UserWithdrawViewController: BaseViewController {
     
 	@objc
 	private func completeNickNameButtonTapped() {
-		deleteUser()
+		model.deleteUser() {
+			let loginViewController = LoginViewController()
+			if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+			   let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+			{
+				keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
+			}
+		}
 	}
       
 	// MARK: - 디바이스 키보드 감지
