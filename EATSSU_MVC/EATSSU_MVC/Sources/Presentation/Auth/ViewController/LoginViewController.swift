@@ -11,6 +11,7 @@ import UIKit
 import Firebase
 import KakaoSDKUser
 import Moya
+import PromiseKit
 import RealmSwift
 import SnapKit
 import Then
@@ -20,12 +21,12 @@ final class LoginViewController: BaseViewController {
     
 	var loginAfterlooking = true
 	public static let isVacationPeriod = false
+	
+	var model = LoginModel()
     
 	// MARK: - UI Components
     
 	private let loginView = LoginView()
-	private let authProvider = MoyaProvider<AuthRouter>(plugins: [MoyaLoggingPlugin()])
-	private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
 
 	// MARK: - Life Cycles
     
@@ -38,7 +39,7 @@ final class LoginViewController: BaseViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
         
-		setFirebaseTask()
+		model.activateFirebaseTask()
 	}
     
 	// MARK: - Functions
@@ -48,11 +49,6 @@ final class LoginViewController: BaseViewController {
 	}
     
 	override func setLayout() {
-		/*
-		 해야 할 일
-		 - View Hierarchy를 확인하면 이상하게 배치가 되어있다.
-		 - 해당 사항을 최초작성자에게 부탁한 후 재설계할 것.
-		 */
 		loginView.snp.makeConstraints { make in
 			make.edges.equalToSuperview()
 		}
@@ -64,34 +60,32 @@ final class LoginViewController: BaseViewController {
 		loginView.lookingWithNoSignInButton.addTarget(self, action: #selector(lookingWithNoSignInButtonDidTapped), for: .touchUpInside)
 	}
     
-	private func setFirebaseTask() {
-		FirebaseRemoteConfig.shared.fetchIsVacationPeriod()
-        
-		#if DEBUG
-		#else
-		Analytics.logEvent("LoginViewControllerLoad", parameters: nil)
-		#endif
-	}
-    
 	private func getUserInfo() {
 		UserApi.shared.me { user, error in
 			if let error = error {
+				// FIXME: 이모지는 좀....
 				print("🎃", error)
 			} else {
 				guard let email = user?.kakaoAccount?.email else { return }
 				guard let id = user?.id else { return }
-				self.postKakaoLoginRequest(email: email, id: String(id))
+				
+				firstly {
+					self.model.postKakaoLoginRequest(email: email, id: String(id))
+				}.done {
+					firstly {
+						self.model.getMyInfo()
+					}.done { responseData in
+						self.changeViewControllerAfterCheckNickName(info: responseData.result)
+					}.catch { err in
+						self.presentBottomAlert(err.localizedDescription)
+					}
+				}.catch { err in
+					self.presentBottomAlert(err.localizedDescription)
+				}
 			}
 		}
 	}
-    
-	private func addTokenInRealm(accessToken: String, refreshToken: String) {
-		RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
-		print("⭐️⭐️토큰 저장 성공~⭐️⭐️")
-		print(RealmService.shared.getToken())
-		print(RealmService.shared.getRefreshToken())
-	}
-    
+ 
 	private func changeIntoHomeViewController() {
 		let homeVC = HomeViewController()
 
@@ -107,20 +101,12 @@ final class LoginViewController: BaseViewController {
 		navigationController?.pushViewController(setNicknameViewController, animated: true)
 	}
     
-	private func checkRealmToken() -> Bool {
-		if RealmService.shared.getToken() == "" {
-			return false
-		} else {
-			return true
-		}
-	}
-    
 	private func checkUser() {
-		/// 자동 로그인 풀고 싶을 때 한번 실행시켜주기
-		//        self.realm.resetDB()
+		// 자동 로그인 풀고 싶을 때 한번 실행시켜주기
+		// self.realm.resetDB()
         
 		/// 자동 로그인
-		if checkRealmToken() {
+		if model.checkRealmToken() {
 			print(RealmService.shared.getToken())
 			changeIntoHomeViewController()
 		}
@@ -138,7 +124,7 @@ final class LoginViewController: BaseViewController {
 		authorizationController.performRequests()
 	}
     
-	private func checkUserNickname(info: MyInfoResponse) {
+	private func changeViewControllerAfterCheckNickName(info: MyInfoResponse) {
 		switch info.nickname {
 		case nil:
 			pushToNicknameVC()
@@ -190,72 +176,6 @@ final class LoginViewController: BaseViewController {
 	}
 }
 
-// MARK: - Network
-
-extension LoginViewController {
-	private func postKakaoLoginRequest(email: String, id: String) {
-		authProvider.request(.kakaoLogin(param: KakaoLoginRequest(email: email,
-		                                                          providerId: id)))
-		{ response in
-			switch response {
-			case .success(let moyaResponse):
-				do {
-					print(moyaResponse.statusCode)
-					let responseData = try moyaResponse.map(BaseResponse<SignResponse>.self)
-					self.addTokenInRealm(accessToken: responseData.result.accessToken,
-					                     refreshToken: responseData.result.refreshToken)
-					let userInfo = UserInfoManager.shared.createUserInfo(accountType: .kakao)
-					self.getMyInfo()
-				} catch (let err) {
-					self.presentBottomAlert(err.localizedDescription)
-					print(err.localizedDescription)
-				}
-			case .failure(let err):
-				self.presentBottomAlert(err.localizedDescription)
-				print(err.localizedDescription)
-			}
-		}
-	}
-    
-	private func getMyInfo() {
-		myProvider.request(.myInfo) { response in
-			switch response {
-			case .success(let moyaResponse):
-				do {
-					let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
-					self.checkUserNickname(info: responseData.result)
-				} catch (let err) {
-					print(err.localizedDescription)
-				}
-			case .failure(let err):
-				print(err.localizedDescription)
-			}
-		}
-	}
-  
-	private func postAppleLoginRequest(token: String) {
-		authProvider.request(.appleLogin(param: AppleLoginRequest(identityToken: token))) { response in
-			switch response {
-			case .success(let moyaResponse):
-				do {
-					print(moyaResponse.statusCode)
-					let responseData = try JSONDecoder().decode(BaseResponse<SignResponse>.self, from: moyaResponse.data)
-					self.addTokenInRealm(accessToken: responseData.result.accessToken,
-					                     refreshToken: responseData.result.refreshToken)
-					let userInfo = UserInfoManager.shared.createUserInfo(accountType: .apple)
-					self.getMyInfo()
-				} catch (let err) {
-					self.presentBottomAlert(err.localizedDescription)
-					print(err.localizedDescription)
-				}
-			case .failure(let err):
-				self.presentBottomAlert(err.localizedDescription)
-				print(err.localizedDescription)
-			}
-		}
-	}
-}
-
 // MARK: - ASAuthorization Controller Delegate
 
 extension LoginViewController: ASAuthorizationControllerPresentationContextProviding, ASAuthorizationControllerDelegate {
@@ -276,7 +196,20 @@ extension LoginViewController: ASAuthorizationControllerPresentationContextProvi
 			let idToken = appleIDCredential.identityToken!
 			let tokeStr = String(data: idToken, encoding: .utf8)
     
-			postAppleLoginRequest(token: tokeStr ?? "")
+			firstly {
+				model.postAppleLoginRequest(token: tokeStr ?? "")
+			}.done {
+				firstly {
+					self.model.getMyInfo()
+				}.done { responseData in
+					self.changeViewControllerAfterCheckNickName(info: responseData.result)
+				}.catch { err in
+					self.presentBottomAlert(err.localizedDescription)
+				}
+			}.catch { err in
+				self.presentBottomAlert(err.localizedDescription)
+			}
+			
 			print("User ID : \(userIdentifier)")
 			print("User Email : \(email ?? "")")
 			print("User Name : \((fullName?.givenName ?? "") + (fullName?.familyName ?? ""))")

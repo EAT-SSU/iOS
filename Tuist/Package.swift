@@ -30,5 +30,6 @@ let package = Package(
 		.package(url: "https://github.com/realm/realm-swift", from: "20.0.0"),
 		.package(url: "https://github.com/ReactiveX/RxSwift", from: "6.7.1"),
 		.package(url: "https://github.com/Swinject/Swinject", from: "2.9.1"),
+		.package(url: "https://github.com/mxcl/PromiseKit.git", from: "8.1.2"),
 	]
 )
