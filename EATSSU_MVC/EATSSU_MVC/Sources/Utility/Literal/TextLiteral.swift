@@ -85,6 +85,12 @@ enum TextLiteral {
     /// "마이페이지" 텍스트 리터럴
     enum MyPage {
 		
+		/// "다시 시도하세요"
+		static let retryMessage:String = "다시 시도하세요"
+		
+		/// "취소하기"
+		static let cancel: String = "취소하기"
+		
 		/// "설정에서 알림수신을 동의해주세요!"
 		static let authorizeNotificationSettingMessage: String = "설정에서 알림수신을 동의해주세요!"
 		
@@ -108,6 +114,9 @@ enum TextLiteral {
 
         /// "로그아웃"
         static let logout: String = "로그아웃"
+		
+		/// 정말 로그아웃 하시겠습니까?"
+		static let logoutConfirmationMessage: String = "정말 로그아웃 하시겠습니까?"
 
         /// "탈퇴하기"
         static let withdraw: String = "탈퇴하기"

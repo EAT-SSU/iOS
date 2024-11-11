@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "ko",
+  "strings" : {
+    "retryMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 시도하세요"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
