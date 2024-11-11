@@ -1,4 +1,5 @@
 {
+  "originHash" : "dfab5f81c35e027a27ab5803c30349622c8dd96e886f628b720270ebd6458009",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -217,6 +218,15 @@
       }
     },
     {
+      "identity" : "swinject",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Swinject/Swinject",
+      "state" : {
+        "revision" : "be9dbcc7b86811bc131539a20c6f9c2d3e56919f",
+        "version" : "2.9.1"
+      }
+    },
+    {
       "identity" : "tabman",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/uias/Tabman",
@@ -235,5 +245,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
