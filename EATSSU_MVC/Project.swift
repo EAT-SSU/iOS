@@ -81,6 +81,7 @@ let project = Project(
               .external(name: "Realm", condition: .none),
               .external(name: "RealmSwift", condition: .none),
 			  .external(name: "Swinject", condition: .none),
+			  .external(name: "PromiseKit", condition: .none),
               
               // Firebase Module
               .external(name: "FirebaseCrashlytics", condition: .none),

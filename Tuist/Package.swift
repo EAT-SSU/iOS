@@ -53,5 +53,6 @@ let package = Package(
 
 		// 더 나은 디커플링과 모듈화를 위한 의존성 주입 프레임워크.
 		.package(url: "https://github.com/Swinject/Swinject", from: "2.9.1"),
+		.package(url: "https://github.com/mxcl/PromiseKit.git", from: "8.1.2"),
 	]
 )
