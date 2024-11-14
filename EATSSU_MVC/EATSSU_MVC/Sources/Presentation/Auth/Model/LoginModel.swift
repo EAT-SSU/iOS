@@ -9,6 +9,7 @@ import Foundation
 
 import Moya
 import PromiseKit
+import Firebase
 
 final class LoginModel {
 	private let authProvider = MoyaProvider<AuthRouter>(plugins: [MoyaLoggingPlugin()])
