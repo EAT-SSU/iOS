@@ -43,6 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self?.window?.makeKeyAndVisible()
             }
         }
+        checkAndUpdateIfNeeded()
     }
     
 	/// 업데이트가 필요한지 확인 후 업데이트 알럿을 띄우는 메소드
