@@ -31,14 +31,13 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
         setLayout()
         setViewProperties()
     }
-    
-    // MARK: - Functions
-    
-    func setViewProperties() {
+        
+    private func setViewProperties() {
         titleLabel.do {
             $0.font = .subtitle1
             $0.text = "기숙사 식당"
         }
+        
         infoButton.do {
             var configuration = UIButton.Configuration.plain()
             configuration.baseForegroundColor = EATSSUAsset.Color.GrayScale.gray600.color
@@ -47,6 +46,7 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
             configuration.imagePadding = 4.0
             $0.configuration = configuration
         }
+        
         stackView.do {
             $0.axis = .horizontal
             $0.distribution = .equalSpacing
@@ -54,20 +54,22 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
         }
     }
     
-    func configureUI() {
+    private func configureUI() {
         contentView.addSubview(stackView)
         stackView.addArrangedSubviews([titleLabel,
                                        infoButton])
     }
     
-    func setLayout() {
+    private func setLayout() {
         stackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
             $0.centerY.equalToSuperview()
         }
+        
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
         }
+        
         infoButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
         }
