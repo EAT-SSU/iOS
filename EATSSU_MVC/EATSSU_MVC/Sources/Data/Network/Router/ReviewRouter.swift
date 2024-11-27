@@ -106,7 +106,7 @@ extension ReviewRouter: TargetType, AccessTokenAuthorizable {
     
     var headers: [String : String]? {
         switch self {
-        case .reviewRate, .reviewList:
+        case .reviewRate:
             return ["Content-Type":"application/json"]
         default:
             let token = RealmService.shared.getToken()
