@@ -11,15 +11,18 @@ import SnapKit
 
 class RestaurantTableViewHeader: BaseTableViewHeaderView {
     
+    // MARK: - Properties
+    
     static let identifier = "RestaurantTableViewHeader"
+    var infoButtonDidTappedCallback: (() -> Void)?
+
+    // MARK: - UI Components
     
     let titleLabel = UILabel()
     let infoButton = UIButton()
     let stackView = UIStackView()
     
-    var infoButtonDidTappedCallback: (() -> Void)?
-    
-    //MARK: - Functions
+    // MARK: - Life Cycles
     
     override func configure() {
         super.configure()
@@ -28,6 +31,8 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
         setLayout()
         setViewProperties()
     }
+    
+    // MARK: - Functions
     
     func setViewProperties() {
         titleLabel.do {
@@ -48,11 +53,11 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
             $0.alignment = .center
         }
     }
-        
+    
     func configureUI() {
         contentView.addSubview(stackView)
         stackView.addArrangedSubviews([titleLabel,
-                                      infoButton])
+                                       infoButton])
     }
     
     func setLayout() {
