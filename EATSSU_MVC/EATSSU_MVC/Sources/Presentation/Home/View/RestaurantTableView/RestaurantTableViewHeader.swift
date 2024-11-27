@@ -21,9 +21,9 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
     let titleLabel = UILabel()
     let infoButton = UIButton()
     let stackView = UIStackView()
-    
-    // MARK: - Life Cycles
-    
+        
+    // MARK: - Functions
+
     override func configure() {
         super.configure()
         
