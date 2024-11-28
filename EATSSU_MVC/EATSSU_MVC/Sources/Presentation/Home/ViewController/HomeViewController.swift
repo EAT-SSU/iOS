@@ -112,20 +112,29 @@ final class HomeViewController: BaseViewController {
             loginPromptVC.modalPresentationStyle = .pageSheet
             
             // Check if iOS 16+
-            if #available(iOS 16.0, *) {
-                if let sheet = loginPromptVC.sheetPresentationController {
-                    let small = UISheetPresentationController.Detent.Identifier("small")
-                    sheet.detents = [
-                        .custom(identifier: small) { context in
-                            0.34 * context.maximumDetentValue
-                        }
-                    ]
-                    
-                    sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-                    sheet.preferredCornerRadius = 30
-                }
-                present(loginPromptVC, animated: true, completion: nil)
+//            if #available(iOS 16.0, *) {
+//                if let sheet = loginPromptVC.sheetPresentationController {
+//                    let small = UISheetPresentationController.Detent.Identifier("small")
+//                    sheet.detents = [
+//                        .custom(identifier: small) { context in
+//                            0.34 * context.maximumDetentValue
+//                        }
+//                    ]
+//                    
+//                    sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+//                    sheet.preferredCornerRadius = 30
+//                }
+//                present(loginPromptVC, animated: true, completion: nil)
+//            }
+            
+            if let sheet = loginPromptVC.sheetPresentationController {
+                sheet.detents = [.medium()]
+                
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+                sheet.preferredCornerRadius = 30
             }
+            present(loginPromptVC, animated: true, completion: nil)
+
 
 //            showAlertControllerWithCancel(title: "로그인이 필요한 서비스입니다", message: "로그인 하시겠습니까?", confirmStyle: .default) {
 //                self.changeIntoLoginViewController()

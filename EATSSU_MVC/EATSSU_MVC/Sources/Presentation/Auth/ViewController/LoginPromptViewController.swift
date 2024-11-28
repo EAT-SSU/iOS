@@ -11,7 +11,7 @@ final class LoginPromptViewController: BaseViewController {
     
     // MARK: - UI Components
     
-    private let loginPromptView = ios16LoginPromptView()
+    private let loginPromptView = ios15LoginPromptView()
     
     // MARK: - Functions
 
