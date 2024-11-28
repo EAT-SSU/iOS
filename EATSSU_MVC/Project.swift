@@ -65,7 +65,7 @@ let project = Project(
             destinations: [.iPhone],
             product: .app,
             bundleId: "com.jiwoo.EatSSU",
-            deploymentTargets: .iOS("16.0"),
+            deploymentTargets: .iOS("15.0"),
             infoPlist: eatSSUInfoPlist,
             sources: ["EATSSU_MVC/Sources/**"],
             resources: ["EATSSU_MVC/Resources/**"],
