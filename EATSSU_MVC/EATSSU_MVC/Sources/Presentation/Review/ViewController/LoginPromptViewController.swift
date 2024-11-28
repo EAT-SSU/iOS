@@ -35,43 +35,30 @@ final class LoginPromptViewController: BaseViewController {
             $0.numberOfLines = 0
             $0.font = EATSSUFontFamily.Pretendard.bold.font(size: 18)
             $0.setContentHuggingPriority(.defaultHigh, for: .vertical)
-            $0.backgroundColor = .green
         }
         
         appleLoginButton.do {
             $0.setImage(EATSSUAsset.Images.Version2.appleLoginButton.image, for: .normal)
-            $0.backgroundColor = .lightGray
-            
         }
         
         kakaoLoginButton.do {
             $0.setImage(EATSSUAsset.Images.Version2.kakaoLoginButton.image, for: .normal)
-            $0.backgroundColor = .purple
-        }
-        
-        buttonView.do {
-            $0.backgroundColor = .red
         }
         
         buttonStackView.do {
             $0.axis = .vertical
             $0.spacing = 8
-            $0.backgroundColor = .blue
-            
         }
-
+        
         loginPromptStackView.do {
             $0.axis = .vertical
-            $0.backgroundColor = .yellow
         }
     }
     
     override func configureUI() {
-        view.addSubview(
-            loginPromptStackView
-        )
+        view.addSubview(loginPromptStackView)
         buttonView.addSubview(buttonStackView)
-
+        
         buttonStackView.addArrangedSubviews([appleLoginButton,
                                              kakaoLoginButton])
         loginPromptStackView.addArrangedSubviews([loginAlertLabel,
@@ -81,12 +68,12 @@ final class LoginPromptViewController: BaseViewController {
     override func setLayout() {
         loginAlertLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
-            
         }
+        
         buttonStackView.snp.makeConstraints{
             $0.center.equalToSuperview()
         }
-
+        
         loginPromptStackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(30)
             $0.height.equalToSuperview().multipliedBy(0.7)
