@@ -101,13 +101,41 @@ final class HomeViewController: BaseViewController {
     
     @objc
     private func rightBarButtonTapped() {
+        /// 로그인 되어있는 경우
         if RealmService.shared.isAccessTokenPresent() {
             let nextVC = MyPageViewController()
             self.navigationController?.pushViewController(nextVC, animated: true)
-        } else {
-            showAlertControllerWithCancel(title: "로그인이 필요한 서비스입니다", message: "로그인 하시겠습니까?", confirmStyle: .default) {
-                self.changeIntoLoginViewController()
+        }
+        /// 로그인 되어있지 않은 경우
+        else {
+            let loginPromptVC = LoginPromptViewController()
+            loginPromptVC.modalPresentationStyle = .pageSheet
+            
+            // Check if iOS 16+
+            if #available(iOS 16.0, *) {
+                if let sheet = loginPromptVC.sheetPresentationController {
+                    let small = UISheetPresentationController.Detent.Identifier("small")
+                    sheet.detents = [
+                        .custom(identifier: small) { context in
+                            0.34 * context.maximumDetentValue
+                        }
+                    ]
+                    
+                    sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+                    sheet.preferredCornerRadius = 30
+                }
+                present(loginPromptVC, animated: true, completion: nil)
             }
+            
+            
+            
+            
+            
+//            showAlertControllerWithCancel(title: "로그인이 필요한 서비스입니다", message: "로그인 하시겠습니까?", confirmStyle: .default) {
+//                self.changeIntoLoginViewController()
+//            }
+            
+            
         }
     }
     

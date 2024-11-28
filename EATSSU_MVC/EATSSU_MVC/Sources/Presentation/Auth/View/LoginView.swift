@@ -72,3 +72,40 @@ final class LoginView: BaseUIView {
         }
     }
 }
+
+/*
+@objc
+   private func rightBarButtonTapped() {
+       if RealmService.shared.isAccessTokenPresent() {
+           let nextVC = MyPageViewController()
+           self.navigationController?.pushViewController(nextVC, animated: true)
+       } else {
+//            showAlertControllerWithCancel(title: "로그인이 필요한 서비스입니다", message: "로그인 하시겠습니까?", confirmStyle: .default) {
+//                self.changeIntoLoginViewController()
+//            }
+           
+           let modalVC = LoginPromptViewController()
+           modalVC.modalPresentationStyle = .pageSheet
+           
+           // Check if UISheetPresentationController is available (iOS 15+)
+           if let sheet = modalVC.sheetPresentationController {
+               let small = UISheetPresentationController.Detent.Identifier("small")
+//                let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallId) { context in
+//                    return 270
+//                }
+//                sheet.detents = [smallDetent]
+               sheet.detents = [
+                   .custom(identifier: small) { context in
+                       0.3 * context.maximumDetentValue
+                   }
+               ]
+               
+//                sheet.prefersGrabberVisible = true
+               sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+               sheet.preferredCornerRadius = 30
+           }
+           present(modalVC, animated: true, completion: nil)
+           
+       }
+   }
+*/
