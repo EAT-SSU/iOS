@@ -11,16 +11,19 @@ import SnapKit
 
 class RestaurantTableViewHeader: BaseTableViewHeaderView {
     
+    // MARK: - Properties
+    
     static let identifier = "RestaurantTableViewHeader"
+    var infoButtonDidTappedCallback: (() -> Void)?
+
+    // MARK: - UI Components
     
     let titleLabel = UILabel()
     let infoButton = UIButton()
     let stackView = UIStackView()
-    
-    var infoButtonDidTappedCallback: (() -> Void)?
-    
-    //MARK: - Functions
-    
+        
+    // MARK: - Functions
+
     override func configure() {
         super.configure()
         
@@ -28,12 +31,13 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
         setLayout()
         setViewProperties()
     }
-    
-    func setViewProperties() {
+        
+    private func setViewProperties() {
         titleLabel.do {
             $0.font = .subtitle1
             $0.text = "기숙사 식당"
         }
+        
         infoButton.do {
             var configuration = UIButton.Configuration.plain()
             configuration.baseForegroundColor = EATSSUAsset.Color.GrayScale.gray600.color
@@ -42,27 +46,30 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
             configuration.imagePadding = 4.0
             $0.configuration = configuration
         }
+        
         stackView.do {
             $0.axis = .horizontal
             $0.distribution = .equalSpacing
             $0.alignment = .center
         }
     }
-        
-    func configureUI() {
+    
+    private func configureUI() {
         contentView.addSubview(stackView)
         stackView.addArrangedSubviews([titleLabel,
-                                      infoButton])
+                                       infoButton])
     }
     
-    func setLayout() {
+    private func setLayout() {
         stackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
             $0.centerY.equalToSuperview()
         }
+        
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
         }
+        
         infoButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
         }
