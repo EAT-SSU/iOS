@@ -38,8 +38,8 @@ enum TextLiteral {
     
     enum SignIn {
         
-        /// 3초만에 로그인하고 리뷰를 달아보세요!
-        static let loginPrompt: String = "3초만에 로그인하고\n리뷰를 달아보세요!"
+        /// 로그인이 필요한 서비스예요. 3초만에 로그인하고 기능을 사용해보세요!
+        static let loginPrompt: String = "로그인이 필요한 서비스예요\n3초만에 로그인하고 기능을 사용해보세요!"
     }
 
     static let signInWithApple: String = "Apple로 로그인"
