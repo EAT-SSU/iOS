@@ -46,7 +46,7 @@ final class HomeRestaurantViewController: BaseViewController {
             // 빈 name을 가지지 않은 ChangeMenuTableResponse만 필터링
             changeMenuTableViewData = changeMenuTableViewData.mapValues { menuTableResponses in
                 menuTableResponses.filter { response in
-                    !(response.menusInformationList.first?.name.isEmpty ?? true)
+                    !(response.briefMenus.first?.name.isEmpty ?? true)
                 }
             }
 
@@ -263,7 +263,7 @@ extension HomeRestaurantViewController: UITableViewDelegate {
         if [0, 1, 2].contains(indexPath.section) {
             reviewMenuTypeInfo.menuType = "VARIABLE"
             reviewMenuTypeInfo.menuID = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].mealId ?? 100
-            if let list = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].menusInformationList {
+            if let list = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].briefMenus {
                 reviewMenuTypeInfo.changeMenuIDList = list.compactMap { $0.menuId }
             }
         } else if [3, 4, 5].contains(indexPath.section) {

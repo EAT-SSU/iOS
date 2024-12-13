@@ -98,18 +98,18 @@ extension RestaurantTableViewMenuCell {
         case .change(let data):
             priceLabel.text = data.price != nil ? data.price?.formattedWithCommas : ""
 
-            if data.mainRating != nil {
-                let formatRating = String(format: "%.1f", data.mainRating ?? 0)
+            if data.rating != nil {
+                let formatRating = String(format: "%.1f", data.rating ?? 0)
                 ratingLabel.text = formatRating
             } else {
                 ratingLabel.text = TextLiteral.Home.emptyRating
             }
             
-            if data.menusInformationList.isEmpty {
+            if data.briefMenus.isEmpty {
                 // vc에서 이미 필터링되어 의미 없음. 리팩 필요
                 nameLabel.text = "제공되는 메뉴가 없습니다"
             } else {
-                nameLabel.text = data.menusInformationList.map { $0.name }.joined(separator: "+")
+                nameLabel.text = data.briefMenus.map { $0.name }.joined(separator: "+")
             }
         
         case .fix(let data):
