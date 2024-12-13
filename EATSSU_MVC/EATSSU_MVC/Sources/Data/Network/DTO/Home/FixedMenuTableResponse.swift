@@ -8,17 +8,17 @@
 import Foundation
 
 struct FixedMenuTableResponse: Codable {
-    let categoryMenuListCollection: [CategoryMenu]
+    let categoryMenuListCollection: [CategoryMenuListCollection]
 }
 
-struct CategoryMenu: Codable {
+struct CategoryMenuListCollection: Codable {
     let category: String
-    let menuInformationList: [MenuInformation]
+    let menus: [Menus]
 }
 
-struct MenuInformation: Codable {
+struct Menus: Codable {
     let menuId: Int
     let name: String
-    let mainRating: Double?
     let price: Int?
+    let rating: Double?
 }
