@@ -9,5 +9,5 @@ import Foundation
 
 enum MenuTypeInfo {
     case change(ChangeMenuTableResponse)
-    case fix(MenuInformation)
+    case fix(Menus)
 }

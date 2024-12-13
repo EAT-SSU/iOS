@@ -115,7 +115,7 @@ extension RestaurantTableViewMenuCell {
         case .fix(let data):
             if let price = data.price {
                 priceLabel.text = price.formattedWithCommas
-                let formatRating = String(format: "%.1f", data.mainRating ?? 0)
+                let formatRating = String(format: "%.1f", data.rating ?? 0)
                 ratingLabel.text = formatRating != "0.0" ? formatRating : "-"
                 nameLabel.text = data.name
             } else {
