@@ -8,5 +8,12 @@
 import UIKit
 
 final class V2ReviewViewController: BaseViewController {
-
+    
+    // MARK: - Properties
+    
+    // MARK: - UI Components
+    
+    // MARK: - Life Cycles
+    
+    // MARK: - Functions
 }

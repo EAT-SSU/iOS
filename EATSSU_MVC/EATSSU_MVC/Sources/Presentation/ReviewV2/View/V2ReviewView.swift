@@ -5,4 +5,8 @@
 //  Created by 최지우 on 12/14/24.
 //
 
-import Foundation
+import UIKit
+
+final class V2ReviewView: BaseUIView {
+    
+}
