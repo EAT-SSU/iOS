@@ -10,11 +10,11 @@ import Foundation
 struct ChangeMenuTableResponse: Codable {
     let mealId: Int?
     let price: Int?
-    let mainRating: Double?
-    var menusInformationList: [MenusInformation]
+    let rating: Double?
+    let briefMenus: [BriefMenus]
 }
 
-struct MenusInformation: Codable {
+struct BriefMenus: Codable {
     let menuId: Int
     let name: String
 }

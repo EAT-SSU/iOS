@@ -34,30 +34,30 @@ final class HomeRestaurantViewController: BaseViewController {
                                            TextLiteral.studentRestaurant,
                                            TextLiteral.snackCorner]
     let restaurantButtonTitleToName = [TextLiteral.dormitoryRestaurant: "DORMITORY",
-                                        TextLiteral.dodamRestaurant: "DODAM",
-                                        TextLiteral.studentRestaurant: "HAKSIK",
-                                        TextLiteral.snackCorner: "SNACK_CORNER"]
+                                       TextLiteral.dodamRestaurant: "DODAM",
+                                       TextLiteral.studentRestaurant: "HAKSIK",
+                                       TextLiteral.snackCorner: "SNACK_CORNER"]
     var currentRestaurant = ""
     var isWeekend = false
     var isSelectable = false
-
+    
     var changeMenuTableViewData: [String: [ChangeMenuTableResponse]] = [:] {
         didSet {
             // 빈 name을 가지지 않은 ChangeMenuTableResponse만 필터링
             changeMenuTableViewData = changeMenuTableViewData.mapValues { menuTableResponses in
                 menuTableResponses.filter { response in
-                    !(response.menusInformationList.first?.name.isEmpty ?? true)
+                    !(response.briefMenus.first?.name.isEmpty ?? true)
                 }
             }
-
+            
             // 필터링된 데이터로 테이블 뷰 섹션을 새로고침
             if let sectionIndex = getSectionIndex(for: currentRestaurant) {
                 restaurantView.restaurantTableView.reloadSections([sectionIndex], with: .automatic)
             }
         }
     }
-
-    var fixMenuTableViewData: [String: [MenuInformation]] = [:] {
+    
+    var fixMenuTableViewData: [String: [Menus]] = [:] {
         didSet {
             if let sectionIndex = getSectionIndex(for: currentRestaurant) {
                 restaurantView.restaurantTableView.reloadSections([sectionIndex], with: .automatic)
@@ -85,7 +85,7 @@ final class HomeRestaurantViewController: BaseViewController {
     override func configureUI() {
         view.addSubviews(restaurantView)
     }
-
+    
     override func setLayout() {
         restaurantView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -121,7 +121,7 @@ final class HomeRestaurantViewController: BaseViewController {
                                   Restaurant.snackCorner.identifier]
         return restaurantRawValue[section]
     }
-
+    
     func fetchData(date: Date, time: String) {
         let formatDate = changeDateFormat(date: date)
         getChageMenuData(date: formatDate, restaurant: Restaurant.dormitoryRestaurant.identifier, time: time) {}
@@ -130,14 +130,14 @@ final class HomeRestaurantViewController: BaseViewController {
         
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend
-
+        
         if time == TextLiteral.lunchRawValue {
-
+            
             if !FirebaseRemoteConfig.shared.isVacationPeriod && !weekday.isWeekend {
                 getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
             } else {
                 currentRestaurant = Restaurant.snackCorner.identifier
-                self.fixMenuTableViewData[Restaurant.snackCorner.identifier] = [MenuInformation(menuId: 0, name: "", mainRating: nil, price: nil)]
+                self.fixMenuTableViewData[Restaurant.snackCorner.identifier] = [Menus(menuId: 0, name: "", price: nil, rating: nil)]
             }
         }
     }
@@ -170,7 +170,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         /// Menu Title Cell
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: RestaurantTableViewMenuTitleCell.identifier, for: indexPath)
@@ -209,12 +209,12 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             return cell
         }
     }
-        
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let restaurantTableViewHeader = tableView.dequeueReusableHeaderFooterView(withIdentifier: RestaurantTableViewHeader.identifier) as? RestaurantTableViewHeader else {
             return nil
         }
-
+        
         let restaurantName = sectionHeaderRestaurant[section]
         restaurantTableViewHeader.titleLabel.text = restaurantName
         
@@ -241,7 +241,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
     }
     
 }
-    
+
 // MARK: - UITableViewDelegate
 
 extension HomeRestaurantViewController: UITableViewDelegate {
@@ -255,7 +255,7 @@ extension HomeRestaurantViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             return
         }
-
+        
         let restaurant = getSectionKey(for: indexPath.section)
         /// bind Data
         var reviewMenuTypeInfo: ReviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
@@ -263,7 +263,7 @@ extension HomeRestaurantViewController: UITableViewDelegate {
         if [0, 1, 2].contains(indexPath.section) {
             reviewMenuTypeInfo.menuType = "VARIABLE"
             reviewMenuTypeInfo.menuID = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].mealId ?? 100
-            if let list = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].menusInformationList {
+            if let list = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].briefMenus {
                 reviewMenuTypeInfo.changeMenuIDList = list.compactMap { $0.menuId }
             }
         } else if [3, 4, 5].contains(indexPath.section) {
@@ -281,9 +281,9 @@ extension HomeRestaurantViewController: UITableViewDelegate {
         
         delegate?.didDelegateReviewMenuTypeInfo(for: reviewMenuTypeInfo)
     }
-
-}
     
+}
+
 // MARK: - Network
 
 extension HomeRestaurantViewController {
@@ -315,9 +315,9 @@ extension HomeRestaurantViewController {
                     let responseDetailDto = try responseData.map(BaseResponse<FixedMenuTableResponse>.self)
                     let responseResult = responseDetailDto.result
                     
-                    var allMenuInformations = [MenuInformation]()
+                    var allMenuInformations = [Menus]()
                     for categoryMenu in responseResult.categoryMenuListCollection {
-                        allMenuInformations += categoryMenu.menuInformationList
+                        allMenuInformations += categoryMenu.menus
                     }
                     self.fixMenuTableViewData[restaurant] = allMenuInformations
                 } catch(let err) {
