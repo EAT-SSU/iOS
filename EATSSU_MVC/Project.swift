@@ -48,8 +48,8 @@ let eatSSUSettings: Settings = .settings(
         "DEVELOPMENT_LANGUAGE": "ko",
     ],
     configurations: [
-        .debug(name: "Debug", xcconfig: "EATSSU_MVC/Resources/Secrets/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "EATSSU_MVC/Resources/Secrets/Release.xcconfig"),
+        .debug(name: "Debug", xcconfig: "App/Resources/Secrets/Debug.xcconfig"),
+        .release(name: "Release", xcconfig: "App/Resources/Secrets/Release.xcconfig"),
     ]
 )
 
@@ -65,11 +65,11 @@ let project = Project(
             destinations: [.iPhone],
             product: .app,
             bundleId: "com.jiwoo.EatSSU",
-            deploymentTargets: .iOS("15.0"),
+            deploymentTargets: .iOS("17.0"),
             infoPlist: eatSSUInfoPlist,
-            sources: ["EATSSU_MVC/Sources/**"],
-            resources: ["EATSSU_MVC/Resources/**"],
-            entitlements: "EATSSU_MVC/Resources/EatSSU-iOS.entitlements",
+            sources: ["App/Sources/**"],
+            resources: ["App/Resources/**"],
+            entitlements: "App/Resources/EatSSU-iOS.entitlements",
             dependencies: [
                 .external(name: "SnapKit", condition: .none),
                 .external(name: "Tabman", condition: .none),
@@ -94,18 +94,34 @@ let project = Project(
 
                 // EATSSU Module
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
+                .target(name: "EATSSUWidget", status: .none, condition: .none),
             ],
             settings: eatSSUSettings
+        ),
+        .target(
+            name: "EATSSUWidget",
+            destinations: [.iPhone],
+            product: .appExtension,
+            bundleId: "com.jiwoo.EatSSU.Widget",
+            deploymentTargets: .iOS("17.0"),
+            infoPlist: .extendingDefault(with: [
+                "NSExtension": [
+                    "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
+                ],
+            ]),
+            sources: ["Widget/Sources/**"],
+            resources: ["Widget/Resources/**"],
+            dependencies: []
         ),
         .target(
             /// UITests의 이름은 "앱 이름 + UiTests" 형식을 지켜야합니다.
             name: "EATSSUUITests",
             destinations: [.iPhone],
             product: .uiTests,
-            bundleId: "com.EATSSU.UITests",
-            sources: ["EATSSU_MVC/UITests/**"],
+            bundleId: "com.jiwoog.EatSSU.UITests",
+            sources: ["Tests/UITests/**"],
             dependencies: [
-                .target(name: "EATSSU", condition: .none),
+                .target(name: "EATSSU", status: .none, condition: .none),
             ]
         ),
         .target(
@@ -113,10 +129,10 @@ let project = Project(
             name: "EATSSUTests",
             destinations: [.iPhone],
             product: .unitTests,
-            bundleId: "com.EATSSU.UnitTests",
-            sources: ["EATSSU_MVC/UnitTests/**"],
+            bundleId: "com.jiwoo.EatSSU.UnitTests",
+            sources: ["Tests/UnitTests/**"],
             dependencies: [
-                .target(name: "EATSSU", condition: .none),
+                .target(name: "EATSSU", status: .none, condition: .none),
             ]
         ),
     ]

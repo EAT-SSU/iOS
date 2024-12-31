@@ -12,6 +12,5 @@ import WidgetKit
 struct EATSSUWidgetBundle: WidgetBundle {
     var body: some Widget {
         EATSSUWidget()
-        EATSSUWidgetControl()
     }
 }
