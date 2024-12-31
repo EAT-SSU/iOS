@@ -10,15 +10,16 @@ import SnapKit
 import Moya
 
 final class RestaurantInfoViewController: BaseViewController {
-    
     // MARK: - UI Components
+
     private let restaurantInfoView = RestaurantInfoView()
-    
+
     // MARK: - Functions
+
     override func configureUI() {
         view.addSubview(restaurantInfoView)
     }
-    
+
     override func setLayout() {
         restaurantInfoView.snp.makeConstraints {
             $0.edges.equalToSuperview()

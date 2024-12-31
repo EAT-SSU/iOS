@@ -7,6 +7,4 @@
 
 import Foundation
 
-struct MenuInfoResponse: Codable {
-    
-}
+struct MenuInfoResponse: Codable {}

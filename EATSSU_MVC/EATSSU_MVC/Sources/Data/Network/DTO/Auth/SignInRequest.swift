@@ -10,7 +10,7 @@ import Foundation
 struct SignInRequest: Codable {
     let email: String
     let pwd: String
-    
+
     init(_ email: String, _ pwd: String) {
         self.email = email
         self.pwd = pwd

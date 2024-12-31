@@ -20,7 +20,7 @@ extension MyRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
         return URL(string: Config.baseURL)!
     }
-    
+
     var path: String {
         switch self {
         case .myReview:
@@ -33,7 +33,7 @@ extension MyRouter: TargetType, AccessTokenAuthorizable {
             return "/inquiries/"
         }
     }
-    
+
     var method: Moya.Method {
         switch self {
         case .myReview:
@@ -46,34 +46,32 @@ extension MyRouter: TargetType, AccessTokenAuthorizable {
             return .post
         }
     }
-    
+
     var task: Moya.Task {
         switch self {
         case .myReview:
             return .requestParameters(parameters: ["page": 0,
                                                    "size": 20,
-                                                   "sort" : "date,DESC"
-                                                  ],
-                                      encoding: URLEncoding.queryString
-            )
+                                                   "sort": "date,DESC"],
+                                      encoding: URLEncoding.queryString)
         case .myInfo:
             return .requestPlain
         case .signOut:
             return .requestPlain
-        case .inquiry(let param):
+        case let .inquiry(param):
             return .requestJSONEncodable(param)
         }
     }
-    
-    var headers: [String : String]? {
+
+    var headers: [String: String]? {
         switch self {
         default:
             let token = RealmService.shared.getToken()
-            return ["Content-Type":"application/json",
+            return ["Content-Type": "application/json",
                     "Authorization": "Bearer \(token)"]
         }
     }
-    
+
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:

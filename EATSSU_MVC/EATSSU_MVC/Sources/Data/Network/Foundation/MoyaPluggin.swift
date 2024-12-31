@@ -10,38 +10,37 @@ import UIKit
 import Moya
 
 final class MoyaLoggingPlugin: PluginType {
-    
     private let reissueProvider = MoyaProvider<ReissueRouter>()
-    
-    func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
+
+    func prepare(_ request: URLRequest, target _: TargetType) -> URLRequest {
         return request
     }
-    
+
     // Request를 보낼 때 호출
     func willSend(_ request: RequestType, target: TargetType) {
         guard let httpRequest = request.request else {
             print("--> 유효하지 않은 요청")
             return
         }
-        
+
         let url = httpRequest.description
         let method = httpRequest.httpMethod ?? "메소드값이 nil입니다."
         var log = """
-                  ⎡---------------------서버통신을 시작합니다.----------------------⎤
-                  [\(method)] \(url)
-                  API: \(target) \n
-                  """
+        ⎡---------------------서버통신을 시작합니다.----------------------⎤
+        [\(method)] \(url)
+        API: \(target) \n
+        """
         if let headers = httpRequest.allHTTPHeaderFields, !headers.isEmpty {
             log.append("header:\n \(headers) \n")
         }
         if let body = httpRequest.httpBody, let bodyString = String(bytes: body, encoding: String.Encoding.utf8) {
             log.append("\(bodyString)\n")
         }
-        
+
         log.append("⎣------------------ Request END  -------------------------⎦")
         print(log)
     }
-    
+
     // Response가 왔을 때
     func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
         switch result {
@@ -51,12 +50,12 @@ final class MoyaLoggingPlugin: PluginType {
             onFail(error, target: target)
         }
     }
-    
-    func process(_ result: Result<Response, MoyaError>, target: TargetType) -> Result<Response, MoyaError> {
+
+    func process(_ result: Result<Response, MoyaError>, target _: TargetType) -> Result<Response, MoyaError> {
         return result
     }
-    
-    func onSucceed(_ response: Response, target: TargetType, isFromError: Bool) {
+
+    func onSucceed(_ response: Response, target: TargetType, isFromError _: Bool) {
         let request = response.request
         let url = request?.url?.absoluteString ?? "nil"
         let statusCode = response.statusCode
@@ -81,7 +80,7 @@ final class MoyaLoggingPlugin: PluginType {
             return
         }
     }
-    
+
     func onFail(_ error: MoyaError, target: TargetType) {
         if let response = error.response {
             onSucceed(response, target: target, isFromError: true)
@@ -101,7 +100,7 @@ extension MoyaLoggingPlugin {
     func userTokenReissueWithAPI() {
         reissueProvider.request(.reissuance) { response in
             switch response {
-            case .success(let data):
+            case let .success(data):
                 do {
                     // 성공적으로 토큰 갱신
                     print("✅✅✅✅✅✅✅✅✅✅✅\(data)")
@@ -113,26 +112,27 @@ extension MoyaLoggingPlugin {
                 } catch {
                     print("Error while parsing response: \(error)")
                 }
-                
-            case .failure(let error):
+
+            case let .failure(error):
                 switch error {
                 // HTTP 상태 코드 에러 처리
-                case .statusCode(let response):
+                case let .statusCode(response):
                     print("🌙statusCode")
                     if response.statusCode == 403 {
                         // 기존에는 여기서 리프레쉬 토큰 만료 처리 해줘야 함.
                     }
                     print("userTokenReissueWithAPI - requestErr: \(response.statusCode)")
                 // 다른 에러 처리
-                case .underlying(_, let response):
+                case let .underlying(_, response):
                     print("userTokenReissueWithAPI - underlying error: \(response?.statusCode ?? 0)")
                     RealmService.shared.resetDB()
-                    
+
                     // 로그인 뷰로 화면 전환 로직.
                     let loginViewController = LoginViewController()
                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                      keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
+                       let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                    {
+                        keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
                     }
                 // 그 외 에러 처리
                 default:
@@ -141,7 +141,7 @@ extension MoyaLoggingPlugin {
             }
         }
     }
-    
+
     private func addTokenInRealm(accessToken: String, refreshToken: String) {
         RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
         print("⭐️⭐️토큰 저장 성공~⭐️⭐️")

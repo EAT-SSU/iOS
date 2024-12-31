@@ -7,108 +7,106 @@
 
 import UIKit
 
+import Moya
 import SnapKit
 import Then
-import Moya
 
 final class MyReviewViewController: BaseViewController {
-    
     // MARK: - Properties
-    
+
     private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
     private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [MoyaLoggingPlugin()])
 
     private var reviewList = [MyDataList]()
-    var nickname: String = String()
-    private var menuName: String = String()
-    
+    var nickname: String = .init()
+    private var menuName: String = .init()
+
     // MARK: - UI Components
-    
+
     let myReviewView = MyReviewView()
-    
+
     private lazy var noMyReviewImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = ImageLiteral.noMyReview
         imageView.isHidden = true
         return imageView
     }()
-    
+
     // MARK: - Life Cycles
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setDelegate()
         checkReviewCount()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         getMyReview()
     }
-    
+
     // MARK: - Functions
-    
+
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-      navigationItem.title = TextLiteral.MyPage.myReview
+        navigationItem.title = TextLiteral.MyPage.myReview
     }
-    
+
     override func configureUI() {
         view.addSubviews(myReviewView, noMyReviewImageView)
     }
-    
+
     override func setLayout() {
         myReviewView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
+
         noMyReviewImageView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }
-    
+
     private func setDelegate() {
         myReviewView.myReviewTableView.register(ReviewTableCell.self, forCellReuseIdentifier: ReviewTableCell.identifier)
         myReviewView.myReviewTableView.delegate = self
         myReviewView.myReviewTableView.dataSource = self
     }
-    
+
     func dataBind(nikcname: String) {
-        self.nickname = nikcname
+        nickname = nikcname
     }
-    
+
     private func showFixOrDeleteAlert(reviewID: Int, menuName: String) {
         let alert = UIAlertController(title: "리뷰 수정 혹은 삭제",
                                       message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.actionSheet
-        )
-        
+                                      preferredStyle: UIAlertController.Style.actionSheet)
+
         let fixAction = UIAlertAction(title: "수정하기",
                                       style: .default,
-                                      handler: { fixAction in
-            let setRateViewController = SetRateViewController()
-            setRateViewController.dataBindForFix(list: [menuName], reivewId: reviewID)
-            self.navigationController?.pushViewController(setRateViewController, animated: true)
-        })
-        
+                                      handler: { _ in
+                                          let setRateViewController = SetRateViewController()
+                                          setRateViewController.dataBindForFix(list: [menuName], reivewId: reviewID)
+                                          self.navigationController?.pushViewController(setRateViewController, animated: true)
+                                      })
+
         let deleteAction = UIAlertAction(title: "삭제하기",
-                                      style: .default,
-                                      handler: { deleteAction in
-            self.deleteReview(reviewID: reviewID)
-        })
-        
+                                         style: .default,
+                                         handler: { _ in
+                                             self.deleteReview(reviewID: reviewID)
+                                         })
+
         let cancelAction = UIAlertAction(title: "취소하기",
                                          style: .cancel,
                                          handler: nil)
-        
+
         alert.addAction(fixAction)
         alert.addAction(deleteAction)
         alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
     }
-    
+
     func checkReviewCount() {
         if reviewList.count == 0 {
             myReviewView.myReviewTableView.isHidden = true
@@ -123,10 +121,10 @@ final class MyReviewViewController: BaseViewController {
 extension MyReviewViewController: UITableViewDelegate {}
 
 extension MyReviewViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return reviewList.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ReviewTableCell.identifier, for: indexPath) as? ReviewTableCell ?? ReviewTableCell()
         cell.myPageDataBind(response: reviewList[indexPath.row], nickname: nickname)
@@ -145,30 +143,30 @@ extension MyReviewViewController: UITableViewDataSource {
 
 extension MyReviewViewController {
     private func getMyReview() {
-        self.myProvider.request(.myReview) { response in
+        myProvider.request(.myReview) { response in
             switch response {
-            case .success(let moyaResponse):
+            case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<MyReviewResponse>.self)
                     self.reviewList = responseData.result.dataList
                     self.checkReviewCount()
                     self.myReviewView.myReviewTableView.reloadData()
-                } catch(let err) {
+                } catch let err {
                     print(err.localizedDescription)
                 }
-            case .failure(let err):
+            case let .failure(err):
                 print(err.localizedDescription)
             }
         }
     }
-    
+
     func deleteReview(reviewID: Int) {
-        self.reviewProvider.request(.deleteReview(reviewID)) { response in
+        reviewProvider.request(.deleteReview(reviewID)) { response in
             switch response {
-            case .success(_):
+            case .success:
                 self.getMyReview()
                 self.view.showToast(message: "삭제되었어요 !")
-            case .failure(let err):
+            case let .failure(err):
                 print(err.localizedDescription)
             }
         }

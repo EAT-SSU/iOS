@@ -19,14 +19,14 @@ struct WriteReviewRequest: Codable {
         self.amountRating = amountRating
         self.tasteRating = tasteRating
         self.content = content
-        self.imageUrl = imageURL ?? ""
+        imageUrl = imageURL ?? ""
     }
-    
+
     init(content: BeforeSelectedImageDTO, imageURL: String?) {
-        self.mainRating = content.mainRating
-        self.amountRating = content.amountRating
-        self.tasteRating = content.tasteRating
+        mainRating = content.mainRating
+        amountRating = content.amountRating
+        tasteRating = content.tasteRating
         self.content = content.content
-        self.imageUrl = imageURL ?? ""
+        imageUrl = imageURL ?? ""
     }
 }

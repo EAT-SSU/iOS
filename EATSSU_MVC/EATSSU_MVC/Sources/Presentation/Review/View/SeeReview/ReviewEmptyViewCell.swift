@@ -10,37 +10,37 @@ import UIKit
 import SnapKit
 
 final class ReviewEmptyViewCell: UITableViewCell {
-    
     // MARK: - Properties
-    
+
     static let identifier = "ReviewEmptyViewCell"
-    
+
     // MARK: - UI Components
-    
+
     private lazy var noReviewImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = ImageLiteral.noReview
         return imageView
     }()
-    
+
     // MARK: - Functions
-    
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.contentView.addSubview(noReviewImageView)
+        contentView.addSubview(noReviewImageView)
         setLayout()
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func setLayout() {
         noReviewImageView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }
-    
+
     func configure(isTokenExist: Bool) {
         if isTokenExist {
             noReviewImageView.image = ImageLiteral.noReview

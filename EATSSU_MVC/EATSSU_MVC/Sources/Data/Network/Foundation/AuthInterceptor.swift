@@ -8,6 +8,4 @@
 import Alamofire
 import Moya
 
-final class AuthInterceptor: RequestInterceptor {
-    
-}
+final class AuthInterceptor: RequestInterceptor {}

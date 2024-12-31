@@ -11,24 +11,24 @@ import SnapKit
 import Then
 
 final class MyReviewView: BaseUIView {
-    
     // MARK: - UI Components
-    
+
     let myReviewTableView = UITableView()
     let refreshControl = UIRefreshControl()
-    
+
     // MARK: - Life Cycles
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         initRefresh()
     }
-    
+
     // MARK: - Functions
-    
+
     override func configureUI() {
-        self.addSubview(myReviewTableView)
-        
+        addSubview(myReviewTableView)
+
         myReviewTableView.do {
             $0.separatorStyle = .none
             $0.showsVerticalScrollIndicator = false
@@ -40,15 +40,15 @@ final class MyReviewView: BaseUIView {
             $0.edges.equalToSuperview()
         }
     }
-    
+
     func initRefresh() {
         refreshControl.addTarget(self,
                                  action: #selector(refreshTable(refresh:)),
                                  for: .valueChanged)
-    
+
         myReviewTableView.refreshControl = refreshControl
     }
-    
+
     @objc
     func refreshTable(refresh: UIRefreshControl) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -56,5 +56,4 @@ final class MyReviewView: BaseUIView {
             refresh.endRefreshing()
         }
     }
-    
 }

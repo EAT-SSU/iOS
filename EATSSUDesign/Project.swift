@@ -20,8 +20,8 @@ let project = Project(
             sources: ["EATSSUDesign/Sources/**"],
             resources: ["EATSSUDesign/Resources/**"],
             dependencies: [
-              .external(name: "SnapKit", condition: .none),
-              .external(name: "Kingfisher", condition: .none),
+                .external(name: "SnapKit", condition: .none),
+                .external(name: "Kingfisher", condition: .none),
             ]
         ),
     ]

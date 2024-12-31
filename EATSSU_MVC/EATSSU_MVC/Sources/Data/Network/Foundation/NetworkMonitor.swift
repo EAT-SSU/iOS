@@ -8,15 +8,14 @@
 import Foundation
 import Network
 
-final class NetworkMonitor{
-    
+final class NetworkMonitor {
     static let shared = NetworkMonitor()
-    
+
     private let queue = DispatchQueue.global()
     private let monitor: NWPathMonitor
-    public private(set) var isConnected:Bool = false
-    public private(set) var connectionType:ConnectionType = .unknown
-    
+    public private(set) var isConnected: Bool = false
+    public private(set) var connectionType: ConnectionType = .unknown
+
     /// 연결타입
     enum ConnectionType {
         case wifi
@@ -24,12 +23,12 @@ final class NetworkMonitor{
         case ethernet
         case unknown
     }
-    
-    private init(){
+
+    private init() {
         monitor = NWPathMonitor()
     }
-    
-    public func startMonitoring(){
+
+    public func startMonitoring() {
         print("startMonitoring 호출")
         monitor.start(queue: queue)
         monitor.pathUpdateHandler = { [weak self] path in
@@ -37,36 +36,35 @@ final class NetworkMonitor{
 
             self?.isConnected = path.status == .satisfied
             self?.getConenctionType(path)
-            
-            if self?.isConnected == true{
-                print("연결 성공")
-            }else{
-                print("연결 실패")
 
+            if self?.isConnected == true {
+                print("연결 성공")
+            } else {
+                print("연결 실패")
             }
         }
     }
-    
-    public func stopMonitoring(){
+
+    public func stopMonitoring() {
         print("stopMonitoring 호출")
         monitor.cancel()
     }
-    
-    private func getConenctionType(_ path:NWPath) {
+
+    private func getConenctionType(_ path: NWPath) {
         print("getConenctionType 호출")
-        if path.usesInterfaceType(.wifi){
+        if path.usesInterfaceType(.wifi) {
             connectionType = .wifi
             print("wifi에 연결")
 
-        }else if path.usesInterfaceType(.cellular) {
+        } else if path.usesInterfaceType(.cellular) {
             connectionType = .cellular
             print("cellular에 연결")
 
-        }else if path.usesInterfaceType(.wiredEthernet) {
+        } else if path.usesInterfaceType(.wiredEthernet) {
             connectionType = .ethernet
             print("wiredEthernet에 연결")
 
-        }else {
+        } else {
             connectionType = .unknown
             print("unknown ..")
         }

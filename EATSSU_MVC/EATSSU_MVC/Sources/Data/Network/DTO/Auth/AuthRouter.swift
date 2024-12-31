@@ -16,53 +16,53 @@ enum AuthRouter {
 }
 
 extension AuthRouter: TargetType {
-  public var baseURL: URL {
-      return URL(string: Config.baseURL)!
-  }
-  
-  var path: String {
-    switch self {
-    case .signUp:
-        return "/user/join"
-    case .signIn:
-        return "/user/login"
-    case .kakaoLogin:
-        return "/oauths/kakao"
-    case .appleLogin:
-        return "/oauths/apple"
+    public var baseURL: URL {
+        return URL(string: Config.baseURL)!
     }
-  }
-  
-  var method: Moya.Method {
-    switch self {
-    case .signUp:
-      return .post
-    case .signIn:
-        return .post
-    case .kakaoLogin:
-        return .post
-    case .appleLogin:
-        return .post
-    }
-  }
-  
-  var task: Task {
-    switch self {
-    case .signUp(let param):
-        return .requestJSONEncodable(param)
-    case .signIn(let param):
-        return .requestJSONEncodable(param)
-    case .kakaoLogin(param: let param):
-        return .requestJSONEncodable(param)
-    case .appleLogin(param: let param):
-        return .requestJSONEncodable(param)
-    }
-  }
 
-  var headers: [String: String]? {
-    switch self {
-    default:
-      return ["Content-Type": "application/json"]
+    var path: String {
+        switch self {
+        case .signUp:
+            return "/user/join"
+        case .signIn:
+            return "/user/login"
+        case .kakaoLogin:
+            return "/oauths/kakao"
+        case .appleLogin:
+            return "/oauths/apple"
+        }
     }
-  }
+
+    var method: Moya.Method {
+        switch self {
+        case .signUp:
+            return .post
+        case .signIn:
+            return .post
+        case .kakaoLogin:
+            return .post
+        case .appleLogin:
+            return .post
+        }
+    }
+
+    var task: Task {
+        switch self {
+        case let .signUp(param):
+            return .requestJSONEncodable(param)
+        case let .signIn(param):
+            return .requestJSONEncodable(param)
+        case let .kakaoLogin(param: param):
+            return .requestJSONEncodable(param)
+        case let .appleLogin(param: param):
+            return .requestJSONEncodable(param)
+        }
+    }
+
+    var headers: [String: String]? {
+        switch self {
+        default:
+            return ["Content-Type": "application/json"]
+        }
+    }
 }

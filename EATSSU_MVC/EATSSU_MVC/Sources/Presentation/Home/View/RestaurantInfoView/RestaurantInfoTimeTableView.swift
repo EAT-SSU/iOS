@@ -8,29 +8,29 @@
 import UIKit
 
 final class RestaurantInfoTimeTableView: UITableView {
-    
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
         setupTableView()
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
         setupTableView()
     }
-    
+
     override var intrinsicContentSize: CGSize {
-        let height = self.contentSize.height + self.contentInset.top + self.contentInset.bottom
-        return CGSize(width: self.contentSize.width, height: height)
+        let height = contentSize.height + contentInset.top + contentInset.bottom
+        return CGSize(width: contentSize.width, height: height)
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.invalidateIntrinsicContentSize()
+        invalidateIntrinsicContentSize()
     }
 
     private func setupTableView() {
-        self.separatorStyle = .none
-        self.isScrollEnabled = false
+        separatorStyle = .none
+        isScrollEnabled = false
     }
 }

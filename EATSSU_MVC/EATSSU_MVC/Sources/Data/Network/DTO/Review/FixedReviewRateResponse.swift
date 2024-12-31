@@ -8,6 +8,7 @@
 import Foundation
 
 // MARK: - FixedReviewRateResponse
+
 struct FixedReviewRateResponse: Codable {
     let menuName: String
     let totalReviewCount: Int
