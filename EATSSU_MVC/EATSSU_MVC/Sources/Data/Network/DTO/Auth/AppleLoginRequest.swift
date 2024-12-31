@@ -9,7 +9,7 @@ import Foundation
 
 struct AppleLoginRequest: Codable {
     let identityToken: String
-    
+
     init(identityToken: String) {
         self.identityToken = identityToken
     }

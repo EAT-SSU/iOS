@@ -5,22 +5,21 @@
 //  Created by 박윤빈 on 2023/05/27.
 //
 
-import RealmSwift
 import Realm
+import RealmSwift
 
-class RealmService{
-    
+class RealmService {
     static let shared = RealmService()
-    
+
     let realm = try! Realm()
-    
+
     init() {
         print("Realm Location: ", realm.configuration.fileURL ?? "cannot find location.")
     }
 
-    func addToken(accessToken:String,refreshToken:String) {
-        let token = Token(accessToken: accessToken,refreshToken: refreshToken)
-        try! realm.write{
+    func addToken(accessToken: String, refreshToken: String) {
+        let token = Token(accessToken: accessToken, refreshToken: refreshToken)
+        try! realm.write {
             realm.add(token)
         }
     }
@@ -34,18 +33,18 @@ class RealmService{
         let token = realm.objects(Token.self)
         return token.last?.refreshToken ?? ""
     }
-    
+
     func isAccessTokenPresent() -> Bool {
         return getToken() != ""
     }
 
     // 스키마 수정시 한번 돌려야 한다.
-    func resetDB(){
+    func resetDB() {
         try! realm.write {
             realm.deleteAll()
         }
     }
-    
+
     func deleteAll<T: Object>(_ objectType: T.Type) {
         do {
             let objects = realm.objects(objectType)
@@ -53,10 +52,8 @@ class RealmService{
                 realm.delete(objects)
                 print("Successfully deleted all objects of type \(objectType)")
             }
-        } catch let error {
+        } catch {
             print(error)
         }
     }
 }
-
-

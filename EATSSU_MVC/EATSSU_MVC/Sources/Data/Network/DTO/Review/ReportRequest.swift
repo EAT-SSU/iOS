@@ -11,7 +11,7 @@ struct ReportRequest: Codable {
     let reviewId: Int
     let reportType: String
     let content: String
-    
+
     init(reviewId: Int, reportType: String, content: String) {
         self.reviewId = reviewId
         self.reportType = reportType

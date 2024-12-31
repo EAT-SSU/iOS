@@ -19,7 +19,7 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
         return URL(string: Config.baseURL)!
     }
-    
+
     var path: String {
         switch self {
         case .writeReview(param: _, image: _, menuId: let menuId):
@@ -30,17 +30,17 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
             return "/reviews/write/\(menuId)"
         }
     }
-    
+
     var method: Moya.Method {
         switch self {
         case .writeReview, .uploadImage, .writeNewReview:
             return .post
         }
     }
-    
+
     var task: Moya.Task {
         switch self {
-        case .writeReview(param: let param, image: let imageList ,menuId: _):
+        case .writeReview(param: let param, image: let imageList, menuId: _):
             let jsonData: Data
             var multipartFileList: MultipartFormData
             do {
@@ -53,7 +53,7 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
                 print("Error encoding ReviewRequest: \(error)")
                 return .requestPlain
             }
-            
+
             if imageList.count != 0 {
                 for fileData in imageList {
                     if let unwrappedImage = fileData {
@@ -67,8 +67,8 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
                 }
             }
             return .uploadMultipartFormData(multipartFileList)
-            
-        case .uploadImage(image: let image):
+
+        case let .uploadImage(image: image):
             var multipartFileList: MultipartFormData
 
             guard let unwrappedImage = image else { return .requestPlain }
@@ -79,26 +79,27 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
                                                  mimeType: "image/jpeg")
             multipartFileList = [formData]
             return .uploadMultipartFormData(multipartFileList)
-        case .writeNewReview(param: let param, _):
-            
+
+        case let .writeNewReview(param: param, _):
+
             return .requestJSONEncodable(param)
         }
     }
-    
-    var headers: [String : String]? {
+
+    var headers: [String: String]? {
         let realm = RealmService()
         let token = realm.getToken()
-        
+
         switch self {
         case .writeNewReview:
-            return ["Content-Type":"application/json",
+            return ["Content-Type": "application/json",
                     "Authorization": "Bearer \(token)"]
         case .uploadImage, .writeReview:
-            return ["Content-Type":"multipart/form-data",
+            return ["Content-Type": "multipart/form-data",
                     "Authorization": "Bearer \(token)"]
         }
     }
-    
+
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:

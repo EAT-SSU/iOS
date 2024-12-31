@@ -16,29 +16,29 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
         return URL(string: Config.baseURL)!
     }
-    
+
     var path: String {
         switch self {
         case .reissuance:
             return "/oauths/reissue/token"
         }
     }
-    
+
     var method: Moya.Method {
         switch self {
         case .reissuance:
             return .post
         }
     }
-    
+
     var task: Moya.Task {
         switch self {
         case .reissuance:
             return .requestPlain
         }
     }
-    
-    var headers: [String : String]? {
+
+    var headers: [String: String]? {
         switch self {
         default:
             let realm = RealmService()
@@ -47,7 +47,7 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
                     "Authorization": "Bearer \(refreshToken)"]
         }
     }
-    
+
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:
@@ -57,7 +57,7 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
 }
 
 extension ReissueRouter {
-  var validationType: ValidationType {
-      return .successCodes
-  }
+    var validationType: ValidationType {
+        return .successCodes
+    }
 }

@@ -15,67 +15,67 @@ import SnapKit
  - enumeration들을 Namespace라는 폴더로 따로 정리하는 방법은 어떨까?
  */
 public enum TextFieldStatus {
-	case pass
-	case error
+    case pass
+    case error
 }
 
 public final class ESTextField: UITextField {
-	// MARK: - Properties
-    
-	private enum Size {
-		static let height: CGFloat = 52.adjusted
-	}
+    // MARK: - Properties
 
-	private var guide: String
-	private var status: TextFieldStatus {
-		didSet {
-			self.changeTextFieldStatus(status: self.status)
-		}
-	}
-    
-	// MARK: - Intializer
-    
-	public init(placeholder: String) {
-		self.guide = placeholder
-		self.status = .pass
-      
-		super.init(frame: .zero)
-		self.configureUI()
-	}
-    
-	@available(*, unavailable)
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-  
-	// MARK: - Functions
+    private enum Size {
+        static let height: CGFloat = 52.adjusted
+    }
 
-	override public func didMoveToSuperview() {
-		self.setLayout()
-	}
-    
-	private func configureUI() {
-		self.placeholder = self.guide
-		self.font = .body2
-		self.textColor = .gray700
-		self.backgroundColor = .gray100
-		self.setRoundBorder()
-		self.setPlaceholderColor()
-		self.addLeftPadding(width: 12.adjusted)
-	}
-    
-	private func setLayout() {
-		self.snp.makeConstraints {
-			$0.height.equalTo(Size.height)
-		}
-	}
-    
-	private func changeTextFieldStatus(status: TextFieldStatus) {
-		switch status {
-		case .pass:
-			self.layer.borderColor = EATSSUDesignAsset.Colors.GrayScaleColor.gray300.color.cgColor
-		case .error:
-			self.layer.borderColor = EATSSUDesignAsset.Colors.RedColor.error.color.cgColor
-		}
-	}
+    private var guide: String
+    private var status: TextFieldStatus {
+        didSet {
+            changeTextFieldStatus(status: status)
+        }
+    }
+
+    // MARK: - Intializer
+
+    public init(placeholder: String) {
+        guide = placeholder
+        status = .pass
+
+        super.init(frame: .zero)
+        configureUI()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Functions
+
+    override public func didMoveToSuperview() {
+        setLayout()
+    }
+
+    private func configureUI() {
+        placeholder = guide
+        font = .body2
+        textColor = .gray700
+        backgroundColor = .gray100
+        setRoundBorder()
+        setPlaceholderColor()
+        addLeftPadding(width: 12.adjusted)
+    }
+
+    private func setLayout() {
+        snp.makeConstraints {
+            $0.height.equalTo(Size.height)
+        }
+    }
+
+    private func changeTextFieldStatus(status: TextFieldStatus) {
+        switch status {
+        case .pass:
+            layer.borderColor = EATSSUDesignAsset.Colors.GrayScaleColor.gray300.color.cgColor
+        case .error:
+            layer.borderColor = EATSSUDesignAsset.Colors.RedColor.error.color.cgColor
+        }
+    }
 }

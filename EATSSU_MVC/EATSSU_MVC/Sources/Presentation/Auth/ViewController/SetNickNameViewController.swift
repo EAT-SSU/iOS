@@ -10,72 +10,71 @@ import UIKit
 import Moya
 
 final class SetNickNameViewController: BaseViewController {
-    
     // MARK: - Properties
-    
+
     var currentKeyboardHeight: CGFloat = 0.0
     private let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [MoyaLoggingPlugin()])
 
     // MARK: - UI Components
-    
+
     private let setNickNameView = SetNickNameView()
-    
+
     // MARK: - Life Cycles
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         dismissKeyboard()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        self.addKeyboardNotifications()
+
+    override func viewWillAppear(_: Bool) {
+        addKeyboardNotifications()
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        self.removeKeyboardNotifications()
+
+    override func viewWillDisappear(_: Bool) {
+        removeKeyboardNotifications()
     }
-    
+
     // MARK: - Functions
-    
+
     override func configureUI() {
         view.addSubviews(setNickNameView)
     }
-    
+
     override func setLayout() {
         setNickNameView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
-    
+
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = TextLiteral.setNickName
     }
-    
+
     override func setButtonEvent() {
         setNickNameView.completeSettingNickNameButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
         setNickNameView.nicknameDoubleCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
     }
-    
+
     @objc
     func tappedCompleteNickNameButton() {
-        self.setUserNickname(nickname: self.setNickNameView.inputNickNameTextField.text ?? "")
+        setUserNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
     }
-    
+
     @objc
     private func tappedCheckButton() {
-        self.checkNickname(nickname: self.setNickNameView.inputNickNameTextField.text ?? "")
+        checkNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
     }
-    
+
     // MARK: - keyboard 감지
-    
+
     func addKeyboardNotifications() {
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(self.keyboardWillShow(_:)),
+                                               selector: #selector(keyboardWillShow(_:)),
                                                name: UIResponder.keyboardWillShowNotification,
                                                object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)),
                                                name: UIResponder.keyboardWillHideNotification,
                                                object: nil)
     }
@@ -92,10 +91,9 @@ final class SetNickNameViewController: BaseViewController {
     @objc
     func keyboardWillShow(_ notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
             let updateKeyboardHeight = keyboardSize.height
             let difference = updateKeyboardHeight - currentKeyboardHeight
-            
+
             setNickNameView.completeSettingNickNameButton.frame.origin.y -= difference
             currentKeyboardHeight = updateKeyboardHeight
         }
@@ -103,7 +101,6 @@ final class SetNickNameViewController: BaseViewController {
 
     @objc func keyboardWillHide(_ notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
             setNickNameView.completeSettingNickNameButton.frame.origin.y += currentKeyboardHeight
             currentKeyboardHeight = 0.0
         }
@@ -114,9 +111,9 @@ final class SetNickNameViewController: BaseViewController {
 
 extension SetNickNameViewController {
     private func setUserNickname(nickname: String) {
-        self.nicknameProvider.request(.setNickname(nickname: nickname)) { response in
+        nicknameProvider.request(.setNickname(nickname: nickname)) { response in
             switch response {
-            case .success(let moyaResponse):
+            case let .success(moyaResponse):
                 do {
                     if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
                         UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
@@ -127,23 +124,24 @@ extension SetNickNameViewController {
                         } else {
                             let homeViewController = HomeViewController()
                             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                              keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
+                               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                            {
+                                keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
                             }
                         }
                     }
                     print(moyaResponse.statusCode)
                 }
-            case .failure(let err):
+            case let .failure(err):
                 print(err.localizedDescription)
             }
         }
     }
-    
+
     private func checkNickname(nickname: String) {
-        self.nicknameProvider.request(.checkNickname(nickname: nickname)) { response in
+        nicknameProvider.request(.checkNickname(nickname: nickname)) { response in
             switch response {
-            case .success(let moyaResponse):
+            case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
                     let isSuccess = responseData.result
@@ -158,10 +156,10 @@ extension SetNickNameViewController {
                         self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage
                         self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
                     }
-                } catch(let err) {
+                } catch let err {
                     print(err.localizedDescription)
                 }
-            case .failure(let err):
+            case let .failure(err):
                 print(err.localizedDescription)
             }
         }

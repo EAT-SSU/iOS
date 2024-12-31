@@ -7,28 +7,26 @@
 
 import UIKit
 
+import Moya
 import SnapKit
 import Then
-import Moya
 
 /// ReportViewController로 대체되었습니다.
 ///
 /// QA 진행 후 문제가 없으면 제거
 final class FormerReportViewController: BaseViewController {
-
     // MARK: - Properties
-    
+
     private var isChecked = false
     private var isReasonSelected = false
-    private var status: Int = Int()
+    private var status: Int = .init()
     private var buttonArray: [UIButton] = []
     private var contentArray: [String?] = []
-    private var reviewID: Int = Int()
+    private var reviewID: Int = .init()
     private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [MoyaLoggingPlugin()])
 
-    
     // MARK: - UI Components
-    
+
     private let alertDeclarationLabel = UILabel().then {
         $0.text = "리뷰를 신고하는 이유를 선택해주세요."
         $0.font = .bold(size: 16)
@@ -57,73 +55,67 @@ final class FormerReportViewController: BaseViewController {
     private let report6Label = UILabel().then {
         $0.text = "기타 (하단 내용 작성)"
     }
-    
+
     private var report1Button = UIButton()
-    
+
     private var report2Button = UIButton()
-    
+
     private var report3Button = UIButton()
-    
+
     private var report4Button = UIButton()
-    
+
     private var report5Button = UIButton()
-    
+
     private var report6Button = UIButton()
-    
+
     lazy var report1StackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [report1Button,
-                                                       report1Label
-                                                      ])
+                                                       report1Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
         return stackView
     }()
-    
+
     lazy var report2StackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [report2Button,
-                                                       report2Label
-                                                      ])
+                                                       report2Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
         return stackView
     }()
-    
+
     lazy var report3StackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [report3Button,
-                                                       report3Label
-                                                      ])
+                                                       report3Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
         return stackView
     }()
-    
+
     lazy var report4StackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [report4Button,
-                                                       report4Label
-                                                      ])
+                                                       report4Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
         return stackView
     }()
-    
+
     lazy var report5StackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [report5Button,
-                                                       report5Label
-                                                      ])
+                                                       report5Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
         return stackView
     }()
-    
+
     lazy var report6StackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [report6Button,
-                                                       report6Label
-                                                      ])
+                                                       report6Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
@@ -136,8 +128,7 @@ final class FormerReportViewController: BaseViewController {
                                                        report3StackView,
                                                        report4StackView,
                                                        report5StackView,
-                                                       report6StackView
-                                                      ])
+                                                       report6StackView])
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.alignment = .leading
@@ -167,45 +158,43 @@ final class FormerReportViewController: BaseViewController {
     }
 
     // MARK: - Life Cycles
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+
         setDelegate()
         addArray()
         setButtonEvent()
         setCustomNavigationBar()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        self.addKeyboardNotifications()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        self.removeKeyboardNotifications()
+
+    override func viewWillAppear(_: Bool) {
+        addKeyboardNotifications()
     }
 
-    //MARK: - Functions
-    
+    override func viewWillDisappear(_: Bool) {
+        removeKeyboardNotifications()
+    }
+
+    // MARK: - Functions
+
     override func configureUI() {
         dismissKeyboard()
         view.addSubviews(alertDeclarationLabel,
                          reportStackView,
                          userReportTextView,
                          textLimitLabel,
-                         sendButton
-                         )
-        
-        [report1Button, report2Button, report3Button, report4Button, report5Button, report6Button].forEach {
-            $0.setImage(ImageLiteral.uncheckedIcon, for: .normal)
-            $0.setImage(ImageLiteral.checkedIcon, for: .selected)
+                         sendButton)
+
+        for item in [report1Button, report2Button, report3Button, report4Button, report5Button, report6Button] {
+            item.setImage(ImageLiteral.uncheckedIcon, for: .normal)
+            item.setImage(ImageLiteral.checkedIcon, for: .selected)
         }
 
-        [report1Label,report2Label,report3Label,report4Label,report5Label, report6Label].forEach {
-            $0.font = .medium(size: 16)
-            $0.textColor = .gray700
+        for item in [report1Label, report2Label, report3Label, report4Label, report5Label, report6Label] {
+            item.font = .medium(size: 16)
+            item.textColor = .gray700
         }
-
     }
 
     override func setLayout() {
@@ -213,7 +202,7 @@ final class FormerReportViewController: BaseViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(30)
             $0.leading.equalToSuperview().offset(16)
         }
-        
+
         reportStackView.snp.makeConstraints {
             $0.top.equalTo(alertDeclarationLabel.snp.bottom).offset(22)
             $0.leading.equalToSuperview().offset(16)
@@ -235,19 +224,19 @@ final class FormerReportViewController: BaseViewController {
     }
 
     override func setButtonEvent() {
-        [report1Button, report2Button, report3Button, report4Button, report5Button, report6Button].forEach {
-            $0.addTarget(self, action: #selector(checkButtonIsTapped(_:)), for: .touchUpInside)
+        for item in [report1Button, report2Button, report3Button, report4Button, report5Button, report6Button] {
+            item.addTarget(self, action: #selector(checkButtonIsTapped(_:)), for: .touchUpInside)
         }
         sendButton.addTarget(self, action: #selector(sendButtonIsTapped), for: .touchUpInside)
     }
 
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        self.title = "신고하기"
-        
+        title = "신고하기"
+
         let navBarApperance = UINavigationBarAppearance()
         navBarApperance.configureWithOpaqueBackground()
-        
+
         navBarApperance.titleTextAttributes = [.foregroundColor: UIColor.primary, .font: UIFont.bold(size: 18)]
         navBarApperance.backgroundColor = .white
         navBarApperance.shadowColor = nil
@@ -255,11 +244,11 @@ final class FormerReportViewController: BaseViewController {
         navigationController?.navigationBar.standardAppearance = navBarApperance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarApperance
     }
-    
+
     private func setDelegate() {
         userReportTextView.delegate = self
     }
-    
+
     private func addArray() {
         report1Button.tag = 0
         report2Button.tag = 1
@@ -267,7 +256,7 @@ final class FormerReportViewController: BaseViewController {
         report4Button.tag = 3
         report5Button.tag = 4
         report6Button.tag = 5
-        
+
         [report1Button,
          report2Button,
          report3Button,
@@ -276,7 +265,7 @@ final class FormerReportViewController: BaseViewController {
          report6Button].forEach {
             buttonArray.append($0)
         }
-        
+
         [report1Label.text,
          report2Label.text,
          report3Label.text,
@@ -286,7 +275,7 @@ final class FormerReportViewController: BaseViewController {
             contentArray.append($0)
         }
     }
-    
+
     @objc
     private func checkButtonIsTapped(_ sender: UIButton) {
         isReasonSelected = true
@@ -298,7 +287,7 @@ final class FormerReportViewController: BaseViewController {
         status = sender.tag
         canTextViewUsed(status: status)
     }
-    
+
     private func canTextViewUsed(status: Int) {
         if status == 5 {
             userReportTextView.isEditable = true
@@ -306,11 +295,11 @@ final class FormerReportViewController: BaseViewController {
             userReportTextView.isEditable = false
         }
     }
-    
+
     func bindData(reviewID: Int) {
         self.reviewID = reviewID
     }
-    
+
     @objc
     private func sendButtonIsTapped() {
         if isReasonSelected {
@@ -319,7 +308,7 @@ final class FormerReportViewController: BaseViewController {
             view.showToast(message: "사유를 선택해주세요!")
         }
     }
-    
+
     // 키보드가 나타났다는 알림을 받으면 실행할 메서드
     @objc
     func keyboardWillShow(_ noti: NSNotification) {
@@ -338,20 +327,20 @@ final class FormerReportViewController: BaseViewController {
 
     // 키보드가 사라졌다는 알림을 받으면 실행할 메서드
     @objc
-    func keyboardWillHide(_ noti: NSNotification) {
+    func keyboardWillHide(_: NSNotification) {
         /// 뷰 원상태로 복귀
-        self.view.transform = .identity
+        view.transform = .identity
     }
-    
+
     // 노티피케이션을 추가하는 메서드
     func addKeyboardNotifications() {
         // 키보드가 나타날 때 앱에게 알리는 메서드 추가
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(self.keyboardWillShow(_:)),
+                                               selector: #selector(keyboardWillShow(_:)),
                                                name: UIResponder.keyboardWillShowNotification,
                                                object: nil)
         // 키보드가 사라질 때 앱에게 알리는 메서드 추가
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)),
                                                name: UIResponder.keyboardWillHideNotification,
                                                object: nil)
     }
@@ -367,19 +356,18 @@ final class FormerReportViewController: BaseViewController {
                                                   name: UIResponder.keyboardWillHideNotification,
                                                   object: nil)
     }
-    
+
     private func showSuccessAlert() {
         let alert = UIAlertController(title: "리뷰 신고 성공",
                                       message: "신고가 성공적으로 접수되었어요!",
-                                      preferredStyle: UIAlertController.Style.alert
-        )
-        
+                                      preferredStyle: UIAlertController.Style.alert)
+
         let okAction = UIAlertAction(title: "리뷰 화면으로 돌아가기",
-                                         style: .default,
-                                         handler: { okAction in
-            self.navigationController?.popViewController(animated: true)
-        })
-        
+                                     style: .default,
+                                     handler: { _ in
+                                         self.navigationController?.popViewController(animated: true)
+                                     })
+
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
     }
@@ -388,11 +376,11 @@ final class FormerReportViewController: BaseViewController {
 // MARK: - UITextViewDelegate
 
 extension FormerReportViewController: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    func textView(_: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let newLength = userReportTextView.text.count - range.length + text.count
         textLimitLabel.text = "\(userReportTextView.text.count) / 150"
         if newLength > 150 {
-          return false
+            return false
         }
         return true
     }
@@ -402,8 +390,8 @@ extension FormerReportViewController: UITextViewDelegate {
 
 extension FormerReportViewController {
     private func postReport(reviewID: Int, content: String) {
-        var reportType: String = String()
-        var reportContent: String = String()
+        var reportType = String()
+        var reportContent = String()
         switch content {
         case "메뉴와 관련없는 내용":
             reportType = "NO_ASSOCIATE_CONTENT"
@@ -427,19 +415,18 @@ extension FormerReportViewController {
             reportType = ""
             reportContent = ""
         }
-        
+
         let param = ReportRequest(reviewId: reviewID,
                                   reportType: reportType,
-                                  content: reportContent
-        )
-        
-        self.reviewProvider.request(.report(param: param)) { response in
+                                  content: reportContent)
+
+        reviewProvider.request(.report(param: param)) { response in
             switch response {
-            case.success(_):
+            case .success:
                 do {
                     self.showSuccessAlert()
                 }
-            case .failure(let err):
+            case let .failure(err):
                 print(err.localizedDescription)
                 self.view.showToast(message: "잠시후 다시 시도해주세요.")
             }
