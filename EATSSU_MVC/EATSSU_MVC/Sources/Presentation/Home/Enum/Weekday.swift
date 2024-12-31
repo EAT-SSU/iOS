@@ -15,13 +15,13 @@ enum Weekday: Int {
     case thursday
     case friday
     case saturday
-    
+
     static func from(date: Date) -> Weekday {
         let calendar = Calendar.current
         let weekdayNumber = calendar.component(.weekday, from: date)
         return Weekday(rawValue: weekdayNumber)!
     }
-    
+
     var isWeekend: Bool {
         return self == .saturday || self == .sunday
     }

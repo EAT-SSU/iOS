@@ -9,17 +9,16 @@ import Foundation
 import UIKit
 
 extension UIView {
-    
     func addSubviews(_ views: UIView...) {
         views.forEach { self.addSubview($0) }
     }
-    
+
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
-         let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-         let mask = CAShapeLayer()
-         mask.path = path.cgPath
-         layer.mask = mask
-     }
+        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        layer.mask = mask
+    }
 }
 
 extension UIView {
@@ -33,18 +32,18 @@ extension UIView {
         toastLabel.alpha = 1.0
         toastLabel.layer.cornerRadius = 10
         toastLabel.clipsToBounds = true
-        
+
         let toastWidth = toastLabel.intrinsicContentSize.width + 20
         let toastHeight = toastLabel.intrinsicContentSize.height + 10
-        toastLabel.frame = CGRect(x: self.frame.size.width/2 - toastWidth/2,
-                                   y: self.frame.size.height - toastHeight - 30,
-                                   width: toastWidth,
-                                   height: toastHeight)
-        self.addSubview(toastLabel)
-        
+        toastLabel.frame = CGRect(x: frame.size.width / 2 - toastWidth / 2,
+                                  y: frame.size.height - toastHeight - 30,
+                                  width: toastWidth,
+                                  height: toastHeight)
+        addSubview(toastLabel)
+
         UIView.animate(withDuration: 1.6, delay: 0.6, options: .curveEaseOut, animations: {
             toastLabel.alpha = 0.0
-        }, completion: {(isCompleted) in
+        }, completion: { _ in
             toastLabel.removeFromSuperview()
         })
     }

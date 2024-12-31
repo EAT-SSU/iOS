@@ -9,7 +9,7 @@ import Foundation
 
 struct UserNicknameRequest: Codable {
     let nickname: String
-    
+
     init(_ nickname: String) {
         self.nickname = nickname
     }

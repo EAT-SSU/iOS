@@ -11,7 +11,7 @@ struct SignUpRequest: Codable {
     let email: String
     let pwd: String
     let nickname: String
-    
+
     init(_ email: String, _ pwd: String, _ nickname: String) {
         self.email = email
         self.pwd = pwd

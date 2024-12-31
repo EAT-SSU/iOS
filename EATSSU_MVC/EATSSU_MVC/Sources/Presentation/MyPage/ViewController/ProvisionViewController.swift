@@ -13,36 +13,35 @@ import WebKit
 import SnapKit
 
 final class ProvisionViewController: BaseViewController {
-    
     // MARK: - Properties
-    
-  internal var navigationTitle = TextLiteral.MyPage.defaultTerms
-    
+
+    var navigationTitle = TextLiteral.MyPage.defaultTerms
+
     // MARK: - UI Components
-    
-  internal let provisionView: ProvisionView!
-    
+
+    let provisionView: ProvisionView!
+
     // MARK: - Life Cycles
-  
-  // MARK: - Initalizer
-  
-  init(agreementType: AgreementType) {
-    provisionView = ProvisionView(agreementType: agreementType)
-    
-    super.init(nibName: nil, bundle: nil)
-  }
-  
+
+    // MARK: - Initalizer
+
+    init(agreementType: AgreementType) {
+        provisionView = ProvisionView(agreementType: agreementType)
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
     // MARK: - Functions
-    
+
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = navigationTitle
     }
-    
+
     override func configureUI() {
         view.addSubview(provisionView)
     }
-    
+
     override func setLayout() {
         provisionView.snp.makeConstraints {
             $0.edges.equalToSuperview()

@@ -8,51 +8,50 @@
 import UIKit
 
 class RestaurantTableViewMenuTitleCell: BaseTableViewCell {
-    
-    // MARK:  - Properties
-    
+    // MARK: - Properties
+
     static let identifier = "RestaurantTableViewMenuTitleCell"
-    
+
     // MARK: - UI Components
-    
+
     private let nameLabel = UILabel().then {
         $0.text = TextLiteral.Home.todayMenu
         $0.font = .body2
     }
-    
+
     private let priceLabel = UILabel().then {
         $0.text = TextLiteral.Home.price
         $0.font = .body2
         $0.textAlignment = .center
     }
-    
+
     private let ratingLabel = UILabel().then {
         $0.text = TextLiteral.Home.rating
         $0.font = .body2
         $0.textAlignment = .center
     }
-    
+
     private let lineView = UIView().then {
         $0.backgroundColor = .gray200
     }
-    
+
     lazy var infoTableStackView = UIStackView().then {
-        $0.addArrangedSubviews([nameLabel, 
-                                priceLabel, 
+        $0.addArrangedSubviews([nameLabel,
+                                priceLabel,
                                 ratingLabel])
         $0.axis = .horizontal
         $0.alignment = .center
         $0.spacing = 24
     }
-    
+
     // MARK: - Functions
-    
+
     override func configureUI() {
         super.configureUI()
         contentView.addSubviews(infoTableStackView,
                                 lineView)
     }
-    
+
     override func setLayout() {
         infoTableStackView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(18)

@@ -11,7 +11,7 @@ import UIKit.UIStackView
 extension UIStackView {
     func addArrangedSubviews(_ views: [UIView]) {
         for view in views {
-            self.addArrangedSubview(view)
+            addArrangedSubview(view)
         }
     }
 }

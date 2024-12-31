@@ -8,7 +8,6 @@
 import UIKit
 
 enum NicknameTextFieldResultType {
-    
     /// common
     case textFieldEmpty
     /// nickname
@@ -16,7 +15,7 @@ enum NicknameTextFieldResultType {
     case nicknameTextFieldDuplicated
     case nicknameTextFieldDoubleCheck
     case nicknameTextFieldValid
-    
+
     var hintMessage: String {
         switch self {
         case .textFieldEmpty:
@@ -31,7 +30,7 @@ enum NicknameTextFieldResultType {
             return "사용가능한 닉네임이에요"
         }
     }
-    
+
     var textColor: UIColor {
         switch self {
         case .textFieldEmpty, .nicknameTextFieldOver, .nicknameTextFieldDuplicated, .nicknameTextFieldDoubleCheck:
@@ -40,6 +39,4 @@ enum NicknameTextFieldResultType {
             return .gray700
         }
     }
-    
 }
-

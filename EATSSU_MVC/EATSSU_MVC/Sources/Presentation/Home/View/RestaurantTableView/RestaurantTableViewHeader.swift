@@ -10,25 +10,24 @@ import UIKit
 import SnapKit
 
 class RestaurantTableViewHeader: BaseTableViewHeaderView {
-    
     static let identifier = "RestaurantTableViewHeader"
-    
+
     let titleLabel = UILabel()
     let infoButton = UIButton()
     let stackView = UIStackView()
-    
+
     var infoButtonDidTappedCallback: (() -> Void)?
-    
-    //MARK: - Functions
-    
+
+    // MARK: - Functions
+
     override func configure() {
         super.configure()
-        
+
         configureUI()
         setLayout()
         setViewProperties()
     }
-    
+
     func setViewProperties() {
         titleLabel.do {
             $0.font = .subtitle1
@@ -48,13 +47,13 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
             $0.alignment = .center
         }
     }
-        
+
     func configureUI() {
         contentView.addSubview(stackView)
         stackView.addArrangedSubviews([titleLabel,
-                                      infoButton])
+                                       infoButton])
     }
-    
+
     func setLayout() {
         stackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()

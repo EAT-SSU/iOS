@@ -16,11 +16,9 @@ import Foundation
 // ... existing code ...
 
 enum TextLiteral {
-
     // MARK: - Notification
 
     enum Notification {
-
         /// 🤔 오늘 밥 뭐 먹지…
         static let dailyWeekdayNotificationTitle: String = "🤔 오늘 밥 뭐 먹지…"
 
@@ -29,7 +27,6 @@ enum TextLiteral {
     }
 
     enum KakaoChannel {
-
         /// EATSSU 카카오 채널 ID
         static let id: String = "_ZlVAn"
     }
@@ -47,53 +44,50 @@ enum TextLiteral {
     static let hintInputNickName: String = "2~8글자를 입력해주세요."
     static let completeLabel: String = "완료하기"
 
-	// MARK: - Home
-    
+    // MARK: - Home
+
     enum Home {
-        
         /// 오늘의 메뉴
         static let todayMenu: String = "오늘의 메뉴"
-        
+
         /// 가격
         static let price: String = "가격"
-        
+
         /// 평점
         static let rating: String = "평점"
-        
+
         /// -
         static let emptyRating: String = "  -"
-        
+
         /// 제공되는 메뉴가 없습니다
         static let noMenuProvidedMessage: String = "제공되는 메뉴가 없습니다"
-
     }
-				
-	// MARK: - Restaurant
-		
-	static let dormitoryRestaurant: String = "기숙사 식당"
-	static let dodamRestaurant: String = "도담 식당"
-	static let studentRestaurant: String = "학생 식당"
-	static let snackCorner: String = "스낵 코너"
-	static let dormitoryRawValue: String = "DORMITORY"
-	static let dodamRawValue: String = "DODAM"
-	static let studentRestaurantRawValue: String = "HAKSIK"
-	static let snackCornerRawValue: String = "SNACK_CORNER"
-	static let lunchRawValue: String = "LUNCH"
-	
+
+    // MARK: - Restaurant
+
+    static let dormitoryRestaurant: String = "기숙사 식당"
+    static let dodamRestaurant: String = "도담 식당"
+    static let studentRestaurant: String = "학생 식당"
+    static let snackCorner: String = "스낵 코너"
+    static let dormitoryRawValue: String = "DORMITORY"
+    static let dodamRawValue: String = "DODAM"
+    static let studentRestaurantRawValue: String = "HAKSIK"
+    static let snackCornerRawValue: String = "SNACK_CORNER"
+    static let lunchRawValue: String = "LUNCH"
+
     // MARK: - MyPage
 
     /// "마이페이지" 텍스트 리터럴
     enum MyPage {
-		
-		/// "설정에서 알림수신을 동의해주세요!"
-		static let authorizeNotificationSettingMessage: String = "설정에서 알림수신을 동의해주세요!"
-		
-		/// "푸시 알림 사용자 설정 접근 키"
-		static let pushNotificationUserSettingKey: String = "pushNotificationUserSettingKey"
-		
+        /// "설정에서 알림수신을 동의해주세요!"
+        static let authorizeNotificationSettingMessage: String = "설정에서 알림수신을 동의해주세요!"
+
+        /// "푸시 알림 사용자 설정 접근 키"
+        static let pushNotificationUserSettingKey: String = "pushNotificationUserSettingKey"
+
         /// "푸시 알림 설정"
-		static let pushNotificationSetting: String = "푸시 알림 설정"
-		
+        static let pushNotificationSetting: String = "푸시 알림 설정"
+
         /// "만든사람들"
         static let creators: String = "만든사람들"
 

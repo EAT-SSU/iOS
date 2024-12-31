@@ -15,14 +15,14 @@ enum HomeRouter {
 
 extension HomeRouter: TargetType {
     var baseURL: URL {
-        return URL (string: Config.baseURL)!
+        return URL(string: Config.baseURL)!
     }
 
     var path: String {
         switch self {
-        case .getChangeMenuTableResponse(_, _, _):
+        case .getChangeMenuTableResponse:
             return "/meals"
-        case .getFixedMenuTableResponse(_):
+        case .getFixedMenuTableResponse:
             return "/menus"
         }
     }
@@ -30,18 +30,18 @@ extension HomeRouter: TargetType {
     var method: Moya.Method {
         switch self {
         case .getChangeMenuTableResponse,
-                .getFixedMenuTableResponse:
+             .getFixedMenuTableResponse:
             return .get
         }
     }
 
     var task: Task {
         switch self {
-        case .getChangeMenuTableResponse(let date, let restaurant, let time):
-            return .requestParameters(parameters: ["date": date, "restaurant": restaurant, "time": time], 
+        case let .getChangeMenuTableResponse(date, restaurant, time):
+            return .requestParameters(parameters: ["date": date, "restaurant": restaurant, "time": time],
                                       encoding: URLEncoding.queryString)
-        case .getFixedMenuTableResponse(let restaurant):
-            return .requestParameters(parameters: ["restaurant": restaurant], 
+        case let .getFixedMenuTableResponse(restaurant):
+            return .requestParameters(parameters: ["restaurant": restaurant],
                                       encoding: URLEncoding.queryString)
         }
     }

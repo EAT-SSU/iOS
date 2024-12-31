@@ -16,6 +16,7 @@ struct MyReviewResponse: Codable {
 }
 
 // MARK: - DataList
+
 struct MyDataList: Codable {
     let reviewID, mainRating, amountRating, tasteRating: Int
     let writeDate, menuName, content: String
