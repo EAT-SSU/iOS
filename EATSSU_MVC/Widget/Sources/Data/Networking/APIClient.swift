@@ -6,3 +6,17 @@
 //
 
 import Foundation
+
+import Moya
+import RxMoya
+import RxSwift
+
+class APIClient {
+    private let provider = MoyaProvider<HomeRouter>()
+
+    func fetchChangeMenuTableResponse(date: String, restaurant: String, time: String) -> Single<ChangeMenuTableResponse> {
+        return provider.rx.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
+            .filterSuccessfulStatusCodes()
+            .map(ChangeMenuTableResponse.self)
+    }
+}

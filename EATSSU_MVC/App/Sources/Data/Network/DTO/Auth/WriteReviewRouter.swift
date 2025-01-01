@@ -41,47 +41,41 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
     var task: Moya.Task {
         switch self {
         case .writeReview(param: let param, image: let imageList, menuId: _):
-            let jsonData: Data
-            var multipartFileList: MultipartFormData
+            var multipartData = [MultipartFormData]()
             do {
-                jsonData = try JSONEncoder().encode(param)
-                let multipartFormData = MultipartFormBodyPart(provider: .data(jsonData),
-                                                              name: "createReviewRequest",
-                                                              mimeType: "application/json")
-                multipartFileList = [multipartFormData]
+                let jsonData = try JSONEncoder().encode(param)
+                multipartData.append(MultipartFormData(provider: .data(jsonData),
+                                                       name: "createReviewRequest",
+                                                       mimeType: "application/json"))
             } catch {
                 print("Error encoding ReviewRequest: \(error)")
                 return .requestPlain
             }
 
-            if imageList.count != 0 {
-                for fileData in imageList {
-                    if let unwrappedImage = fileData {
-                        let imageData = unwrappedImage.resize(newWidth: 300.adjusted).jpegData(compressionQuality: 0.3) ?? Data()
-                        let formData = MultipartFormBodyPart(provider: .data(imageData),
-                                                             name: "multipartFileList",
-                                                             fileName: "image.jpg",
-                                                             mimeType: "image/jpeg")
-                        multipartFileList = [formData]
+            for fileData in imageList {
+                if let unwrappedImage = fileData {
+                    if let imageData = unwrappedImage.resize(newWidth: 300.adjusted).jpegData(compressionQuality: 0.3) {
+                        multipartData.append(MultipartFormData(provider: .data(imageData),
+                                                               name: "multipartFileList",
+                                                               fileName: "image.jpg",
+                                                               mimeType: "image/jpeg"))
                     }
                 }
             }
-            return .uploadMultipartFormData(multipartFileList)
+            return .uploadMultipart(multipartData)
 
         case let .uploadImage(image: image):
-            var multipartFileList: MultipartFormData
-
+            var multipartData = [MultipartFormData]()
             guard let unwrappedImage = image else { return .requestPlain }
-            let imageData = unwrappedImage.resize(newWidth: 300.adjusted).jpegData(compressionQuality: 0.3) ?? Data()
-            let formData = MultipartFormBodyPart(provider: .data(imageData),
-                                                 name: "image",
-                                                 fileName: "image.jpeg",
-                                                 mimeType: "image/jpeg")
-            multipartFileList = [formData]
-            return .uploadMultipartFormData(multipartFileList)
+            if let imageData = unwrappedImage.resize(newWidth: 300.adjusted).jpegData(compressionQuality: 0.3) {
+                multipartData.append(MultipartFormData(provider: .data(imageData),
+                                                       name: "image",
+                                                       fileName: "image.jpeg",
+                                                       mimeType: "image/jpeg"))
+            }
+            return .uploadMultipart(multipartData)
 
         case let .writeNewReview(param: param, _):
-
             return .requestJSONEncodable(param)
         }
     }

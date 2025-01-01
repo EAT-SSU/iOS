@@ -25,6 +25,6 @@ struct EATSSUWidget: Widget {
         }
         .configurationDisplayName("EATSSU Widget")
         .description("Displays dynamic data.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemMedium, .systemLarge])
     }
 }

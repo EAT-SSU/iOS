@@ -115,7 +115,12 @@ let project = Project(
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
             resources: ["Widget/Resources/**"],
-            dependencies: [],
+            dependencies: [
+                .external(name: "Moya", condition: .none),
+                .external(name: "RxSwift", condition: .none),
+                .external(name: "RxMoya", condition: .none),
+                .external(name: "CombineMoya", condition: .none),
+            ],
             settings: projectSettings
         ),
         .target(
