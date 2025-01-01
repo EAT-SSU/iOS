@@ -20,7 +20,7 @@ final class ESTimelineProvider: TimelineProvider {
     func getTimeline(in _: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         let currentDate = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.dateFormat = "yyyyMMdd"
         let formattedDate = dateFormatter.string(from: currentDate)
 
         let restaurant = "DORMITORY"
@@ -30,7 +30,6 @@ final class ESTimelineProvider: TimelineProvider {
 
         apiClient.fetchChangeMenuTableResponse(date: formattedDate, restaurant: restaurant, time: time)
             .subscribe(onSuccess: { response in
-                // Format the response data into a string or custom format
                 let menuDescriptions = response.briefMenus.map { $0.name }.joined(separator: ", ")
                 let entry = SimpleEntry(date: currentDate, someString: menuDescriptions)
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
@@ -38,7 +37,7 @@ final class ESTimelineProvider: TimelineProvider {
             }, onFailure: { error in
                 print("Error fetching menu data: \(error.localizedDescription)")
                 // Fallback to cached or placeholder data
-                let entry = SimpleEntry(date: currentDate, someString: "Failed to fetch data. Please try again later.")
+                let entry = SimpleEntry(date: currentDate, someString: "실패")
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
                 completion(timeline)
             })
