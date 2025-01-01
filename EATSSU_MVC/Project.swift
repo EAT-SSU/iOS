@@ -46,6 +46,7 @@ let eatSSUSettings: Settings = .settings(
     base: [
         "OTHER_LDFLAGS": ["-all_load -Objc"],
         "DEVELOPMENT_LANGUAGE": "ko",
+        "DEVELOPMENT_TEAM": "HZ8WU7PA4J",
     ],
     configurations: [
         .debug(name: "Debug", xcconfig: "App/Resources/Secrets/Debug.xcconfig"),
@@ -112,7 +113,8 @@ let project = Project(
             ]),
             sources: ["Widget/Sources/**"],
             resources: ["Widget/Resources/**"],
-            dependencies: []
+            dependencies: [],
+            settings: eatSSUSettings
         ),
         .target(
             /// UITests의 이름은 "앱 이름 + UiTests" 형식을 지켜야합니다.
@@ -123,7 +125,8 @@ let project = Project(
             sources: ["Tests/UITests/**"],
             dependencies: [
                 .target(name: "EATSSU", status: .none, condition: .none),
-            ]
+            ],
+            settings: eatSSUSettings
         ),
         .target(
             /// UnitTests의 이름은 "앱 이름 + Tests" 형식을 지켜야 합니다.
@@ -134,7 +137,8 @@ let project = Project(
             sources: ["Tests/UnitTests/**"],
             dependencies: [
                 .target(name: "EATSSU", status: .none, condition: .none),
-            ]
+            ],
+            settings: eatSSUSettings
         ),
     ]
 )
