@@ -13,11 +13,9 @@ struct WidgetEntryView: View {
     var body: some View {
         VStack {
             if entry.someString.isEmpty {
-                Text("Data:")
                 Text("nil 방지")
                     .font(.headline)
             } else {
-                Text("Data:")
                 Text(entry.someString)
                     .font(.headline)
             }

@@ -7,7 +7,11 @@
 
 import WidgetKit
 
+import RxSwift
+
 final class ESTimelineProvider: TimelineProvider {
+    private let disposeBag = DisposeBag()
+
     func placeholder(in _: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), someString: "Loading...")
     }
@@ -28,8 +32,15 @@ final class ESTimelineProvider: TimelineProvider {
 
         let apiClient = APIClient()
 
-        apiClient.fetchChangeMenuTableResponse(date: "20250102", restaurant: restaurant, time: time)
-            .subscribe(onSuccess: { _ in
+        apiClient.fetchChangeMenuTableResponse(date: formattedDate, restaurant: restaurant, time: time)
+            .subscribe(onSuccess: { response in
+                let result = response.result
+                for changeMenuTableResponse in result {
+                    for briefMenu in changeMenuTableResponse.briefMenus {
+                        print(briefMenu.name)
+                    }
+                    print("")
+                }
                 let entry = SimpleEntry(date: currentDate, someString: "성공")
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
                 completion(timeline)
@@ -40,5 +51,6 @@ final class ESTimelineProvider: TimelineProvider {
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
                 completion(timeline)
             })
+            .disposed(by: disposeBag)
     }
 }

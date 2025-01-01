@@ -12,7 +12,7 @@ import RxMoya
 import RxSwift
 
 class APIClient {
-    private let provider = MoyaProvider<HomeRouter>(plugins: [NetworkLoggerPlugin()])
+    private let provider = MoyaProvider<HomeRouter>(plugins: [])
 
     func fetchChangeMenuTableResponse(date: String, restaurant: String, time: String) -> Single<BaseResponse<[ChangeMenuTableResponse]>> {
         return provider.rx.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
