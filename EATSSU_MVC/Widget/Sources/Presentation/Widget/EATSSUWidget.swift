@@ -10,7 +10,7 @@ import WidgetKit
 
 @main
 struct EATSSUWidget: Widget {
-    let kind: String = "Testing"
+    let kind: String = "EATSSUWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: ESTimelineProvider()) { entry in
@@ -32,6 +32,17 @@ struct EATSSUWidget: Widget {
 #Preview(as: .systemSmall) {
     EATSSUWidget()
 } timeline: {
-    SimpleEntry(date: .now, data: "Preview Data")
-    SimpleEntry(date: .now.addingTimeInterval(3600), data: "Future Data")
+    SimpleEntry(date: .now, data: "Small Preview Data")
+}
+
+#Preview(as: .systemMedium) {
+    EATSSUWidget()
+} timeline: {
+    SimpleEntry(date: .now, data: "Medium Preview Data")
+}
+
+#Preview(as: .systemLarge) {
+    EATSSUWidget()
+} timeline: {
+    SimpleEntry(date: .now, data: "Large Preview Data")
 }
