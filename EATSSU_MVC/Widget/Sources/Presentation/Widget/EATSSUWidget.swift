@@ -28,21 +28,3 @@ struct EATSSUWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
-
-#Preview(as: .systemSmall) {
-    EATSSUWidget()
-} timeline: {
-    SimpleEntry(date: .now, data: "Small Preview Data")
-}
-
-#Preview(as: .systemMedium) {
-    EATSSUWidget()
-} timeline: {
-    SimpleEntry(date: .now, data: "Medium Preview Data")
-}
-
-#Preview(as: .systemLarge) {
-    EATSSUWidget()
-} timeline: {
-    SimpleEntry(date: .now, data: "Large Preview Data")
-}

@@ -1,6 +1,6 @@
 import ProjectDescription
 
-let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
+let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
@@ -42,7 +42,15 @@ let eatSSUInfoPlist: InfoPlist = .extendingDefault(with: [
     "CFBundleDevelopmentRegion": "ko",
 ])
 
-let eatSSUSettings: Settings = .settings(
+let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
+    "NSExtension": [
+        "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
+    ],
+    "BASE_URL": "https://$(BASE_URL)",
+    "CFBundleDevelopmentRegion": "ko",
+])
+
+let projectSettings: Settings = .settings(
     base: [
         "OTHER_LDFLAGS": ["-all_load -Objc"],
         "DEVELOPMENT_LANGUAGE": "ko",
@@ -68,11 +76,14 @@ let project = Project(
             product: .app,
             bundleId: "com.jiwoo.EatSSU",
             deploymentTargets: .iOS("17.0"),
-            infoPlist: eatSSUInfoPlist,
+            infoPlist: appInfoPlist,
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
             entitlements: "App/Resources/EatSSU-iOS.entitlements",
             dependencies: [
+                .target(name: "Widget", status: .none, condition: .none),
+
+                // 외부 라이브러리
                 .external(name: "SnapKit", condition: .none),
                 .external(name: "Tabman", condition: .none),
                 .external(name: "Moya", condition: .none),
@@ -82,43 +93,33 @@ let project = Project(
                 .external(name: "GoogleAppMeasurement", condition: .none),
                 .external(name: "Realm", condition: .none),
                 .external(name: "RealmSwift", condition: .none),
-
-                // Firebase Module
                 .external(name: "FirebaseCrashlytics", condition: .none),
                 .external(name: "FirebaseAnalytics", condition: .none),
                 .external(name: "FirebaseRemoteConfig", condition: .none),
-
-                // KakakSDK Module
                 .external(name: "KakaoSDKAuth", condition: .none),
                 .external(name: "KakaoSDKUser", condition: .none),
                 .external(name: "KakaoSDKCommon", condition: .none),
                 .external(name: "KakaoSDKTalk", condition: .none),
 
-                // EATSSU Module
+                // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
-                .target(name: "EATSSUWidget", status: .none, condition: .none),
             ],
-            settings: eatSSUSettings
+            settings: projectSettings
         ),
         .target(
-            name: "EATSSUWidget",
+            name: "Widget",
             destinations: [.iPhone],
             product: .appExtension,
             bundleId: "com.jiwoo.EatSSU.Widget",
             deploymentTargets: .iOS("17.0"),
-            infoPlist: .extendingDefault(with: [
-                "NSExtension": [
-                    "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
-                ],
-            ]),
+            infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
             resources: ["Widget/Resources/**"],
             dependencies: [],
-            settings: eatSSUSettings
+            settings: projectSettings
         ),
         .target(
-            /// UITests의 이름은 "앱 이름 + UiTests" 형식을 지켜야합니다.
-            name: "EATSSUUITests",
+            name: "UITests",
             destinations: [.iPhone],
             product: .uiTests,
             bundleId: "com.jiwoo.EatSSU.UITests",
@@ -126,11 +127,10 @@ let project = Project(
             dependencies: [
                 .target(name: "EATSSU", status: .none, condition: .none),
             ],
-            settings: eatSSUSettings
+            settings: projectSettings
         ),
         .target(
-            /// UnitTests의 이름은 "앱 이름 + Tests" 형식을 지켜야 합니다.
-            name: "EATSSUTests",
+            name: "UnitTests",
             destinations: [.iPhone],
             product: .unitTests,
             bundleId: "com.jiwoo.EatSSU.UnitTests",
@@ -138,7 +138,7 @@ let project = Project(
             dependencies: [
                 .target(name: "EATSSU", status: .none, condition: .none),
             ],
-            settings: eatSSUSettings
+            settings: projectSettings
         ),
     ]
 )

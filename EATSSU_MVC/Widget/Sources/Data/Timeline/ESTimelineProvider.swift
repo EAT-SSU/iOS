@@ -20,7 +20,7 @@ final class ESTimelineProvider: TimelineProvider {
     func getTimeline(in _: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         let currentDate = Date()
 
-        let entry = SimpleEntry(date: currentDate, data: "Hello, World!")
+        let entry = SimpleEntry(date: currentDate, data: "바뀌는지 테스트")
         let timeline = Timeline(entries: [entry], policy: .atEnd)
         completion(timeline)
     }
