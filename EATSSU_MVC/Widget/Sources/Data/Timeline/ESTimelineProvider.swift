@@ -28,10 +28,9 @@ final class ESTimelineProvider: TimelineProvider {
 
         let apiClient = APIClient()
 
-        apiClient.fetchChangeMenuTableResponse(date: formattedDate, restaurant: restaurant, time: time)
-            .subscribe(onSuccess: { response in
-                let menuDescriptions = response.briefMenus.map { $0.name }.joined(separator: ", ")
-                let entry = SimpleEntry(date: currentDate, someString: menuDescriptions)
+        apiClient.fetchChangeMenuTableResponse(date: "20250102", restaurant: restaurant, time: time)
+            .subscribe(onSuccess: { _ in
+                let entry = SimpleEntry(date: currentDate, someString: "성공")
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
                 completion(timeline)
             }, onFailure: { error in

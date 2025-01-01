@@ -14,9 +14,9 @@ import RxSwift
 class APIClient {
     private let provider = MoyaProvider<HomeRouter>(plugins: [NetworkLoggerPlugin()])
 
-    func fetchChangeMenuTableResponse(date: String, restaurant: String, time: String) -> Single<ChangeMenuTableResponse> {
+    func fetchChangeMenuTableResponse(date: String, restaurant: String, time: String) -> Single<BaseResponse<[ChangeMenuTableResponse]>> {
         return provider.rx.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
             .filterSuccessfulStatusCodes()
-            .map(ChangeMenuTableResponse.self)
+            .map(BaseResponse<[ChangeMenuTableResponse]>.self)
     }
 }
