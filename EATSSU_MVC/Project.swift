@@ -50,7 +50,8 @@ let eatSSUSettings: Settings = .settings(
     configurations: [
         .debug(name: "Debug", xcconfig: "App/Resources/Secrets/Debug.xcconfig"),
         .release(name: "Release", xcconfig: "App/Resources/Secrets/Release.xcconfig"),
-    ]
+    ],
+    defaultSettings: .recommended
 )
 
 let project = Project(
@@ -118,7 +119,7 @@ let project = Project(
             name: "EATSSUUITests",
             destinations: [.iPhone],
             product: .uiTests,
-            bundleId: "com.jiwoog.EatSSU.UITests",
+            bundleId: "com.jiwoo.EatSSU.UITests",
             sources: ["Tests/UITests/**"],
             dependencies: [
                 .target(name: "EATSSU", status: .none, condition: .none),
