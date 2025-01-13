@@ -1,15 +1,6 @@
-//
-//  LoginView.swift
-//  iOS
-//
-//  Created by 최지우 on 2023/06/26.
-//
-
 import UIKit
-
 import SnapKit
 import Then
-
 import EATSSUDesign
 
 final class LoginView: BaseUIView {

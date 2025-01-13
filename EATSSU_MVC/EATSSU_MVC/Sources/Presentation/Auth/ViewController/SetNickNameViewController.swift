@@ -1,10 +1,3 @@
-//
-//  SetNickNameViewController.swift
-//  EatSSU-iOS
-//
-//  Created by 최지우 on 2023/07/04.
-//
-
 import UIKit
 
 import Moya
@@ -13,7 +6,7 @@ final class SetNickNameViewController: BaseViewController {
     // MARK: - Properties
 
     var currentKeyboardHeight: CGFloat = 0.0
-    private let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [MoyaLoggingPlugin()])
+    private let viewModel = SetNickNameViewModel()
 
     // MARK: - UI Components
 
@@ -25,6 +18,7 @@ final class SetNickNameViewController: BaseViewController {
         super.viewDidLoad()
 
         dismissKeyboard()
+        setNickNameView.bindViewModel(viewModel)
     }
 
     override func viewWillAppear(_: Bool) {
@@ -59,12 +53,35 @@ final class SetNickNameViewController: BaseViewController {
 
     @objc
     func tappedCompleteNickNameButton() {
-        setUserNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
+        viewModel.setUserNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "") { [weak self] success in
+            if success {
+                self?.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
+                    if let myPageViewController = self?.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
+                        self?.navigationController?.popToViewController(myPageViewController, animated: true)
+                    } else {
+                        let homeViewController = HomeViewController()
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                        {
+                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
+                        }
+                    }
+                }
+            } else {
+                self?.view.showToast(message: "닉네임 설정에 실패했습니다. 다시 시도해주세요.")
+            }
+        }
     }
 
     @objc
     private func tappedCheckButton() {
-        checkNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
+        viewModel.checkNicknameAvailability(nickname: setNickNameView.inputNickNameTextField.text ?? "") { [weak self] isAvailable in
+            if isAvailable {
+                self?.view.showToast(message: "사용 가능한 닉네임이에요")
+            } else {
+                self?.view.showToast(message: "이미 사용 중인 닉네임이에요")
+            }
+        }
     }
 
     // MARK: - keyboard 감지
@@ -103,65 +120,6 @@ final class SetNickNameViewController: BaseViewController {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             setNickNameView.completeSettingNickNameButton.frame.origin.y += currentKeyboardHeight
             currentKeyboardHeight = 0.0
-        }
-    }
-}
-
-// MARK: - Network
-
-extension SetNickNameViewController {
-    private func setUserNickname(nickname: String) {
-        nicknameProvider.request(.setNickname(nickname: nickname)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                        UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
-                    }
-                    self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
-                        if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
-                            self.navigationController?.popToViewController(myPageViewController, animated: true)
-                        } else {
-                            let homeViewController = HomeViewController()
-                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                            {
-                                keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
-                            }
-                        }
-                    }
-                    print(moyaResponse.statusCode)
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
-            }
-        }
-    }
-
-    private func checkNickname(nickname: String) {
-        nicknameProvider.request(.checkNickname(nickname: nickname)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    let isSuccess = responseData.result
-                    if isSuccess {
-                        self.view.showToast(message: "사용 가능한 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = isSuccess
-                        self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
-                        self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
-                    } else {
-                        self.view.showToast(message: "이미 사용 중인 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = isSuccess
-                        self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage
-                        self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
-                    }
-                } catch let err {
-                    print(err.localizedDescription)
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
-            }
         }
     }
 }
