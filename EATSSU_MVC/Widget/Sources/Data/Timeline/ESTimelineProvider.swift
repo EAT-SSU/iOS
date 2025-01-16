@@ -28,7 +28,19 @@ final class ESTimelineProvider: TimelineProvider {
         let formattedDate = dateFormatter.string(from: currentDate)
 
         let restaurant = "DORMITORY"
-        let time = "LUNCH"
+        let time: String
+        let currentTime = Calendar.current.component(.hour, from: currentDate)
+
+        switch currentTime {
+        case 0 ..< 10:
+            time = "MORNING"
+        case 10 ..< 15:
+            time = "LUNCH"
+        case 15 ..< 21:
+            time = "DINNER"
+        default:
+            time = "LUNCH"
+        }
 
         let apiClient = APIClient()
 
@@ -41,7 +53,7 @@ final class ESTimelineProvider: TimelineProvider {
                     }
                     print("")
                 }
-                let entry = SimpleEntry(date: currentDate, someString: "성공")
+                let entry = SimpleEntry(date: currentDate, someString: time)
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
                 completion(timeline)
             }, onFailure: { error in
