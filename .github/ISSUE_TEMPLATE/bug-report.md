@@ -3,7 +3,7 @@ name: Bug Report
 about: 버그를 신고해주세요.
 title: "[Fix] "
 labels: "\U0001F6E0️ Fix"
-assignees: ''
+assignees: CJiu01, jayn2u
 
 ---
 

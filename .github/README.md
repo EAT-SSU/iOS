@@ -1,6 +1,43 @@
-# EATSSU iOS APP
+![eatssu_main](https://github.com/user-attachments/assets/ae21de9d-8333-46fb-b0ad-d8578f572fda)
 
-"숭실대에서 먹자!" 숭실대학교 학식 리뷰 iOS 앱
+# EAT-SSU: 숭실대 학식 리뷰 앱 
+**EAT-SSU는 숭실대학교 학생들의 즐겁고 편리한 학식 이용을 꿈꾸는 프로젝트입니다.**
+- `학생식당`, `도담식당`, `푸드코트`, `스낵코너`, `기숙사 식당`의 모든 메뉴를 비교할 수 있어요.
+- 학식에 대한 리뷰를 통해 숭실대 학우들과 정보를 공유할 수 있어요.
+- 식당의 운영시간과 위치를 확인할 수 있어요!
+- [More & Contact](https://hi-jin-1514.notion.site/EAT-SSU-b04aaec9b7814a628c6ef6b3e08c74a3)
+
+## 다운로드 
+2023.11.27~ 서비스 중
+- [App Store](https://apps.apple.com/kr/app/eat-ssu-%EC%88%AD%EC%8B%A4%EB%8C%80-%ED%95%99%EC%8B%9D-%EB%A6%AC%EB%B7%B0-%EC%95%B1/id6472618331)
+- [Play Store](https://play.google.com/store/apps/details?id=com.eatssu.android)
+
+## Tuist 개발환경
+
+> 개발자 별 로컬에서 어떤 방법을 사용해서 `tuist`의 버전을 괸리하느냐에 따라서 호환성 통일을 위해서 확인해야 합니다.
+
+⭐️ EATSSU iOS에서는 `tuist 4.24.0`을 사용하고 있습니다.
+
+### Mise 사용 시
+
+- [mise](https://github.com/jdx/mise)에서 설치합니다.
+- 이 때 `Homebrew`로도 `mise`를 설치할 수 있는데, 정상동작하지 않기 때문에 꼭 위의 링크로 진행해야 합니다.
+- 아래의 명령어를 진행해서 사용하면 됩니다.
+- mise를 사용하면 프로젝트 별로 tuist 버전을 다르게 사용할 수 있어서, 이 방법을 채택하는 것을 권장합니다.
+```zsh
+tuist install
+tuist generate
+```
+
+### Homebrew 사용 시
+
+- [Tuist Quick Install Guide](https://docs.tuist.dev/en/guides/quick-start/install-tuist)를 참고해서 설치하면 됩니다.
+- 아래의 명령어를 순차적으로 입력해 사용하면 됩니다.
+
+```zsh
+brew tap tuist/tuist
+brew install --formula tuist@4.24.0
+```
 
 ## Issue Title
 
@@ -73,7 +110,7 @@ Commit Type / issue number
 
 ## Folder Structure
 ```
-IOS
+iOS
  ┣ EATSSU_MVC
  ┃  ┣ EATSSU_MVC
  ┃  ┃  ┗ Sources
