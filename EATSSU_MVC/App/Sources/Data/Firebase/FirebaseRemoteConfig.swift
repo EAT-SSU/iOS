@@ -24,10 +24,10 @@ class FirebaseRemoteConfig {
 
     func noticeCheck(completion: @escaping (String?) -> Void) {
         remoteConfig.fetch { [weak self] status, error in
-            guard let self = self else { return }
+            guard let self else { return }
 
             if status == .success {
-                if let notice = self.activateRemoteConfig(), notice.dialog == true {
+                if let notice = activateRemoteConfig(), notice.dialog == true {
                     completion(notice.message)
                 } else {
                     completion(nil)

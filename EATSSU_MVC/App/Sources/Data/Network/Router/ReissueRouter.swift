@@ -14,27 +14,27 @@ enum ReissueRouter {
 
 extension ReissueRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        return URL(string: Config.baseURL)!
+        URL(string: Config.baseURL)!
     }
 
     var path: String {
         switch self {
         case .reissuance:
-            return "/oauths/reissue/token"
+            "/oauths/reissue/token"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .reissuance:
-            return .post
+            .post
         }
     }
 
     var task: Moya.Task {
         switch self {
         case .reissuance:
-            return .requestPlain
+            .requestPlain
         }
     }
 
@@ -51,13 +51,13 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:
-            return .bearer
+            .bearer
         }
     }
 }
 
 extension ReissueRouter {
     var validationType: ValidationType {
-        return .successCodes
+        .successCodes
     }
 }

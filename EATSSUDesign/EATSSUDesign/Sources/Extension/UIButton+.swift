@@ -47,7 +47,7 @@ extension UIButton {
             return
         }
 
-        guard let titleLabel = titleLabel else {
+        guard let titleLabel else {
             return
         }
 

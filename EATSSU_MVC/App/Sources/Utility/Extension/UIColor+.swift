@@ -9,27 +9,27 @@ import UIKit
 
 extension UIColor {
     static var gray100: UIColor {
-        return UIColor(hex: "#F9F9F9")
+        UIColor(hex: "#F9F9F9")
     }
 
     static var gray200: UIColor {
-        return UIColor(hex: "#E6E6E6")
+        UIColor(hex: "#E6E6E6")
     }
 
     static var gray300: UIColor {
-        return UIColor(hex: "#D9D9D9")
+        UIColor(hex: "#D9D9D9")
     }
 
     static var gray500: UIColor {
-        return UIColor(hex: "#9D9D9D")
+        UIColor(hex: "#9D9D9D")
     }
 
     static var gray700: UIColor {
-        return UIColor(hex: "#565656")
+        UIColor(hex: "#565656")
     }
 
     static var primary: UIColor {
-        return UIColor(hex: "#DF5757")
+        UIColor(hex: "#DF5757")
     }
 }
 

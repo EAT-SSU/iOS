@@ -131,7 +131,7 @@ final class HomeRestaurantViewController: BaseViewController {
         isWeekend = weekday.isWeekend
 
         if time == TextLiteral.lunchRawValue {
-            if !FirebaseRemoteConfig.shared.isVacationPeriod && !weekday.isWeekend {
+            if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
                 getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
             } else {
                 currentRestaurant = Restaurant.snackCorner.identifier
@@ -151,7 +151,7 @@ final class HomeRestaurantViewController: BaseViewController {
 
 extension HomeRestaurantViewController: UITableViewDataSource {
     func numberOfSections(in _: UITableView) -> Int {
-        return sectionHeaderRestaurant.count
+        sectionHeaderRestaurant.count
     }
 
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -243,7 +243,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
 
 extension HomeRestaurantViewController: UITableViewDelegate {
     func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat {
-        return headerHeight
+        headerHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -261,7 +261,7 @@ extension HomeRestaurantViewController: UITableViewDelegate {
             reviewMenuTypeInfo.menuType = "VARIABLE"
             reviewMenuTypeInfo.menuID = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].mealId ?? 100
             if let list = changeMenuTableViewData[restaurant]?[indexPath.row - restaurantTableViewMenuTitleCellCount].briefMenus {
-                reviewMenuTypeInfo.changeMenuIDList = list.compactMap { $0.menuId }
+                reviewMenuTypeInfo.changeMenuIDList = list.compactMap(\.menuId)
             }
         } else if [3, 4, 5].contains(indexPath.section) {
             if !isSelectable {

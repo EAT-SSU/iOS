@@ -202,8 +202,8 @@ final class ReviewViewController: BaseViewController {
                                                        idList: menuIDList ?? [],
                                                        reviewList: nil,
                                                        currentPage: 0)
-                        self.activityIndicatorView.stopAnimating()
-                        self.navigationController?.pushViewController(setRateViewController, animated: true)
+                        activityIndicatorView.stopAnimating()
+                        navigationController?.pushViewController(setRateViewController, animated: true)
                     } else {
                         // 고정메뉴이고, 메뉴가 1개일때 선택창으로 안가고 바로 작성창으로 가도록
                         if menuIDList?.count == 1 {
@@ -212,13 +212,13 @@ final class ReviewViewController: BaseViewController {
                                                            idList: menuIDList ?? [],
                                                            reviewList: nil,
                                                            currentPage: 0)
-                            self.activityIndicatorView.stopAnimating()
-                            self.navigationController?.pushViewController(setRateViewController, animated: true)
+                            activityIndicatorView.stopAnimating()
+                            navigationController?.pushViewController(setRateViewController, animated: true)
                         } else {
                             let choiceMenuViewController = ChoiceMenuViewController()
                             choiceMenuViewController.menuDataBind(menuList: menuNameList, idList: menuIDList ?? [])
-                            self.activityIndicatorView.stopAnimating()
-                            self.navigationController?.pushViewController(choiceMenuViewController, animated: true)
+                            activityIndicatorView.stopAnimating()
+                            navigationController?.pushViewController(choiceMenuViewController, animated: true)
                         }
                     }
                 }
@@ -255,22 +255,22 @@ extension ReviewViewController: UITableViewDelegate {
 
 extension ReviewViewController: UITableViewDataSource {
     func numberOfSections(in _: UITableView) -> Int {
-        return 2
+        2
     }
 
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1
+            1
         case 1:
             // 두 번째 섹션에서 리뷰 개수가 하나도 없을 때 셀 변경
             if reviewList.count == 0 {
-                return 1
+                1
             } else {
-                return reviewList.count
+                reviewList.count
             }
         default:
-            return 0
+            0
         }
     }
 
@@ -342,15 +342,15 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
-            return 251.adjusted
+            251.adjusted
         case 1:
             if reviewList.count == 0 {
-                return 300.adjusted
+                300.adjusted
             } else {
-                return UITableView.automaticDimension
+                UITableView.automaticDimension
             }
         default:
-            return UITableView.automaticDimension
+            UITableView.automaticDimension
         }
     }
 }

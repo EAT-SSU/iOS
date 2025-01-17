@@ -12,9 +12,9 @@ enum MyPageRightItemData {
     /// 앱의 배포 버전
     static var version: String? {
         if let info = Bundle.main.infoDictionary, let version = info["CFBundleShortVersionString"] as? String {
-            return version
+            version
         } else {
-            return nil
+            nil
         }
     }
 }

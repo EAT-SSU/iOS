@@ -21,22 +21,22 @@ enum Restaurant {
     var type: RestaurantType {
         switch self {
         case .dodamRestaurant, .dormitoryRestaurant, .studentRestaurant:
-            return .change
+            .change
         case .snackCorner:
-            return .fix
+            .fix
         }
     }
 
     var identifier: String {
         switch self {
         case .dodamRestaurant:
-            return "DODAM"
+            "DODAM"
         case .dormitoryRestaurant:
-            return "DORMITORY"
+            "DORMITORY"
         case .studentRestaurant:
-            return "HAKSIK"
+            "HAKSIK"
         case .snackCorner:
-            return "SNACK_CORNER"
+            "SNACK_CORNER"
         }
     }
 }

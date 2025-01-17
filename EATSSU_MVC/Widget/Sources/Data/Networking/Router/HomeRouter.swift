@@ -15,15 +15,15 @@ enum HomeRouter {
 
 extension HomeRouter: TargetType {
     var baseURL: URL {
-        return URL(string: Config.baseURL)!
+        URL(string: Config.baseURL)!
     }
 
     var path: String {
         switch self {
         case .getChangeMenuTableResponse:
-            return "/meals"
+            "/meals"
         case .getFixedMenuTableResponse:
-            return "/menus"
+            "/menus"
         }
     }
 
@@ -31,26 +31,26 @@ extension HomeRouter: TargetType {
         switch self {
         case .getChangeMenuTableResponse,
              .getFixedMenuTableResponse:
-            return .get
+            .get
         }
     }
 
     var task: Task {
         switch self {
         case let .getChangeMenuTableResponse(date, restaurant, time):
-            return .requestParameters(parameters: ["date": date, "restaurant": restaurant, "time": time],
-                                      encoding: URLEncoding.queryString)
+            .requestParameters(parameters: ["date": date, "restaurant": restaurant, "time": time],
+                               encoding: URLEncoding.queryString)
         case let .getFixedMenuTableResponse(restaurant):
-            return .requestParameters(parameters: ["restaurant": restaurant],
-                                      encoding: URLEncoding.queryString)
+            .requestParameters(parameters: ["restaurant": restaurant],
+                               encoding: URLEncoding.queryString)
         }
     }
 
     var headers: [String: String]? {
-        return ["Content-type": "application/json"]
+        ["Content-type": "application/json"]
     }
 
     var sampleData: Data {
-        return Data()
+        Data()
     }
 }

@@ -88,7 +88,7 @@ final class SetNickNameView: BaseUIView {
         $0.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
     }
 
-    private lazy var setNickNameStackView: UIStackView = UIStackView(
+    private lazy var setNickNameStackView: UIStackView = .init(
         arrangedSubviews: [
             inputNickNameTextField,
             nicknameValidationMessageLabel,
@@ -239,7 +239,7 @@ private extension SetNickNameView {
         /// 텍스트 변경 시, 완료하기 버튼 false 처리
         completeSettingNickNameButton.isEnabled = false
 
-        if nickname.count > 1 && nickname.count < 9 {
+        if nickname.count > 1, nickname.count < 9 {
             nicknameDoubleCheckButton.isEnabled = true
             return true
         } else {

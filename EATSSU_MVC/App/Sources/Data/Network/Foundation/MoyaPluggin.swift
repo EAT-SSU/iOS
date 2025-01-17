@@ -13,7 +13,7 @@ final class MoyaLoggingPlugin: PluginType {
     private let reissueProvider = MoyaProvider<ReissueRouter>()
 
     func prepare(_ request: URLRequest, target _: TargetType) -> URLRequest {
-        return request
+        request
     }
 
     // Request를 보낼 때 호출
@@ -52,7 +52,7 @@ final class MoyaLoggingPlugin: PluginType {
     }
 
     func process(_ result: Result<Response, MoyaError>, target _: TargetType) -> Result<Response, MoyaError> {
-        return result
+        result
     }
 
     func onSucceed(_ response: Response, target: TargetType, isFromError _: Bool) {

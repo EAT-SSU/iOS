@@ -15,6 +15,6 @@ enum AppFontName: String {
     case extraBoldFont = "AppleSDGothicNeo-ExtraBold"
 
     var name: String {
-        return rawValue
+        rawValue
     }
 }

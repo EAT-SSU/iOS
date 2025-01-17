@@ -75,7 +75,7 @@ final class LoginViewController: BaseViewController {
 
     private func getUserInfo() {
         UserApi.shared.me { user, error in
-            if let error = error {
+            if let error {
                 print("🎃", error)
             } else {
                 guard let email = user?.kakaoAccount?.email else { return }
@@ -109,9 +109,9 @@ final class LoginViewController: BaseViewController {
 
     private func checkRealmToken() -> Bool {
         if RealmService.shared.getToken() == "" {
-            return false
+            false
         } else {
-            return true
+            true
         }
     }
 
@@ -158,7 +158,7 @@ final class LoginViewController: BaseViewController {
         if UserApi.isKakaoTalkLoginAvailable() {
             // 카카오톡 앱을 통한 로그인 시도
             UserApi.shared.loginWithKakaoTalk { oauthToken, error in
-                if let error = error {
+                if let error {
                     print(error)
                 } else {
                     print("loginWithKakaoTalk() success.")
@@ -169,7 +169,7 @@ final class LoginViewController: BaseViewController {
         } else {
             // 카카오 계정을 통한 웹 로그인 시도
             UserApi.shared.loginWithKakaoAccount { oauthToken, error in
-                if let error = error {
+                if let error {
                     print(error)
                 } else {
                     self.getUserInfo()
@@ -260,7 +260,7 @@ extension LoginViewController {
 
 extension LoginViewController: ASAuthorizationControllerPresentationContextProviding, ASAuthorizationControllerDelegate {
     func presentationAnchor(for _: ASAuthorizationController) -> ASPresentationAnchor {
-        return view.window!
+        view.window!
     }
 
     // Apple ID 연동 성공 시

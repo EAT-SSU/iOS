@@ -17,52 +17,52 @@ enum AuthRouter {
 
 extension AuthRouter: TargetType {
     public var baseURL: URL {
-        return URL(string: Config.baseURL)!
+        URL(string: Config.baseURL)!
     }
 
     var path: String {
         switch self {
         case .signUp:
-            return "/user/join"
+            "/user/join"
         case .signIn:
-            return "/user/login"
+            "/user/login"
         case .kakaoLogin:
-            return "/oauths/kakao"
+            "/oauths/kakao"
         case .appleLogin:
-            return "/oauths/apple"
+            "/oauths/apple"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .signUp:
-            return .post
+            .post
         case .signIn:
-            return .post
+            .post
         case .kakaoLogin:
-            return .post
+            .post
         case .appleLogin:
-            return .post
+            .post
         }
     }
 
     var task: Task {
         switch self {
         case let .signUp(param):
-            return .requestJSONEncodable(param)
+            .requestJSONEncodable(param)
         case let .signIn(param):
-            return .requestJSONEncodable(param)
+            .requestJSONEncodable(param)
         case let .kakaoLogin(param: param):
-            return .requestJSONEncodable(param)
+            .requestJSONEncodable(param)
         case let .appleLogin(param: param):
-            return .requestJSONEncodable(param)
+            .requestJSONEncodable(param)
         }
     }
 
     var headers: [String: String]? {
         switch self {
         default:
-            return ["Content-Type": "application/json"]
+            ["Content-Type": "application/json"]
         }
     }
 }

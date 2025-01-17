@@ -43,6 +43,6 @@ class UserInfoManager {
     }
 
     func getCurrentUserInfo() -> UserInfo? {
-        return realm.objects(UserInfo.self).first
+        realm.objects(UserInfo.self).first
     }
 }

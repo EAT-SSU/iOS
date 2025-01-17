@@ -16,7 +16,7 @@ class Token: Object {
     @Persisted var refreshToken = String()
 
     override static func primaryKey() -> String? {
-        return "token"
+        "token"
     }
 
     convenience init(accessToken: String, refreshToken: String) {

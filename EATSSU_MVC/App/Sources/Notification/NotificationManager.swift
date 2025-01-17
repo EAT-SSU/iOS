@@ -48,7 +48,7 @@ class NotificationManager {
 
             // 알림 등록
             center.add(request) { error in
-                if let error = error {
+                if let error {
                     print("알림 등록 간 에러 메시지: \(error.localizedDescription)")
                 }
             }

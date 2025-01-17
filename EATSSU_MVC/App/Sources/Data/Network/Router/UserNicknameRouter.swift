@@ -15,24 +15,24 @@ enum UserNicknameRouter {
 
 extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        return URL(string: Config.baseURL)!
+        URL(string: Config.baseURL)!
     }
 
     var path: String {
         switch self {
         case .setNickname:
-            return "/users/nickname"
+            "/users/nickname"
         case .checkNickname:
-            return "/users/validate/nickname"
+            "/users/validate/nickname"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .setNickname:
-            return .patch
+            .patch
         case .checkNickname:
-            return .get
+            .get
         }
     }
 
@@ -60,7 +60,7 @@ extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:
-            return .bearer
+            .bearer
         }
     }
 }

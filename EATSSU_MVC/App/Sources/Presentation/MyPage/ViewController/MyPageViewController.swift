@@ -142,7 +142,7 @@ final class MyPageViewController: BaseViewController {
 
 extension MyPageViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return myPageTableLabelList.count
+        myPageTableLabelList.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -187,7 +187,7 @@ extension MyPageViewController: UITableViewDataSource {
 
 extension MyPageViewController: UITableViewDelegate {
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 60
+        60
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

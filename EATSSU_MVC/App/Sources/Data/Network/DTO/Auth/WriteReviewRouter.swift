@@ -17,24 +17,24 @@ enum WriteReviewRouter {
 
 extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        return URL(string: Config.baseURL)!
+        URL(string: Config.baseURL)!
     }
 
     var path: String {
         switch self {
         case .writeReview(param: _, image: _, menuId: let menuId):
-            return "/reviews/\(menuId)"
+            "/reviews/\(menuId)"
         case .uploadImage:
-            return "/reviews/upload/image"
+            "/reviews/upload/image"
         case .writeNewReview(param: _, menuID: let menuId):
-            return "/reviews/write/\(menuId)"
+            "/reviews/write/\(menuId)"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .writeReview, .uploadImage, .writeNewReview:
-            return .post
+            .post
         }
     }
 
@@ -97,7 +97,7 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:
-            return .bearer
+            .bearer
         }
     }
 }

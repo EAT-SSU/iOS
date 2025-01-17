@@ -52,7 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let marketingVersion = AppStoreCheck().latestVersion()
 
             DispatchQueue.main.async {
-                guard let marketingVersion = marketingVersion else {
+                guard let marketingVersion else {
                     print("앱스토어 버전을 찾지 못했습니다.")
                     return
                 }

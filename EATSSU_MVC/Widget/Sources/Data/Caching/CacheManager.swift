@@ -12,7 +12,7 @@ final class CacheManager {
     private let cacheKey = "widgetData"
 
     func fetchCachedData() -> String? {
-        return UserDefaults.standard.string(forKey: cacheKey)
+        UserDefaults.standard.string(forKey: cacheKey)
     }
 
     func saveCachedData(_ data: String) {

@@ -18,48 +18,48 @@ enum MyRouter {
 
 extension MyRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        return URL(string: Config.baseURL)!
+        URL(string: Config.baseURL)!
     }
 
     var path: String {
         switch self {
         case .myReview:
-            return "/users/reviews"
+            "/users/reviews"
         case .myInfo:
-            return "/users/mypage"
+            "/users/mypage"
         case .signOut:
-            return "/users"
+            "/users"
         case .inquiry:
-            return "/inquiries/"
+            "/inquiries/"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .myReview:
-            return .get
+            .get
         case .myInfo:
-            return .get
+            .get
         case .signOut:
-            return .delete
+            .delete
         case .inquiry:
-            return .post
+            .post
         }
     }
 
     var task: Moya.Task {
         switch self {
         case .myReview:
-            return .requestParameters(parameters: ["page": 0,
-                                                   "size": 20,
-                                                   "sort": "date,DESC"],
-                                      encoding: URLEncoding.queryString)
+            .requestParameters(parameters: ["page": 0,
+                                            "size": 20,
+                                            "sort": "date,DESC"],
+                               encoding: URLEncoding.queryString)
         case .myInfo:
-            return .requestPlain
+            .requestPlain
         case .signOut:
-            return .requestPlain
+            .requestPlain
         case let .inquiry(param):
-            return .requestJSONEncodable(param)
+            .requestJSONEncodable(param)
         }
     }
 
@@ -75,7 +75,7 @@ extension MyRouter: TargetType, AccessTokenAuthorizable {
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:
-            return .bearer
+            .bearer
         }
     }
 }

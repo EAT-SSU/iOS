@@ -59,17 +59,15 @@ final class HomeTimeTabmanController: TabmanViewController {
 
     private func adjustTabBar() {
         let currentHour = Calendar.current.component(.hour, from: Date())
-        let selectedIndex: PageboyViewController.PageIndex
-
-        switch currentHour {
+        let selectedIndex: PageboyViewController.PageIndex = switch currentHour {
         case 0 ..< 10:
-            selectedIndex = 0
+            0
         case 10 ..< 16:
-            selectedIndex = 1
+            1
         case 16 ..< 24:
-            selectedIndex = 2
+            2
         default:
-            selectedIndex = 1
+            1
         }
 
         scrollToPage(.at(index: selectedIndex), animated: true)
@@ -107,15 +105,15 @@ final class HomeTimeTabmanController: TabmanViewController {
 
 extension HomeTimeTabmanController: PageboyViewControllerDataSource, TMBarDataSource {
     func numberOfViewControllers(in _: Pageboy.PageboyViewController) -> Int {
-        return viewControllers.count
+        viewControllers.count
     }
 
     func viewController(for _: Pageboy.PageboyViewController, at index: Pageboy.PageboyViewController.PageIndex) -> UIViewController? {
-        return viewControllers[index]
+        viewControllers[index]
     }
 
     func defaultPage(for _: Pageboy.PageboyViewController) -> Pageboy.PageboyViewController.Page? {
-        return nil
+        nil
     }
 
     func barItem(for _: Tabman.TMBar, at index: Int) -> Tabman.TMBarItemable {

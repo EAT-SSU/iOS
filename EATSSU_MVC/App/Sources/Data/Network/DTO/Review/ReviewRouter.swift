@@ -21,7 +21,7 @@ enum ReviewRouter {
 
 extension ReviewRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        return URL(string: Config.baseURL)!
+        URL(string: Config.baseURL)!
     }
 
     var path: String {
@@ -29,35 +29,35 @@ extension ReviewRouter: TargetType, AccessTokenAuthorizable {
         case let .reviewRate(type, id):
             switch type {
             case "VARIABLE":
-                return "/reviews/meals/\(id)"
+                "/reviews/meals/\(id)"
             case "FIXED":
-                return "/reviews/menus/\(id)"
+                "/reviews/menus/\(id)"
             default:
-                return ""
+                ""
             }
         case .reviewList:
-            return "/reviews"
+            "/reviews"
         case .report:
-            return "/reports"
+            "/reports"
         case let .deleteReview(reviewId):
-            return "/reviews/\(reviewId)"
+            "/reviews/\(reviewId)"
         case let .fixReview(reviewId, _):
-            return "/reviews/\(reviewId)"
+            "/reviews/\(reviewId)"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .reviewRate:
-            return .get
+            .get
         case .reviewList:
-            return .get
+            .get
         case .report:
-            return .post
+            .post
         case .deleteReview:
-            return .delete
+            .delete
         case .fixReview:
-            return .patch
+            .patch
         }
     }
 
@@ -66,40 +66,40 @@ extension ReviewRouter: TargetType, AccessTokenAuthorizable {
         case let .reviewRate(type, id):
             switch type {
             case "VARIABLE":
-                return .requestParameters(parameters: ["mealId": id],
-                                          encoding: URLEncoding.queryString)
+                .requestParameters(parameters: ["mealId": id],
+                                   encoding: URLEncoding.queryString)
             case "FIXED":
-                return .requestParameters(parameters: ["menuId": id],
-                                          encoding: URLEncoding.queryString)
+                .requestParameters(parameters: ["menuId": id],
+                                   encoding: URLEncoding.queryString)
             default:
-                return .requestPlain
+                .requestPlain
             }
         /// 이후 정렬 순서, 리뷰 로드 개수 등 수정 필요하면 고치기
         case let .reviewList(type, id):
             switch type {
             case "VARIABLE":
-                return .requestParameters(parameters: ["menuType": type,
-                                                       "mealId": id,
-                                                       "page": 0,
-                                                       "size": 20,
-                                                       "sort": "date,DESC"],
-                                          encoding: URLEncoding.queryString)
+                .requestParameters(parameters: ["menuType": type,
+                                                "mealId": id,
+                                                "page": 0,
+                                                "size": 20,
+                                                "sort": "date,DESC"],
+                                   encoding: URLEncoding.queryString)
             case "FIXED":
-                return .requestParameters(parameters: ["menuType": type,
-                                                       "menuId": id,
-                                                       "page": 0,
-                                                       "size": 20,
-                                                       "sort": "date,DESC"],
-                                          encoding: URLEncoding.queryString)
+                .requestParameters(parameters: ["menuType": type,
+                                                "menuId": id,
+                                                "page": 0,
+                                                "size": 20,
+                                                "sort": "date,DESC"],
+                                   encoding: URLEncoding.queryString)
             default:
-                return .requestPlain
+                .requestPlain
             }
         case let .report(param: param):
-            return .requestJSONEncodable(param)
+            .requestJSONEncodable(param)
         case .deleteReview:
-            return .requestPlain
+            .requestPlain
         case let .fixReview(_, param):
-            return .requestJSONEncodable(param)
+            .requestJSONEncodable(param)
         }
     }
 
@@ -121,7 +121,7 @@ extension ReviewRouter: TargetType, AccessTokenAuthorizable {
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:
-            return .bearer
+            .bearer
         }
     }
 }

@@ -294,7 +294,7 @@ final class SetRateViewController: BaseViewController {
     func dataBind(list: [String], idList: [Int], reviewList: [(BeforeSelectedImageDTO, UIImage?)]?, currentPage: Int) {
         selectedList = list
         selectedIDList = idList
-        if let reviewList = reviewList {
+        if let reviewList {
             self.reviewList = reviewList
         } else {
             self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
@@ -328,7 +328,7 @@ final class SetRateViewController: BaseViewController {
         if userReviewTextView.text == "3글자 이상 작성해주세요!" || userReviewTextView.text.count < 3 {
             view.showToast(message: "리뷰를 3글자 이상 작성해주세요!")
         } else {
-            if (rateView.currentStar != 0) && (quantityRateView.currentStar != 0) && (tasteRateView.currentStar != 0) {
+            if rateView.currentStar != 0, quantityRateView.currentStar != 0, tasteRateView.currentStar != 0 {
                 // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
                 let param = BeforeSelectedImageDTO(mainRating: rateView.currentStar,
                                                    amountRating: quantityRateView.currentStar,

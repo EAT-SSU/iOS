@@ -16,7 +16,7 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
 
     var model: MenuTypeInfo? {
         didSet {
-            if let model = model {
+            if let model {
                 bind(model)
             }
         }
@@ -113,7 +113,7 @@ extension RestaurantTableViewMenuCell {
                 // vc에서 이미 필터링되어 의미 없음. 리팩 필요
                 nameLabel.text = "제공되는 메뉴가 없습니다"
             } else {
-                nameLabel.text = data.briefMenus.map { $0.name }.joined(separator: "+")
+                nameLabel.text = data.briefMenus.map(\.name).joined(separator: "+")
             }
 
         case let .fix(data):

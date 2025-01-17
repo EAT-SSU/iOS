@@ -151,7 +151,7 @@ extension ChoiceMenuViewController: UITableViewDelegate {}
 
 extension ChoiceMenuViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return menuNameList.count
+        menuNameList.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -161,13 +161,13 @@ extension ChoiceMenuViewController: UITableViewDataSource {
         cell.handler = { [weak self] in
             guard let self else { return }
             cell.isChecked.toggle()
-            self.isMenuSelected[indexPath.row].toggle()
+            isMenuSelected[indexPath.row].toggle()
         }
 
         return cell
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 50
+        50
     }
 }

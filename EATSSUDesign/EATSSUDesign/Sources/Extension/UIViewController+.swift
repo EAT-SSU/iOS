@@ -14,7 +14,7 @@ import UIKit.UIViewController
             let viewController: UIViewController
 
             func makeUIViewController(context _: Context) -> UIViewController {
-                return viewController
+                viewController
             }
 
             func updateUIViewController(_: UIViewController, context _: Context) {}

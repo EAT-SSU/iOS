@@ -23,6 +23,6 @@ enum Weekday: Int {
     }
 
     var isWeekend: Bool {
-        return self == .saturday || self == .sunday
+        self == .saturday || self == .sunday
     }
 }

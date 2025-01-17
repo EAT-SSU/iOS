@@ -122,7 +122,7 @@ extension MyReviewViewController: UITableViewDelegate {}
 
 extension MyReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return reviewList.count
+        reviewList.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

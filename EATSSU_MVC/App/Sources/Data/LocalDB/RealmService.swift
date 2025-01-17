@@ -35,7 +35,7 @@ class RealmService {
     }
 
     func isAccessTokenPresent() -> Bool {
-        return getToken() != ""
+        getToken() != ""
     }
 
     // 스키마 수정시 한번 돌려야 한다.
@@ -45,7 +45,7 @@ class RealmService {
         }
     }
 
-    func deleteAll<T: Object>(_ objectType: T.Type) {
+    func deleteAll(_ objectType: (some Object).Type) {
         do {
             let objects = realm.objects(objectType)
             try realm.write {
