@@ -8,10 +8,10 @@ import PackageDescription
     // 각 SPM 라이브러리를 동적 프레임워크(.framework)로 빌드하도록 설정
     let packageSettings = PackageSettings(
         productTypes: [
-            // 예시: SnapKit/Tabman/Moya/Then/FSCalendar/Kakao/Kingfisher/Firebase/Realm/RxSwift ...
+            "Alamofire": .framework,
+            "Moya": .framework,
             "SnapKit": .framework,
             "Tabman": .framework,
-            "Moya": .framework,
             "Then": .framework,
             "FSCalendar": .framework,
             "Kingfisher": .framework,
