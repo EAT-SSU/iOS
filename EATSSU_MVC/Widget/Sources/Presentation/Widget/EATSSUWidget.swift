@@ -10,7 +10,7 @@ import WidgetKit
 
 @main
 struct EATSSUWidget: Widget {
-    let kind: String = "EATSSUWidget"
+    let kind: String = "EATSSU"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: ESTimelineProvider()) { entry in
@@ -29,20 +29,16 @@ struct EATSSUWidget: Widget {
     }
 }
 
-#if canImport(SwiftUI) && swift(>=5.9)
-    @available(iOS 17.0, *)
-    #Preview(as: .systemSmall, widget: {
-        EATSSUWidget()
-    }, timelineProvider: {
-        ESTimelineProvider()
-    })
-#endif
+@available(iOS 17.0, *)
+#Preview(as: .systemSmall, widget: {
+    EATSSUWidget()
+}, timelineProvider: {
+    ESTimelineProvider()
+})
 
-struct EATSSUWidget_Preview: View {
-    var body: some View {
-        WidgetEntryView(entry: SimpleEntry(date: Date(), someString: "Preview"))
-            .padding()
-            .background(Color(.systemBackground))
-            .previewLayout(.sizeThatFits) // 프리뷰용 레이아웃 설정
-    }
-}
+@available(iOS 17.0, *)
+#Preview(as: .systemMedium, widget: {
+    EATSSUWidget()
+}, timelineProvider: {
+    ESTimelineProvider()
+})

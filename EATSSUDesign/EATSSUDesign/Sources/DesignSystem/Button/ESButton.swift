@@ -84,7 +84,7 @@ public final class ESButton: UIButton {
     private func configureUI(size: ButtonSize) {
         layer.cornerRadius = 12.adjusted
         clipsToBounds = true
-        backgroundColor = EATSSUDesignAsset.Colors.MainColor.primary.color
+        backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
         titleLabel?.textColor = .white
         setTitle(title, for: .normal)
 

@@ -12,16 +12,16 @@ import RxSwift
 final class ESTimelineProvider: TimelineProvider {
     private let disposeBag = DisposeBag()
 
-    func placeholder(in _: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), someString: "Loading...")
+    func placeholder(in _: Context) -> ESEntry {
+        ESEntry(date: Date(), someString: "Loading...")
     }
 
-    func getSnapshot(in _: Context, completion: @escaping (SimpleEntry) -> Void) {
+    func getSnapshot(in _: Context, completion: @escaping (ESEntry) -> Void) {
         let cachedData = CacheManager.shared.fetchCachedData() ?? "Fallback Data"
-        completion(SimpleEntry(date: Date(), someString: cachedData))
+        completion(ESEntry(date: Date(), someString: cachedData))
     }
 
-    func getTimeline(in _: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
+    func getTimeline(in _: Context, completion: @escaping (Timeline<ESEntry>) -> Void) {
         let currentDate = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd"
@@ -53,13 +53,13 @@ final class ESTimelineProvider: TimelineProvider {
                     }
                     print("")
                 }
-                let entry = SimpleEntry(date: currentDate, someString: time)
+                let entry = ESEntry(date: currentDate, someString: time)
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
                 completion(timeline)
             }, onFailure: { error in
                 print("Error fetching menu data: \(error.localizedDescription)")
                 // Fallback to cached or placeholder data
-                let entry = SimpleEntry(date: currentDate, someString: "실패")
+                let entry = ESEntry(date: currentDate, someString: "실패")
                 let timeline = Timeline(entries: [entry], policy: .atEnd)
                 completion(timeline)
             })

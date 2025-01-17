@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "checkedIcon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

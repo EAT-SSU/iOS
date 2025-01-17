@@ -73,9 +73,9 @@ public final class ESTextField: UITextField {
     private func changeTextFieldStatus(status: TextFieldStatus) {
         switch status {
         case .pass:
-            layer.borderColor = EATSSUDesignAsset.Colors.GrayScaleColor.gray300.color.cgColor
+            layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         case .error:
-            layer.borderColor = EATSSUDesignAsset.Colors.RedColor.error.color.cgColor
+            layer.borderColor = EATSSUDesignAsset.Color.Red.error.color.cgColor
         }
     }
 }
