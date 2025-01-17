@@ -29,8 +29,20 @@ struct EATSSUWidget: Widget {
     }
 }
 
-#Preview(as: .systemSmall, widget: {
-    EATSSUWidget()
-}, timelineProvider: {
-    ESTimelineProvider()
-})
+#if canImport(SwiftUI) && swift(>=5.9)
+    @available(iOS 17.0, *)
+    #Preview(as: .systemSmall, widget: {
+        EATSSUWidget()
+    }, timelineProvider: {
+        ESTimelineProvider()
+    })
+#endif
+
+struct EATSSUWidget_Preview: View {
+    var body: some View {
+        WidgetEntryView(entry: SimpleEntry(date: Date(), someString: "Preview"))
+            .padding()
+            .background(Color(.systemBackground))
+            .previewLayout(.sizeThatFits) // 프리뷰용 레이아웃 설정
+    }
+}
