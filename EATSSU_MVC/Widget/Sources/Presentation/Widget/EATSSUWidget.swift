@@ -25,6 +25,12 @@ struct EATSSUWidget: Widget {
         }
         .configurationDisplayName("EATSSU Widget")
         .description("Displays dynamic data.")
-        .supportedFamilies([.systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
+
+#Preview(as: .systemSmall, widget: {
+    EATSSUWidget()
+}, timelineProvider: {
+    ESTimelineProvider()
+})
