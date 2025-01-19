@@ -7,62 +7,60 @@
 
 import WidgetKit
 
-import RxSwift
+struct ESTimelineProvider: AppIntentTimelineProvider {
+    typealias Intent = SelectRestaurant // SelectRestaurant Intent 사용
+    typealias Entry = ESEntry
 
-final class ESTimelineProvider: TimelineProvider {
-    private let disposeBag = DisposeBag()
-
-    func placeholder(in _: Context) -> ESEntry {
-        ESEntry(date: Date(), someString: "Loading...")
+    func placeholder(in context: Context) -> ESEntry {
+        // 위젯의 기본 플레이스홀더 데이터 제공
+        ESEntry(date: Date(), restaurantName: "Loading...")
     }
 
-    func getSnapshot(in _: Context, completion: @escaping (ESEntry) -> Void) {
-        let cachedData = CacheManager.shared.fetchCachedData() ?? "Fallback Data"
-        completion(ESEntry(date: Date(), someString: cachedData))
+    func snapshot(for configuration: SelectRestaurant, in context: Context) async -> ESEntry {
+        // 위젯 미리보기 데이터 제공
+        ESEntry(date: Date(), restaurantName: configuration.selectedRestaurant.rawValue)
     }
 
-    func getTimeline(in _: Context, completion: @escaping (Timeline<ESEntry>) -> Void) {
+    func timeline(for configuration: SelectRestaurant, in context: Context) async -> Timeline<ESEntry> {
+        // 사용자가 선택한 데이터를 기반으로 타임라인 생성
         let currentDate = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd"
         let formattedDate = dateFormatter.string(from: currentDate)
 
-        let restaurant = "DORMITORY"
-        let time: String
-        let currentTime = Calendar.current.component(.hour, from: currentDate)
+        let restaurant = configuration.selectedRestaurant.rawValue
+        let timeSlot: String
+        let currentHour = Calendar.current.component(.hour, from: currentDate)
 
-        switch currentTime {
-        case 0 ..< 10:
-            time = "MORNING"
-        case 10 ..< 15:
-            time = "LUNCH"
-        case 15 ..< 21:
-            time = "DINNER"
+        // 시간대에 따라 메뉴 구분
+        switch currentHour {
+        case 0..<10:
+            timeSlot = "MORNING"
+        case 10..<15:
+            timeSlot = "LUNCH"
+        case 15..<21:
+            timeSlot = "DINNER"
         default:
-            time = "LUNCH"
+            timeSlot = "CLOSED"
         }
 
-        let apiClient = APIClient()
+        // API 클라이언트 사용 (네트워크 요청 예제)
+        do {
+            let menuData = try await fetchMenu(for: formattedDate, restaurant: restaurant, timeSlot: timeSlot)
+            let entry = ESEntry(date: currentDate, restaurantName: "\(restaurant) - \(timeSlot)", menu: menuData)
+            return Timeline(entries: [entry], policy: .atEnd)
+        } catch {
+            print("Failed to fetch menu: \(error)")
+            let entry = ESEntry(date: currentDate, restaurantName: "Error fetching data")
+            return Timeline(entries: [entry], policy: .atEnd)
+        }
+    }
 
-        apiClient.fetchChangeMenuTableResponse(date: formattedDate, restaurant: restaurant, time: time)
-            .subscribe(onSuccess: { response in
-                let result = response.result
-                for changeMenuTableResponse in result {
-                    for briefMenu in changeMenuTableResponse.briefMenus {
-                        print(briefMenu.name)
-                    }
-                    print("")
-                }
-                let entry = ESEntry(date: currentDate, someString: time)
-                let timeline = Timeline(entries: [entry], policy: .atEnd)
-                completion(timeline)
-            }, onFailure: { error in
-                print("Error fetching menu data: \(error.localizedDescription)")
-                // Fallback to cached or placeholder data
-                let entry = ESEntry(date: currentDate, someString: "실패")
-                let timeline = Timeline(entries: [entry], policy: .atEnd)
-                completion(timeline)
-            })
-            .disposed(by: disposeBag)
+    // API 데이터를 비동기로 가져오는 함수
+    private func fetchMenu(for date: String, restaurant: String, timeSlot: String) async throws -> String {
+        // 예제: 실제 API 클라이언트 호출로 대체 가능
+        // 여기서는 간단히 시간과 식당 데이터를 합쳐서 반환
+        return "\(restaurant) menu for \(timeSlot) on \(date)"
     }
 }
+

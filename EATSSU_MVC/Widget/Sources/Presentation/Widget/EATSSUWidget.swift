@@ -13,7 +13,11 @@ struct EATSSUWidget: Widget {
     let kind: String = "EATSSU"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: ESTimelineProvider()) { entry in
+        AppIntentConfiguration(
+            kind: kind,
+            intent: SelectRestaurant.self, // SelectRestaurant Intent 사용
+            provider: ESTimelineProvider()
+        ) { entry in
             if #available(iOS 17.0, *) {
                 WidgetEntryView(entry: entry)
                     .containerBackground(.fill.tertiary, for: .widget)
@@ -23,22 +27,8 @@ struct EATSSUWidget: Widget {
                     .background()
             }
         }
-        .configurationDisplayName("EATSSU Widget")
-        .description("Displays dynamic data.")
+        .configurationDisplayName("EATSSU 위젯")
+        .description("확인하고 싶은 식당을 선택하세요.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
-
-@available(iOS 17.0, *)
-#Preview(as: .systemSmall, widget: {
-    EATSSUWidget()
-}, timelineProvider: {
-    ESTimelineProvider()
-})
-
-@available(iOS 17.0, *)
-#Preview(as: .systemMedium, widget: {
-    EATSSUWidget()
-}, timelineProvider: {
-    ESTimelineProvider()
-})
