@@ -18,15 +18,26 @@ import WidgetKit
 /// - haksik: 학생식당
 /// - dormitory: 기숙사 식당
 enum RestaurantOptions: String, AppEnum {
-    
     /// 도담식당
     case dodam = "DODAM"
-    
+
     /// 학생식당
     case haksik = "HAKSIK"
-    
+
     /// 기숙사 식당
     case dormitory = "DORMITORY"
+
+    /// 위젯 UI에 렌더링할 텍스트
+    var displayName: String {
+        switch self {
+        case .dodam:
+            return "도담식당"
+        case .haksik:
+            return "학생식당"
+        case .dormitory:
+            return "기숙사 식당"
+        }
+    }
 
     /// 옵션 타입의 표시 표현을 정의합니다.
     ///
@@ -51,7 +62,6 @@ enum RestaurantOptions: String, AppEnum {
 ///
 /// 이 구조체는 위젯이 특정 식당을 선택하도록 하는 역할을 수행합니다.
 struct SelectRestaurant: WidgetConfigurationIntent {
-    
     /// 위젯의 제목
     ///
     /// - Returns: "Select Restaurant" 문자열을 반환합니다.

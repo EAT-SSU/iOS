@@ -15,15 +15,17 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
 
     func placeholder(in _: Context) -> ESEntry {
         // 위젯의 기본 플레이스홀더 데이터 제공
-        ESEntry(date: Date(), restaurantName: "Loading...")
+        ESEntry(date: Date(), restaurantName: "기숙사 식당")
     }
 
     func snapshot(for configuration: SelectRestaurant, in _: Context) async -> ESEntry {
         // 위젯 미리보기 데이터 제공
-        ESEntry(date: Date(), restaurantName: configuration.selectedRestaurant.rawValue)
+        ESEntry(date: Date(), restaurantName: configuration.selectedRestaurant.displayName)
     }
 
     func timeline(for configuration: SelectRestaurant, in _: Context) async -> Timeline<ESEntry> {
+        
+        // TODO: Utility 프레임워크에 설계
         let currentDate = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd"
@@ -46,7 +48,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         }
 
         // 기본 데이터를 반환 (초기 상태)
-        let initialEntry = ESEntry(date: currentDate, restaurantName: "Fetching menu...")
+        let initialEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName)
         let timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(60 * 5)))
 
         print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")

@@ -14,7 +14,7 @@ struct SmallView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("기숙사 식당")
+                Text(entry.restaurantName)
                     .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
                 Text("중식")
