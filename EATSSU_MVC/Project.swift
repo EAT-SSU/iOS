@@ -48,6 +48,9 @@ let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
     ],
     "BASE_URL": "https://$(BASE_URL)",
     "CFBundleDevelopmentRegion": "ko",
+    "NSAppTransportSecurity": [
+        "NSAllowsArbitraryLoads": true,
+    ],
 ])
 
 let projectSettings: Settings = .settings(

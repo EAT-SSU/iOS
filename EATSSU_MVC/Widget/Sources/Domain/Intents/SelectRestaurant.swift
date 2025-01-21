@@ -44,7 +44,7 @@ struct SelectRestaurant: WidgetConfigurationIntent {
     @Parameter(
         title: "선택된 식당",
         description: "식당을 선택하세요",
-        default: .haksik // 기본값 설정
+        default: RestaurantOptions.haksik // 기본값 설정
     )
     var selectedRestaurant: RestaurantOptions
 

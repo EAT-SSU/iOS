@@ -7,8 +7,7 @@
 
 import WidgetKit
 
-import RxMoya
-import RxSwift
+import Moya
 
 struct ESTimelineProvider: AppIntentTimelineProvider {
     typealias Intent = SelectRestaurant // SelectRestaurant Intent 사용
@@ -52,28 +51,28 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
 
         print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
 
-        // RxSwift를 이용한 비동기 작업
-        APIClient().fetchChangeMenuTableResponse(date: formattedDate, restaurant: restaurant, time: timeSlot)
-            .subscribe { response in
-                let result = response.result
-                let menuNames = result.flatMap { $0.briefMenus.map(\.name) }
-                let menuString = menuNames.joined(separator: ", ")
-
-                // 디버깅용 프린트 추가
-                print("Fetched menu names: \(menuString)")
-
-                // UI 업데이트용 새로운 타임라인 생성
-                let newEntry = ESEntry(date: Date(), restaurantName: menuString)
-                let updatedTimeline = Timeline(entries: [newEntry], policy: .atEnd)
-
-                // 위젯을 새로고침하기 위해 위젯 센터에 업데이트 요청
-                WidgetCenter.shared.reloadAllTimelines()
-            } onFailure: { error in
-                print("Error : \(error.localizedDescription)")
-            } onDisposed: {
-                print("Observable disposed")
-            }
-            .disposed(by: DisposeBag())
+        let provider = MoyaProvider<HomeRouter>(plugins: [NetworkLoggerPlugin()])
+        provider
+            .request(
+                .getChangeMenuTableResponse(
+                    date: formattedDate,
+                    restaurant: restaurant,
+                    time: timeSlot
+                )
+            ) { result in
+                switch result {
+                case .success(let response):
+                    print("Status Code : \(response.statusCode)")
+                    do {
+                        let decodedResponse = try response.map(BaseResponse<[ChangeMenuTableResponse]>.self)
+                        print(decodedResponse)
+                    } catch {
+                        print("Error : \(error.localizedDescription)")
+                    }
+                case .failure(let error):
+                    print("Error : \(error.localizedDescription)")
+                }
+        }
 
         return timeline
     }

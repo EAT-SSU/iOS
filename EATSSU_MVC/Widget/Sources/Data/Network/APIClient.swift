@@ -16,7 +16,6 @@ class APIClient {
 
     func fetchChangeMenuTableResponse(date: String, restaurant: String, time: String) -> Single<BaseResponse<[ChangeMenuTableResponse]>> {
         provider.rx.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
-            .filterSuccessfulStatusCodes()
             .map(BaseResponse<[ChangeMenuTableResponse]>.self)
     }
 }
