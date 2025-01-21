@@ -52,7 +52,8 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         let timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(60 * 5)))
 
         print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
-
+        
+        // TODO: RxMoya로 구현하기
         let provider = MoyaProvider<HomeRouter>(plugins: [])
         provider
             .request(
@@ -67,7 +68,11 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
                     print("Status Code : \(response.statusCode)")
                     do {
                         let decodedResponse = try response.map(BaseResponse<[ChangeMenuTableResponse]>.self)
-                        print(decodedResponse)
+                        for changeMenuTableResponse in decodedResponse.result {
+                            for briefMenu in changeMenuTableResponse.briefMenus {
+                                print(briefMenu.name)
+                            }
+                        }
                     } catch {
                         print("Error : \(error.localizedDescription)")
                     }
