@@ -26,7 +26,7 @@ enum RestaurantOptions: String, AppEnum {
         [
             .dodam: DisplayRepresentation(title: "도담식당"),
             .haksik: DisplayRepresentation(title: "학생식당"),
-            .dormitory: DisplayRepresentation(title: "기숙사 식당")
+            .dormitory: DisplayRepresentation(title: "기숙사 식당"),
         ]
     }
 }

@@ -122,7 +122,7 @@ let project = Project(
                 .external(name: "RxSwift", condition: .none),
                 .external(name: "RxMoya", condition: .none),
                 .external(name: "CombineMoya", condition: .none),
-                
+
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
 
