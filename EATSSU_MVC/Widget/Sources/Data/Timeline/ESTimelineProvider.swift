@@ -34,14 +34,14 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
 
         let initialEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName)
-        var timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(10)))
+        var timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(60 * 60)))
 
         let provider = MoyaProvider<HomeRouter>()
 
         do {
             let menus = try await fetchMenu(provider: provider, date: formattedDate, restaurant: restaurant, time: timeSlot)
             let updatedEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName, menus: menus)
-            timeline = Timeline(entries: [updatedEntry], policy: .after(currentDate.addingTimeInterval(10)))
+            timeline = Timeline(entries: [updatedEntry], policy: .after(currentDate.addingTimeInterval(60 * 60)))
         } catch {
             print("Error: \(error.localizedDescription)")
         }
