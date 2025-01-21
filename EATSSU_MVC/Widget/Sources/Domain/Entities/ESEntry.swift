@@ -10,11 +10,11 @@ import WidgetKit
 struct ESEntry: TimelineEntry {
     let date: Date
     let restaurantName: String
-    let menu: String
+    let menus: [String]
 
-    init(date: Date, restaurantName: String, menu: String = "No menu available") {
+    init(date: Date, restaurantName: String, menus: [String] = ["메뉴가 없습니다."]) {
         self.date = date
         self.restaurantName = restaurantName
-        self.menu = menu
+        self.menus = menus
     }
 }

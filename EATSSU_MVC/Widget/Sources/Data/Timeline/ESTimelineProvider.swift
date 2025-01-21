@@ -8,79 +8,75 @@
 import WidgetKit
 
 import Moya
+import RxMoya
+import RxSwift
 
 struct ESTimelineProvider: AppIntentTimelineProvider {
-    typealias Intent = SelectRestaurant // SelectRestaurant Intent 사용
+    typealias Intent = SelectRestaurant
     typealias Entry = ESEntry
 
+    private let disposeBag = DisposeBag()
+
     func placeholder(in _: Context) -> ESEntry {
-        // 위젯의 기본 플레이스홀더 데이터 제공
         ESEntry(date: Date(), restaurantName: "기숙사 식당")
     }
 
     func snapshot(for configuration: SelectRestaurant, in _: Context) async -> ESEntry {
-        // 위젯 미리보기 데이터 제공
         ESEntry(date: Date(), restaurantName: configuration.selectedRestaurant.displayName)
     }
 
     func timeline(for configuration: SelectRestaurant, in _: Context) async -> Timeline<ESEntry> {
-        
-        // TODO: Utility 프레임워크에 설계
         let currentDate = Date()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd"
-        let formattedDate = dateFormatter.string(from: currentDate)
-
+        let formattedDate = formatDate(currentDate)
         let restaurant = configuration.selectedRestaurant.rawValue
-        let timeSlot: String
-        let currentHour = Calendar.current.component(.hour, from: currentDate)
-
-        // 시간대에 따른 메뉴 구분
-        switch currentHour {
-        case 0 ..< 10:
-            timeSlot = "MORNING"
-        case 10 ..< 15:
-            timeSlot = "LUNCH"
-        case 15 ..< 21:
-            timeSlot = "DINNER"
-        default:
-            timeSlot = "CLOSED"
-        }
-
-        // 기본 데이터를 반환 (초기 상태)
-        let initialEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName)
-        let timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(60 * 5)))
+        let timeSlot = getTimeSlot(for: currentDate)
 
         print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
-        
-        // TODO: RxMoya로 구현하기
-        let provider = MoyaProvider<HomeRouter>(plugins: [])
-        provider
-            .request(
-                .getChangeMenuTableResponse(
-                    date: formattedDate,
-                    restaurant: restaurant,
-                    time: timeSlot
-                )
-            ) { result in
-                switch result {
-                case .success(let response):
-                    print("Status Code : \(response.statusCode)")
-                    do {
-                        let decodedResponse = try response.map(BaseResponse<[ChangeMenuTableResponse]>.self)
-                        for changeMenuTableResponse in decodedResponse.result {
-                            for briefMenu in changeMenuTableResponse.briefMenus {
-                                print(briefMenu.name)
-                            }
-                        }
-                    } catch {
-                        print("Error : \(error.localizedDescription)")
-                    }
-                case .failure(let error):
-                    print("Error : \(error.localizedDescription)")
-                }
+
+        let initialEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName)
+        var timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(10)))
+
+        let provider = MoyaProvider<HomeRouter>()
+
+        do {
+            let menus = try await fetchMenu(provider: provider, date: formattedDate, restaurant: restaurant, time: timeSlot)
+            let updatedEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName, menus: menus)
+            timeline = Timeline(entries: [updatedEntry], policy: .after(currentDate.addingTimeInterval(10)))
+        } catch {
+            print("Error: \(error.localizedDescription)")
         }
 
         return timeline
+    }
+
+    private func fetchMenu(provider: MoyaProvider<HomeRouter>, date: String, restaurant: String, time: String) async throws -> [String] {
+        try await withCheckedThrowingContinuation { continuation in
+            provider.rx.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
+                .map(BaseResponse<[ChangeMenuTableResponse]>.self)
+                .subscribe(onSuccess: { response in
+                    let menuNames = response.result.flatMap { $0.briefMenus.map(\.name) }
+                    continuation.resume(returning: menuNames)
+                }, onFailure: { error in
+                    print("RxMoya Error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                })
+                .disposed(by: disposeBag)
+        }
+    }
+
+    private func formatDate(_ date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        return dateFormatter.string(from: date)
+    }
+
+    private func getTimeSlot(for date: Date) -> String {
+        let hour = Calendar.current.component(.hour, from: date)
+        switch hour {
+        case 0 ..< 10: return "MORNING"
+        case 10 ..< 15: return "LUNCH"
+        case 15 ..< 21: return "DINNER"
+        default: return "CLOSED"
+        }
     }
 }

@@ -32,8 +32,8 @@ struct SmallView: View {
                     .cornerRadius(10)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
-                    ForEach(0 ..< 10, id: \.self) { index in
-                        Text("메뉴 \(index + 1)")
+                    ForEach(entry.menus, id: \.self) { menu in
+                        Text(menu)
                             .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
                     }
                 }

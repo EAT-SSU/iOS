@@ -31,11 +31,11 @@ enum RestaurantOptions: String, AppEnum {
     var displayName: String {
         switch self {
         case .dodam:
-            return "도담식당"
+            "도담식당"
         case .haksik:
-            return "학생식당"
+            "학생식당"
         case .dormitory:
-            return "기숙사 식당"
+            "기숙사 식당"
         }
     }
 
