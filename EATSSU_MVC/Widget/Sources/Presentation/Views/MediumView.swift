@@ -5,8 +5,9 @@
 //  Created by JIWOONG CHOI on 1/17/25.
 //
 
-import EATSSUDesign
 import SwiftUI
+
+import EATSSUDesign
 
 struct MediumView: View {
     var entry: ESEntry
@@ -25,7 +26,7 @@ struct MediumView: View {
             }
 
             HStack {
-                Text("기숙사 식당")
+                Text(entry.restaurantName)
                     .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 10))
                 Spacer()
                 Text("9월 26일")

@@ -53,7 +53,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
 
         print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
 
-        let provider = MoyaProvider<HomeRouter>(plugins: [NetworkLoggerPlugin()])
+        let provider = MoyaProvider<HomeRouter>(plugins: [])
         provider
             .request(
                 .getChangeMenuTableResponse(
