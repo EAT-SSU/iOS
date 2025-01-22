@@ -60,8 +60,8 @@ let projectSettings: Settings = .settings(
         "DEVELOPMENT_TEAM": "HZ8WU7PA4J",
     ],
     configurations: [
-        .debug(name: "Debug", xcconfig: "App/Resources/Secrets/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "App/Resources/Secrets/Release.xcconfig"),
+        .debug(name: "Debug", xcconfig: "App/Configuration/Secrets/Debug.xcconfig"),
+        .release(name: "Release", xcconfig: "App/Configuration/Secrets/Release.xcconfig"),
     ],
     defaultSettings: .recommended
 )
@@ -84,7 +84,7 @@ let project = Project(
             infoPlist: appInfoPlist,
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
-            entitlements: "App/Resources/EatSSU-iOS.entitlements",
+            entitlements: "App/Configuration/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
                 .target(name: "Widget", status: .none, condition: .none),
 
