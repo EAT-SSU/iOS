@@ -50,7 +50,7 @@ extension UITextField {
         attributedPlaceholder = NSAttributedString(
             string: placeholder ?? "",
             attributes: [
-                .foregroundColor: EATSSUDesignAsset.Colors.GrayScaleColor.gray400.color,
+                .foregroundColor: EATSSUDesignAsset.Color.GrayScale.gray400.color,
                 .font: UIFont.body2,
             ].compactMapValues { $0 }
         )

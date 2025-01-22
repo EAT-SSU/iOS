@@ -1,0 +1,43 @@
+//
+//  SmallView.swift
+//  Widget
+//
+//  Created by JIWOONG CHOI on 1/17/25.
+//
+
+import EATSSUDesign
+import SwiftUI
+
+struct SmallView: View {
+    var entry: ESEntry
+
+    var body: some View {
+        VStack {
+            HStack {
+                Text(entry.restaurantName)
+                    .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
+                    .dynamicTypeSize(.xLarge ... .xxxLarge)
+                Text("중식")
+                    .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 8))
+                    .dynamicTypeSize(.xLarge ... .xxxLarge)
+                Spacer()
+                Image(asset: EATSSUDesignAsset.Images.Version2.mainLogoSmall)
+                    .resizable()
+                    .frame(width: 44, height: 14)
+            }
+
+            ZStack {
+                Rectangle()
+                    .foregroundColor(EATSSUDesignAsset.Color.GrayScale.gray300.swiftUIColor)
+                    .cornerRadius(10)
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
+                    ForEach(entry.menus, id: \.self) { menu in
+                        Text(menu)
+                            .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
+                    }
+                }
+            }
+        }
+    }
+}

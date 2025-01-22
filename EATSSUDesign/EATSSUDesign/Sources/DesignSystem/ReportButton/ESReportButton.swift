@@ -66,7 +66,7 @@ public final class ESReportButton: UIButton {
         backgroundColor = .white
 
         layer.borderWidth = 1
-        layer.borderColor = EATSSUDesignAsset.Colors.GrayScaleColor.gray300.color.cgColor
+        layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         layer.cornerRadius = 10
 
         setTitle(title, for: .normal)
@@ -91,11 +91,11 @@ public final class ESReportButton: UIButton {
 
     private func updateButtonAppearance() {
         if isSelected {
-            backgroundColor = EATSSUDesignAsset.Colors.MainColor.secondary.color
-            layer.borderColor = EATSSUDesignAsset.Colors.MainColor.primary.color.cgColor
+            backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+            layer.borderColor = EATSSUDesignAsset.Color.Main.primary.color.cgColor
         } else {
             backgroundColor = .white
-            layer.borderColor = EATSSUDesignAsset.Colors.GrayScaleColor.gray300.color.cgColor
+            layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         }
     }
 }
