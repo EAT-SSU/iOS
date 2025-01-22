@@ -66,7 +66,8 @@ let projectSettings: Settings = .settings(
     defaultSettings: .recommended
 )
 
-let deploymentTarget: DeploymentTargets = .iOS("17.0")
+let appDeploymentTarget: DeploymentTargets = .iOS("15.0")
+let widgetDeploymentTarget: DeploymentTargets = .iOS("17.0")
 
 let project = Project(
     name: "EATSSU_MVC",
@@ -80,7 +81,7 @@ let project = Project(
             destinations: [.iPhone],
             product: .app,
             bundleId: "com.jiwoo.EatSSU",
-            deploymentTargets: deploymentTarget,
+            deploymentTargets: appDeploymentTarget,
             infoPlist: appInfoPlist,
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
@@ -116,7 +117,7 @@ let project = Project(
             destinations: [.iPhone],
             product: .appExtension,
             bundleId: "com.jiwoo.EatSSU.Widget",
-            deploymentTargets: deploymentTarget,
+            deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
             resources: ["Widget/Resources/**"],

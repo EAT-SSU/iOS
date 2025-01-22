@@ -8,6 +8,7 @@
 import SwiftUI
 import WidgetKit
 
+@available(iOS 17.0, *)
 @main
 struct EATSSUWidget: Widget {
     let kind: String = "EATSSU"
