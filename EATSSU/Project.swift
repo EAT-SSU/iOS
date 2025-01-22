@@ -70,7 +70,7 @@ let appDeploymentTarget: DeploymentTargets = .iOS("15.0")
 let widgetDeploymentTarget: DeploymentTargets = .iOS("17.0")
 
 let project = Project(
-    name: "EATSSU_MVC",
+    name: "EATSSU",
     options: .options(
         defaultKnownRegions: ["ko"],
         developmentRegion: "ko"
@@ -87,7 +87,7 @@ let project = Project(
             resources: ["App/Resources/**"],
             entitlements: "App/Configuration/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
-                .target(name: "Widget", status: .none, condition: .none),
+                .target(name: "EATSSUWidget", status: .none, condition: .none),
 
                 // 외부 라이브러리
                 .external(name: "SnapKit", condition: .none),
@@ -113,14 +113,13 @@ let project = Project(
             settings: projectSettings
         ),
         .target(
-            name: "Widget",
+            name: "EATSSUWidget",
             destinations: [.iPhone],
             product: .appExtension,
             bundleId: "com.jiwoo.EatSSU.Widget",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
-            resources: ["Widget/Resources/**"],
             dependencies: [
                 .external(name: "Moya", condition: .none),
                 .external(name: "RxSwift", condition: .none),
@@ -134,7 +133,7 @@ let project = Project(
             settings: projectSettings
         ),
         .target(
-            name: "UITests",
+            name: "EATSSUUITests",
             destinations: [.iPhone],
             product: .uiTests,
             bundleId: "com.jiwoo.EatSSU.UITests",
@@ -145,7 +144,7 @@ let project = Project(
             settings: projectSettings
         ),
         .target(
-            name: "UnitTests",
+            name: "EATSSUUnitTests",
             destinations: [.iPhone],
             product: .unitTests,
             bundleId: "com.jiwoo.EatSSU.UnitTests",
