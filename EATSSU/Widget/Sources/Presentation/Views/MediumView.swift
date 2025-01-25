@@ -42,21 +42,25 @@ struct MediumView: View {
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
             }
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
-                ForEach(entry.menus, id: \.self) { menu in
-                    Text(menu)
-                        .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
-                        .foregroundStyle(.black)
-                        .lineLimit(1)
-                        .dynamicTypeSize(.xLarge ... .xxxLarge)
+            VStack {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
+                    ForEach(entry.menus, id: \.self) { menu in
+                        Text(menu)
+                            .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
+                            .foregroundStyle(.black)
+                            .lineLimit(1)
+                            .dynamicTypeSize(.xLarge ... .xxxLarge)
+                    }
                 }
+                .padding(5)
+
+                Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(EATSSUDesignAsset.Color.GrayScale.gray100.swiftUIColor)
             )
-
-            Spacer()
         }
         .background(Color.white)
     }
