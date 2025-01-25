@@ -19,12 +19,20 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
 
     // 위젯이 처음 로드될 때 보여줄 기본 데이터
     func placeholder(in _: Context) -> ESEntry {
-        ESEntry(date: Date(), restaurantName: "기숙사 식당")
+        let currentDate = Date()
+        let timeSlot = getTimeSlot(for: currentDate)
+        return ESEntry(
+            date: currentDate,
+            restaurantName: "학생식당",
+            timeSlot: timeSlot
+        )
     }
 
     // 위젯 미리보기에서 사용할 샘플 데이터 제공
     func snapshot(for configuration: SelectRestaurant, in _: Context) async -> ESEntry {
-        ESEntry(date: Date(), restaurantName: configuration.selectedRestaurant.displayName)
+        let currentDate = Date()
+        let timeSlot = getTimeSlot(for: currentDate)
+        return ESEntry(date: Date(), restaurantName: configuration.selectedRestaurant.displayName, timeSlot: timeSlot)
     }
 
     // 위젯의 타임라인 데이터를 제공하는 함수
@@ -40,7 +48,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         #endif
 
         // 초기 기본 엔트리 생성 (네트워크 요청 이전 기본값)
-        let initialEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName)
+        let initialEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName, timeSlot: timeSlot)
         var timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))
 
         let provider = MoyaProvider<HomeRouter>() // Moya를 이용한 네트워크 요청 객체 생성
@@ -48,7 +56,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         do {
             // 네트워크 요청을 통해 메뉴 데이터를 가져옴
             let menus = try await fetchMenu(provider: provider, date: formattedDate, restaurant: restaurant, time: timeSlot)
-            let updatedEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName, menus: menus)
+            let updatedEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName, menus: menus, timeSlot: timeSlot)
 
             // 새로운 데이터로 타임라인 업데이트
             timeline = Timeline(entries: [updatedEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))

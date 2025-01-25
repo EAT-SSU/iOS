@@ -32,13 +32,25 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
     ]
 
     func placeholder(in _: Context) -> ESEntry {
-        ESEntry(date: Date(), restaurantName: "개발용 식당", menus: ["로딩중..."])
+        let currentDate = Date()
+        let timeSlot = getTimeSlot(for: currentDate)
+        return ESEntry(
+            date: currentDate,
+            restaurantName: "개발용 식당",
+            menus: ["로딩중..."],
+            timeSlot: timeSlot
+        )
     }
 
     func snapshot(for configuration: SelectRestaurant, in _: Context) async -> ESEntry {
-        ESEntry(date: Date(),
-                restaurantName: configuration.selectedRestaurant.displayName,
-                menus: ["샘플 메뉴 1", "샘플 메뉴 2"])
+        let currentDate = Date()
+        let timeSlot = getTimeSlot(for: currentDate)
+        return ESEntry(
+            date: currentDate,
+            restaurantName: configuration.selectedRestaurant.displayName,
+            menus: ["샘플 메뉴 1", "샘플 메뉴 2"],
+            timeSlot: timeSlot
+        )
     }
 
     func timeline(for configuration: SelectRestaurant, in _: Context) async -> Timeline<ESEntry> {
@@ -51,25 +63,32 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: mockMenus["아침 메뉴"] ?? []
+                menus: mockMenus["아침 메뉴"] ?? [],
+                timeSlot: timeSlot
             )
         case "LUNCH":
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: mockMenus["점심 메뉴"] ?? []
+                menus: mockMenus["점심 메뉴"] ?? [],
+                timeSlot: timeSlot
+
             )
         case "DINNER":
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: mockMenus["저녁 메뉴"] ?? []
+                menus: mockMenus["저녁 메뉴"] ?? [],
+                timeSlot: timeSlot
+
             )
         default:
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: ["영업시간이 아닙니다"]
+                menus: ["영업시간이 아닙니다"],
+                timeSlot: timeSlot
+
             )
         }
 
@@ -94,5 +113,5 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
 #Preview(as: .systemSmall) {
     EATSSUWidget()
 } timeline: {
-    ESEntry(date: Date(), restaurantName: "개발용 식당", menus: ["메뉴1", "메뉴2", "메뉴3"])
+    ESEntry(date: Date(), restaurantName: "개발용 식당", menus: ["메뉴1", "메뉴2", "메뉴3"], timeSlot: "DINNER")
 }

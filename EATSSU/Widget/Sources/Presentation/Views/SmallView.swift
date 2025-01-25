@@ -21,11 +21,16 @@ struct SmallView: View {
                     .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
                     .foregroundStyle(.black)
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
-                Text("중식")
-                    .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 8))
-                    .foregroundStyle(.black)
-                    .dynamicTypeSize(.xLarge ... .xxxLarge)
+
+                if entry.timeSlot == "MORNING" || entry.timeSlot == "LUNCH" || entry.timeSlot == "DINNER" {
+                    Text(entry.timeSlot == "MORNING" ? "조식" : entry.timeSlot == "LUNCH" ? "중식" : "석식")
+                        .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 8))
+                        .foregroundStyle(.black)
+                        .dynamicTypeSize(.xLarge ... .xxxLarge)
+                }
+
                 Spacer()
+
                 Image(asset: EATSSUDesignAsset.Images.Version2.miniLogo)
                     .resizable()
                     .frame(width: 10, height: 10)
