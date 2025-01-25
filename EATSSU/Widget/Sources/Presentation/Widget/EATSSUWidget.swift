@@ -17,7 +17,7 @@ struct EATSSUWidget: Widget {
         AppIntentConfiguration(
             kind: kind,
             intent: SelectRestaurant.self,
-            provider: DevTimelineProvider()
+            provider: ESTimelineProvider()
         ) { entry in
             if #available(iOS 17.0, *) {
                 WidgetEntryView(entry: entry)
