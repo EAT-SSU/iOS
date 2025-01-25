@@ -16,9 +16,11 @@ struct SmallView: View {
             HStack {
                 Text(entry.restaurantName)
                     .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
+                    .foregroundStyle(.black)
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
                 Text("중식")
                     .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 8))
+                    .foregroundStyle(.black)
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
                 Spacer()
                 Image(asset: EATSSUDesignAsset.Images.Version2.mainLogoSmall)
@@ -26,18 +28,19 @@ struct SmallView: View {
                     .frame(width: 44, height: 14)
             }
 
-            ZStack {
-                Rectangle()
-                    .foregroundColor(EATSSUDesignAsset.Color.GrayScale.gray300.swiftUIColor)
-                    .cornerRadius(10)
-
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
-                    ForEach(entry.menus, id: \.self) { menu in
-                        Text(menu)
-                            .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
-                    }
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
+                ForEach(entry.menus, id: \.self) { menu in
+                    Text(menu)
+                        .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
+                        .foregroundStyle(.black)
+                        .lineLimit(1)
+                        .dynamicTypeSize(.xLarge ... .xxxLarge)
                 }
             }
+            .background(EATSSUDesignAsset.Color.GrayScale.gray100.swiftUIColor)
+
+            Spacer()
         }
+        .background(Color.white)
     }
 }

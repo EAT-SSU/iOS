@@ -36,7 +36,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         let timeSlot = getTimeSlot(for: currentDate) // 현재 시간에 따른 타임슬롯 설정 (아침, 점심, 저녁)
 
         #if DEBUG
-        print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
+            print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
         #endif
 
         // 초기 기본 엔트리 생성 (네트워크 요청 이전 기본값)

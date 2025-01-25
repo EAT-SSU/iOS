@@ -16,20 +16,32 @@ struct EATSSUWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: SelectRestaurant.self, // SelectRestaurant Intent 사용
+            intent: SelectRestaurant.self,
             provider: ESTimelineProvider()
         ) { entry in
             if #available(iOS 17.0, *) {
                 WidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    .containerBackground(Color.white, for: .widget)
             } else {
                 WidgetEntryView(entry: entry)
                     .padding()
-                    .background()
+                    .background(Color.white)
             }
         }
         .configurationDisplayName("EATSSU 위젯")
         .description("확인하고 싶은 식당을 선택하세요.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
+}
+
+#Preview(as: .systemSmall) {
+    EATSSUWidget()
+} timeline: {
+    ESEntry(date: Date(), restaurantName: "도담식당")
+}
+
+#Preview(as: .systemMedium) {
+    EATSSUWidget()
+} timeline: {
+    ESEntry(date: Date(), restaurantName: "도담식당")
 }
