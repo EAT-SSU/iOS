@@ -51,7 +51,10 @@ struct MediumView: View {
                         .dynamicTypeSize(.xLarge ... .xxxLarge)
                 }
             }
-            .background(EATSSUDesignAsset.Color.GrayScale.gray100.swiftUIColor)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(EATSSUDesignAsset.Color.GrayScale.gray100.swiftUIColor)
+            )
 
             Spacer()
         }

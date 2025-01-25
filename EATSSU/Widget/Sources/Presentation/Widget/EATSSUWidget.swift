@@ -17,7 +17,7 @@ struct EATSSUWidget: Widget {
         AppIntentConfiguration(
             kind: kind,
             intent: SelectRestaurant.self,
-            provider: ESTimelineProvider()
+            provider: DevTimelineProvider()
         ) { entry in
             if #available(iOS 17.0, *) {
                 WidgetEntryView(entry: entry)
@@ -32,16 +32,4 @@ struct EATSSUWidget: Widget {
         .description("확인하고 싶은 식당을 선택하세요.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
-}
-
-#Preview(as: .systemSmall) {
-    EATSSUWidget()
-} timeline: {
-    ESEntry(date: Date(), restaurantName: "도담식당")
-}
-
-#Preview(as: .systemMedium) {
-    EATSSUWidget()
-} timeline: {
-    ESEntry(date: Date(), restaurantName: "도담식당")
 }
