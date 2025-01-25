@@ -14,13 +14,15 @@ struct MediumView: View {
 
     var body: some View {
         VStack {
+            Spacer()
+
             HStack {
-                Text("화")
-                    .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 14))
+                Text(entry.restaurantName)
+                    .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
                     .foregroundStyle(.black)
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
                 Text("중식")
-                    .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 10))
+                    .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 8))
                     .foregroundStyle(.black)
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
                 Spacer()
@@ -29,22 +31,11 @@ struct MediumView: View {
                     .frame(width: 44, height: 14)
             }
 
-            HStack {
-                Text(entry.restaurantName)
-                    .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 10))
-                    .foregroundStyle(.black)
-
-                Spacer()
-
-                Text("9월 26일")
-                    .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 10))
-                    .foregroundStyle(.black)
-                    .dynamicTypeSize(.xLarge ... .xxxLarge)
-            }
+            Spacer()
 
             VStack {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
-                    ForEach(entry.menus.prefix(8), id: \.self) { menu in
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 8) {
+                    ForEach(entry.menus.prefix(10), id: \.self) { menu in
                         Text(menu)
                             .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
                             .foregroundStyle(.black)
@@ -63,5 +54,7 @@ struct MediumView: View {
             )
         }
         .background(Color.white)
+
+        Spacer()
     }
 }

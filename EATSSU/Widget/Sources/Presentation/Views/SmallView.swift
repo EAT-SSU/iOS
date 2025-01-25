@@ -13,6 +13,8 @@ struct SmallView: View {
     var entry: ESEntry
 
     var body: some View {
+        Spacer()
+
         VStack {
             HStack {
                 Text(entry.restaurantName)
@@ -28,6 +30,8 @@ struct SmallView: View {
                     .resizable()
                     .frame(width: 10, height: 10)
             }
+
+            Spacer()
 
             VStack {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
@@ -50,5 +54,7 @@ struct SmallView: View {
             )
         }
         .background(Color.white)
+
+        Spacer()
     }
 }
