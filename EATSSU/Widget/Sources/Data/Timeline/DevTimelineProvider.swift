@@ -72,7 +72,6 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
                 restaurantName: configuration.selectedRestaurant.displayName,
                 menus: mockMenus["점심 메뉴"] ?? [],
                 timeSlot: timeSlot
-
             )
         case "DINNER":
             ESEntry(
@@ -80,7 +79,6 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
                 restaurantName: configuration.selectedRestaurant.displayName,
                 menus: mockMenus["저녁 메뉴"] ?? [],
                 timeSlot: timeSlot
-
             )
         default:
             ESEntry(
@@ -88,7 +86,6 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
                 restaurantName: configuration.selectedRestaurant.displayName,
                 menus: ["영업시간이 아닙니다"],
                 timeSlot: timeSlot
-
             )
         }
 

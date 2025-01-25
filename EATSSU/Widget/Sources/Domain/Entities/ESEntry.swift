@@ -11,7 +11,7 @@ struct ESEntry: TimelineEntry {
     let date: Date
     let restaurantName: String
     let menus: [String]
-    let timeSlot: String  // Add timeSlot property
+    let timeSlot: String
 
     init(date: Date, restaurantName: String, menus: [String] = ["메뉴가 없습니다."], timeSlot: String) {
         self.date = date

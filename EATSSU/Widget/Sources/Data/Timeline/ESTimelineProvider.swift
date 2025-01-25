@@ -95,10 +95,10 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
     private func getTimeSlot(for date: Date) -> String {
         let hour = Calendar.current.component(.hour, from: date)
         switch hour {
-        case 0 ..< 10: return "MORNING" // 00:00 ~ 09:59 → 아침
-        case 10 ..< 15: return "LUNCH" // 10:00 ~ 14:59 → 점심
-        case 15 ..< 21: return "DINNER" // 15:00 ~ 20:59 → 저녁
-        default: return "CLOSED" // 21:00 이후는 닫힘
+        case 0 ..< 10: return "MORNING"
+        case 10 ..< 16: return "LUNCH"
+        case 16 ..< 24: return "DINNER"
+        default: return "CLOSED"
         }
     }
 }
