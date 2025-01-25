@@ -44,9 +44,9 @@ struct MediumView: View {
 
             VStack {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
-                    ForEach(entry.menus, id: \.self) { menu in
+                    ForEach(entry.menus.prefix(8), id: \.self) { menu in
                         Text(menu)
-                            .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
+                            .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
                             .foregroundStyle(.black)
                             .lineLimit(1)
                             .dynamicTypeSize(.xLarge ... .xxxLarge)
