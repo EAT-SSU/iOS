@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 
 class RestaurantTableViewHeader: BaseTableViewHeaderView {
@@ -35,8 +37,8 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
         }
         infoButton.do {
             var configuration = UIButton.Configuration.plain()
-            configuration.baseForegroundColor = EATSSUAsset.Color.GrayScale.gray600.color
-            configuration.image = EATSSUAsset.Images.Version2.icInfo.image
+            configuration.baseForegroundColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+            configuration.image = EATSSUDesignAsset.Images.icInfo.image
             configuration.imagePlacement = .trailing
             configuration.imagePadding = 4.0
             $0.configuration = configuration

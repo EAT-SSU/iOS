@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import Pageboy
 import SnapKit
 import Tabman
@@ -74,8 +76,6 @@ final class HomeTimeTabmanController: TabmanViewController {
     }
 
     func dateFetchData(for date: Date) {
-        let formatDate = changeDateFormat(date: date)
-
         morningViewController.fetchData(date: date, time: "MORNING")
         lunchViewController.fetchData(date: date, time: "LUNCH")
         dinnerViewController.fetchData(date: date, time: "DINNER")
@@ -136,13 +136,13 @@ extension HomeTimeTabmanController: PageboyViewControllerDataSource, TMBarDataSo
         ctBar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
         ctBar.buttons.customize { button in
             button.tintColor = .gray700 // 선택 안되어 있을 때
-            button.selectedTintColor = EATSSUAsset.Color.Main.primary.color // 선택 되어 있을 때
+            button.selectedTintColor = EATSSUDesignAsset.Color.Main.primary.color // 선택 되어 있을 때
             button.font = .semiBold(size: 16)
         }
 
         // 인디케이터 조정
         ctBar.indicator.weight = .custom(value: 2)
-        ctBar.indicator.tintColor = EATSSUAsset.Color.Main.primary.color
+        ctBar.indicator.tintColor = EATSSUDesignAsset.Color.Main.primary.color
         ctBar.indicator.overscrollBehavior = .compress
         ctBar.layout.contentMode = .fit
         ctBar.layout.transitionStyle = .snap

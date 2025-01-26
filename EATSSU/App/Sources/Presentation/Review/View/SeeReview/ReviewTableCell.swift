@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 
 final class ReviewTableCell: UITableViewCell {
@@ -43,7 +45,7 @@ final class ReviewTableCell: UITableViewCell {
         let label = UILabel()
         label.text = "2023.03.03"
         label.font = .caption3
-        label.textColor = EATSSUAsset.Color.GrayScale.gray600.color
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return label
     }()
 
@@ -51,7 +53,7 @@ final class ReviewTableCell: UITableViewCell {
         let label = UILabel()
         label.text = "hellosoongsil1234"
         label.font = .caption3
-        label.textColor = EATSSUAsset.Color.GrayScale.gray600.color
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return label
     }()
 
@@ -71,7 +73,7 @@ final class ReviewTableCell: UITableViewCell {
 
     private var sideButton: BaseButton = {
         let button = BaseButton()
-        button.setTitleColor(EATSSUAsset.Color.GrayScale.gray400.color, for: .normal)
+        button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray400.color, for: .normal)
         button.titleLabel?.font = .caption2
         button.configuration?.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 15)
         return button

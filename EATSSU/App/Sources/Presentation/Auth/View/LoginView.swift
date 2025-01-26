@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 import Then
 
@@ -16,23 +18,23 @@ final class LoginView: BaseUIView {
     // MARK: - UI Components
 
     private let logoImage = UIImageView().then {
-        $0.image = EATSSUAsset.Images.Version2.authLogo.image
+        $0.image = EATSSUDesignAsset.Images.authLogo.image
     }
 
     private let logoSubTitle = UIImageView().then { imageView in
-        imageView.image = EATSSUAsset.Images.Version2.authSubTitle.image
+        imageView.image = EATSSUDesignAsset.Images.authSubTitle.image
     }
 
     let appleLoginButton = UIButton().then { button in
-        button.setImage(EATSSUAsset.Images.Version2.appleLoginButton.image, for: .normal)
+        button.setImage(EATSSUDesignAsset.Images.appleLoginButton.image, for: .normal)
     }
 
     let kakaoLoginButton = UIButton().then { button in
-        button.setImage(EATSSUAsset.Images.Version2.kakaoLoginButton.image, for: .normal)
+        button.setImage(EATSSUDesignAsset.Images.kakaoLoginButton.image, for: .normal)
     }
 
     let lookingWithNoSignInButton = UIButton().then { button in
-        button.setImage(EATSSUAsset.Images.Version2.lookAroundButton.image, for: .normal)
+        button.setImage(EATSSUDesignAsset.Images.lookAroundButton.image, for: .normal)
     }
 
     override func configureUI() {

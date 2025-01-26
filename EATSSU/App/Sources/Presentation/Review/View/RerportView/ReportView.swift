@@ -7,9 +7,9 @@
 
 import UIKit
 
-import SnapKit
-
 import EATSSUDesign
+
+import SnapKit
 
 final class ReportView: BaseUIView {
     // MARK: - UI Components
@@ -18,7 +18,7 @@ final class ReportView: BaseUIView {
     private let reviewReportReasonLabel: UILabel = {
         let label = UILabel()
         label.text = "리뷰 신고 사유를 알려주세요"
-        label.font = EATSSUFontFamily.Pretendard.bold.font(size: 18)
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         label.textColor = .black
         return label
     }()
@@ -27,8 +27,8 @@ final class ReportView: BaseUIView {
     private let singleReportPerDayLabel: UILabel = {
         let label = UILabel()
         label.text = "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다."
-        label.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUAsset.Color.GrayScale.gray600.color
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return label
     }()
 
@@ -53,11 +53,11 @@ final class ReportView: BaseUIView {
     /// "리뷰 신고 사유를 작성해 주세요" 텍스트필드
     var reviewReportReasonTextView: UITextView = {
         let textView = UITextView()
-        textView.font = EATSSUFontFamily.Pretendard.medium.font(size: 16)
+        textView.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
         textView.layer.cornerRadius = 10
-        textView.backgroundColor = EATSSUAsset.Color.GrayScale.gray100.color
+        textView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
         textView.layer.borderWidth = 1
-        textView.layer.borderColor = EATSSUAsset.Color.GrayScale.gray200.color.cgColor
+        textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray200.color.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
         textView.isEditable = false
         return textView
@@ -67,8 +67,8 @@ final class ReportView: BaseUIView {
     var characterCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0 / 300"
-        label.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUAsset.Color.GrayScale.gray400.color
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         return label
     }()
 

@@ -9,6 +9,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import Moya
 import SnapKit
 
@@ -115,13 +117,13 @@ class BaseViewController: UIViewController {
     func setCustomNavigationBar() {
         // 네비게이션 바 타이틀 속성
         navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: EATSSUAsset.Color.GrayScale.gray700.color,
-            NSAttributedString.Key.font: EATSSUFontFamily.Pretendard.bold.font(size: 16),
+            .foregroundColor: EATSSUDesignAsset.Color.GrayScale.gray700.color,
+            NSAttributedString.Key.font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 16),
         ]
 
         // 네비게이션 바 백버튼 속성
         let backButton = UIBarButtonItem()
-        backButton.tintColor = EATSSUAsset.Color.GrayScale.gray500.color
+        backButton.tintColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
     }
 }

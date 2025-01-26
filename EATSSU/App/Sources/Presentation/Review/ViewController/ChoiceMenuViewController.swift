@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 import Then
 
@@ -59,7 +61,7 @@ final class ChoiceMenuViewController: BaseViewController {
         enjoyLabel.do {
             $0.text = "식사는 맛있게 하셨나요?"
             $0.font = .body1
-            $0.textColor = EATSSUAsset.Color.GrayScale.gray600.color
+            $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         }
 
         choiceMenuTabelView.do {

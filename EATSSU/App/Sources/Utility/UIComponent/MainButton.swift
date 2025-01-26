@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 import Then
 
@@ -15,7 +17,7 @@ class MainButton: UIButton {
         static let height: CGFloat = 48.adjusted
     }
 
-    // MARK: - property
+    // MARK: - Property
 
     var title: String? {
         didSet {
@@ -23,7 +25,7 @@ class MainButton: UIButton {
         }
     }
 
-    // MARK: - init
+    // MARK: - Initializer
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,12 +38,12 @@ class MainButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - func
+    // MARK: - Function
 
     func configureUI() {
         titleLabel?.font = .button1
         titleLabel?.textColor = .white
-        backgroundColor = EATSSUAsset.Color.Main.primary.color
+        backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
         layer.cornerRadius = 10
     }
 
