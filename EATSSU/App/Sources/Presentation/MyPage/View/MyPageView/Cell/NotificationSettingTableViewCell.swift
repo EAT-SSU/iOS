@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 
 class NotificationSettingTableViewCell: UITableViewCell {
@@ -20,7 +22,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
     private let pushNotificationTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "푸시 알림 설정"
-        label.font = EATSSUFontFamily.Pretendard.regular.font(size: 16)
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
         label.textColor = .black
         return label
     }()
@@ -29,8 +31,8 @@ class NotificationSettingTableViewCell: UITableViewCell {
     private let dailyNotificationInfoLabel: UILabel = {
         let label = UILabel()
         label.text = "매일 오전 11시에 알림을 보내드려요"
-        label.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUAsset.Color.GrayScale.gray400.color
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         return label
     }()
 
@@ -42,7 +44,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
 
     let toggleSwitch: UISwitch = {
         let toggleSwitch = UISwitch()
-        toggleSwitch.onTintColor = EATSSUAsset.Color.Main.primary.color
+        toggleSwitch.onTintColor = EATSSUDesignAsset.Color.Main.primary.color
         toggleSwitch.isOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
         return toggleSwitch
     }()

@@ -7,12 +7,12 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 import Then
 
 final class MyPageView: BaseUIView {
-    // MARK: - Properties
-
     // MARK: - UI Components
 
     /// MyPageView 전체 스크롤뷰
@@ -31,20 +31,20 @@ final class MyPageView: BaseUIView {
         $0.addTitleAttribute(
             title: "다시 시도해주세요",
             titleColor: .black,
-            fontName: EATSSUFontFamily.Pretendard.regular.font(size: 16)
+            fontName: EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
         )
     }
 
     // "연결된 계정" 레이블
     let accountTitleLabel = UILabel().then {
         $0.text = TextLiteral.MyPage.linkedAccount
-        $0.font = EATSSUFontFamily.Pretendard.regular.font(size: 14)
+        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
     }
 
     // 서버에서 계정 정보를 가져오기 전 기본값
     var accountTypeLabel = UILabel().then {
         $0.text = "없음"
-        $0.font = EATSSUFontFamily.Pretendard.regular.font(size: 14)
+        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         $0.font = .bold(size: 14)
     }
 
@@ -73,24 +73,24 @@ final class MyPageView: BaseUIView {
     // "앱 버전" 레이블
     private let appVersionStringLabel = UILabel().then { label in
         label.text = TextLiteral.MyPage.appVersion
-        label.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUAsset.Color.GrayScale.gray400.color
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
     }
 
     // 현재 배포된 앱의 버전
     private let appVersionLabel = UILabel().then { label in
         label.text = MyPageRightItemData.version
-        label.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUAsset.Color.GrayScale.gray400.color
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
     }
 
     /// "탈퇴하기" 레이블과 탈퇴하기 아이콘
     let userWithdrawButton: UIButton = {
         let button = UIButton()
         button.setTitle(TextLiteral.MyPage.withdraw, for: .normal)
-        button.setImage(EATSSUAsset.Images.Version2.withdrawIcon.image, for: .normal)
-        button.setTitleColor(EATSSUAsset.Color.GrayScale.gray400.color, for: .normal)
-        button.titleLabel?.font = EATSSUFontFamily.Pretendard.regular.font(size: 12)
+        button.setImage(EATSSUDesignAsset.Images.withdrawIcon.image, for: .normal)
+        button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray400.color, for: .normal)
+        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         button.tintColor = .red
         return button
     }()
@@ -98,7 +98,7 @@ final class MyPageView: BaseUIView {
     /// "탈퇴하기" 레이블 underline
     private let underLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = EATSSUAsset.Color.GrayScale.gray400.color
+        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         return view
     }()
 

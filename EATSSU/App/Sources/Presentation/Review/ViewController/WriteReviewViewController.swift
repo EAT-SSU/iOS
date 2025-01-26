@@ -84,7 +84,7 @@ class WriteReviewViewController: BaseViewController, UIImagePickerControllerDele
         $0.addGestureRecognizer(tapGesture)
     }
 
-    private let selectImageButton = UIButton().then {
+    private lazy var selectImageButton = UIButton().then {
         $0.setImage(UIImage(named: "AddImageButton"), for: .normal)
         $0.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
     }

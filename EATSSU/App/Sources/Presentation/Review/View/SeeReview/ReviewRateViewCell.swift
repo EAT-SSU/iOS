@@ -14,6 +14,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 
 final class ReviewRateViewCell: UITableViewCell {
@@ -38,7 +40,7 @@ final class ReviewRateViewCell: UITableViewCell {
 
     private let bigStarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUAsset.Images.Version2.icStarYellow.image
+        imageView.image = EATSSUDesignAsset.Images.icStarYellow.image
         return imageView
     }()
 
@@ -52,13 +54,13 @@ final class ReviewRateViewCell: UITableViewCell {
 
     private let tasteStarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUAsset.Images.Version2.icStarYellow.image
+        imageView.image = EATSSUDesignAsset.Images.icStarYellow.image
         return imageView
     }()
 
     private let quantityStarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUAsset.Images.Version2.icStarYellow.image
+        imageView.image = EATSSUDesignAsset.Images.icStarYellow.image
         return imageView
     }()
 
@@ -74,7 +76,7 @@ final class ReviewRateViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "5"
         label.font = .body2
-        label.textColor = EATSSUAsset.Color.Main.primary.color
+        label.textColor = EATSSUDesignAsset.Color.Main.primary.color
         return label
     }()
 
@@ -90,7 +92,7 @@ final class ReviewRateViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "5"
         label.font = .body2
-        label.textColor = EATSSUAsset.Color.Main.primary.color
+        label.textColor = EATSSUDesignAsset.Color.Main.primary.color
         return label
     }()
 
@@ -106,7 +108,7 @@ final class ReviewRateViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "15"
         label.font = .caption1
-        label.textColor = EATSSUAsset.Color.Main.primary.color
+        label.textColor = EATSSUDesignAsset.Color.Main.primary.color
         return label
     }()
 
@@ -238,7 +240,7 @@ final class ReviewRateViewCell: UITableViewCell {
         button.setTitle("리뷰 작성하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .bold(size: 14)
-        button.backgroundColor = EATSSUAsset.Color.Main.primary.color
+        button.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = false
         return button
