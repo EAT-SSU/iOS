@@ -84,22 +84,22 @@ let project = Project(
                 .target(name: "EATSSUWidget-DEV"),
 
                 // 외부 라이브러리
-                .external(name: "SnapKit", condition: .none),
-                .external(name: "Tabman", condition: .none),
-                .external(name: "Moya", condition: .none),
-                .external(name: "Then", condition: .none),
-                .external(name: "FSCalendar", condition: .none),
-                .external(name: "Kingfisher", condition: .none),
-                .external(name: "GoogleAppMeasurement", condition: .none),
-                .external(name: "Realm", condition: .none),
-                .external(name: "RealmSwift", condition: .none),
-                .external(name: "FirebaseCrashlytics", condition: .none),
-                .external(name: "FirebaseAnalytics", condition: .none),
-                .external(name: "FirebaseRemoteConfig", condition: .none),
-                .external(name: "KakaoSDKAuth", condition: .none),
-                .external(name: "KakaoSDKUser", condition: .none),
-                .external(name: "KakaoSDKCommon", condition: .none),
-                .external(name: "KakaoSDKTalk", condition: .none),
+                .external(name: "SnapKit"),
+                .external(name: "Tabman"),
+                .external(name: "Moya"),
+                .external(name: "Then"),
+                .external(name: "FSCalendar"),
+                .external(name: "Kingfisher"),
+                .external(name: "GoogleAppMeasurement"),
+                .external(name: "Realm"),
+                .external(name: "RealmSwift"),
+                .external(name: "FirebaseCrashlytics"),
+                .external(name: "FirebaseAnalytics"),
+                .external(name: "FirebaseRemoteConfig"),
+                .external(name: "KakaoSDKAuth"),
+                .external(name: "KakaoSDKUser"),
+                .external(name: "KakaoSDKCommon"),
+                .external(name: "KakaoSDKTalk"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -120,22 +120,22 @@ let project = Project(
                 .target(name: "EATSSUWidget-PROD"),
 
                 // 외부 라이브러리
-                .external(name: "SnapKit", condition: .none),
-                .external(name: "Tabman", condition: .none),
-                .external(name: "Moya", condition: .none),
-                .external(name: "Then", condition: .none),
-                .external(name: "FSCalendar", condition: .none),
-                .external(name: "Kingfisher", condition: .none),
-                .external(name: "GoogleAppMeasurement", condition: .none),
-                .external(name: "Realm", condition: .none),
-                .external(name: "RealmSwift", condition: .none),
-                .external(name: "FirebaseCrashlytics", condition: .none),
-                .external(name: "FirebaseAnalytics", condition: .none),
-                .external(name: "FirebaseRemoteConfig", condition: .none),
-                .external(name: "KakaoSDKAuth", condition: .none),
-                .external(name: "KakaoSDKUser", condition: .none),
-                .external(name: "KakaoSDKCommon", condition: .none),
-                .external(name: "KakaoSDKTalk", condition: .none),
+                .external(name: "SnapKit"),
+                .external(name: "Tabman"),
+                .external(name: "Moya"),
+                .external(name: "Then"),
+                .external(name: "FSCalendar"),
+                .external(name: "Kingfisher"),
+                .external(name: "GoogleAppMeasurement"),
+                .external(name: "Realm"),
+                .external(name: "RealmSwift"),
+                .external(name: "FirebaseCrashlytics"),
+                .external(name: "FirebaseAnalytics"),
+                .external(name: "FirebaseRemoteConfig"),
+                .external(name: "KakaoSDKAuth"),
+                .external(name: "KakaoSDKUser"),
+                .external(name: "KakaoSDKCommon"),
+                .external(name: "KakaoSDKTalk"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -151,10 +151,9 @@ let project = Project(
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
             dependencies: [
-                .external(name: "Moya", condition: .none),
-                .external(name: "RxSwift", condition: .none),
-                .external(name: "RxMoya", condition: .none),
-                .external(name: "CombineMoya", condition: .none),
+                .external(name: "Moya"),
+                .external(name: "RxSwift"),
+                .external(name: "RxMoya"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -171,10 +170,9 @@ let project = Project(
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
             dependencies: [
-                .external(name: "Moya", condition: .none),
-                .external(name: "RxSwift", condition: .none),
-                .external(name: "RxMoya", condition: .none),
-                .external(name: "CombineMoya", condition: .none),
+                .external(name: "Moya"),
+                .external(name: "RxSwift"),
+                .external(name: "RxMoya"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -190,7 +188,7 @@ let project = Project(
             bundleId: "com.jiwoo.EatSSU.UITests",
             sources: ["Tests/UITests/**"],
             dependencies: [
-                .target(name: "EATSSU-DEV", status: .none, condition: .none),
+                .target(name: "EATSSU-DEV"),
             ],
             settings: projectSettings
         ),
@@ -201,7 +199,7 @@ let project = Project(
             bundleId: "com.jiwoo.EatSSU.UnitTests",
             sources: ["Tests/UnitTests/**"],
             dependencies: [
-                .target(name: "EATSSU-DEV", status: .none, condition: .none),
+                .target(name: "EATSSU-DEV"),
             ],
             settings: projectSettings
         ),
