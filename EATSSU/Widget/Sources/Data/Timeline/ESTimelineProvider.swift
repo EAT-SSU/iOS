@@ -82,7 +82,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
                 timeSlot: timeSlot,
                 isError: true
             )
-            timeline = Timeline(entries: [errorEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))
+            timeline = Timeline(entries: [errorEntry], policy: .atEnd)
         }
 
         return timeline
