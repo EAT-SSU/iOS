@@ -69,7 +69,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
             )
 
             // 새로운 데이터로 타임라인 업데이트
-            timeline = Timeline(entries: [updatedEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))
+            timeline = Timeline(entries: [updatedEntry], policy: .atEnd)
         } catch {
             #if DEBUG
                 print("Error: \(error.localizedDescription)") // 네트워크 요청 실패 시 오류 출력
