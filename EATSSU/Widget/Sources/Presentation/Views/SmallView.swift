@@ -16,7 +16,11 @@ struct SmallView: View {
         if entry.isError {
             SmallErrorView(entry: entry)
         } else {
-            SmallSuccessView(entry: entry)
+            if entry.menus.isEmpty {
+                SmallEmptyMenuView(entry: entry)
+            } else {
+                SmallNormalView(entry: entry)
+            }
         }
     }
 }

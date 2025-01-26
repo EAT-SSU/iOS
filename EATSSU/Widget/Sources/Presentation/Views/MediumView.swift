@@ -16,7 +16,11 @@ struct MediumView: View {
         if entry.isError {
             MediumErrorView(entry: entry)
         } else {
-            MediumSuccessView(entry: entry)
+            if entry.menus.isEmpty {
+                MediumEmptyMenuView(entry: entry)
+            } else {
+                MediumNormalView(entry: entry)
+            }
         }
     }
 }

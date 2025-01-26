@@ -1,6 +1,6 @@
 //
-//  SmallSuccessView.swift
-//  EATSSUWidget
+//  SmallEmptyMenuView.swift
+//  EATSSU
 //
 //  Created by JIWOONG CHOI on 1/26/25.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 
 import EATSSUDesign
 
-struct SmallSuccessView: View {
+struct SmallEmptyMenuView: View {
     var entry: ESEntry
 
     var body: some View {
@@ -39,22 +39,7 @@ struct SmallSuccessView: View {
             Spacer()
 
             VStack {
-                if entry.menus.isEmpty {
-                    Image(asset: EATSSUDesignAsset.Images.noMenuInfoSign)
-                } else {
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
-                        ForEach(entry.menus.prefix(8), id: \.self) { menu in
-                            Text(menu)
-                                .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
-                                .foregroundStyle(.black)
-                                .lineLimit(1)
-                                .dynamicTypeSize(.xLarge ... .xxxLarge)
-                        }
-                    }
-                    .padding(5)
-
-                    Spacer()
-                }
+                Image(asset: EATSSUDesignAsset.Images.noMenuInfoSign)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(

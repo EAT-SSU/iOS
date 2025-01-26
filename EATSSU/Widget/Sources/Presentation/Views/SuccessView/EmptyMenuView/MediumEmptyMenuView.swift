@@ -1,6 +1,6 @@
 //
-//  MediumSuccessView.swift
-//  EATSSUWidget
+//  MediumEmptyMenuView.swift
+//  EATSSU
 //
 //  Created by JIWOONG CHOI on 1/26/25.
 //
@@ -9,12 +9,10 @@ import SwiftUI
 
 import EATSSUDesign
 
-struct MediumSuccessView: View {
+struct MediumEmptyMenuView: View {
     var entry: ESEntry
 
     var body: some View {
-        Spacer()
-
         VStack {
             Spacer()
 
@@ -41,22 +39,7 @@ struct MediumSuccessView: View {
             Spacer()
 
             VStack {
-                if entry.menus.isEmpty {
-                    Image(asset: EATSSUDesignAsset.Images.noMenuInfoSign)
-                } else {
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 8) {
-                        ForEach(entry.menus.prefix(10), id: \.self) { menu in
-                            Text(menu)
-                                .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
-                                .foregroundStyle(.black)
-                                .lineLimit(1)
-                                .dynamicTypeSize(.xLarge ... .xxxLarge)
-                        }
-                    }
-                    .padding(5)
-
-                    Spacer()
-                }
+                Image(asset: EATSSUDesignAsset.Images.noMenuInfoSign)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
@@ -65,7 +48,9 @@ struct MediumSuccessView: View {
             )
         }
         .background(Color.white)
-
-        Spacer()
     }
+}
+
+#Preview {
+    MediumEmptyMenuView(entry: ESEntry(date: Date(), restaurantName: "도담식당", timeSlot: "LUNCH"))
 }
