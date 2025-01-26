@@ -23,7 +23,7 @@ final class MyPageView: BaseUIView {
 
     // 사용자 이미지
     var userImage = UIImageView().then {
-        $0.image = ImageLiteral.profileIcon
+        $0.image = EATSSUDesignAsset.Images.profile.image
     }
 
     // 닉네임이 들어간 닉네임 변경 버튼
@@ -207,10 +207,10 @@ final class MyPageView: BaseUIView {
             switch accountType {
             case .apple:
                 accountTypeLabel.text = "APPLE"
-                accountTypeImage.image = ImageLiteral.signInWithApple
+                accountTypeImage.image = EATSSUDesignAsset.Images.signWithApple.image
             case .kakao:
                 accountTypeLabel.text = "카카오"
-                accountTypeImage.image = ImageLiteral.signInWithKakao
+                accountTypeImage.image = EATSSUDesignAsset.Images.signWithKakao.image
             }
         }
     }
