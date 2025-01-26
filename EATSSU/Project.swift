@@ -16,9 +16,6 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
         "kakaoplus",
         "kakaotalk",
     ],
-    "NSAppTransportSecurity": [
-        "NSAllowsArbitraryLoads": true,
-    ],
     "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
         "UISceneConfigurations": [
@@ -43,14 +40,11 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
 ])
 
 let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
+    "CFBundleDisplayName": "$(PRODUCT_NAME)",
     "NSExtension": [
         "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
     ],
     "BASE_URL": "https://$(BASE_URL)",
-    "CFBundleDevelopmentRegion": "ko",
-    "NSAppTransportSecurity": [
-        "NSAllowsArbitraryLoads": true,
-    ],
 ])
 
 let projectSettings: Settings = .settings(
@@ -77,7 +71,7 @@ let project = Project(
     ),
     targets: [
         .target(
-            name: "EATSSU",
+            name: "EATSSU-DEV",
             destinations: [.iPhone],
             product: .app,
             bundleId: "com.jiwoo.EatSSU",
@@ -87,25 +81,25 @@ let project = Project(
             resources: ["App/Resources/**"],
             entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
-                .target(name: "EATSSUWidget", status: .none, condition: .none),
+                .target(name: "EATSSUWidget-DEV"),
 
                 // 외부 라이브러리
-                .external(name: "SnapKit", condition: .none),
-                .external(name: "Tabman", condition: .none),
-                .external(name: "Moya", condition: .none),
-                .external(name: "Then", condition: .none),
-                .external(name: "FSCalendar", condition: .none),
-                .external(name: "Kingfisher", condition: .none),
-                .external(name: "GoogleAppMeasurement", condition: .none),
-                .external(name: "Realm", condition: .none),
-                .external(name: "RealmSwift", condition: .none),
-                .external(name: "FirebaseCrashlytics", condition: .none),
-                .external(name: "FirebaseAnalytics", condition: .none),
-                .external(name: "FirebaseRemoteConfig", condition: .none),
-                .external(name: "KakaoSDKAuth", condition: .none),
-                .external(name: "KakaoSDKUser", condition: .none),
-                .external(name: "KakaoSDKCommon", condition: .none),
-                .external(name: "KakaoSDKTalk", condition: .none),
+                .external(name: "SnapKit"),
+                .external(name: "Tabman"),
+                .external(name: "Moya"),
+                .external(name: "Then"),
+                .external(name: "FSCalendar"),
+                .external(name: "Kingfisher"),
+                .external(name: "GoogleAppMeasurement"),
+                .external(name: "Realm"),
+                .external(name: "RealmSwift"),
+                .external(name: "FirebaseCrashlytics"),
+                .external(name: "FirebaseAnalytics"),
+                .external(name: "FirebaseRemoteConfig"),
+                .external(name: "KakaoSDKAuth"),
+                .external(name: "KakaoSDKUser"),
+                .external(name: "KakaoSDKCommon"),
+                .external(name: "KakaoSDKTalk"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -113,18 +107,53 @@ let project = Project(
             settings: projectSettings
         ),
         .target(
-            name: "EATSSUWidget",
+            name: "EATSSU-PROD",
+            destinations: [.iPhone],
+            product: .app,
+            bundleId: "com.jiwoo.EatSSU",
+            deploymentTargets: appDeploymentTarget,
+            infoPlist: appInfoPlist,
+            sources: ["App/Sources/**"],
+            resources: ["App/Resources/**"],
+            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            dependencies: [
+                .target(name: "EATSSUWidget-PROD"),
+
+                // 외부 라이브러리
+                .external(name: "SnapKit"),
+                .external(name: "Tabman"),
+                .external(name: "Moya"),
+                .external(name: "Then"),
+                .external(name: "FSCalendar"),
+                .external(name: "Kingfisher"),
+                .external(name: "GoogleAppMeasurement"),
+                .external(name: "Realm"),
+                .external(name: "RealmSwift"),
+                .external(name: "FirebaseCrashlytics"),
+                .external(name: "FirebaseAnalytics"),
+                .external(name: "FirebaseRemoteConfig"),
+                .external(name: "KakaoSDKAuth"),
+                .external(name: "KakaoSDKUser"),
+                .external(name: "KakaoSDKCommon"),
+                .external(name: "KakaoSDKTalk"),
+
+                // EATSSU 내장 라이브러리
+                .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
+            ],
+            settings: projectSettings
+        ),
+        .target(
+            name: "EATSSUWidget-DEV",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.Widget",
+            bundleId: "com.jiwoo.EatSSU.WidgetExtension",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
             dependencies: [
-                .external(name: "Moya", condition: .none),
-                .external(name: "RxSwift", condition: .none),
-                .external(name: "RxMoya", condition: .none),
-                .external(name: "CombineMoya", condition: .none),
+                .external(name: "Moya"),
+                .external(name: "RxSwift"),
+                .external(name: "RxMoya"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -132,6 +161,26 @@ let project = Project(
             ],
             settings: projectSettings
         ),
+        .target(
+            name: "EATSSUWidget-PROD",
+            destinations: [.iPhone],
+            product: .appExtension,
+            bundleId: "com.jiwoo.EatSSU.WidgetExtension",
+            deploymentTargets: widgetDeploymentTarget,
+            infoPlist: widgetInfoPlist,
+            sources: ["Widget/Sources/**"],
+            dependencies: [
+                .external(name: "Moya"),
+                .external(name: "RxSwift"),
+                .external(name: "RxMoya"),
+
+                // EATSSU 내장 라이브러리
+                .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
+
+            ],
+            settings: projectSettings
+        ),
+
         .target(
             name: "EATSSUUITests",
             destinations: [.iPhone],
@@ -139,7 +188,7 @@ let project = Project(
             bundleId: "com.jiwoo.EatSSU.UITests",
             sources: ["Tests/UITests/**"],
             dependencies: [
-                .target(name: "EATSSU", status: .none, condition: .none),
+                .target(name: "EATSSU-DEV"),
             ],
             settings: projectSettings
         ),
@@ -150,9 +199,47 @@ let project = Project(
             bundleId: "com.jiwoo.EatSSU.UnitTests",
             sources: ["Tests/UnitTests/**"],
             dependencies: [
-                .target(name: "EATSSU", status: .none, condition: .none),
+                .target(name: "EATSSU-DEV"),
             ],
             settings: projectSettings
         ),
+    ],
+    schemes: [
+        .scheme(
+            name: "EATSSU-DEV",
+            shared: true,
+            buildAction: .buildAction(targets: [.target("EATSSU-DEV")]),
+            testAction: .targets(["EATSSU-DEV"]),
+            runAction: .runAction(configuration: "Debug"),
+            archiveAction: .archiveAction(configuration: "Release"),
+            profileAction: .profileAction(configuration: "Debug"),
+            analyzeAction: .analyzeAction(configuration: "Debug")
+        ),
+        .scheme(name: "EATSSU-PROD",
+                shared: true,
+                buildAction: .buildAction(targets: [.target("EATSSU-PROD")]),
+                testAction: .targets(["EATSSU-PROD"]),
+                runAction: .runAction(configuration: "Release"),
+                archiveAction: .archiveAction(configuration: "Release"),
+                profileAction: .profileAction(configuration: "Release"),
+                analyzeAction: .analyzeAction(configuration: "Release")),
+        .scheme(
+            name: "EATSSUWidget-DEV",
+            shared: true,
+            buildAction: .buildAction(targets: [.target("EATSSUWidget-DEV")]),
+            testAction: .targets(["EATSSUWidget-DEV"]),
+            runAction: .runAction(configuration: "Debug"),
+            archiveAction: .archiveAction(configuration: "Release"),
+            profileAction: .profileAction(configuration: "Debug"),
+            analyzeAction: .analyzeAction(configuration: "Debug")
+        ),
+        .scheme(name: "EATSSUWidget-PROD",
+                shared: true,
+                buildAction: .buildAction(targets: [.target("EATSSUWidget-PROD")]),
+                testAction: .targets(["EATSSUWidget-PROD"]),
+                runAction: .runAction(configuration: "Release"),
+                archiveAction: .archiveAction(configuration: "Release"),
+                profileAction: .profileAction(configuration: "Release"),
+                analyzeAction: .analyzeAction(configuration: "Release")),
     ]
 )

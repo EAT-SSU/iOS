@@ -10,6 +10,7 @@ import PackageDescription
         productTypes: [
             "Alamofire": .framework,
             "Moya": .framework,
+            "RxMoya": .framework,
             "SnapKit": .framework,
             "Tabman": .framework,
             "Then": .framework,

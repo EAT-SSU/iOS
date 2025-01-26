@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import Moya
 import SnapKit
 import Then
@@ -72,7 +74,7 @@ final class SetRateViewController: BaseViewController {
         let label = UILabel()
         label.text = "해당 메뉴에 대한 상세한 평가를 남겨주세요."
         label.font = .body3
-        label.textColor = EATSSUAsset.Color.GrayScale.gray600.color
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return label
     }()
 
@@ -108,9 +110,9 @@ final class SetRateViewController: BaseViewController {
         let textView = UITextView()
         textView.font = .body1
         textView.layer.cornerRadius = 10.adjusted
-        textView.backgroundColor = EATSSUAsset.Color.GrayScale.gray100.color
+        textView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
         textView.layer.borderWidth = 1.adjusted
-        textView.layer.borderColor = EATSSUAsset.Color.GrayScale.gray300.color.cgColor
+        textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted,
                                                    left: 16.0.adjusted,
                                                    bottom: 16.0.adjusted,
@@ -129,7 +131,7 @@ final class SetRateViewController: BaseViewController {
         $0.addGestureRecognizer(tapGesture)
     }
 
-    private let selectImageButton = UIButton().then {
+    private lazy var selectImageButton = UIButton().then {
         $0.setImage(UIImage(named: "AddImageButton"), for: .normal)
         $0.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
     }
@@ -137,14 +139,14 @@ final class SetRateViewController: BaseViewController {
     private let deleteMethodLabel = UILabel().then {
         $0.text = "이미지 클릭 시, 삭제됩니다"
         $0.font = .caption3
-        $0.textColor = EATSSUAsset.Color.GrayScale.gray500.color
+        $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
     }
 
     private let maximumWordLabel: UILabel = {
         let label = UILabel()
         label.text = "0 / 300"
         label.font = .caption2
-        label.textColor = EATSSUAsset.Color.GrayScale.gray600.color
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return label
     }()
 

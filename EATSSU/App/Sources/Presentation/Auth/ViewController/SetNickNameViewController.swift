@@ -100,7 +100,7 @@ final class SetNickNameViewController: BaseViewController {
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+        if ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue) != nil {
             setNickNameView.completeSettingNickNameButton.frame.origin.y += currentKeyboardHeight
             currentKeyboardHeight = 0.0
         }

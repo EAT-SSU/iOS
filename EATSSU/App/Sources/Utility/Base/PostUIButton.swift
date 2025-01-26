@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 
 class PostUIButton: UIButton {
@@ -28,23 +30,20 @@ class PostUIButton: UIButton {
 
     private func setEnableButton() {
         isUserInteractionEnabled = true
-        backgroundColor = EATSSUAsset.Color.Main.primary.color
+        backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
     }
 
     private func setDisableButton() {
         isUserInteractionEnabled = false
-        backgroundColor = EATSSUAsset.Color.Main.secondary.color
+        backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
     }
 
     func setupButton() {
-        backgroundColor = EATSSUAsset.Color.Main.secondary.color
+        backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
         setTitleColor(.white, for: .normal)
-        titleLabel?.font = EATSSUFontFamily.Pretendard.bold.font(size: 14)
+        titleLabel?.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)
         layer.cornerRadius = 10
-        /*
-         해야 할 일
-         - UIEdgeInsets은 iOS 15.0에서 deprecated 되었기에, 수정 필요
-         */
+        // TODO: UIEdgeInsets은 iOS 15.0에서 deprecated 되었기에, 수정 필요
         contentEdgeInsets = UIEdgeInsets(top: 9, left: 0, bottom: 9, right: 0)
         contentHorizontalAlignment = .center
         isEnabled = false

@@ -6,6 +6,8 @@
 //
 import UIKit
 
+import EATSSUDesign
+
 import FirebaseAnalytics
 import Moya
 import SnapKit
@@ -66,16 +68,16 @@ final class HomeViewController: BaseViewController {
     }
 
     private func setnavigation() {
-        navigationItem.titleView = UIImageView(image: EATSSUAsset.Images.Version2.mainLogoSmall.image)
+        navigationItem.titleView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
 
         let rightButton = UIBarButtonItem(
             // FIXME: myPageIcon은 Version 1 소속 이미지 파일입니다. 앞으로도 사용한다면 Version 2로 옮겨주세요.
-            image: EATSSUAsset.Images.Version1.myPageIcon.image,
+            image: EATSSUDesignAsset.Images.myPageIcon.image,
             style: .plain, target: self,
             action: #selector(rightBarButtonTapped)
         )
         navigationItem.rightBarButtonItem = rightButton
-        navigationItem.rightBarButtonItem?.tintColor = EATSSUAsset.Color.Main.primary.color
+        navigationItem.rightBarButtonItem?.tintColor = EATSSUDesignAsset.Color.Main.primary.color
 
         navigationController?.isNavigationBarHidden = false
     }

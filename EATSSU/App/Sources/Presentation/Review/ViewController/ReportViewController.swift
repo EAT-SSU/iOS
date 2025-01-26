@@ -5,12 +5,11 @@
 //  Created by Jiwoong CHOI on 8/30/24.
 //
 
-// Swift Module
 import UIKit
 
-import Moya
+import EATSSUDesign
 
-// External Module
+import Moya
 import SnapKit
 
 final class ReportViewController: BaseViewController {
@@ -107,8 +106,8 @@ final class ReportViewController: BaseViewController {
         navBarApperance.configureWithOpaqueBackground()
 
         navBarApperance.titleTextAttributes = [
-            .foregroundColor: EATSSUAsset.Color.GrayScale.gray700.color,
-            .font: EATSSUFontFamily.Pretendard.bold.font(size: 18),
+            .foregroundColor: EATSSUDesignAsset.Color.GrayScale.gray700.color,
+            .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 18),
         ]
         navBarApperance.backgroundColor = .white
         navBarApperance.shadowColor = nil

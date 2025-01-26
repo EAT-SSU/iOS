@@ -30,10 +30,17 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
     }
 
     // 위젯 미리보기에서 사용할 샘플 데이터 제공
-    func snapshot(for configuration: SelectRestaurant, in _: Context) async -> ESEntry {
-        let currentDate = Date()
-        let timeSlot = getTimeSlot(for: currentDate)
-        return ESEntry(date: Date(), restaurantName: configuration.selectedRestaurant.displayName, timeSlot: timeSlot)
+    func snapshot(for _: SelectRestaurant, in _: Context) async -> ESEntry {
+        let mockupMenus = ["스팸마요덮밥", "우동국물", "깍두기", "요거트",
+                           "불고기덮밥", "된장찌개", "참치김치볶음",
+                           "배추김치", "계란장조림", "사과"]
+        return ESEntry(
+            date: Date(),
+            restaurantName: "학생식당",
+            menus: mockupMenus,
+            timeSlot: "LUNCH",
+            isError: false
+        )
     }
 
     // 위젯의 타임라인 데이터를 제공하는 함수

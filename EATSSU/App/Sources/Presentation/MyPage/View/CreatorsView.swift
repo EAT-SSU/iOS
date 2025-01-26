@@ -5,10 +5,10 @@
 //  Created by Jiwoong CHOI on 9/11/24.
 //
 
-// Swift Module
 import UIKit
 
-// External Module
+import EATSSUDesign
+
 import SnapKit
 
 /// "만든 사람들"을 담고 있는 View 입니다.
@@ -17,7 +17,7 @@ class CreatorsView: BaseUIView {
 
     private let creatorsImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUAsset.Images.Version2.creators.image
+        imageView.image = EATSSUDesignAsset.Images.creators.image
         imageView.contentMode = .scaleAspectFit
         imageView.snp.makeConstraints { make in
             make.width.equalTo(342)

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 import Then
 
@@ -38,13 +40,13 @@ final class RateNumberView: BaseUIView {
     override func configureUI() {
         addSubviews(rateNumberStackView)
         starImageView.do {
-            $0.image = EATSSUAsset.Images.Version2.icStarYellow.image
+            $0.image = EATSSUDesignAsset.Images.icStarYellow.image
         }
 
         rateNumberLabel.do {
             $0.text = "5"
             $0.font = .body2
-            $0.textColor = EATSSUAsset.Color.Main.primary.color
+            $0.textColor = EATSSUDesignAsset.Color.Main.primary.color
         }
 
         rateNumberStackView.do {

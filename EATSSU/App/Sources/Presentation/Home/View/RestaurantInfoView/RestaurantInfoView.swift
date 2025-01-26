@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import MapKit
 import SnapKit
 import Then
@@ -14,7 +16,7 @@ import Then
 final class RestaurantInfoView: BaseUIView {
     // MARK: - UI Components
 
-    let restaurantImage = UIImageView(image: EATSSUAsset.Images.Version2.restaurantImage.image)
+    let restaurantImage = UIImageView(image: EATSSUDesignAsset.Images.restaurantImage.image)
 
     var restaurantNameLabel = UILabel().then {
         $0.text = "학생 식당"

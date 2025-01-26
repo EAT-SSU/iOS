@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 import Then
 
@@ -84,7 +86,7 @@ extension ChoiceMenuTableViewCell {
     }
 
     func tapped() {
-        let image = isChecked ? EATSSUAsset.Images.Version2.icCheck.image : EATSSUAsset.Images.Version2.icUncheck.image
+        let image = isChecked ? EATSSUDesignAsset.Images.icCheck.image : EATSSUDesignAsset.Images.icUncheck.image
         checkButton.setImage(image, for: .normal)
     }
 }

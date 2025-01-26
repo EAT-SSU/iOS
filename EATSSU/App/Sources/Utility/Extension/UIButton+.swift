@@ -43,7 +43,7 @@ extension UIButton {
 
     /// title / image vertical align
     func alignTextBelow(spacing _: CGFloat = 8.0) {
-        guard let image = imageView?.image else {
+        guard (imageView?.image) != nil else {
             return
         }
 

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import FSCalendar
 import SnapKit
 import Then
@@ -79,13 +81,13 @@ extension HomeCalendarView: FSCalendarDataSource, FSCalendarDelegate {
         // Date
         calendar.appearance.titleFont = .bold(size: 16)
         calendar.appearance.todayColor = .white
-        calendar.appearance.titleTodayColor = EATSSUAsset.Color.Main.primary.color
+        calendar.appearance.titleTodayColor = EATSSUDesignAsset.Color.Main.primary.color
 
         // Selection
         calendar.allowsSelection = true
         calendar.allowsMultipleSelection = false
         calendar.appearance.borderRadius = 20
-        calendar.appearance.selectionColor = EATSSUAsset.Color.Main.primary.color
+        calendar.appearance.selectionColor = EATSSUDesignAsset.Color.Main.primary.color
 
         // 오늘 날짜 Select
         calendar.select(Date())

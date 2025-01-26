@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 
 final class RateView: BaseUIView {
@@ -28,9 +30,9 @@ final class RateView: BaseUIView {
         return view
     }()
 
-    lazy var starFillImage: UIImage? = EATSSUAsset.Images.Version2.icStarYellow.image
+    lazy var starFillImage: UIImage? = EATSSUDesignAsset.Images.icStarYellow.image
 
-    lazy var starEmptyImage: UIImage? = EATSSUAsset.Images.Version2.icStarGray.image
+    lazy var starEmptyImage: UIImage? = EATSSUDesignAsset.Images.icStarGray.image
 
     override init(frame: CGRect) {
         super.init(frame: frame)
