@@ -87,7 +87,7 @@ let project = Project(
             resources: ["App/Resources/**"],
             entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
-                .target(name: "EATSSUWidget", status: .none, condition: .none),
+                .target(name: "EATSSUWidget-DEV", status: .none, condition: .none),
 
                 // 외부 라이브러리
                 .external(name: "SnapKit", condition: .none),
@@ -123,7 +123,7 @@ let project = Project(
             resources: ["App/Resources/**"],
             entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
-                .target(name: "EATSSUWidget", status: .none, condition: .none),
+                .target(name: "EATSSUWidget-PROD", status: .none, condition: .none),
 
                 // 외부 라이브러리
                 .external(name: "SnapKit", condition: .none),
@@ -149,7 +149,7 @@ let project = Project(
             settings: projectSettings
         ),
         .target(
-            name: "EATSSUWidget",
+            name: "EATSSUWidget-DEV",
             destinations: [.iPhone],
             product: .appExtension,
             bundleId: "com.jiwoo.EatSSU.Widget",
@@ -168,6 +168,27 @@ let project = Project(
             ],
             settings: projectSettings
         ),
+        .target(
+            name: "EATSSUWidget-PROD",
+            destinations: [.iPhone],
+            product: .appExtension,
+            bundleId: "com.jiwoo.EatSSU.Widget",
+            deploymentTargets: widgetDeploymentTarget,
+            infoPlist: widgetInfoPlist,
+            sources: ["Widget/Sources/**"],
+            dependencies: [
+                .external(name: "Moya", condition: .none),
+                .external(name: "RxSwift", condition: .none),
+                .external(name: "RxMoya", condition: .none),
+                .external(name: "CombineMoya", condition: .none),
+
+                // EATSSU 내장 라이브러리
+                .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
+
+            ],
+            settings: projectSettings
+        ),
+
         .target(
             name: "EATSSUUITests",
             destinations: [.iPhone],
@@ -206,6 +227,24 @@ let project = Project(
                 shared: true,
                 buildAction: .buildAction(targets: [.target("EATSSU-PROD")]),
                 testAction: .targets(["EATSSU-PROD"]),
+                runAction: .runAction(configuration: "Release"),
+                archiveAction: .archiveAction(configuration: "Release"),
+                profileAction: .profileAction(configuration: "Release"),
+                analyzeAction: .analyzeAction(configuration: "Release")),
+        .scheme(
+            name: "EATSSUWidget-DEV",
+            shared: true,
+            buildAction: .buildAction(targets: [.target("EATSSUWidget-DEV")]),
+            testAction: .targets(["EATSSUWidget-DEV"]),
+            runAction: .runAction(configuration: "Debug"),
+            archiveAction: .archiveAction(configuration: "Release"),
+            profileAction: .profileAction(configuration: "Debug"),
+            analyzeAction: .analyzeAction(configuration: "Debug")
+        ),
+        .scheme(name: "EATSSUWidget-PROD",
+                shared: true,
+                buildAction: .buildAction(targets: [.target("EATSSUWidget-PROD")]),
+                testAction: .targets(["EATSSUWidget-PROD"]),
                 runAction: .runAction(configuration: "Release"),
                 archiveAction: .archiveAction(configuration: "Release"),
                 profileAction: .profileAction(configuration: "Release"),
