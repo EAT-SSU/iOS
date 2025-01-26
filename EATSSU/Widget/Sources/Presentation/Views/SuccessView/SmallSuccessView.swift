@@ -39,18 +39,22 @@ struct SmallSuccessView: View {
             Spacer()
 
             VStack {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
-                    ForEach(entry.menus.prefix(8), id: \.self) { menu in
-                        Text(menu)
-                            .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
-                            .foregroundStyle(.black)
-                            .lineLimit(1)
-                            .dynamicTypeSize(.xLarge ... .xxxLarge)
+                if entry.menus.isEmpty {
+                    Image(asset: EATSSUDesignAsset.Images.noMenuInfoSign)
+                } else {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
+                        ForEach(entry.menus.prefix(8), id: \.self) { menu in
+                            Text(menu)
+                                .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
+                                .foregroundStyle(.black)
+                                .lineLimit(1)
+                                .dynamicTypeSize(.xLarge ... .xxxLarge)
+                        }
                     }
-                }
-                .padding(5)
+                    .padding(5)
 
-                Spacer()
+                    Spacer()
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(

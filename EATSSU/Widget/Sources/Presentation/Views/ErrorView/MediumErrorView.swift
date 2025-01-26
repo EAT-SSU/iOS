@@ -39,7 +39,7 @@ struct MediumErrorView: View {
             Spacer()
 
             VStack {
-                Image(asset: EATSSUDesignAsset.Images.networkErrorWarningSign)
+                Image(asset: EATSSUDesignAsset.Images.networkErrorInfoMediumSign)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(

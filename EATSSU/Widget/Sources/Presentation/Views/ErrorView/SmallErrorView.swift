@@ -37,9 +37,7 @@ struct SmallErrorView: View {
             Spacer()
 
             VStack {
-                Image(asset: EATSSUDesignAsset.Images.networkErrorWarningSign)
-                    .resizable()
-                    .frame(maxWidth: 83, maxHeight: 50)
+                Image(asset: EATSSUDesignAsset.Images.networkErrorInfoSmallSign)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
