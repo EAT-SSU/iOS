@@ -6,19 +6,25 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct WidgetEntryView: View {
     @Environment(\.widgetFamily) var family
     var entry: ESEntry
 
     var body: some View {
-        switch family {
-        case .systemSmall:
-            SmallView(entry: entry)
-        case .systemMedium:
-            MediumView(entry: entry)
-        default:
-            Text("Unsupported Widget Family")
+        Group {
+            switch family {
+            case .systemSmall:
+                SmallView(entry: entry)
+            case .systemMedium:
+                MediumView(entry: entry)
+            default:
+                Text("Unsupported Widget Family")
+            }
+        }
+        .onChange(of: family) { _, _ in
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 }

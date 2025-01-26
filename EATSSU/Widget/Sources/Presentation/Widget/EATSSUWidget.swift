@@ -16,16 +16,16 @@ struct EATSSUWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: SelectRestaurant.self, // SelectRestaurant Intent 사용
+            intent: SelectRestaurant.self,
             provider: ESTimelineProvider()
         ) { entry in
             if #available(iOS 17.0, *) {
                 WidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    .containerBackground(Color.white, for: .widget)
             } else {
                 WidgetEntryView(entry: entry)
                     .padding()
-                    .background()
+                    .background(Color.white)
             }
         }
         .configurationDisplayName("EATSSU 위젯")
