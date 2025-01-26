@@ -16,9 +16,6 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
         "kakaoplus",
         "kakaotalk",
     ],
-    "NSAppTransportSecurity": [
-        "NSAllowsArbitraryLoads": true,
-    ],
     "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
         "UISceneConfigurations": [
@@ -43,14 +40,11 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
 ])
 
 let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
+    "CFBundleDisplayName": "$(PRODUCT_NAME)",
     "NSExtension": [
         "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
     ],
     "BASE_URL": "https://$(BASE_URL)",
-    "CFBundleDevelopmentRegion": "ko",
-    "NSAppTransportSecurity": [
-        "NSAllowsArbitraryLoads": true,
-    ],
 ])
 
 let projectSettings: Settings = .settings(
@@ -87,7 +81,7 @@ let project = Project(
             resources: ["App/Resources/**"],
             entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
-                .target(name: "EATSSUWidget-DEV", status: .none, condition: .none),
+                .target(name: "EATSSUWidget-DEV"),
 
                 // 외부 라이브러리
                 .external(name: "SnapKit", condition: .none),
@@ -123,7 +117,7 @@ let project = Project(
             resources: ["App/Resources/**"],
             entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
-                .target(name: "EATSSUWidget-PROD", status: .none, condition: .none),
+                .target(name: "EATSSUWidget-PROD"),
 
                 // 외부 라이브러리
                 .external(name: "SnapKit", condition: .none),
@@ -152,7 +146,7 @@ let project = Project(
             name: "EATSSUWidget-DEV",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.Widget",
+            bundleId: "com.jiwoo.EatSSU.WidgetExtension",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
@@ -172,7 +166,7 @@ let project = Project(
             name: "EATSSUWidget-PROD",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.Widget",
+            bundleId: "com.jiwoo.EatSSU.WidgetExtension",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
