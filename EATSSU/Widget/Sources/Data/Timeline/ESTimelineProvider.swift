@@ -24,7 +24,8 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         return ESEntry(
             date: currentDate,
             restaurantName: "학생식당",
-            timeSlot: timeSlot
+            timeSlot: timeSlot,
+            isError: false
         )
     }
 
@@ -48,7 +49,11 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         #endif
 
         // 초기 기본 엔트리 생성 (네트워크 요청 이전 기본값)
-        let initialEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName, timeSlot: timeSlot)
+        let initialEntry = ESEntry(
+            date: currentDate,
+            restaurantName: configuration.selectedRestaurant.displayName,
+            timeSlot: timeSlot
+        )
         var timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))
 
         let provider = MoyaProvider<HomeRouter>() // Moya를 이용한 네트워크 요청 객체 생성
@@ -56,12 +61,28 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         do {
             // 네트워크 요청을 통해 메뉴 데이터를 가져옴
             let menus = try await fetchMenu(provider: provider, date: formattedDate, restaurant: restaurant, time: timeSlot)
-            let updatedEntry = ESEntry(date: currentDate, restaurantName: configuration.selectedRestaurant.displayName, menus: menus, timeSlot: timeSlot)
+            let updatedEntry = ESEntry(
+                date: currentDate,
+                restaurantName: configuration.selectedRestaurant.displayName,
+                menus: menus,
+                timeSlot: timeSlot
+            )
 
             // 새로운 데이터로 타임라인 업데이트
             timeline = Timeline(entries: [updatedEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))
         } catch {
-            print("Error: \(error.localizedDescription)") // 네트워크 요청 실패 시 오류 출력
+            #if DEBUG
+                print("Error: \(error.localizedDescription)") // 네트워크 요청 실패 시 오류 출력
+            #endif
+
+            let errorEntry = ESEntry(
+                date: currentDate,
+                restaurantName: configuration.selectedRestaurant.displayName,
+                menus: ["네트워크 연결 실패"],
+                timeSlot: timeSlot,
+                isError: true
+            )
+            timeline = Timeline(entries: [errorEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))
         }
 
         return timeline
