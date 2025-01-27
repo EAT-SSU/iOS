@@ -20,7 +20,7 @@ class WriteReviewViewController: BaseViewController, UIImagePickerControllerDele
     var tag: [String] = []
     var isPhotoExist: Bool = false
     private var starButtons: [UIButton] = []
-    let writeReviewProvider = MoyaProvider<WriteReviewRouter>(plugins: [MoyaLoggingPlugin()])
+    let writeReviewProvider = MoyaProvider<WriteReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     // MARK: - UI Components
 

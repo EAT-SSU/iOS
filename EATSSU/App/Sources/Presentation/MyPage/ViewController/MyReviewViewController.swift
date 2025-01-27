@@ -14,8 +14,8 @@ import Then
 final class MyReviewViewController: BaseViewController {
     // MARK: - Properties
 
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [MoyaLoggingPlugin()])
+    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     private var reviewList = [MyDataList]()
     var nickname: String = .init()

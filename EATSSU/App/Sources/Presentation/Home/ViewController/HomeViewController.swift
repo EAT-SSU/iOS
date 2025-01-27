@@ -4,138 +4,143 @@
 //
 //  Created by 최지우 on 2023/08/08.
 //
+
 import UIKit
 
 import EATSSUDesign
 
 import FirebaseAnalytics
+import GoogleMobileAds
 import Moya
 import SnapKit
 
 final class HomeViewController: BaseViewController {
     // MARK: - Properties
 
-    var currentDate: Date = .init() {
+    private var currentDate = Date() {
         didSet {
-            print("Changed Date: \(currentDate)")
+            #if DEBUG
+                print("Changed Date: \(currentDate)")
+            #endif
         }
     }
 
-    // MARK: - UI Components
+    private let tabmanController = HomeTimeTabmanController()
+    private let homeCalendarView = HomeCalendarView()
 
-    let tabmanController = HomeTimeTabmanController()
-    let homeCalendarView = HomeCalendarView()
-
-    // MARK: - Life Cycles
+    // MARK: - Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        homeCalendarView.delegate = tabmanController
-
-        registerTabman()
-        setnavigation()
+        setupDelegates()
         configureUI()
         setLayout()
+        registerTabman()
+        setupNavigationBar()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        setFirebaseTask()
+        logFirebaseEvent()
     }
 
-    // MARK: - Functions
+    // MARK: - UI Configuration
 
     override func configureUI() {
-        view.addSubviews(homeCalendarView)
+        view.addSubview(homeCalendarView)
     }
 
     override func setLayout() {
-        homeCalendarView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(80)
+        homeCalendarView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(80)
         }
     }
 
-    private func setFirebaseTask() {
-        FirebaseRemoteConfig.shared.fetchRestaurantInfo()
+    // MARK: - Tabman Setup
 
-        #if DEBUG
-        #else
+    private func registerTabman() {
+        addChild(tabmanController)
+        view.addSubview(tabmanController.view)
+        tabmanController.view.snp.makeConstraints { make in
+            make.top.equalTo(homeCalendarView.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+        tabmanController.didMove(toParent: self)
+    }
+
+    // MARK: - Navigation
+
+    private func setupNavigationBar() {
+        let logoImageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
+        navigationItem.titleView = logoImageView
+
+        let rightButton = UIBarButtonItem(
+            image: EATSSUDesignAsset.Images.myPageIcon.image,
+            style: .plain,
+            target: self,
+            action: #selector(didTapRightBarButton)
+        )
+        rightButton.tintColor = EATSSUDesignAsset.Color.Main.primary.color
+        navigationItem.rightBarButtonItem = rightButton
+        navigationController?.isNavigationBarHidden = false
+    }
+
+    @objc
+    private func didTapRightBarButton() {
+        if RealmService.shared.isAccessTokenPresent() {
+            navigateToMyPage()
+        } else {
+            presentLoginAlert()
+        }
+    }
+
+    private func navigateToMyPage() {
+        let myPageVC = MyPageViewController()
+        navigationController?.pushViewController(myPageVC, animated: true)
+    }
+
+    private func presentLoginAlert() {
+        let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
+                                      message: "로그인 하시겠습니까?",
+                                      preferredStyle: .alert)
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.navigateToLogin()
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alert.addAction(confirmAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true, completion: nil)
+    }
+
+    private func navigateToLogin() {
+        let loginVC = LoginViewController()
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = windowScene.delegate as? SceneDelegate,
+           let window = sceneDelegate.window
+        {
+            window.replaceRootViewController(loginVC)
+        }
+    }
+
+    // MARK: - Firebase
+
+    private func logFirebaseEvent() {
+        FirebaseRemoteConfig.shared.fetchRestaurantInfo()
+        #if !DEBUG
             Analytics.logEvent("HomeViewControllerLoad", parameters: nil)
         #endif
     }
 
-    private func setnavigation() {
-        navigationItem.titleView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
+    // MARK: - Delegates
 
-        let rightButton = UIBarButtonItem(
-            // FIXME: myPageIcon은 Version 1 소속 이미지 파일입니다. 앞으로도 사용한다면 Version 2로 옮겨주세요.
-            image: EATSSUDesignAsset.Images.myPageIcon.image,
-            style: .plain, target: self,
-            action: #selector(rightBarButtonTapped)
-        )
-        navigationItem.rightBarButtonItem = rightButton
-        navigationItem.rightBarButtonItem?.tintColor = EATSSUDesignAsset.Color.Main.primary.color
-
-        navigationController?.isNavigationBarHidden = false
-    }
-
-    private func registerTabman() {
-        // 자식 뷰 컨트롤러로 추가
-        addChild(tabmanController)
-
-        // 자식 뷰를 부모 뷰에 추가
-        view.addSubview(tabmanController.view)
-
-        // tabman 레이아웃 설정
-        tabmanController.view.snp.makeConstraints {
-            $0.top.equalTo(homeCalendarView.snp.bottom)
-            $0.horizontalEdges.equalToSuperview()
-            $0.bottom.equalToSuperview()
-        }
-
-        // 자식 뷰 컨트롤러로서의 위치를 확정
-        tabmanController.didMove(toParent: self)
-    }
-
-    @objc
-    private func rightBarButtonTapped() {
-        if RealmService.shared.isAccessTokenPresent() {
-            let nextVC = MyPageViewController()
-            navigationController?.pushViewController(nextVC, animated: true)
-        } else {
-            showAlertControllerWithCancel(title: "로그인이 필요한 서비스입니다", message: "로그인 하시겠습니까?", confirmStyle: .default) {
-                self.changeIntoLoginViewController()
-            }
-        }
-    }
-
-    private func changeIntoLoginViewController() {
-        let loginViewController = LoginViewController()
-
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let sceneDelegate = windowScene.delegate as? SceneDelegate,
-              let window = sceneDelegate.window
-        else {
-            return
-        }
-
-        window.replaceRootViewController(loginViewController)
-
-        /*
-          해야 할 일
-          - 아래의 더 쉬운 방법이 있는데, window 클래스의 커스텀 메소드 중 replaceRootViewController를 사용할 필요가 있을까?
-
-         UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
-           window.rootViewController = loginViewController
-         }
-          */
+    private func setupDelegates() {
+        homeCalendarView.delegate = tabmanController
     }
 }
 
-// MARK: Calendar Selection
+// MARK: - Calendar Selection Delegate
 
 extension HomeViewController: CalendarSeletionDelegate {
     func didSelectCalendar(date: Date) {

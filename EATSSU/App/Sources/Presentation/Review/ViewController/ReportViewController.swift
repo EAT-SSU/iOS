@@ -26,7 +26,7 @@ final class ReportViewController: BaseViewController {
     private var buttonArray: [UIButton] = []
     private var contentArray: [String?] = []
     private var reviewID: Int = .init()
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [MoyaLoggingPlugin()])
+    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     // MARK: - View Life Cycle
 

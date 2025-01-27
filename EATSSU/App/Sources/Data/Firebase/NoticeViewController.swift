@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 import SnapKit
 
 /// FirebaseRemoteConfig 관련 ViewController
@@ -17,7 +19,7 @@ class NoticeViewController: BaseViewController {
 
     // MARK: - UI Components
 
-    let backgroundImage = UIImageView(image: ImageLiteral.splashLogo)
+    let backgroundImage = UIImageView(image: EATSSUDesignAsset.Images.splashLogo.image)
 
     // MARK: - Life Cycles
 
