@@ -16,8 +16,8 @@ import Then
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
 
-    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(plugins: [MoyaLoggingPlugin()])
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [MoyaLoggingPlugin()])
+    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
     private var currentPage: Int = 0 {
         didSet {
             menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"

@@ -13,7 +13,7 @@ final class SetNickNameViewController: BaseViewController {
     // MARK: - Properties
 
     var currentKeyboardHeight: CGFloat = 0.0
-    private let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [MoyaLoggingPlugin()])
+    private let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     // MARK: - UI Components
 

@@ -23,8 +23,8 @@ final class LoginViewController: BaseViewController {
 
     // MARK: - 프로퍼티
 
-    private let authProvider = MoyaProvider<AuthRouter>(plugins: [MoyaLoggingPlugin()])
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [MoyaLoggingPlugin()])
+    private let authProvider = MoyaProvider<AuthRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     // MARK: - UI 컴포넌트
 

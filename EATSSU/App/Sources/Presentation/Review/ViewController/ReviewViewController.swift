@@ -13,7 +13,7 @@ import Moya
 final class ReviewViewController: BaseViewController {
     // MARK: - Properties
 
-    let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [MoyaLoggingPlugin()])
+    let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
     var menuID: Int = .init()
     var type = "VARIABLE"
     private var menuNameList: [String] = []
