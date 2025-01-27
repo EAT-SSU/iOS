@@ -13,64 +13,79 @@ import KakaoSDKAuth
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
-    func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        if let url = URLContexts.first?.url {
-            if AuthApi.isKakaoTalkLoginUrl(url) {
-                _ = AuthController.handleOpenUrl(url: url)
-            }
-        }
-    }
-
-    func sceneWillEnterForeground(_: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
+    // MARK: - UIWindowSceneDelegate Methods
 
     func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
+        configureWindow(with: windowScene)
+        fetchNoticeAndConfigureRootViewController()
+        checkForAppUpdate()
+    }
+
+    func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url, AuthApi.isKakaoTalkLoginUrl(url) else { return }
+        _ = AuthController.handleOpenUrl(url: url)
+    }
+
+    func sceneWillEnterForeground(_: UIScene) {
+        // 백그라운드에서 포그라운드로 전환 시 필요한 작업 수행
+    }
+
+    // MARK: - Private Methods
+
+    private func configureWindow(with windowScene: UIWindowScene) {
         window = UIWindow(windowScene: windowScene)
         window?.windowScene = windowScene
+        window?.makeKeyAndVisible()
+    }
 
-        var navigationController = UINavigationController(rootViewController: LoginViewController())
-
+    private func fetchNoticeAndConfigureRootViewController() {
         FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
-            if result != nil {
-                navigationController =
-                    UINavigationController(rootViewController: NoticeViewController(noticeMessage: result ?? ""))
-            } else {
-                self?.window?.rootViewController = navigationController
-                self?.window?.makeKeyAndVisible()
-            }
-        }
-        checkAndUpdateIfNeeded()
-    }
-
-    /// 업데이트가 필요한지 확인 후 업데이트 알럿을 띄우는 메소드
-    private func checkAndUpdateIfNeeded() {
-        DispatchQueue.global(qos: .background).async {
-            let marketingVersion = AppStoreCheck().latestVersion()
-
             DispatchQueue.main.async {
-                guard let marketingVersion else {
-                    print("앱스토어 버전을 찾지 못했습니다.")
-                    return
-                }
-
-                // 현재 기기의 버전
-                let currentProjectVersion = AppStoreCheck.appVersion ?? ""
-
-                if marketingVersion != currentProjectVersion {
-                    self.showUpdateAlert(version: marketingVersion)
-                } else {
-                    print("현재 최신 버전입니다.")
-                }
+                self?.configureRootViewController(with: result)
             }
         }
     }
 
-    /// 알럿을 띄우는 메소드
-    private func showUpdateAlert(version _: String) {
+    private func configureRootViewController(with noticeMessage: String?) {
+        let rootViewController: UIViewController = if let notice = noticeMessage, !notice.isEmpty {
+            UINavigationController(rootViewController: NoticeViewController(noticeMessage: notice))
+        } else {
+            UINavigationController(rootViewController: LoginViewController())
+        }
+        window?.rootViewController = rootViewController
+    }
+
+    private func checkForAppUpdate() {
+        #if DEBUG
+            print("개발 환경에서는 앱 업데이트 체크를 건너뜁니다.")
+            return
+        #else
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                let latestVersion = AppStoreCheck().latestVersion()
+                DispatchQueue.main.async {
+                    self?.handleAppUpdateCheck(latestVersion: latestVersion)
+                }
+            }
+        #endif
+    }
+
+    private func handleAppUpdateCheck(latestVersion: String?) {
+        guard let latestVersion else {
+            print("앱스토어 버전을 찾지 못했습니다.")
+            return
+        }
+
+        let currentVersion = AppStoreCheck.appVersion ?? ""
+        if latestVersion != currentVersion {
+            showUpdateAlert()
+        } else {
+            print("현재 최신 버전입니다.")
+        }
+    }
+
+    private func showUpdateAlert() {
         let alert = UIAlertController(
             title: "업데이트 알림",
             message: "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!",
@@ -78,7 +93,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
 
         let updateAction = UIAlertAction(title: "업데이트", style: .default) { _ in
-            // 업데이트 버튼을 누르면 해당 앱스토어로 이동한다.
             AppStoreCheck().openAppStore()
         }
 

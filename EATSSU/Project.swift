@@ -4,6 +4,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
+    "GADApplicationIdentifier": "$(GADApplicationIdentifier)",
     "CFBundleURLTypes": [
         [
             "CFBundleTypeRole": "Editor",
@@ -100,6 +101,7 @@ let project = Project(
                 .external(name: "KakaoSDKUser"),
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
+                .external(name: "GoogleMobileAds"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -136,6 +138,7 @@ let project = Project(
                 .external(name: "KakaoSDKUser"),
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
+                .external(name: "GoogleMobileAds"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
