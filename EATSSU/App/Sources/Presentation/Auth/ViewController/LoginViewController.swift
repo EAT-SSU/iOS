@@ -89,7 +89,7 @@ final class LoginViewController: BaseViewController {
         #if DEBUG
             print("저장된 AccessToken: ", RealmService.shared.getToken())
         #endif
-        changeIntoHomeViewController()
+        changeIntoRootTabBarController()
     }
 
     /// Realm에 저장된 액세스 토큰이 있는지 여부를 반환한다.
@@ -98,14 +98,14 @@ final class LoginViewController: BaseViewController {
     }
 
     /// 홈 화면으로 이동하면서, 루트 뷰 컨트롤러를 교체한다.
-    private func changeIntoHomeViewController() {
-        let homeVC = HomeViewController()
+    private func changeIntoRootTabBarController() {
+        let rootTabBarViewController = RootTabBarViewController()
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
         else { return }
 
         keyWindow.replaceRootViewController(
-            UINavigationController(rootViewController: homeVC)
+            rootTabBarViewController
         )
     }
 
@@ -116,7 +116,7 @@ final class LoginViewController: BaseViewController {
             if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
                 UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
             }
-            changeIntoHomeViewController()
+            changeIntoRootTabBarController()
         } else {
             // 닉네임 설정이 필요한 경우
             let setNicknameVC = SetNickNameViewController()
@@ -173,7 +173,7 @@ final class LoginViewController: BaseViewController {
 
     @objc
     private func lookingWithNoSignInButtonDidTapped() {
-        changeIntoHomeViewController()
+        changeIntoRootTabBarController()
     }
 }
 
