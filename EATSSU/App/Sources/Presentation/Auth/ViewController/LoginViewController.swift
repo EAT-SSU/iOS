@@ -149,9 +149,9 @@ final class LoginViewController: BaseViewController {
                     return
                 }
                 #if DEBUG
-                    print("loginWithKakaoTalk() success.")
+                    print("카카오톡으로 로그인 성공")
                 #endif
-                fetchKakaoUserInfo()
+                processKakaoUserLogin()
             }
         } else {
             // 카카오톡이 설치되어 있지 않으면 웹(카카오 계정) 로그인 시도
@@ -161,7 +161,7 @@ final class LoginViewController: BaseViewController {
                     print(error)
                     return
                 }
-                fetchKakaoUserInfo()
+                processKakaoUserLogin()
             }
         }
     }
@@ -200,8 +200,17 @@ extension LoginViewController {
             // 닉네임 등 정보를 확인하기 위해 프로필 조회
             getMyInfo()
         } catch {
-            presentBottomAlert(error.localizedDescription)
-            print(error.localizedDescription)
+            switch accountType {
+            case .apple:
+                presentBottomAlert("카카오톡으로 생성된 계정입니다.")
+            case .kakao:
+                presentBottomAlert("Apple로 생성된 계정입니다.")
+            }
+
+            #if DEBUG
+                print("다른 계정으로 로그인 되어있을지도 모릅니다.")
+                print(error.localizedDescription)
+            #endif
         }
     }
 
@@ -234,7 +243,7 @@ extension LoginViewController {
             switch result {
             case let .success(moyaResponse):
                 #if DEBUG
-                    print("Apple login response status code: \(moyaResponse.statusCode)")
+                    print("Apple 로그인 서버 응답코드: \(moyaResponse.statusCode)")
                 #endif
                 handleLoginSuccess(moyaResponse: moyaResponse, accountType: .apple)
 
@@ -270,7 +279,7 @@ extension LoginViewController {
 
 extension LoginViewController {
     /// 카카오 로그인 이후, 카카오에서 직접 사용자 정보를 가져온 다음 백엔드로 넘긴다.
-    private func fetchKakaoUserInfo() {
+    private func processKakaoUserLogin() {
         UserApi.shared.me { [weak self] user, error in
             guard let self else { return }
             if let error {
@@ -323,10 +332,12 @@ extension LoginViewController: ASAuthorizationControllerPresentationContextProvi
 
             postAppleLoginRequest(token: tokenString)
 
-            print("User ID : \(userIdentifier)")
-            print("User Email : \(email ?? "")")
-            print("User Name : \((fullName?.givenName ?? "") + (fullName?.familyName ?? ""))")
-            print("Token : \(tokenString)")
+            #if DEBUG
+                print("User ID : \(userIdentifier)")
+                print("User Email : \(email ?? "")")
+                print("User Name : \((fullName?.givenName ?? "") + (fullName?.familyName ?? ""))")
+                print("Token : \(tokenString)")
+            #endif
 
         default:
             break
