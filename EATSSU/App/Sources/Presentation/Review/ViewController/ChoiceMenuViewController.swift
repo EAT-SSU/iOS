@@ -104,8 +104,8 @@ final class ChoiceMenuViewController: BaseViewController {
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         navigationItem.title = "리뷰 남기기"
     }
 

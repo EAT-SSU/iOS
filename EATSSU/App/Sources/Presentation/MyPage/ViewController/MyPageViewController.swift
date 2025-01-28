@@ -46,8 +46,8 @@ final class MyPageViewController: BaseViewController {
 
     // MARK: - Functions
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         navigationItem.title = TextLiteral.MyPage.myPage
     }
 

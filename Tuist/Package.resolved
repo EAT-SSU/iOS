@@ -1,5 +1,5 @@
 {
-  "originHash" : "927f3970054f96b698bb1f4d42eec10f20bdcf37978d07047fc3af226ed8ed97",
+  "originHash" : "f7acbf13d8ff28deccedf1b13d9163bb3548128ddcdec705eab977fbd5b1c7f0",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -206,6 +206,24 @@
       "state" : {
         "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
         "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "spm-nmapsgeometry",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/navermaps/SPM-NMapsGeometry.git",
+      "state" : {
+        "revision" : "436d5e2e684f557faf5ef5862fd6633a42d7af11",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "spm-nmapsmap",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/navermaps/SPM-NMapsMap",
+      "state" : {
+        "revision" : "606cb2df9bcffcf6df62ba00d0322965a4c730e9",
+        "version" : "3.20.0"
       }
     },
     {

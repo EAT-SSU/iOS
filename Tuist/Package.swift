@@ -36,6 +36,9 @@ import PackageDescription
 
             // RxSwift
             "RxSwift": .framework,
+
+            // Naver Maps
+            "NMapsMap": .framework,
         ]
     )
 #endif
@@ -55,5 +58,6 @@ let package = Package(
         .package(url: "https://github.com/realm/realm-swift", from: "20.0.0"),
         .package(url: "https://github.com/ReactiveX/RxSwift", from: "6.7.1"),
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "11.0.0"),
+        .package(url: "https://github.com/navermaps/SPM-NMapsMap", from: "3.20.0"),
     ]
 )

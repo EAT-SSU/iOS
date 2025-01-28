@@ -37,9 +37,9 @@ class CreatorViewController: BaseViewController {
         }
     }
 
-    override func setCustomNavigationBar() {
+    override func setESNavigationBar() {
         // TODO: setCustomNavigationBar에 파라미터로 title 값을 받아서 네비게이션 바를 설계하도록 변경
-        super.setCustomNavigationBar()
+        super.setESNavigationBar()
         navigationItem.title = "만든 사람들"
     }
 }

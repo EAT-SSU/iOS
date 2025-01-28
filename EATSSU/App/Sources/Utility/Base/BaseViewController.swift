@@ -1,8 +1,8 @@
 //
 //  BaseViewController.swift
-//  EatSSU-iOS
+//  EATSSU
 //
-//  Created by 박윤빈 on 2023/03/15.
+//  Edited by Jiwoong CHOI on 01/28/2025.
 //
 
 // TODO: BaseViewController 코드 Utility 모듈로 모듈화 간 재정비
@@ -20,7 +20,7 @@ import SnapKit
 /// - configureUI
 /// - setLayout
 /// - setButtonEvent
-/// - setCustomnavigationBar
+/// - setESnavigationBar
 ///
 /// - Important: configureUI와 setLayout 메소드는 필수로 오버라이딩 해야 합니다.
 /// 오버라이딩 하지 않으면 런타임 에러가 발생합니다.
@@ -40,9 +40,10 @@ class BaseViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // TODO: deinit 메소드의 목적이 무엇인지 알아보기
     deinit {
-        print("DEINIT: \(className)")
+        #if DEBUG
+            print("메모리 해제 ViewController: \(className)")
+        #endif
     }
 
     override func viewDidLoad() {
@@ -51,7 +52,7 @@ class BaseViewController: UIViewController {
         configureUI()
         setLayout()
         setButtonEvent()
-        setCustomNavigationBar()
+        setESNavigationBar()
         view.backgroundColor = .systemBackground
     }
 
@@ -59,7 +60,9 @@ class BaseViewController: UIViewController {
         super.viewWillAppear(animated)
 
         if !NetworkMonitor.shared.isConnected {
-            print("네트워크 오류")
+            #if DEBUG
+                print("네트워크 오류")
+            #endif
             showAlertController(title: "오류", message: "네트워크를 확인해주세요", style: .destructive)
         }
     }
@@ -114,7 +117,7 @@ class BaseViewController: UIViewController {
     ///
     /// # 네비게이션 백버튼 속성
     /// - `gray500`으로 백버튼 색상을 설정합니다.
-    func setCustomNavigationBar() {
+    func setESNavigationBar() {
         // 네비게이션 바 타이틀 속성
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: EATSSUDesignAsset.Color.GrayScale.gray700.color,

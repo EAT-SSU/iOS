@@ -47,8 +47,8 @@ final class SetNickNameViewController: BaseViewController {
         }
     }
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         navigationItem.title = TextLiteral.setNickName
     }
 

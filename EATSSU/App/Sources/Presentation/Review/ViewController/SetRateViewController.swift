@@ -284,8 +284,8 @@ final class SetRateViewController: BaseViewController {
         nextButton.addTarget(self, action: #selector(tappedNextButton), for: .touchUpInside)
     }
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         if reviewId != nil {
             navigationItem.title = "리뷰 수정하기"
         } else {
