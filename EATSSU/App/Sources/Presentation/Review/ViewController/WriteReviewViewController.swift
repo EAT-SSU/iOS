@@ -99,7 +99,7 @@ class WriteReviewViewController: BaseViewController, UIImagePickerControllerDele
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setCustomNavigationBar()
+        setESNavigationBar()
         setStarButtons()
 
         userReviewTextView.delegate = self
@@ -182,8 +182,8 @@ class WriteReviewViewController: BaseViewController, UIImagePickerControllerDele
         userReviewTextView.resignFirstResponder()
     }
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         navigationItem.title = "리뷰 남기기"
     }
 

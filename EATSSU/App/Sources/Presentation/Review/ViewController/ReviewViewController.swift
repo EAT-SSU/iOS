@@ -89,8 +89,8 @@ final class ReviewViewController: BaseViewController {
         }
     }
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         navigationItem.title = "리뷰"
     }
 

@@ -165,7 +165,7 @@ final class FormerReportViewController: BaseViewController {
         setDelegate()
         addArray()
         setButtonEvent()
-        setCustomNavigationBar()
+        setESNavigationBar()
     }
 
     override func viewWillAppear(_: Bool) {
@@ -230,8 +230,8 @@ final class FormerReportViewController: BaseViewController {
         sendButton.addTarget(self, action: #selector(sendButtonIsTapped), for: .touchUpInside)
     }
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         title = "신고하기"
 
         let navBarApperance = UINavigationBarAppearance()

@@ -43,7 +43,7 @@ final class ReportViewController: BaseViewController {
         setDelegate()
         addArray()
         setButtonEvent()
-        setCustomNavigationBar()
+        setESNavigationBar()
     }
 
     override func viewWillDisappear(_: Bool) {
@@ -98,8 +98,8 @@ final class ReportViewController: BaseViewController {
         self.reviewID = reviewID
     }
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         title = "신고하기"
 
         let navBarApperance = UINavigationBarAppearance()

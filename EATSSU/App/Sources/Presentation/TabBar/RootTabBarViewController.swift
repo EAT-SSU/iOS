@@ -16,7 +16,7 @@ class RootTabBarViewController: UITabBarController {
 
     private func setupTabBar() {
         let homeViewController = HomeViewController()
-        let searchViewController = HomeViewController()
+        let searchViewController = MapsViewController()
         let settingsViewController = MyPageViewController()
 
         // 각 뷰컨트롤러를 네비게이션 컨트롤러로 래핑
@@ -26,7 +26,7 @@ class RootTabBarViewController: UITabBarController {
 
         // 탭바 아이템 설정
         homeNav.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
-        searchNav.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
+        searchNav.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "map.fill"), tag: 1)
         settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape.fill"), tag: 2)
 
         // 탭바 컨트롤러에 뷰컨트롤러 추가

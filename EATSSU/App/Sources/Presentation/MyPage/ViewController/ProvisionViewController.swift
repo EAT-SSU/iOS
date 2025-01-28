@@ -33,8 +33,8 @@ final class ProvisionViewController: BaseViewController {
 
     // MARK: - Functions
 
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
+    override func setESNavigationBar() {
+        super.setESNavigationBar()
         navigationItem.title = navigationTitle
     }
 

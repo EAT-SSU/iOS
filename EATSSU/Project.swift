@@ -1,10 +1,12 @@
 import ProjectDescription
 
 let appInfoPlist: InfoPlist = .extendingDefault(with: [
-    "UILaunchStoryboardName": "LaunchScreen",
+    // API Keys Settings
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
+    "NMFClientId": "$(NMAP_CLIENT_ID)",
     "GADApplicationIdentifier": "$(GADApplicationIdentifier)",
+    "UILaunchStoryboardName": "LaunchScreen",
     "CFBundleURLTypes": [
         [
             "CFBundleTypeRole": "Editor",
@@ -102,6 +104,7 @@ let project = Project(
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
                 .external(name: "GoogleMobileAds"),
+                .external(name: "NMapsMap"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -139,6 +142,7 @@ let project = Project(
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
                 .external(name: "GoogleMobileAds"),
+                .external(name: "NMapsMap"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
