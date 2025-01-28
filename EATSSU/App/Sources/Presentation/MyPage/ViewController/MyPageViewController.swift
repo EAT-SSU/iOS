@@ -23,6 +23,13 @@ final class MyPageViewController: BaseViewController {
     private var nickName = ""
     private var switchState = false
     private let myPageTableLabelList = MyPageLocalData.myPageTableLabelList
+    private let hasAccessToken: Bool
+
+    // TODO: 리뷰에서 엑세스 토큰을 확인하는 코드 정상처리 되는지 확인
+    init(hasAccessToken: Bool) {
+        self.hasAccessToken = hasAccessToken
+        super.init(nibName: nil, bundle: nil)
+    }
 
     // MARK: - UI Components
 
@@ -40,7 +47,11 @@ final class MyPageViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "실패"
+        if hasAccessToken {
+            nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "다시 시도하세요"
+        } else {
+            nickName = "로그인을 해주세요"
+        }
         mypageView.setUserInfo(nickname: nickName)
     }
 
@@ -72,8 +83,7 @@ final class MyPageViewController: BaseViewController {
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
 
-        #if DEBUG
-        #else
+        #if !DEBUG
             Analytics.logEvent("MypageViewControllerLoad", parameters: nil)
         #endif
     }

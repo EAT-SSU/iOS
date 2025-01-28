@@ -7,9 +7,13 @@
 
 import UIKit
 
+import EATSSUDesign
+
 class RootTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        delegate = self
 
         setupTabBar()
     }
@@ -17,23 +21,67 @@ class RootTabBarViewController: UITabBarController {
     private func setupTabBar() {
         let homeViewController = HomeViewController()
         let searchViewController = MapsViewController()
-        let settingsViewController = MyPageViewController()
+        let mypageViewController = MyPageViewController(hasAccessToken: RealmService.shared.isAccessTokenPresent())
 
-        // 각 뷰컨트롤러를 네비게이션 컨트롤러로 래핑
         let homeNav = UINavigationController(rootViewController: homeViewController)
-        let searchNav = UINavigationController(rootViewController: searchViewController)
-        let settingsNav = UINavigationController(rootViewController: settingsViewController)
+        let mapNav = UINavigationController(rootViewController: searchViewController)
+        let mypageNav = UINavigationController(rootViewController: mypageViewController)
 
-        // 탭바 아이템 설정
         homeNav.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
-        searchNav.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "map.fill"), tag: 1)
-        settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape.fill"), tag: 2)
+        mapNav.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "map.fill"), tag: 1)
+        mypageNav.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape.fill"), tag: 2)
 
-        // 탭바 컨트롤러에 뷰컨트롤러 추가
-        viewControllers = [homeNav, searchNav, settingsNav]
+        viewControllers = [homeNav, mapNav, mypageNav]
 
-        // 탭바 스타일 설정 (선택적)
-        tabBar.tintColor = .systemBlue
+        tabBar.tintColor = EATSSUDesignAsset.Color.Main.primary.color
         tabBar.backgroundColor = .white
+    }
+
+    // FIXME: EATSSUKit으로 이관하여 재사용성 높이기
+    private func presentLoginAlert() {
+        let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
+                                      message: "로그인 하시겠습니까?",
+                                      preferredStyle: .alert)
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.navigateToLogin()
+        }
+        alert.addAction(confirmAction)
+        present(alert, animated: true, completion: nil)
+    }
+
+    // FIXME: EATSSUKit으로 이관하여 재사용성 높이기
+    private func navigateToLogin() {
+        let loginVC = LoginViewController()
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = windowScene.delegate as? SceneDelegate,
+           let window = sceneDelegate.window
+        {
+            window.replaceRootViewController(loginVC)
+        }
+    }
+}
+
+// MARK: - UITabBarControllerDelegate
+
+extension RootTabBarViewController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else { return }
+
+        if selectedIndex == 2 {
+            #if DEBUG
+                print("마이페지이 탭(tag 2)이 선택되었습니다.")
+            #endif
+            handleSettingsTabSelected()
+        }
+    }
+
+    private func handleSettingsTabSelected() {
+        if !RealmService.shared.isAccessTokenPresent() {
+            presentLoginAlert()
+        } else {
+            #if DEBUG
+                print("MyPageViewController로 이동")
+            #endif
+        }
     }
 }
