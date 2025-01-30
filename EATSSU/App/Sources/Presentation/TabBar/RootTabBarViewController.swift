@@ -12,13 +12,20 @@ import EATSSUDesign
 class RootTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
-
         delegate = self
-
         setupTabBar()
     }
 
+    // RootTabBarViewController.swift 수정 내용 (setupTabBar 메서드 내)
     private func setupTabBar() {
+        // 탭바 인스턴스를 ESTabBar로 교체
+        tabBar.removeFromSuperview()
+        let estTabBar = ESTabBar()
+        // KVC를 사용하여 탭바 교체, 프레임워크에서 제공하는 탭바를 제거하고 커스텀 탭바를 컨트롤러에 등록
+        // forKey 값의 tabBar는 탭바를 변경하기 위한 프레임워크에서 예약된 키값
+        setValue(estTabBar, forKey: "tabBar")
+
+        // 기존 코드 유지
         let homeViewController = HomeViewController()
         let searchViewController = MapsViewController()
         let mypageViewController = MyPageViewController(hasAccessToken: RealmService.shared.isAccessTokenPresent())
