@@ -15,7 +15,7 @@ import SnapKit
 final class ProvisionViewController: BaseViewController {
     // MARK: - Properties
 
-    var navigationTitle = TextLiteral.MyPage.defaultTerms
+    var navigationTitle = ESTextLiteral.MyPage.defaultTerms
 
     // MARK: - UI Components
 

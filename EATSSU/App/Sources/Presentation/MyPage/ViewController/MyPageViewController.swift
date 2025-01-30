@@ -59,7 +59,7 @@ final class MyPageViewController: BaseViewController {
 
     override func setESNavigationBar() {
         super.setESNavigationBar()
-        navigationItem.title = TextLiteral.MyPage.myPage
+        navigationItem.title = ESTextLiteral.MyPage.myPage
     }
 
     override func configureUI() {
@@ -138,13 +138,13 @@ final class MyPageViewController: BaseViewController {
     /// UserDefaults에 스위치 상태 저장
     private func saveSwitchStateToUserDefaults() {
         print("사용자 푸시 알림 값을 앱 저장소에 보관합니다.")
-        UserDefaults.standard.set(switchState, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+        UserDefaults.standard.set(switchState, forKey: ESTextLiteral.MyPage.pushNotificationUserSettingKey)
     }
 
     /// UserDefaults에서 스위치 상태 불러오기
     private func loadSwitchStateFromUserDefaults() {
         print("사용자 푸시 알림 값을 앱 저장소에서 불러옵니다.")
-        switchState = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+        switchState = UserDefaults.standard.bool(forKey: ESTextLiteral.MyPage.pushNotificationUserSettingKey)
     }
 }
 
@@ -210,7 +210,7 @@ extension MyPageViewController: UITableViewDelegate {
                 switch setting.authorizationStatus {
                 case .denied:
                     DispatchQueue.main.async {
-                        self.view.showToast(message: TextLiteral.MyPage.authorizeNotificationSettingMessage)
+                        self.view.showToast(message: ESTextLiteral.MyPage.authorizeNotificationSettingMessage)
                     }
                 default:
                     DispatchQueue.main.async {
@@ -250,9 +250,9 @@ extension MyPageViewController: UITableViewDelegate {
 
         // "문의하기" 스크린으로 이동
         case MyPageLabels.Inquiry.rawValue:
-            TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
+            TalkApi.shared.chatChannel(channelPublicId: ESTextLiteral.KakaoChannel.id) { [weak self] error in
                 if error != nil {
-                    if let kakaoChannelLink = URL(string: "http://pf.kakao.com/\(TextLiteral.KakaoChannel.id)") {
+                    if let kakaoChannelLink = URL(string: "http://pf.kakao.com/\(ESTextLiteral.KakaoChannel.id)") {
                         UIApplication.shared.open(kakaoChannelLink)
                     } else {
                         self?.showAlertController(
@@ -269,13 +269,13 @@ extension MyPageViewController: UITableViewDelegate {
         // "서비스 이용약관" 스크린으로 이동
         case MyPageLabels.TermsOfUse.rawValue:
             let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
-            provisionViewController.navigationTitle = TextLiteral.MyPage.termsOfUse
+            provisionViewController.navigationTitle = ESTextLiteral.MyPage.termsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "개인정보 이용약관" 스크린으로 이동
         case MyPageLabels.PrivacyTermsOfUse.rawValue:
             let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
-            provisionViewController.navigationTitle = TextLiteral.MyPage.privacyTermsOfUse
+            provisionViewController.navigationTitle = ESTextLiteral.MyPage.privacyTermsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "만든사람들" 스크린으로 이동

@@ -28,14 +28,14 @@ final class HomeRestaurantViewController: BaseViewController {
     weak var infoDelegate: RestaurantInfoDelegate?
     var delegate: ReviewMenuTypeInfoDelegate?
     private let fixedDummy = FixedMenuInfoData.Dummy()
-    private let sectionHeaderRestaurant = [TextLiteral.dormitoryRestaurant,
-                                           TextLiteral.dodamRestaurant,
-                                           TextLiteral.studentRestaurant,
-                                           TextLiteral.snackCorner]
-    let restaurantButtonTitleToName = [TextLiteral.dormitoryRestaurant: "DORMITORY",
-                                       TextLiteral.dodamRestaurant: "DODAM",
-                                       TextLiteral.studentRestaurant: "HAKSIK",
-                                       TextLiteral.snackCorner: "SNACK_CORNER"]
+    private let sectionHeaderRestaurant = [ESTextLiteral.Restaurant.dormitoryRestaurant,
+                                           ESTextLiteral.Restaurant.dodamRestaurant,
+                                           ESTextLiteral.Restaurant.studentRestaurant,
+                                           ESTextLiteral.Restaurant.snackCorner]
+    let restaurantButtonTitleToName = [ESTextLiteral.Restaurant.dormitoryRestaurant: "DORMITORY",
+                                       ESTextLiteral.Restaurant.dodamRestaurant: "DODAM",
+                                       ESTextLiteral.Restaurant.studentRestaurant: "HAKSIK",
+                                       ESTextLiteral.Restaurant.snackCorner: "SNACK_CORNER"]
     var currentRestaurant = ""
     var isWeekend = false
     var isSelectable = false
@@ -130,9 +130,9 @@ final class HomeRestaurantViewController: BaseViewController {
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend
 
-        if time == TextLiteral.lunchRawValue {
+        if time == ESTextLiteral.Restaurant.lunchRawValue {
             if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
-                getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
+                getFixMenuData(restaurant: ESTextLiteral.Restaurant.snackCornerRawValue) {}
             } else {
                 currentRestaurant = Restaurant.snackCorner.identifier
                 fixMenuTableViewData[Restaurant.snackCorner.identifier] = [Menus(menuId: 0, name: "", price: nil, rating: nil)]
@@ -181,19 +181,19 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             // MARK: 섹션지정
 
             if indexPath.section == 0 {
-                if let data = changeMenuTableViewData[TextLiteral.dormitoryRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
+                if let data = changeMenuTableViewData[ESTextLiteral.Restaurant.dormitoryRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
                     cell.model = .change(data)
                 }
             } else if indexPath.section == 1 {
-                if let data = changeMenuTableViewData[TextLiteral.dodamRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
+                if let data = changeMenuTableViewData[ESTextLiteral.Restaurant.dodamRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
                     cell.model = .change(data)
                 }
             } else if indexPath.section == 2 {
-                if let data = changeMenuTableViewData[TextLiteral.studentRestaurantRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
+                if let data = changeMenuTableViewData[ESTextLiteral.Restaurant.studentRestaurantRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
                     cell.model = .change(data)
                 }
             } else if indexPath.section == 3 {
-                if let data = fixMenuTableViewData[TextLiteral.snackCornerRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
+                if let data = fixMenuTableViewData[ESTextLiteral.Restaurant.snackCornerRawValue]?[indexPath.row - restaurantTableViewMenuTitleCellCount] {
                     if data.price != nil {
                         isSelectable = true
                         cell.selectionStyle = .default

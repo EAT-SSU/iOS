@@ -87,12 +87,12 @@ final class UserWithdrawView: BaseUIView {
 
     private func setProperties() {
         nickNameLabel.do {
-            $0.text = TextLiteral.MyPage.confirmWithdrawal
+            $0.text = ESTextLiteral.MyPage.confirmWithdrawal
             $0.font = .bold(size: 16)
         }
 
         subscription.do {
-            $0.text = TextLiteral.MyPage.withdrawalNotice
+            $0.text = ESTextLiteral.MyPage.withdrawalNotice
             $0.numberOfLines = 2
             $0.font = .medium(size: 12)
             $0.textColor = .gray700
@@ -107,7 +107,7 @@ final class UserWithdrawView: BaseUIView {
         }
 
         nickNameStateGuideLabel.do {
-            $0.text = TextLiteral.inputNickName
+            $0.text = ESTextLiteral.Nickname.inputNickName
             $0.textColor = .gray700
             $0.font = .medium(size: 10)
         }
@@ -118,7 +118,7 @@ final class UserWithdrawView: BaseUIView {
         }
 
         completeSignOutButton.do {
-            $0.addTitleAttribute(title: TextLiteral.MyPage.withdraw,
+            $0.addTitleAttribute(title: ESTextLiteral.MyPage.withdraw,
                                  titleColor: .white,
                                  fontName: .bold(size: 18))
             $0.setRoundBorder(borderColor: .gray300, borderWidth: 0, cornerRadius: 10)
@@ -133,20 +133,20 @@ final class UserWithdrawView: BaseUIView {
     private func setValidationLabel(state: ValidationLabelState) {
         switch state {
         case .corrected:
-            nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
+            nickNameStateGuideLabel.text = ESTextLiteral.Nickname.validInputMessage
             nickNameStateGuideLabel.textColor = .systemGreen
             completeSignOutButton.isEnabled = true
         case .unCorrected:
             nickNameStateGuideLabel.do {
                 $0.isHidden = false
-                $0.text = TextLiteral.MyPage.invalidNicknameMessage
+                $0.text = ESTextLiteral.Nickname.invalidNicknameMessage
                 $0.textColor = .primary
             }
             completeSignOutButton.isEnabled = false
         case .pleaseEnter:
             nickNameStateGuideLabel.do {
                 $0.isHidden = false
-                $0.text = TextLiteral.inputNickName
+                $0.text = ESTextLiteral.Nickname.inputNickName
                 $0.textColor = .gray700
             }
             completeSignOutButton.isEnabled = false
