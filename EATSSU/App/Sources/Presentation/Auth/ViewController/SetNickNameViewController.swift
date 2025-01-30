@@ -49,7 +49,7 @@ final class SetNickNameViewController: BaseViewController {
 
     override func setESNavigationBar() {
         super.setESNavigationBar()
-        navigationItem.title = TextLiteral.setNickName
+        navigationItem.title = ESTextLiteral.Nickname.setNickName
     }
 
     override func setButtonEvent() {

@@ -51,7 +51,7 @@ final class MyReviewViewController: BaseViewController {
 
     override func setESNavigationBar() {
         super.setESNavigationBar()
-        navigationItem.title = TextLiteral.MyPage.myReview
+        navigationItem.title = ESTextLiteral.MyPage.myReview
     }
 
     override func configureUI() {

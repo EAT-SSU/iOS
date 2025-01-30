@@ -16,24 +16,24 @@ struct MyPageLocalData {
 extension MyPageLocalData {
     static let myPageTableLabelList = [
         // "푸시 알림 설정"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.pushNotificationSetting),
+        MyPageLocalData(titleLabel: ESTextLiteral.MyPage.pushNotificationSetting),
 
         // "내가 쓴 리뷰"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.myReview),
+        MyPageLocalData(titleLabel: ESTextLiteral.MyPage.myReview),
 
         // "문의하기"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.inquiry),
+        MyPageLocalData(titleLabel: ESTextLiteral.MyPage.inquiry),
 
         // "서비스 이용약관"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.termsOfUse),
+        MyPageLocalData(titleLabel: ESTextLiteral.MyPage.termsOfUse),
 
         // "개인정보 이용약관"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.privacyTermsOfUse),
+        MyPageLocalData(titleLabel: ESTextLiteral.MyPage.privacyTermsOfUse),
 
         // "만든 사람들"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.creators),
+        MyPageLocalData(titleLabel: ESTextLiteral.MyPage.creators),
 
         // "로그아웃"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.logout),
+        MyPageLocalData(titleLabel: ESTextLiteral.MyPage.logout),
     ]
 }

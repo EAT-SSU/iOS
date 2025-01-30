@@ -25,8 +25,8 @@ class NotificationManager {
         // 알림 콘텐츠 설정
         let content = UNMutableNotificationContent()
 
-        content.title = TextLiteral.Notification.dailyWeekdayNotificationTitle
-        content.body = TextLiteral.Notification.dailyWeekdayNotificationBody
+        content.title = ESTextLiteral.Notification.dailyWeekdayNotificationTitle
+        content.body = ESTextLiteral.Notification.dailyWeekdayNotificationBody
         content.sound = .default
 
         // 반복할 요일 및 시간 설정 (평일 오전 11시)

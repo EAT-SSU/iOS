@@ -37,7 +37,7 @@ final class MyPageView: BaseUIView {
 
     // "연결된 계정" 레이블
     let accountTitleLabel = UILabel().then {
-        $0.text = TextLiteral.MyPage.linkedAccount
+        $0.text = ESTextLiteral.MyPage.linkedAccount
         $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
     }
 
@@ -72,7 +72,7 @@ final class MyPageView: BaseUIView {
 
     // "앱 버전" 레이블
     private let appVersionStringLabel = UILabel().then { label in
-        label.text = TextLiteral.MyPage.appVersion
+        label.text = ESTextLiteral.MyPage.appVersion
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
     }
@@ -87,7 +87,7 @@ final class MyPageView: BaseUIView {
     /// "탈퇴하기" 레이블과 탈퇴하기 아이콘
     let userWithdrawButton: UIButton = {
         let button = UIButton()
-        button.setTitle(TextLiteral.MyPage.withdraw, for: .normal)
+        button.setTitle(ESTextLiteral.MyPage.withdraw, for: .normal)
         button.setImage(EATSSUDesignAsset.Images.withdrawIcon.image, for: .normal)
         button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray400.color, for: .normal)
         button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)

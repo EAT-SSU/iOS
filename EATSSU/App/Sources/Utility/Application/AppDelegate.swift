@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /// 푸시 알림 권한을 요청하고 설정을 처리합니다.
     private func setupNotificationPermissions() {
         NotificationManager.shared.requestNotificationPermission { granted in
-            let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
+            let userSettingKey = ESTextLiteral.MyPage.pushNotificationUserSettingKey
             let isAppPermissionGranted = UserDefaults.standard.bool(forKey: userSettingKey)
 
             if granted {

@@ -106,7 +106,7 @@ extension RestaurantTableViewMenuCell {
                 let formatRating = String(format: "%.1f", data.rating ?? 0)
                 ratingLabel.text = formatRating
             } else {
-                ratingLabel.text = TextLiteral.Home.emptyRating
+                ratingLabel.text = ESTextLiteral.Home.emptyRating
             }
 
             if data.briefMenus.isEmpty {

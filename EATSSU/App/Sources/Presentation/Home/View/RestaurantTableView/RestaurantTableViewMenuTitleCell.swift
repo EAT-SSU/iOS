@@ -15,18 +15,18 @@ class RestaurantTableViewMenuTitleCell: BaseTableViewCell {
     // MARK: - UI Components
 
     private let nameLabel = UILabel().then {
-        $0.text = TextLiteral.Home.todayMenu
+        $0.text = ESTextLiteral.Home.todayMenu
         $0.font = .body2
     }
 
     private let priceLabel = UILabel().then {
-        $0.text = TextLiteral.Home.price
+        $0.text = ESTextLiteral.Home.price
         $0.font = .body2
         $0.textAlignment = .center
     }
 
     private let ratingLabel = UILabel().then {
-        $0.text = TextLiteral.Home.rating
+        $0.text = ESTextLiteral.Home.rating
         $0.font = .body2
         $0.textAlignment = .center
     }

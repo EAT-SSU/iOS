@@ -27,7 +27,7 @@ final class SetNickNameView: BaseUIView {
     }
 
     /// 닉네임 입력 텍스트필드
-    public let inputNickNameTextField = ESTextField(placeholder: TextLiteral.inputNickName).then { _ in
+    public let inputNickNameTextField = ESTextField(placeholder: ESTextLiteral.Nickname.inputNickName).then { _ in
         /*
          해야 할 일
          - 현재 ESTextField로서는 크게 문제가 없는데, 혹시 모르는 추가 설정이 놓친 게 없나 검토 필요
@@ -46,7 +46,7 @@ final class SetNickNameView: BaseUIView {
 
     /// 닉네임 중복확인 결과 메시지 레이블
     public var nicknameValidationMessageLabel = UILabel().then {
-        $0.text = TextLiteral.hintInputNickName
+        $0.text = ESTextLiteral.Nickname.hintInputNickName
         $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
     }

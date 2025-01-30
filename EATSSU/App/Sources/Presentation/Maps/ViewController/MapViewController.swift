@@ -16,6 +16,7 @@ final class MapViewController: BaseViewController, NMFMapViewTouchDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setNavigationBar()
 
         mapView = NMFMapView(frame: view.frame)
         view.addSubview(mapView)
@@ -25,6 +26,21 @@ final class MapViewController: BaseViewController, NMFMapViewTouchDelegate {
         marker.mapView = mapView
 
         mapView.touchDelegate = self
+    }
+
+    private func setNavigationBar() {
+        navigationItem.title = ESTextLiteral.Map.mapNavTitle
+        navigationController?.isNavigationBarHidden = false
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.titleTextAttributes = [
+            .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 16),
+        ]
+
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 }
 
