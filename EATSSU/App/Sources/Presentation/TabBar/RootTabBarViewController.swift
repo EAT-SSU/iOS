@@ -27,7 +27,7 @@ class RootTabBarViewController: UITabBarController {
 
         // 기존 코드 유지
         let homeViewController = HomeViewController()
-        let searchViewController = MapsViewController()
+        let searchViewController = MapViewController()
         let mypageViewController = MyPageViewController(hasAccessToken: RealmService.shared.isAccessTokenPresent())
 
         let homeNav = UINavigationController(rootViewController: homeViewController)
