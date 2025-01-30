@@ -34,9 +34,9 @@ class RootTabBarViewController: UITabBarController {
         let mapNav = UINavigationController(rootViewController: searchViewController)
         let mypageNav = UINavigationController(rootViewController: mypageViewController)
 
-        homeNav.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
-        mapNav.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "map.fill"), tag: 1)
-        mypageNav.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape.fill"), tag: 2)
+        homeNav.tabBarItem = UITabBarItem(title: "학식", image: UIImage(systemName: "fork.knife"), tag: 0)
+        mapNav.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
+        mypageNav.tabBarItem = UITabBarItem(title: "마이", image: UIImage(systemName: "person.fill"), tag: 2)
 
         viewControllers = [homeNav, mapNav, mypageNav]
 
