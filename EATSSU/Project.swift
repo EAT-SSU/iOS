@@ -6,6 +6,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
     "NMFClientId": "$(NMAP_CLIENT_ID)",
     "GADApplicationIdentifier": "$(GADApplicationIdentifier)",
+    "NSLocationAlwaysUsageDescription": "사용자의 위치를 받습니다.",
     "UILaunchStoryboardName": "LaunchScreen",
     "CFBundleURLTypes": [
         [
