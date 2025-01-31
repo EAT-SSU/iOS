@@ -21,9 +21,14 @@ final class MapViewController: BaseViewController, NMFMapViewTouchDelegate {
         mapView = NMFMapView(frame: view.frame)
         view.addSubview(mapView)
 
-        let marker = NMFMarker()
-        marker.position = NMGLatLng(lat: 37.4964, lng: 126.9575)
-        marker.mapView = mapView
+        // Sample marker at NAVER 1984 location
+        let sampleMarker = ESMarker(
+            position: NMGLatLng(lat: 37.3595704, lng: 127.105399),
+            data: "Sample Data",
+            leftText: "NAVER",
+            rightText: "1984"
+        )
+        sampleMarker.marker.mapView = mapView
 
         mapView.touchDelegate = self
     }
@@ -50,9 +55,13 @@ extension MapViewController {
             print("탭: \(latlng.lat), \(latlng.lng)")
         #endif
 
-        let marker = NMFMarker()
-        marker.position = NMGLatLng(lat: latlng.lat, lng: latlng.lng)
-        marker.mapView = mapView
+        let marker = ESMarker(
+            position: NMGLatLng(lat: latlng.lat, lng: latlng.lng),
+            data: "Tapped Location",
+            leftText: "Tapped",
+            rightText: "Here"
+        )
+        marker.marker.mapView = mapView
     }
 
     func mapView(_: NMFMapView, didLongTapMap latlng: NMGLatLng, point _: CGPoint) {
