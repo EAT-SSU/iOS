@@ -157,13 +157,6 @@ extension MapViewController: NMFMapViewTouchDelegate {
         #if DEBUG
             print("탭: \(latlng.lat), \(latlng.lng)")
         #endif
-
-        addMarker(
-            at: latlng,
-            leftText: "Tapped Location",
-            rightText: "Here is the location where you tapped the map",
-            markerData: MarkerData(title: "Tapped Location", description: "Location Description")
-        )
     }
 
     /// 사용자가 지도에서 길게 눌렀을 때 호출됩니다.
