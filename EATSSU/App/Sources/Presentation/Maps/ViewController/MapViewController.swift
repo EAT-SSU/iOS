@@ -58,8 +58,8 @@ extension MapViewController {
         let marker = ESMarker(
             position: NMGLatLng(lat: latlng.lat, lng: latlng.lng),
             data: "Tapped Location",
-            leftText: "Tapped",
-            rightText: "Here"
+            leftText: "Tapped Marker",
+            rightText: "Here is the location"
         )
         marker.marker.mapView = mapView
     }
