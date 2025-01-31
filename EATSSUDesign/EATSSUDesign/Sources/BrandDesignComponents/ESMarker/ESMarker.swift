@@ -27,7 +27,7 @@ public final class ESMarker {
     private enum Layout {
         static let horizontalPadding: CGFloat = 12 // 텍스트와 말풍선 가장자리 간격
         static let verticalPadding: CGFloat = 8 // 텍스트와 말풍선 위아래 간격
-        static let spacing: CGFloat = 5 // 왼쪽 말풍선과 오른쪽 말풍선 간격
+        static let spacing: CGFloat = 0 // 왼쪽 말풍선과 오른쪽 말풍선 간격
         static let cornerRadius: CGFloat = 25 // 말풍선의 둥근 정도
         static let leftBubblePadding: CGFloat = 5 // 왼쪽 말풍선의 추가 패딩
         static let tailHeight: CGFloat = 10 // 말풍선 꼬리의 높이
