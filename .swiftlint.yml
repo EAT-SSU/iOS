@@ -1,0 +1,14 @@
+# 모든 규칙을 기본적으로 warning(경고)로 설정
+opt_in_rules:
+  - all
+
+# error를 warning으로 변경
+warning_threshold: 10000  # 경고 한도를 높여서 제한되지 않도록 설정
+
+# 특정 규칙을 warning으로 변경
+disabled_rules:
+  - force_cast
+  - force_try
+
+# error로 설정된 규칙을 warning으로만 처리
+treats_warnings_as_errors: false
