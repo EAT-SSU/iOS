@@ -1,5 +1,5 @@
 //
-//  MyPageLabels.swift
+//  MyPageLabelsIndex.swift
 //  EATSSU
 //
 //  Created by Jiwoong CHOI on 9/11/24.
@@ -8,9 +8,12 @@
 import Foundation
 
 /// "마이파이지"에서 확인할 수 있는 서비스 리스트
-enum MyPageLabels: Int {
+enum MyPageLabelsIndex: Int {
     /// 푸시 알림 설정
     case NotificationSetting = 0
+
+    /// 내 정보
+    case MyInfo
 
     /// 내가 쓴 리뷰
     case MyReview
