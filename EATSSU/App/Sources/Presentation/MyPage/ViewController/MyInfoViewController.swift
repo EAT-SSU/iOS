@@ -54,7 +54,7 @@ final class MyInfoViewController: BaseViewController {
 
     override func setESNavigationBar() {
         super.setESNavigationBar()
-        navigationItem.title = ESTextLiteral.Nickname.setNickName
+        navigationItem.title = ESTextLiteral.MyPage.myInfoTitle
     }
 
     override func setButtonEvent() {

@@ -20,7 +20,7 @@ final class MyInfoView: BaseUIView {
     // MARK: - UI Components
 
     /// 닉네임 설정 안내 문구
-    private let nickNameLabel = UILabel().then {
+    let nickNameLabel = UILabel().then {
         $0.text = "EAT-SSU에서 사용할\n닉네임을 설정해 주세요"
         $0.numberOfLines = 2
         $0.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
@@ -42,7 +42,7 @@ final class MyInfoView: BaseUIView {
     }
 
     /// 닉네임 입력 필드 및 검증 메시지를 포함하는 StackView
-    private lazy var setNickNameStackView = UIStackView(arrangedSubviews: [
+    lazy var setNickNameStackView = UIStackView(arrangedSubviews: [
         inputNickNameTextField,
         nicknameValidationMessageLabel,
     ]).then {
