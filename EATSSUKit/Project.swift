@@ -8,6 +8,7 @@ let project = Project(
             destinations: .iOS,
             product: .framework,
             bundleId: "com.EATSSU.EATSSUKit",
+            deploymentTargets: .iOS("15.0"),
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchScreen": [

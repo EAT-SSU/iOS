@@ -147,6 +147,7 @@ let project = Project(
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
+                .project(target: "EATSSUKit", path: .relativeToRoot("../EATSSUKit"), condition: .none),
             ],
             settings: projectSettings
         ),

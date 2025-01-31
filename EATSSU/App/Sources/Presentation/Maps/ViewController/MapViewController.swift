@@ -5,17 +5,23 @@
 //  Created by JIWOONG CHOI on 1/28/25.
 //
 
-import EATSSUDesign
-import NMapsMap
 import UIKit
 
+import EATSSUDesign
+import EATSSUKit
+
+import NMapsMap
+
 /// `MapViewController`는 네이버 지도를 표시하고, 마커를 추가하는 역할을 합니다.
-final class MapViewController: BaseViewController, NMFMapViewTouchDelegate {
+final class MapViewController: BaseViewController {
     /// 네이버 지도 뷰
     private var mapView: NMFMapView!
 
     /// 숭실대학교 위치 (위도, 경도)
     private let soongsilUniversityLocation = NMGLatLng(lat: 37.496389, lng: 126.957222)
+
+    /// 추가된 ESMarker들을 저장하는 배열
+    private var esMarkers: [ESMarker] = []
 
     // MARK: - Life Cycle
 
@@ -73,21 +79,76 @@ final class MapViewController: BaseViewController, NMFMapViewTouchDelegate {
 
     // MARK: - 마커 설정
 
+    /// 특정 위치에 마커를 추가합니다.
+    /// - Parameters:
+    ///   - location: 마커를 추가할 위치 (`NMGLatLng`)
+    ///   - title: 마커의 데이터 (`String`)
+    ///   - leftText: 마커 왼쪽 텍스트 (`String`)
+    ///   - rightText: 마커 오른쪽 텍스트 (`String`)
+    private func addMarker(at location: NMGLatLng, leftText: String, rightText: String, markerData: MarkerData) {
+        let marker = ESMarker(
+            position: location,
+            leftText: leftText,
+            rightText: rightText,
+            touchHandler: { (_: NMFOverlay) -> Bool in
+                #if DEBUG
+                    print("마커가 탭되었습니다!")
+                #endif
+                self.presentMarkerDetailModal(with: markerData)
+                return true
+            },
+            markerData: markerData
+        )
+        marker.marker.mapView = mapView
+        esMarkers.append(marker)
+    }
+
     /// 숭실대학교 위치에 마커를 추가합니다.
     private func addSoongsilMarker() {
         let soongsilMarker = ESMarker(
             position: soongsilUniversityLocation,
-            data: "Soongsil Univ",
             leftText: "숭실대학교",
-            rightText: "Soongsil Univ"
+            rightText: "Soongsil Univ",
+            touchHandler: { (_: NMFOverlay) -> Bool in
+                #if DEBUG
+                    print("마커가 탭되었습니다!")
+                #endif
+                self.presentMarkerDetailModal(with: .init(title: "숭실대학교", description: "EATSSU의 서비스 지역"))
+                return true
+            },
+            markerData: MarkerData(title: "숭실대학교", description: "EATSSU의 서비스 지역")
         )
         soongsilMarker.marker.mapView = mapView
+        esMarkers.append(soongsilMarker)
+    }
+
+    // MARK: - Modal 표시
+
+    /// `MarkerDetailViewController`를 표시하는 메서드
+    /// - Parameter data: 마커에 대한 데이터 (`MarkerData`)
+    private func presentMarkerDetailModal(with data: MarkerData) {
+        let detailVC = MarkerDetailViewController()
+        detailVC.markerData = data
+        let navController = UINavigationController(rootViewController: detailVC)
+
+        // 모달 스타일을 설정
+        navController.modalPresentationStyle = .pageSheet
+
+        // `UISheetPresentationController` 설정 (iOS 15+)
+        if let sheet = navController.sheetPresentationController {
+            sheet.detents = [.medium(), .large()] // 중간 크기와 큰 크기로 설정
+            sheet.prefersGrabberVisible = true // 위로 드래그할 수 있도록 grabber 표시
+            sheet.prefersEdgeAttachedInCompactHeight = true // 화면 하단에 고정
+            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
+        }
+
+        present(navController, animated: true, completion: nil)
     }
 }
 
 // MARK: - NMFMapViewTouchDelegate (지도 터치 이벤트)
 
-extension MapViewController {
+extension MapViewController: NMFMapViewTouchDelegate {
     /// 사용자가 지도에서 단일 탭을 했을 때 호출됩니다.
     /// - Parameters:
     ///   - latlng: 사용자가 탭한 위치 (`NMGLatLng`)
@@ -97,7 +158,12 @@ extension MapViewController {
             print("탭: \(latlng.lat), \(latlng.lng)")
         #endif
 
-        addMarker(at: latlng, title: "Tapped Location", leftText: "Tapped Marker", rightText: "Here is the location")
+        addMarker(
+            at: latlng,
+            leftText: "Tapped Location",
+            rightText: "Here is the location where you tapped the map",
+            markerData: MarkerData(title: "Tapped Location", description: "Location Description")
+        )
     }
 
     /// 사용자가 지도에서 길게 눌렀을 때 호출됩니다.
@@ -108,21 +174,5 @@ extension MapViewController {
         #if DEBUG
             print("롱 탭: \(latlng.lat), \(latlng.lng)")
         #endif
-    }
-
-    /// 특정 위치에 마커를 추가합니다.
-    /// - Parameters:
-    ///   - location: 마커를 추가할 위치 (`NMGLatLng`)
-    ///   - title: 마커의 데이터 (`String`)
-    ///   - leftText: 마커 왼쪽 텍스트 (`String`)
-    ///   - rightText: 마커 오른쪽 텍스트 (`String`)
-    private func addMarker(at location: NMGLatLng, title: String, leftText: String, rightText: String) {
-        let marker = ESMarker(
-            position: location,
-            data: title,
-            leftText: leftText,
-            rightText: rightText
-        )
-        marker.marker.mapView = mapView
     }
 }
