@@ -5,8 +5,11 @@
 //  Created by JIWOONG CHOI on 1/31/25.
 //
 
-import NMapsMap
 import UIKit
+
+import EATSSUKit
+
+import NMapsMap
 
 /// `ESMarker`는 Naver 지도에 마커를 추가하고, 말풍선 형태의 UI를 렌더링하는 클래스입니다.
 /// - `leftText`: 말풍선의 왼쪽 텍스트
@@ -16,8 +19,8 @@ public final class ESMarker {
 
     /// Naver 지도에서 사용되는 마커 객체
     public private(set) var marker: NMFMarker
-    /// 마커에 포함될 데이터 (유형이 고정되지 않음)
-    private var data: Any
+    /// 마커 정보 페이지에 표기될 마커 데이터 객체
+    public var markerData: MarkerData
     /// 왼쪽 말풍선에 표시될 텍스트
     private var leftText: String
     /// 오른쪽 말풍선에 표시될 텍스트
@@ -40,15 +43,22 @@ public final class ESMarker {
     /// `ESMarker` 초기화 메서드
     /// - Parameters:
     ///   - position: 마커의 위치 (`NMGLatLng`)
-    ///   - data: 마커에 포함할 데이터
     ///   - leftText: 왼쪽 말풍선 텍스트
     ///   - rightText: 오른쪽 말풍선 텍스트
-    public init(position: NMGLatLng, data: Any, leftText: String, rightText: String) {
+    ///   - touchHandler: 마커 터치 핸들러
+    public init(
+        position: NMGLatLng,
+        leftText: String,
+        rightText: String,
+        touchHandler: @escaping NMFOverlayTouchHandler,
+        markerData: MarkerData
+    ) {
         marker = NMFMarker()
         marker.position = position
-        self.data = data
         self.leftText = leftText
         self.rightText = rightText
+        marker.touchHandler = touchHandler
+        self.markerData = markerData
         updateImage()
     }
 
