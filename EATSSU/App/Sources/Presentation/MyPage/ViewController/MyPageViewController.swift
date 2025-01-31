@@ -190,7 +190,7 @@ extension MyPageViewController: UITableViewDataSource {
     ///         "푸시 알림 설정" 셀만 별도로 처리합니다.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // "푸시 알림 설정" 셀
-        if indexPath.row == MyPageLabels.NotificationSetting.rawValue {
+        if indexPath.row == MyPageLabelsIndex.NotificationSetting.rawValue {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: NotificationSettingTableViewCell.identifier,
                 for: indexPath
@@ -243,7 +243,7 @@ extension MyPageViewController: UITableViewDelegate {
 
         switch indexPath.row {
         // "푸시 알림 설정"
-        case MyPageLabels.NotificationSetting.rawValue:
+        case MyPageLabelsIndex.NotificationSetting.rawValue:
             NotificationManager.shared.checkNotificationSetting { setting in
                 switch setting.authorizationStatus {
                 case .denied:
@@ -285,13 +285,17 @@ extension MyPageViewController: UITableViewDelegate {
                 }
             }
 
+        case MyPageLabelsIndex.MyInfo.rawValue:
+            let myInfoViewController = MyInfoViewController()
+            navigationController?.pushViewController(myInfoViewController, animated: true)
+
         // "내가 쓴 리뷰"
-        case MyPageLabels.MyReview.rawValue:
+        case MyPageLabelsIndex.MyReview.rawValue:
             let myReviewViewController = MyReviewViewController()
             navigationController?.pushViewController(myReviewViewController, animated: true)
 
         // "문의하기"
-        case MyPageLabels.Inquiry.rawValue:
+        case MyPageLabelsIndex.Inquiry.rawValue:
             TalkApi.shared.chatChannel(channelPublicId: ESTextLiteral.KakaoChannel.id) { [weak self] error in
                 if error != nil {
                     // 채널 연동 실패 시, 웹 브라우저로 연결
@@ -310,24 +314,24 @@ extension MyPageViewController: UITableViewDelegate {
             }
 
         // "서비스 이용약관"
-        case MyPageLabels.TermsOfUse.rawValue:
+        case MyPageLabelsIndex.TermsOfUse.rawValue:
             let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
             provisionViewController.navigationTitle = ESTextLiteral.MyPage.termsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "개인정보 이용약관"
-        case MyPageLabels.PrivacyTermsOfUse.rawValue:
+        case MyPageLabelsIndex.PrivacyTermsOfUse.rawValue:
             let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
             provisionViewController.navigationTitle = ESTextLiteral.MyPage.privacyTermsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "만든사람들"
-        case MyPageLabels.Creator.rawValue:
+        case MyPageLabelsIndex.Creator.rawValue:
             let creatorViewController = CreatorViewController()
             navigationController?.pushViewController(creatorViewController, animated: true)
 
         // "로그아웃"
-        case MyPageLabels.Logout.rawValue:
+        case MyPageLabelsIndex.Logout.rawValue:
             showLogoutAlert()
 
         default:
