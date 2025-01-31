@@ -1,11 +1,13 @@
 //
 //  MyReviewViewController.swift
-//  EatSSU-iOS
+//  EATSSU
 //
-//  Created by 최지우 on 2023/07/27.
+//  Edited by Jiwoong CHOI on 1/31/25.
 //
 
 import UIKit
+
+import EATSSUKit
 
 import Moya
 import SnapKit
@@ -152,10 +154,20 @@ extension MyReviewViewController {
                     self.checkReviewCount()
                     self.myReviewView.myReviewTableView.reloadData()
                 } catch let err {
-                    print(err.localizedDescription)
+                    #if DEBUG
+                        print(err.localizedDescription)
+                    #endif
+                    ESAlertUtility.showConfirmOnlyAlert(title: "알림", message: "서버 문제가 발생했습니다.", in: self) { [weak self] in
+                        self?.navigationController?.popViewController(animated: true)
+                    }
                 }
             case let .failure(err):
-                print(err.localizedDescription)
+                #if DEBUG
+                    print(err.localizedDescription)
+                #endif
+                ESAlertUtility.showConfirmOnlyAlert(title: "알림", message: "서버 문제가 발생했습니다.", in: self) { [weak self] in
+                    self?.navigationController?.popViewController(animated: true)
+                }
             }
         }
     }
