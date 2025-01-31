@@ -17,7 +17,7 @@ extension MyPageSettingList {
         MyPageSettingList(title: ESTextLiteral.MyPage.pushNotificationSetting),
 
         // "내 정보"
-        MyPageSettingList(title: ESTextLiteral.MyPage.myInfo),
+        MyPageSettingList(title: ESTextLiteral.MyPage.myInfoTitle),
 
         // "내가 쓴 리뷰"
         MyPageSettingList(title: ESTextLiteral.MyPage.myReview),

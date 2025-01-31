@@ -184,9 +184,9 @@ enum ESTextLiteral {
         /// - Note: "푸시 알림 설정"
         static let pushNotificationSetting: String = "푸시 알림 설정"
 
-        /// 내 정보를 수정합니다.
-        /// - Note: "내 정보"
-        static let myInfo: String = "내 정보"
+        /// 내 정보를 수정하는 VC의 타이틀입니다.
+        /// - Note: "내 정보 수정"
+        static let myInfoTitle: String = "내 정보 수정"
 
         /// 제작자 목록을 표시하는 섹션의 타이틀 텍스트입니다.
         /// - Note: "만든사람들"
