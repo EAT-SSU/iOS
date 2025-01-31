@@ -105,23 +105,11 @@ final class MyPageViewController: BaseViewController {
 
     /// - Note: 버튼들의 액션을 연결합니다.
     override func setButtonEvent() {
-        mypageView.userNicknameButton
-            .addTarget(self, action: #selector(didTappedChangeNicknameButton), for: .touchUpInside)
-
         mypageView.userWithdrawButton
             .addTarget(self, action: #selector(userWithdrawButtonTapped), for: .touchUpInside)
     }
 
     // MARK: - Actions
-
-    //======================================================================
-    /// - Note: 닉네임 변경 버튼을 탭했을 때 호출됩니다.
-    ///         닉네임 설정 화면으로 이동합니다.
-    @objc
-    private func didTappedChangeNicknameButton() {
-        let setNickNameVC = SetNickNameViewController()
-        navigationController?.pushViewController(setNickNameVC, animated: true)
-    }
 
     /// - Note: 회원탈퇴 버튼을 탭했을 때 호출됩니다.
     ///         회원탈퇴 화면으로 이동합니다.
