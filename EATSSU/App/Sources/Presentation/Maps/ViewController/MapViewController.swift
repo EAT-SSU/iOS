@@ -33,7 +33,7 @@ final class MapViewController: BaseViewController {
         super.viewDidLoad()
         setupUI()
         configureMapView()
-        setupSegmentedControl() // 여기서 segmented control을 추가합니다.
+        setupSegmentedControl() // segmented control을 추가합니다.
         addSoongsilMarker()
     }
 
@@ -88,30 +88,53 @@ final class MapViewController: BaseViewController {
     /// 지도 상단에 UISegmentedControl을 추가합니다.
     private func setupSegmentedControl() {
         // segmented control에 들어갈 항목들을 설정합니다.
-        let items = ["Option 1", "Option 2"]
+        let items = ["내 제휴", "전체"]
         mapSegmentedControl = UISegmentedControl(items: items)
         mapSegmentedControl.selectedSegmentIndex = 0
         mapSegmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
 
-        // segmented control을 view의 서브뷰로 추가합니다.
+        // 배경색 및 선택된 옵션의 색상, 곡률 반경 설정
+        mapSegmentedControl.backgroundColor = .white
+        mapSegmentedControl.selectedSegmentTintColor = EATSSUDesignAsset.Color.Main.primary.color
+        mapSegmentedControl.layer.cornerRadius = 50
+        mapSegmentedControl.layer.masksToBounds = true
+
+        // 텍스트 폰트
+        let font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
+
+        // 텍스트 속성 설정
+        mapSegmentedControl.setTitleTextAttributes(
+            [
+                .foregroundColor: UIColor.white,
+                .font: font,
+            ],
+            for: .selected
+        )
+        mapSegmentedControl.setTitleTextAttributes(
+            [
+                .foregroundColor: UIColor.black,
+                .font: font,
+            ],
+            for: .normal
+        )
+
+        // 각 Segment의 넓이를 지정하는 대신, 전체 컨트롤의 넓이를 145로 지정합니다.
         view.addSubview(mapSegmentedControl)
-        mapSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        mapSegmentedControl.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(145)
+        }
 
-        // Auto Layout을 이용해 지도 상단에 고정합니다.
-        NSLayoutConstraint.activate([
-            // safeArea의 상단에 8pt 간격을 두고 배치
-            mapSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            mapSegmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapSegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-        ])
-
-        // 혹시 지도 뷰가 segmented control 위에 올 수 있으므로 bringSubviewToFront로 순서를 보장합니다.
+        // 혹시 지도 뷰가 segmented control 위에 올 수 있으므로 순서를 보장합니다.
         view.bringSubviewToFront(mapSegmentedControl)
     }
 
     @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
         // segmented control의 값이 변경되었을 때 처리할 코드를 작성합니다.
-        print("Selected segment index: \(sender.selectedSegmentIndex)")
+        #if DEBUG
+            print("Selected segment index: \(sender.selectedSegmentIndex)")
+        #endif
 
         // 예시: 선택된 인덱스에 따라 지도 스타일 변경 등
         // if sender.selectedSegmentIndex == 0 { ... } else { ... }
