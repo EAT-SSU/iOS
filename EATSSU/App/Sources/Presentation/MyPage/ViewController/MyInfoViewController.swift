@@ -32,12 +32,12 @@ final class MyInfoViewController: BaseViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        addKeyboardNotifications()
+//        addKeyboardNotifications()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        removeKeyboardNotifications()
+//        removeKeyboardNotifications()
     }
 
     // MARK: - UI 설정
@@ -78,48 +78,48 @@ final class MyInfoViewController: BaseViewController {
 
     // MARK: - 키보드 감지
 
-    /// 키보드 이벤트 감지를 위한 옵저버를 추가합니다.
-    func addKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
-    }
-
-    /// 키보드 이벤트 옵저버를 제거합니다.
-    func removeKeyboardNotifications() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillShowNotification,
-                                                  object: nil)
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillHideNotification,
-                                                  object: nil)
-    }
-
-    /// 키보드가 나타날 때 호출됩니다.
-    @objc
-    func keyboardWillShow(_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            let updateKeyboardHeight = keyboardSize.height
-            let difference = updateKeyboardHeight - currentKeyboardHeight
-
-            myInfoView.completeButton.frame.origin.y -= difference
-            currentKeyboardHeight = updateKeyboardHeight
-        }
-    }
-
-    /// 키보드가 사라질 때 호출됩니다.
-    @objc
-    func keyboardWillHide(_ notification: Notification) {
-        if ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue) != nil {
-            myInfoView.completeButton.frame.origin.y += currentKeyboardHeight
-            currentKeyboardHeight = 0.0
-        }
-    }
+//    /// 키보드 이벤트 감지를 위한 옵저버를 추가합니다.
+//    func addKeyboardNotifications() {
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(keyboardWillShow(_:)),
+//                                               name: UIResponder.keyboardWillShowNotification,
+//                                               object: nil)
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(keyboardWillHide(_:)),
+//                                               name: UIResponder.keyboardWillHideNotification,
+//                                               object: nil)
+//    }
+//
+//    /// 키보드 이벤트 옵저버를 제거합니다.
+//    func removeKeyboardNotifications() {
+//        NotificationCenter.default.removeObserver(self,
+//                                                  name: UIResponder.keyboardWillShowNotification,
+//                                                  object: nil)
+//        NotificationCenter.default.removeObserver(self,
+//                                                  name: UIResponder.keyboardWillHideNotification,
+//                                                  object: nil)
+//    }
+//
+//    /// 키보드가 나타날 때 호출됩니다.
+//    @objc
+//    func keyboardWillShow(_ notification: Notification) {
+//        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+//            let updateKeyboardHeight = keyboardSize.height
+//            let difference = updateKeyboardHeight - currentKeyboardHeight
+//
+//            myInfoView.completeButton.frame.origin.y -= difference
+//            currentKeyboardHeight = updateKeyboardHeight
+//        }
+//    }
+//
+//    /// 키보드가 사라질 때 호출됩니다.
+//    @objc
+//    func keyboardWillHide(_ notification: Notification) {
+//        if ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue) != nil {
+//            myInfoView.completeButton.frame.origin.y += currentKeyboardHeight
+//            currentKeyboardHeight = 0.0
+//        }
+//    }
 }
 
 // MARK: - 네트워크 요청
