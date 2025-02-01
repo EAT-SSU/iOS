@@ -172,6 +172,14 @@ enum ESTextLiteral {
     // MARK: - MyPage
 
     enum MyPage {
+        /// 완료하기 값입니다.
+        /// - Note: "완료하기"
+        static let complete: String = "완료하기"
+
+        /// 소속설정 UILabel의 값입니다.
+        /// - Note: "소속 설정"
+        static let affiliationSetting: String = "소속 설정"
+
         /// 알림 수신 권한 설정을 요청하는 메시지 텍스트입니다.
         /// - Note: "설정에서 알림수신을 동의해주세요!"
         static let authorizeNotificationSettingMessage: String = "설정에서 알림수신을 동의해주세요!"

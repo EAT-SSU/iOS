@@ -58,8 +58,8 @@ final class MyInfoViewController: BaseViewController {
     }
 
     override func setButtonEvent() {
-        myInfoView.completeSettingNickNameButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
-        myInfoView.nicknameDoubleCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
+        myInfoView.completeButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
+        myInfoView.nicknameCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
     }
 
     // MARK: - 닉네임 설정 이벤트
@@ -67,13 +67,13 @@ final class MyInfoViewController: BaseViewController {
     /// "닉네임 설정 완료" 버튼을 눌렀을 때 호출됩니다.
     @objc
     func tappedCompleteNickNameButton() {
-        setUserNickname(nickname: myInfoView.inputNickNameTextField.text ?? "")
+        setUserNickname(nickname: myInfoView.nicknameTextField.text ?? "")
     }
 
     /// "중복 확인" 버튼을 눌렀을 때 호출됩니다.
     @objc
     func tappedCheckButton() {
-        checkNickname(nickname: myInfoView.inputNickNameTextField.text ?? "")
+        checkNickname(nickname: myInfoView.nicknameTextField.text ?? "")
     }
 
     // MARK: - 키보드 감지
@@ -107,7 +107,7 @@ final class MyInfoViewController: BaseViewController {
             let updateKeyboardHeight = keyboardSize.height
             let difference = updateKeyboardHeight - currentKeyboardHeight
 
-            myInfoView.completeSettingNickNameButton.frame.origin.y -= difference
+            myInfoView.completeButton.frame.origin.y -= difference
             currentKeyboardHeight = updateKeyboardHeight
         }
     }
@@ -116,7 +116,7 @@ final class MyInfoViewController: BaseViewController {
     @objc
     func keyboardWillHide(_ notification: Notification) {
         if ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue) != nil {
-            myInfoView.completeSettingNickNameButton.frame.origin.y += currentKeyboardHeight
+            myInfoView.completeButton.frame.origin.y += currentKeyboardHeight
             currentKeyboardHeight = 0.0
         }
     }
@@ -166,14 +166,16 @@ extension MyInfoViewController {
                     let isSuccess = responseData.result
                     if isSuccess {
                         self.view.showToast(message: "사용 가능한 닉네임이에요")
-                        self.myInfoView.completeSettingNickNameButton.isEnabled = true
-                        self.myInfoView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
-                        self.myInfoView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
+                        self.myInfoView.completeButton.isEnabled = true
+                        self.myInfoView.nicknameValidationLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
+                        self.myInfoView.nicknameValidationLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
                     } else {
                         self.view.showToast(message: "이미 사용 중인 닉네임이에요")
-                        self.myInfoView.completeSettingNickNameButton.isEnabled = false
-                        self.myInfoView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage
-                        self.myInfoView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
+                        self.myInfoView.completeButton.isEnabled = false
+                        self.myInfoView.nicknameValidationLabel.text =
+                            NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage
+                        self.myInfoView.nicknameValidationLabel.textColor =
+                            NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
                     }
                 } catch let err {
                     print(err.localizedDescription)
