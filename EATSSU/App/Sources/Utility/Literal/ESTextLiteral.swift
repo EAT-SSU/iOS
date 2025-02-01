@@ -172,6 +172,10 @@ enum ESTextLiteral {
     // MARK: - MyPage
 
     enum MyPage {
+        /// 변경하기 값입니다.
+        /// - Note: "변경하기"
+        static let change: String = "변경하기"
+
         /// 완료하기 값입니다.
         /// - Note: "완료하기"
         static let complete: String = "완료하기"
