@@ -65,8 +65,8 @@ enum ESTextLiteral {
         static let nickNameLabel: String = "닉네임"
 
         /// 닉네임 입력 필드의 플레이스홀더 텍스트입니다.
-        /// - Note: "닉네임을 입력해주세요"
-        static let inputNickName: String = "닉네임을 입력해주세요"
+        /// - Note: "새로운 닉네임을 입력해주세요"
+        static let inputNickName: String = "새로운 닉네임을 입력해주세요"
 
         /// 닉네임 설정 안내 메시지의 텍스트입니다.
         /// - Note: "닉네임을 설정해 주세요."

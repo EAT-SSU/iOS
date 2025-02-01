@@ -26,7 +26,7 @@ final class MyInfoView: BaseUIView {
 
     /// 닉네임 설정 안내 문구
     let nicknameSettingLabel = UILabel().then {
-        $0.text = "EAT-SSU에서 사용할\n닉네임을 설정해 주세요"
+        $0.text = "닉네임 설정"
         $0.numberOfLines = 2
         $0.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
     }
