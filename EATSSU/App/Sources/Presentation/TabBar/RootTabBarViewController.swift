@@ -72,11 +72,15 @@ class RootTabBarViewController: UITabBarController {
 
 extension RootTabBarViewController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        // Create and trigger a haptic feedback generator
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        feedbackGenerator.impactOccurred()
+
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else { return }
 
         if selectedIndex == 2 {
             #if DEBUG
-                print("마이페지이 탭(tag 2)이 선택되었습니다.")
+                print("마이페이 탭(tag 2)이 선택되었습니다.")
             #endif
             handleSettingsTabSelected()
         }
