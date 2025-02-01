@@ -20,46 +20,52 @@ final class MyInfoView: BaseUIView {
     // MARK: - UI Components
 
     /// 닉네임 설정 안내 문구
-    let nickNameLabel = UILabel().then {
+    let nicknameSettingLabel = UILabel().then {
         $0.text = "EAT-SSU에서 사용할\n닉네임을 설정해 주세요"
         $0.numberOfLines = 2
         $0.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
     }
 
     /// 닉네임 입력 필드
-    let inputNickNameTextField = ESTextField(placeholder: ESTextLiteral.Nickname.inputNickName)
+    let nicknameTextField = ESTextField(placeholder: ESTextLiteral.Nickname.inputNickName)
 
     /// 닉네임 중복 확인 버튼
-    let nicknameDoubleCheckButton = ESButton(size: .small, title: "중복 확인").then {
+    let nicknameCheckButton = ESButton(size: .small, title: "중복 확인").then {
         $0.isEnabled = false
     }
 
     /// 닉네임 검증 결과 메시지를 표시하는 레이블
-    let nicknameValidationMessageLabel = UILabel().then {
+    let nicknameValidationLabel = UILabel().then {
         $0.text = ESTextLiteral.Nickname.hintInputNickName
         $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
     }
 
     /// 닉네임 입력 필드 및 검증 메시지를 포함하는 StackView
-    lazy var setNickNameStackView = UIStackView(arrangedSubviews: [
-        inputNickNameTextField,
-        nicknameValidationMessageLabel,
+    lazy var nicknameStackView = UIStackView(arrangedSubviews: [
+        nicknameTextField,
+        nicknameValidationLabel,
     ]).then {
         $0.axis = .vertical
         $0.spacing = 8.0
     }
 
     /// 완료 버튼
-    let completeSettingNickNameButton = ESButton(size: .big, title: "완료하기").then {
+    let completeButton = ESButton(size: .big, title: ESTextLiteral.MyPage.complete).then {
         $0.isEnabled = false
+    }
+
+    /// 소속 설정 UILabel
+    let affiliationLabel = UILabel().then {
+        $0.text = ESTextLiteral.MyPage.affiliationSetting
+        $0.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
     }
 
     // MARK: - Initializer
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setTextFieldDelegate()
+        configureTextFieldDelegate()
     }
 
     // MARK: - Functions
@@ -67,34 +73,40 @@ final class MyInfoView: BaseUIView {
     /// UI 구성 요소를 추가하는 메서드
     override func configureUI() {
         addSubviews(
-            nickNameLabel,
-            setNickNameStackView,
-            completeSettingNickNameButton,
-            nicknameDoubleCheckButton
+            nicknameSettingLabel,
+            nicknameStackView,
+            completeButton,
+            nicknameCheckButton,
+            affiliationLabel
         )
     }
 
     /// 레이아웃 설정 메서드
     override func setLayout() {
-        nickNameLabel.snp.makeConstraints {
+        affiliationLabel.snp.makeConstraints {
+            $0.top.equalTo(nicknameStackView.snp.bottom).offset(40)
+            $0.leading.equalTo(nicknameStackView.snp.leading)
+        }
+
+        nicknameSettingLabel.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(20)
             $0.leading.equalToSuperview().inset(16)
         }
-        setNickNameStackView.snp.makeConstraints {
-            $0.top.equalTo(nickNameLabel.snp.bottom).offset(16)
+        nicknameStackView.snp.makeConstraints {
+            $0.top.equalTo(nicknameSettingLabel.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(16)
-            $0.trailing.equalTo(nicknameDoubleCheckButton.snp.leading).offset(-5)
+            $0.trailing.equalTo(nicknameCheckButton.snp.leading).offset(-5)
         }
-        nicknameDoubleCheckButton.snp.makeConstraints {
-            $0.top.equalTo(inputNickNameTextField)
+        nicknameCheckButton.snp.makeConstraints {
+            $0.top.equalTo(nicknameTextField)
             $0.width.equalTo(75)
             $0.height.equalTo(48)
             $0.trailing.equalToSuperview().inset(16)
         }
-        inputNickNameTextField.snp.makeConstraints {
+        nicknameTextField.snp.makeConstraints {
             $0.height.equalTo(48)
         }
-        completeSettingNickNameButton.snp.makeConstraints {
+        completeButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(26)
             $0.height.equalTo(50)
@@ -102,8 +114,8 @@ final class MyInfoView: BaseUIView {
     }
 
     /// 닉네임 입력 필드의 delegate 설정
-    func setTextFieldDelegate() {
-        inputNickNameTextField.delegate = self
+    func configureTextFieldDelegate() {
+        nicknameTextField.delegate = self
     }
 }
 
@@ -121,16 +133,16 @@ extension MyInfoView: UITextFieldDelegate {
         guard let inputValue = textField.text?.trimmingCharacters(in: .whitespaces) else { return }
 
         if inputValue.isEmpty {
-            textFieldSettingWhenEmpty()
+            updateTextFieldForEmptyState()
             return
         }
-        checkNicknameValidation(textField)
+        validateNickname(textField)
     }
 
     /// 입력 필드를 초기화할 때 호출 (버튼 비활성화)
     func textFieldShouldClear(_: UITextField) -> Bool {
-        nicknameDoubleCheckButton.isEnabled = false
-        completeSettingNickNameButton.isEnabled = false
+        nicknameCheckButton.isEnabled = false
+        completeButton.isEnabled = false
         return true
     }
 }
@@ -139,20 +151,20 @@ extension MyInfoView: UITextFieldDelegate {
 
 private extension MyInfoView {
     /// 닉네임 입력 값이 없을 때 기본 메시지를 표시
-    func textFieldSettingWhenEmpty() {
-        nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-        nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
+    func updateTextFieldForEmptyState() {
+        nicknameValidationLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
+        nicknameValidationLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
     }
 
     /// 닉네임 유효성 검사
-    func checkNicknameValidation(_ textField: UITextField) {
+    func validateNickname(_ textField: UITextField) {
         if let userNickname = textField.text {
-            if nicknameInputChanged(nickname: userNickname) {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
+            if isNicknameValid(userNickname) {
+                nicknameValidationLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
+                nicknameValidationLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
             } else {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
+                nicknameValidationLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
+                nicknameValidationLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
             }
         }
     }
@@ -163,14 +175,14 @@ private extension MyInfoView {
      - Parameter nickname: 사용자가 입력한 닉네임
      - Returns: 닉네임이 유효한 경우 `true`, 그렇지 않으면 `false`
      */
-    func nicknameInputChanged(nickname: String) -> Bool {
-        completeSettingNickNameButton.isEnabled = false
+    func isNicknameValid(_ nickname: String) -> Bool {
+        completeButton.isEnabled = false
 
         if nickname.count > 1, nickname.count < 9 {
-            nicknameDoubleCheckButton.isEnabled = true
+            nicknameCheckButton.isEnabled = true
             return true
         } else {
-            nicknameDoubleCheckButton.isEnabled = false
+            nicknameCheckButton.isEnabled = false
             return false
         }
     }
