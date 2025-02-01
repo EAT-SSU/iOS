@@ -11,11 +11,15 @@ import EATSSUDesign
 import EATSSUKit
 
 import NMapsMap
+import SnapKit
 
 /// `MapViewController`는 네이버 지도를 표시하고, 마커를 추가하는 역할을 합니다.
 final class MapViewController: BaseViewController {
     /// 네이버 지도 뷰
     private var mapView: NMFMapView!
+
+    /// 지도 위에 추가할 UISegmentedControl
+    private var mapSegmentedControl: UISegmentedControl!
 
     /// 숭실대학교 위치 (위도, 경도)
     private let soongsilUniversityLocation = NMGLatLng(lat: 37.496389, lng: 126.957222)
@@ -29,6 +33,7 @@ final class MapViewController: BaseViewController {
         super.viewDidLoad()
         setupUI()
         configureMapView()
+        setupSegmentedControl() // 여기서 segmented control을 추가합니다.
         addSoongsilMarker()
     }
 
@@ -59,6 +64,7 @@ final class MapViewController: BaseViewController {
 
     /// 네이버 지도 뷰를 초기화하고 화면에 추가합니다.
     private func configureMapView() {
+        // 지도 뷰의 프레임을 view.frame으로 설정하면 전체를 덮게 됩니다.
         mapView = NMFMapView(frame: view.frame)
         view.addSubview(mapView)
         mapView.touchDelegate = self
@@ -75,6 +81,40 @@ final class MapViewController: BaseViewController {
             position: NMFCameraPosition(location, zoom: zoomLevel)
         )
         mapView.moveCamera(cameraUpdate)
+    }
+
+    // MARK: - UISegmentedControl 설정
+
+    /// 지도 상단에 UISegmentedControl을 추가합니다.
+    private func setupSegmentedControl() {
+        // segmented control에 들어갈 항목들을 설정합니다.
+        let items = ["Option 1", "Option 2"]
+        mapSegmentedControl = UISegmentedControl(items: items)
+        mapSegmentedControl.selectedSegmentIndex = 0
+        mapSegmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
+
+        // segmented control을 view의 서브뷰로 추가합니다.
+        view.addSubview(mapSegmentedControl)
+        mapSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+
+        // Auto Layout을 이용해 지도 상단에 고정합니다.
+        NSLayoutConstraint.activate([
+            // safeArea의 상단에 8pt 간격을 두고 배치
+            mapSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            mapSegmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mapSegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+        ])
+
+        // 혹시 지도 뷰가 segmented control 위에 올 수 있으므로 bringSubviewToFront로 순서를 보장합니다.
+        view.bringSubviewToFront(mapSegmentedControl)
+    }
+
+    @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
+        // segmented control의 값이 변경되었을 때 처리할 코드를 작성합니다.
+        print("Selected segment index: \(sender.selectedSegmentIndex)")
+
+        // 예시: 선택된 인덱스에 따라 지도 스타일 변경 등
+        // if sender.selectedSegmentIndex == 0 { ... } else { ... }
     }
 
     // MARK: - 마커 설정
