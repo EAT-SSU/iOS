@@ -14,7 +14,6 @@ final class MainReviewViewController: BaseViewController {
     
     // View Properties
     private let mainReviewView = MainReviewView()
-    private let scrollView = UIScrollView()
     
     // MARK: - View Life Cycle
     

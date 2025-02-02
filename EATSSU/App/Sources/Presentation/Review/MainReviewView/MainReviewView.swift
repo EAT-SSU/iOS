@@ -18,7 +18,15 @@ final class MainReviewView: BaseUIView {
     
     // MARK: - UI Components
     
-    private let menuChipHorizontalScrollView = MenuChipHorizontalScrollView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+
+    /// 리뷰 상단 summary
+    let summaryView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .red
+        return view
+    }()
     
     /// 사용자 정보
     private let profileImageView: UIImageView = {
@@ -30,37 +38,53 @@ final class MainReviewView: BaseUIView {
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
-        tableView.rowHeight = 150
         tableView.backgroundColor = .yellow
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.isScrollEnabled = false
         return tableView
     }()
     
-    
+    /// 리뷰작성
+    let writingReviewButton = ESButton(size: .big, title: "리뷰 작성하기")
     
     // MARK: - Functions
     
     override func configureUI() {
-        addSubview(
+        addSubviews(
+            scrollView,
+            writingReviewButton
+        )
+        scrollView.addSubview(contentView)
+        contentView.addSubviews(
+            summaryView,
             tableView
         )
     }
     
     override func setLayout() {
-        self.tableView.snp.makeConstraints {
-          $0.edges.equalTo(self.safeAreaLayoutGuide)
+        writingReviewButton.snp.makeConstraints { make in
+            make.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(16)
+            make.bottom.equalTo(safeAreaLayoutGuide)
         }
-//        profileImageView.snp.makeConstraints { make in
-//            make.top.leading.equalToSuperview()
-//        }
-//        menuChipHorizontalScrollView.snp.makeConstraints { make in
-//            make.horizontalEdges.equalToSuperview()
-//            make.top.equalToSuperview().offset(100)
-//            
-//        }
-    }
-    
-    private func insertMenuData() {
-        menuChipHorizontalScrollView.menuDataSource = ["고구마치즈돈까스", "막국수", "요구르트","김치","고구마치즈돈까스", "막국수", "요구르트","김치"]
+        scrollView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(safeAreaLayoutGuide)
+            make.bottom.equalTo(writingReviewButton.snp.top)
+        }
+        contentView.snp.makeConstraints { make in
+            make.edges.equalTo(scrollView.contentLayoutGuide)
+            make.width.equalTo(scrollView.frameLayoutGuide)
+            make.height.equalTo(2000)
+        }
+        summaryView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(200)
+        }
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(summaryView.snp.bottom)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
     }
     
 }
