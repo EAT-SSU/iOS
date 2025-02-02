@@ -69,6 +69,7 @@ class MenuChipHorizontalScrollView: BaseUIView {
                 .font: EATSSUDesignFontFamily.Pretendard.medium.font(size: 10),
                 .foregroundColor: EATSSUDesignAsset.Color.Main.primary.color]))
         config.attributedTitle = attributedString
+        
         config.baseBackgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
         config.background.strokeColor = EATSSUDesignAsset.Color.Main.primary.color
         config.background.strokeWidth = 0.5
