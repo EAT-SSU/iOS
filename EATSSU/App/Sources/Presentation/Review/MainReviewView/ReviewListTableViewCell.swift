@@ -64,15 +64,12 @@ final class ReviewListTableViewCell: BaseTableViewCell {
         return button
     }()
     
-    var reviewTextView: UITextView = {
-        let textView = UITextView()
-        textView.textColor = UIColor.black
-        textView.isEditable = false
-        textView.isScrollEnabled = false
-        textView.backgroundColor = .systemBackground
-        textView.font = .body1
-        textView.text = "여기 계란국 맛집임... 김치볶음밥에 계란후라이 없어서 아쉽 다음에 또 먹어야지"
-        return textView
+    var reviewTextLabel: UILabel = {
+        let label = UILabel()
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        label.text = "여기 계란국 맛집임... 김치볶음밥에 계란후라이 없어서 아쉽 다음에 또 먹어야지dddddfdfdfdfdfdfddfdfdfddfdfdfdfddfddfdfd여기 계란국 맛집임... 김치볶음밥에 계란후라이 없어서 아쉽 다음에 또 먹어야지dddddfdfdfdfdfdfddfdfdfddfdfdfdfddfddfdfd"
+        label.numberOfLines = 0
+        return label
     }()
     
     var foodImageView: UIImageView = {
@@ -118,7 +115,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     }()
     
     lazy var contentStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [reviewTextView, foodImageView])
+        let stackView = UIStackView(arrangedSubviews: [reviewTextLabel, foodImageView])
         stackView.axis = .vertical
         stackView.spacing = 8.adjusted
         stackView.alignment = .leading
@@ -155,8 +152,8 @@ final class ReviewListTableViewCell: BaseTableViewCell {
         setCollectionView()
         contentView.addSubviews(profileStackView,
                                 dateReportStackView,
-                                contentStackView,
-                                collectionView)
+                                collectionView,
+                                contentStackView)
     }
     
     override func setLayout() {
@@ -173,9 +170,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
         
         contentStackView.snp.makeConstraints { make in
             make.top.equalTo(collectionView.snp.bottom)
-            make.leading.equalToSuperview().offset(16)
-            make.bottom.equalToSuperview().offset(-15)
-            make.trailing.equalToSuperview().offset(-16)
+            make.horizontalEdges.bottom.equalToSuperview()
         }
         
         foodImageView.snp.makeConstraints { make in
