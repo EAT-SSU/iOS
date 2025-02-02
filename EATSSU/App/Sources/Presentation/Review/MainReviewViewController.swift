@@ -34,11 +34,24 @@ final class MainReviewViewController: BaseViewController {
         }
     }
     
+    override func setButtonEvent() {
+        mainReviewView.writingReviewButton.addTarget(self, action: #selector(writeReviewButtonIsTapped), for: .touchUpInside)
+    }
+    
     private func setTableView() {
         mainReviewView.tableView.dataSource = self
         mainReviewView.tableView.delegate = self
-        mainReviewView.tableView.register(ReviewListTableViewCell.self, forCellReuseIdentifier: ReviewListTableViewCell.id)
-        mainReviewView.tableView.register(ReviewListTableViewHeader.self, forHeaderFooterViewReuseIdentifier: ReviewListTableViewHeader.id)
+        mainReviewView.tableView.register(ReviewListTableViewCell.self,
+                                          forCellReuseIdentifier: ReviewListTableViewCell.id)
+        mainReviewView.tableView.register(ReviewListTableViewHeader.self,
+                                          forHeaderFooterViewReuseIdentifier: ReviewListTableViewHeader.id)
+    }
+    
+    @objc
+    private func writeReviewButtonIsTapped() {
+        let writingReviewModalViewController = WritingReviewModalViewController()
+        writingReviewModalViewController.modalPresentationStyle = .pageSheet
+        self.present(writingReviewModalViewController, animated: true)
     }
 }
 
