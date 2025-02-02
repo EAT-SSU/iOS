@@ -68,11 +68,12 @@ final class MainReviewView: BaseUIView {
         }
         scrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(safeAreaLayoutGuide)
-            make.bottom.equalTo(writingReviewButton.snp.top)
+            make.bottom.equalTo(writingReviewButton.snp.top).offset(-10)
         }
         contentView.snp.makeConstraints { make in
             make.edges.equalTo(scrollView.contentLayoutGuide)
             make.width.equalTo(scrollView.frameLayoutGuide)
+            // TODO: 수정 필요
             make.height.equalTo(2000)
         }
         summaryView.snp.makeConstraints { make in
