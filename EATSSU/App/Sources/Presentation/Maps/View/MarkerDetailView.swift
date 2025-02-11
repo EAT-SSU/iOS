@@ -79,22 +79,22 @@ class MarkerDetailView: BaseView {
 
         categoryLabel.snp.makeConstraints { make in
             make.leading.equalTo(titleLabel)
-            make.top.equalTo(titleLabel).offset(4)
+            make.top.equalTo(titleLabel.snp.bottom).offset(4)
         }
 
         partnershipPeriodLabel.snp.makeConstraints { make in
             make.leading.equalTo(categoryLabel)
-            make.top.equalTo(categoryLabel).offset(16)
+            make.top.equalTo(categoryLabel.snp.bottom).offset(16)
         }
 
         explanatonLabel.snp.makeConstraints { make in
             make.leading.equalTo(partnershipPeriodLabel)
-            make.top.equalTo(partnershipPeriodLabel).offset(4)
+            make.top.equalTo(partnershipPeriodLabel.snp.bottom).offset(4)
         }
 
         businessStatusLabel.snp.makeConstraints { make in
             make.leading.equalTo(explanatonLabel)
-            make.top.equalTo(explanatonLabel).offset(16)
+            make.top.equalTo(explanatonLabel.snp.bottom).offset(16)
         }
     }
 }
