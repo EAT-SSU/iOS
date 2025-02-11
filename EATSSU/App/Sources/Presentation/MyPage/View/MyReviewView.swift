@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class MyReviewView: BaseUIView {
+final class MyReviewView: BaseView {
     // MARK: - UI Components
 
     let myReviewTableView = UITableView()

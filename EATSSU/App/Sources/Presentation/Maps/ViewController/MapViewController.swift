@@ -197,26 +197,25 @@ final class MapViewController: BaseViewController {
 
     /// `MarkerDetailViewController`를 FloatingPanel로 표시하는 메서드
     /// - Parameter data: 마커에 대한 데이터 (`MarkerData`)
-    private func presentMarkerDetailFloatingPanel(with data: MarkerData) {
+    private func presentMarkerDetailFloatingPanel(with markerData: MarkerData) {
         // 만약 이미 같은 마커가 선택되어 있고, 패널이 표시 중이면 업데이트 없이 리턴
-        if let currentData = selectedMarkerData, currentData == data,
+        if let currentData = selectedMarkerData, currentData == markerData,
            floatingPanelController?.parent != nil
         {
             return
         }
         // 새로운 마커가 탭되었으므로 선택 정보를 업데이트
-        selectedMarkerData = data
+        selectedMarkerData = markerData
 
         // 상세정보를 표시할 컨텐츠 뷰 컨트롤러 생성
-        let detailVC = MarkerDetailViewController()
-        detailVC.markerData = data
+        let detailVC = MarkerDetailViewController(markerData: markerData)
 
         // FloatingPanelController가 없으면 생성 (한 번만 생성해 재사용)
         if floatingPanelController == nil {
             floatingPanelController = FloatingPanelController()
             floatingPanelController?.delegate = self
 
-            var appearance = SurfaceAppearance()
+            let appearance = SurfaceAppearance()
             appearance.cornerRadius = 15
             floatingPanelController?.surfaceView.appearance = appearance
         }

@@ -14,7 +14,7 @@ enum AgreementType {
     case privacyPolicy
 }
 
-final class ProvisionView: BaseUIView {
+final class ProvisionView: BaseView {
     // MARK: - UI Components
 
     private let webView: WKWebView!

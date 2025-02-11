@@ -17,7 +17,7 @@ protocol CalendarSeletionDelegate: AnyObject {
     func didSelectCalendar(date: Date)
 }
 
-final class HomeCalendarView: BaseUIView {
+final class HomeCalendarView: BaseView {
     // MARK: - Properties
 
     weak var delegate: CalendarSeletionDelegate?

@@ -13,7 +13,7 @@ import SnapKit
 import Then
 
 /// 사용자의 닉네임과 소속(단과대학 및 학과)을 설정하는 화면의 View
-final class MyInfoView: BaseUIView {
+final class MyInfoView: BaseView {
     // MARK: - Properties
 
     /// 사용자가 입력한 닉네임 값

@@ -12,7 +12,7 @@ import EATSSUDesign
 import SnapKit
 import Then
 
-final class RateNumberView: BaseUIView {
+final class RateNumberView: BaseView {
     // MARK: - UI Components
 
     let starImageView = UIImageView()

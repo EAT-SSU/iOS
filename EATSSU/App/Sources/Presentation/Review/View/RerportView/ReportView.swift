@@ -11,7 +11,7 @@ import EATSSUDesign
 
 import SnapKit
 
-final class ReportView: BaseUIView {
+final class ReportView: BaseView {
     // MARK: - UI Components
 
     /// "리뷰 신고 사유를 알려주세요" 레이블

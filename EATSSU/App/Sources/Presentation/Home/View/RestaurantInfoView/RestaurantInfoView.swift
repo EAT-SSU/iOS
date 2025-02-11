@@ -13,7 +13,7 @@ import MapKit
 import SnapKit
 import Then
 
-final class RestaurantInfoView: BaseUIView {
+final class RestaurantInfoView: BaseView {
     // MARK: - UI Components
 
     let restaurantImage = UIImageView(image: EATSSUDesignAsset.Images.restaurantImage.image)
