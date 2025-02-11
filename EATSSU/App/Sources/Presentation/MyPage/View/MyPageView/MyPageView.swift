@@ -29,7 +29,8 @@ final class MyPageView: BaseUIView {
 
     /// **사용자 프로필 이미지**
     let userImage = UIImageView().then {
-        $0.image = EATSSUDesignAsset.Images.profile.image
+        $0.image = UIImage(systemName: "person.crop.circle")
+        $0.tintColor = EATSSUDesignAsset.Color.GrayScale.gray300.color
     }
 
     /// **사용자 닉네임 라벨**
