@@ -37,6 +37,7 @@ final class ReportViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // FIXME: super.viewDidLoad 메서드 내/아래 메서드에서 동일한 메서드 호출 발생
         configureUI()
         setLayout()
         setScrollViewSetting()
@@ -50,7 +51,7 @@ final class ReportViewController: BaseViewController {
         removeKeyboardNotifications()
     }
 
-    // MARK: - Methods
+    // MARK: - Functions
 
     override func configureUI() {
         view.addSubview(scrollView)
@@ -63,10 +64,13 @@ final class ReportViewController: BaseViewController {
             make.edges.equalTo(scrollView.contentLayoutGuide)
             make.width.equalTo(scrollView.frameLayoutGuide)
 
+            // FIXME: dynamic height 적용
+            // make.bottom.equalTo(scrollView.contentLayoutGuide)
             make.height.equalTo(800)
         }
     }
 
+    // FIXME: - 제거 필요
     override func setLayout() {
         super.setLayout()
     }
