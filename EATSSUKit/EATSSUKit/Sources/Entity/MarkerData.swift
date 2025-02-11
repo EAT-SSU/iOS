@@ -8,7 +8,7 @@
 import Foundation
 
 /// 마커에 대한 상세 정보를 담는 구조체
-public struct MarkerData {
+public struct MarkerData: Equatable {
     public let title: String
     public let description: String
 
