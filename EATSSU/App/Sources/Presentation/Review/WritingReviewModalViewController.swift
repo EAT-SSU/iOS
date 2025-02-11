@@ -22,6 +22,7 @@ final class WritingReviewModalViewController: BaseViewController {
 
     private var rateView = RateView()
     private let imagePickerController = UIImagePickerController()
+    public let completeReviewButton = ESButton(size: .big, title: "완료하기")
     
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -82,21 +83,21 @@ final class WritingReviewModalViewController: BaseViewController {
     private let maximumWordLabel: UILabel = {
         let label = UILabel()
         label.text = "0 / 300"
-        label.font = .caption2
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 10)
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         return label
     }()
 
-    private var nextButton: UIButton = {
-        var config = UIButton.Configuration.plain()
-        var container = AttributeContainer()
-        container.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
-        container.foregroundColor = EATSSUDesignAsset.Color.Main.primary.color
-        config.attributedTitle = AttributedString("완료하기", attributes: container)
-        config.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
-        let button = UIButton(configuration: config)
-        return button
-    }()
+//    private var nextButton: UIButton = {
+//        var config = UIButton.Configuration.plain()
+//        var container = AttributeContainer()
+//        container.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
+//        container.foregroundColor = EATSSUDesignAsset.Color.Main.primary.color
+//        config.attributedTitle = AttributedString("완료하기", attributes: container)
+//        config.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+//        let button = UIButton(configuration: config)
+//        return button
+//    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,25 +118,20 @@ final class WritingReviewModalViewController: BaseViewController {
         dismissKeyboard()
         view.addSubviews(
             titleLabel,
-            nextButton,
             questionLabel,
             rateView,
             maximumWordLabel,
             selectImageButton,
             userReviewImageView,
             userReviewTextView,
-            deleteMethodLabel)
+            deleteMethodLabel,
+            completeReviewButton)
     }
 
     override func setLayout() {
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.centerX.equalToSuperview()
-        }
-        
-        nextButton.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel)
-            make.trailing.equalToSuperview().inset(30)
         }
 
         questionLabel.snp.makeConstraints { make in
@@ -171,18 +167,22 @@ final class WritingReviewModalViewController: BaseViewController {
         userReviewImageView.snp.makeConstraints {
             $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
             $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
-            $0.width.equalTo(60)
-            $0.height.equalTo(60)
+            $0.width.height.equalTo(60)
         }
 
         deleteMethodLabel.snp.makeConstraints {
             $0.top.equalTo(selectImageButton.snp.bottom).offset(7)
             $0.leading.equalTo(selectImageButton)
         }
+        
+        completeReviewButton.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview().inset(40)
+        }
     }
 
     override func setButtonEvent() {
-        nextButton.addTarget(self, action: #selector(tappedNextButton), for: .touchUpInside)
+        completeReviewButton.addTarget(self, action: #selector(tappedNextButton), for: .touchUpInside)
     }
     
     @objc
