@@ -11,7 +11,7 @@ import EATSSUDesign
 
 import SnapKit
 
-final class RateView: BaseUIView {
+final class RateView: BaseView {
     // MARK: - Properties
 
     var buttons: [UIButton] = []

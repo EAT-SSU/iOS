@@ -14,7 +14,7 @@ import Then
 
 import EATSSUDesign
 
-final class LoginView: BaseUIView {
+final class LoginView: BaseView {
     // MARK: - UI Components
 
     private let logoImage = UIImageView().then {

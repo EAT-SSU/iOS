@@ -1,11 +1,11 @@
 //
-//  BaseUIView.swift
-//  EatSSU-iOS
+//  BaseView.swift
+//  EATSSU
 //
-//  Created by 박윤빈 on 2023/03/15.
+//  Edited by Jiwoong CHOI on 02/11/2025.
 //
 
-// TODO: BaseUIView 코드 Utility 모듈로 모듈화 간 재정비
+// TODO: BaseView 코드 Utility 모듈로 모듈화 간 재정비
 
 import UIKit
 
@@ -17,7 +17,7 @@ import UIKit
 ///
 /// - Important: configureUI()와 setLayout() 메소드를 오버라이딩 해야 합니다.
 /// 오버라이딩 하지 않으면 런타임 에러가 발생합니다.
-class BaseUIView: UIView {
+class BaseView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 

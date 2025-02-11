@@ -11,7 +11,7 @@ import Moya
 import SnapKit
 import Then
 
-final class HomeRestaurantView: BaseUIView {
+final class HomeRestaurantView: BaseView {
     // MARK: - UI Components
 
     let refreshControl = UIRefreshControl()

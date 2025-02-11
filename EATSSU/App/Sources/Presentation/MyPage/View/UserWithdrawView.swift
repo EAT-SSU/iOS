@@ -16,7 +16,7 @@ enum ValidationLabelState {
     case pleaseEnter
 }
 
-final class UserWithdrawView: BaseUIView {
+final class UserWithdrawView: BaseView {
     // MARK: - Properties
 
     private var userNickname: String = ""

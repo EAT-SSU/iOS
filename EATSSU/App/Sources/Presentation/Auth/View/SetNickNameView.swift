@@ -12,7 +12,7 @@ import EATSSUDesign
 import SnapKit
 import Then
 
-final class SetNickNameView: BaseUIView {
+final class SetNickNameView: BaseView {
     // MARK: - Properties
 
     private var userNickname: String = ""

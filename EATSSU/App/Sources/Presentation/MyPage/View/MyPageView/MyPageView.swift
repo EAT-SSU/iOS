@@ -18,7 +18,7 @@ import Then
 /// - 사용자 프로필 이미지, 닉네임, 계정 정보 등을 표시합니다.
 /// - 앱 버전 정보 및 회원 탈퇴 기능을 제공합니다.
 ///
-final class MyPageView: BaseUIView {
+final class MyPageView: BaseView {
     // MARK: - UI Components
 
     /// **마이페이지 전체를 감싸는 스크롤 뷰**
