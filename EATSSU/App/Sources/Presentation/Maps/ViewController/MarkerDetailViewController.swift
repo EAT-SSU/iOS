@@ -35,6 +35,11 @@ class MarkerDetailViewController: BaseViewController {
     // MARK: - Life Cycle
 
     override func loadView() {
+        markerDetailView.titleLabel.text = markerData.title
+        markerDetailView.categoryLabel.text = "테스트"
+        markerDetailView.partnershipPeriodLabel.text = "테스트 기간"
+        markerDetailView.explanatonLabel.text = markerData.description
+        markerDetailView.businessStatusLabel.text = "영업기간 테스트"
         view = markerDetailView
     }
 
@@ -43,7 +48,7 @@ class MarkerDetailViewController: BaseViewController {
     }
 
     override func configureUI() {
-        //
+        // loadView 메소드를 사용해서 불필요한 코드라고 생각함. 다만 loadView 메소드 자체를 잘 사용하지 않아서, 어떤 방법을 채택할 지 고민을 해야 할 듯 함.
     }
 
     override func setLayout() {
