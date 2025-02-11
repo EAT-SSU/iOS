@@ -10,6 +10,7 @@ import UIKit
 import EATSSUDesign
 import EATSSUKit
 
+import FloatingPanel
 import NMapsMap
 import SnapKit
 
@@ -20,6 +21,9 @@ final class MapViewController: BaseViewController {
 
     /// 지도 위에 추가할 UISegmentedControl
     private var mapSegmentedControl: UISegmentedControl!
+
+    /// FloatingPanelController 인스턴스 (패널이 띄워져 있을 때 참조)
+    private var floatingPanelController: FloatingPanelController?
 
     /// 숭실대학교 위치 (위도, 경도)
     private let soongsilUniversityLocation = NMGLatLng(lat: 37.496389, lng: 126.957222)
@@ -33,7 +37,7 @@ final class MapViewController: BaseViewController {
         super.viewDidLoad()
         setupUI()
         configureMapView()
-        setupSegmentedControl() // segmented control을 추가합니다.
+        setupSegmentedControl()
         addSoongsilMarker()
     }
 
@@ -148,6 +152,7 @@ final class MapViewController: BaseViewController {
     ///   - title: 마커의 데이터 (`String`)
     ///   - leftText: 마커 왼쪽 텍스트 (`String`)
     ///   - rightText: 마커 오른쪽 텍스트 (`String`)
+    /// 특정 위치에 마커를 추가합니다.
     private func addMarker(at location: NMGLatLng, leftText: String, rightText: String, markerData: MarkerData) {
         let marker = ESMarker(
             position: location,
@@ -157,7 +162,7 @@ final class MapViewController: BaseViewController {
                 #if DEBUG
                     print("마커가 탭되었습니다!")
                 #endif
-                self.presentMarkerDetailModal(with: markerData)
+                self.presentMarkerDetailFloatingPanel(with: markerData)
                 return true
             },
             markerData: markerData
@@ -176,7 +181,7 @@ final class MapViewController: BaseViewController {
                 #if DEBUG
                     print("마커가 탭되었습니다!")
                 #endif
-                self.presentMarkerDetailModal(with: .init(title: "숭실대학교", description: "EATSSU의 서비스 지역"))
+                self.presentMarkerDetailFloatingPanel(with: .init(title: "숭실대학교", description: "EATSSU의 서비스 지역"))
                 return true
             },
             markerData: MarkerData(title: "숭실대학교", description: "EATSSU의 서비스 지역")
@@ -185,27 +190,33 @@ final class MapViewController: BaseViewController {
         esMarkers.append(soongsilMarker)
     }
 
-    // MARK: - Modal 표시
+    // MARK: - 상세정보 표시
 
-    /// `MarkerDetailViewController`를 표시하는 메서드
+    /// `MarkerDetailViewController`를 `UISheetPresentationController`로 표시하는 메서드
     /// - Parameter data: 마커에 대한 데이터 (`MarkerData`)
-    private func presentMarkerDetailModal(with data: MarkerData) {
+    private func presentMarkerDetailFloatingPanel(with data: MarkerData) {
+        // 상세정보를 표시할 컨텐츠 뷰 컨트롤러 생성
         let detailVC = MarkerDetailViewController()
         detailVC.markerData = data
-        let navController = UINavigationController(rootViewController: detailVC)
 
-        // 모달 스타일을 설정
-        navController.modalPresentationStyle = .pageSheet
+        // FloatingPanelController가 없으면 생성 (한 번만 생성해 재사용할 수 있음)
+        if floatingPanelController == nil {
+            floatingPanelController = FloatingPanelController()
+            floatingPanelController?.delegate = self
+            // 배경의 터치 이벤트가 FloatingPanel에 가로채지 않도록 설정
+//            floatingPanelController?.backgroundView?.isUserInteractionEnabled = false
 
-        // `UISheetPresentationController` 설정 (iOS 15+)
-        if let sheet = navController.sheetPresentationController {
-            sheet.detents = [.medium(), .large()] // 중간 크기와 큰 크기로 설정
-            sheet.prefersGrabberVisible = true // 위로 드래그할 수 있도록 grabber 표시
-            sheet.prefersEdgeAttachedInCompactHeight = true // 화면 하단에 고정
-            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
+            // 추가적으로 FloatingPanel의 레이아웃이나 외관을 커스터마이징할 수 있음
+            // 예) floatingPanelController?.surfaceView.grabberHandle.isHidden = false
         }
 
-        present(navController, animated: true, completion: nil)
+        // 컨텐츠 뷰 컨트롤러 갱신
+        floatingPanelController?.set(contentViewController: detailVC)
+
+        // FloatingPanel이 아직 부모에 추가되지 않았다면, 현재 뷰 컨트롤러에 추가
+        if floatingPanelController?.parent == nil {
+            floatingPanelController?.addPanel(toParent: self)
+        }
     }
 }
 
@@ -230,5 +241,12 @@ extension MapViewController: NMFMapViewTouchDelegate {
         #if DEBUG
             print("롱 탭: \(latlng.lat), \(latlng.lng)")
         #endif
+    }
+}
+
+extension MapViewController: FloatingPanelControllerDelegate {
+    func floatingPanelDidRemove(_: FloatingPanelController) {
+        // 패널이 제거되었을 때 필요한 처리가 있다면 구현합니다.
+        floatingPanelController = nil
     }
 }
