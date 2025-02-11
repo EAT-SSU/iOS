@@ -162,7 +162,7 @@ final class MyPageView: BaseUIView {
         myPageTableView.snp.makeConstraints {
             $0.top.equalTo(accountTitleLabel.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(420)
+            $0.height.equalTo(480)
             $0.width.equalToSuperview()
         }
 
