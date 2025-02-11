@@ -106,6 +106,7 @@ let project = Project(
                 .external(name: "KakaoSDKTalk"),
                 .external(name: "GoogleMobileAds"),
                 .external(name: "NMapsMap"),
+                .external(name: "FloatingPanel"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),

@@ -1,5 +1,5 @@
 {
-  "originHash" : "f7acbf13d8ff28deccedf1b13d9163bb3548128ddcdec705eab977fbd5b1c7f0",
+  "originHash" : "c52c25f7bb5a865448c49c984a755d29abfaff1e358246ba9197353bdaa3057a",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -35,6 +35,15 @@
       "state" : {
         "revision" : "9118aca998dbe2ceac45d64b21a91c6376928df7",
         "version" : "11.1.0"
+      }
+    },
+    {
+      "identity" : "floatingpanel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scenee/FloatingPanel.git",
+      "state" : {
+        "revision" : "b6e8928b1a3ad909e6db6a0278d286c33cfd0dc3",
+        "version" : "2.8.6"
       }
     },
     {
