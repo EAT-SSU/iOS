@@ -215,7 +215,10 @@ final class MapViewController: BaseViewController {
         if floatingPanelController == nil {
             floatingPanelController = FloatingPanelController()
             floatingPanelController?.delegate = self
-            // 필요시 추가적인 커스터마이징 가능
+
+            var appearance = SurfaceAppearance()
+            appearance.cornerRadius = 15
+            floatingPanelController?.surfaceView.appearance = appearance
         }
 
         // 컨텐츠 뷰 컨트롤러 갱신 (패널 업데이트)
