@@ -23,7 +23,7 @@ final class MainReviewViewController: BaseViewController {
         super.viewDidLoad()
         
         setTableView()
-        self.dataSource = ["고구마치즈돈까스", "막국수", "요구르트","김치","고구마치즈돈까스", "막국수", "요구르트","김치"]
+        self.dataSource = ["고구마치즈돈까스", "막국수", "요구르트","김치","수육+겉절이김치참치", "온두부", "국","짜파게티"]
         mainReviewView.tableView.reloadData()
     }
     

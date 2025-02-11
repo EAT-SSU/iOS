@@ -16,7 +16,7 @@ final class ReviewListTableViewHeader: UITableViewHeaderFooterView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "리뷰"
-        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 24)
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         return label
     }()
     

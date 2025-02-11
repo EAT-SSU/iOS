@@ -28,12 +28,6 @@ final class MainReviewView: BaseUIView {
         return view
     }()
     
-    /// 사용자 정보
-    private let profileImageView: UIImageView = {
-        let imageView = UIImageView(image: EATSSUDesignAsset.Images.profile.image)
-        return imageView
-    }()
-    
     /// 리뷰 리스트
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -45,7 +39,7 @@ final class MainReviewView: BaseUIView {
     }()
     
     /// 리뷰작성
-    let writingReviewButton = ESButton(size: .big, title: "리뷰 작성하기")
+    public let writingReviewButton = ESButton(size: .big, title: "리뷰 작성하기")
     
     // MARK: - Functions
     
