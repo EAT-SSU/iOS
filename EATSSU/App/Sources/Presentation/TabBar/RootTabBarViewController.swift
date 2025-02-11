@@ -82,11 +82,12 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
             #if DEBUG
                 print("마이페이 탭(tag 2)이 선택되었습니다.")
             #endif
-            handleSettingsTabSelected()
+            handleMyPageTabSelected()
         }
     }
 
-    private func handleSettingsTabSelected() {
+    // TODO: 로그인 유무를 확인하는 비즈니스 로직이 TabBarController와 MyPageViewController 어디에 있는 것이 더 적합한지 고민
+    private func handleMyPageTabSelected() {
         if !RealmService.shared.isAccessTokenPresent() {
             presentLoginAlert()
         } else {
