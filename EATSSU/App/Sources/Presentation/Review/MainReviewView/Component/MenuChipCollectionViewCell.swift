@@ -44,7 +44,7 @@ final class MenuChipCollectionViewCell: UICollectionViewCell {
         let stackView = UIStackView(arrangedSubviews: [thumbsupImageView, menuLabel])
         stackView.axis = .horizontal
         stackView.spacing = 1
-//        stackView.backgroundColor = .green
+        stackView.backgroundColor = .green
         return stackView
     }()
     
@@ -93,7 +93,7 @@ final class MenuChipCollectionViewCell: UICollectionViewCell {
     private func setupDynamicLayout() {
         menuLabel.sizeToFit()
         let viewSize = menuLabel.intrinsicContentSize
-        let width = viewSize.width + 58
+        let width = viewSize.width + 30
         let height = viewSize.height + 48
 
         menuChipView.snp.remakeConstraints { make in
