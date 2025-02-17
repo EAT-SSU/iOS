@@ -6,6 +6,8 @@
 //
 import Foundation
 
+import EATSSUNetwork
+
 import Moya
 
 enum UserNicknameRouter {
@@ -15,7 +17,7 @@ enum UserNicknameRouter {
 
 extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        URL(string: Config.baseURL)!
+        URL(string: AppConfiguration.baseURL)!
     }
 
     var path: String {

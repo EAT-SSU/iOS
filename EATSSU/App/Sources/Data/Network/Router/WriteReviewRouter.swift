@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUNetwork
+
 import Moya
 
 enum WriteReviewRouter {
@@ -17,7 +19,7 @@ enum WriteReviewRouter {
 
 extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        URL(string: Config.baseURL)!
+        URL(string: AppConfiguration.baseURL)!
     }
 
     var path: String {
