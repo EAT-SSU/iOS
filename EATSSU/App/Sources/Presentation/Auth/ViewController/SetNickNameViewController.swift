@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUNetwork
+
 import Moya
 
 final class SetNickNameViewController: BaseViewController {

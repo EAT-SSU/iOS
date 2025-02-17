@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUNetwork
+
 import Moya
 
 /// `ESMoyaLoggingPlugin`은 네트워크 요청 및 응답을 로깅하고,

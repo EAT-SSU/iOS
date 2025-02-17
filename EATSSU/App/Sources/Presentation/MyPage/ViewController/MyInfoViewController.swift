@@ -5,8 +5,11 @@
 //  Created by Jiwoong CHOI on 01/31/25.
 //
 
-import Moya
 import UIKit
+
+import EATSSUNetwork
+
+import Moya
 
 /// 사용자의 닉네임을 설정 및 검증할 수 있는 화면입니다.
 final class MyInfoViewController: BaseViewController {

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUNetwork
+
 import FirebaseAnalytics
 import Moya
 
