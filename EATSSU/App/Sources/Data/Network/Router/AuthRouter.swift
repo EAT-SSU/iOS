@@ -6,6 +6,9 @@
 //
 
 import Foundation
+
+import EATSSUNetwork
+
 import Moya
 
 enum AuthRouter {
@@ -17,7 +20,7 @@ enum AuthRouter {
 
 extension AuthRouter: TargetType {
     public var baseURL: URL {
-        URL(string: Config.baseURL)!
+        URL(string: AppConfiguration.baseURL)!
     }
 
     var path: String {

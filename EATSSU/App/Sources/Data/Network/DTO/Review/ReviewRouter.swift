@@ -6,6 +6,9 @@
 //
 
 import Foundation
+
+import EATSSUNetwork
+
 import Moya
 
 enum ReviewRouter {
@@ -21,7 +24,7 @@ enum ReviewRouter {
 
 extension ReviewRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        URL(string: Config.baseURL)!
+        URL(string: AppConfiguration.baseURL)!
     }
 
     var path: String {

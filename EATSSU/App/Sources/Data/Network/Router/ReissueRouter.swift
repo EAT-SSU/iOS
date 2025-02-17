@@ -6,6 +6,9 @@
 //
 
 import Foundation
+
+import EATSSUNetwork
+
 import Moya
 
 enum ReissueRouter {
@@ -14,7 +17,7 @@ enum ReissueRouter {
 
 extension ReissueRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        URL(string: Config.baseURL)!
+        URL(string: AppConfiguration.baseURL)!
     }
 
     var path: String {

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUNetwork
+
 import Moya
 
 enum MyRouter {
@@ -18,7 +20,7 @@ enum MyRouter {
 
 extension MyRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        URL(string: Config.baseURL)!
+        URL(string: AppConfiguration.baseURL)!
     }
 
     var path: String {

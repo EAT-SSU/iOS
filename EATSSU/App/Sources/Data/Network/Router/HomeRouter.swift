@@ -6,6 +6,9 @@
 //
 
 import Foundation
+
+import EATSSUNetwork
+
 import Moya
 
 enum HomeRouter {
@@ -15,7 +18,7 @@ enum HomeRouter {
 
 extension HomeRouter: TargetType {
     var baseURL: URL {
-        URL(string: Config.baseURL)!
+        URL(string: AppConfiguration.baseURL)!
     }
 
     var path: String {
