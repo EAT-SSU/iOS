@@ -8,6 +8,8 @@
 import AuthenticationServices
 import UIKit
 
+import EATSSUNetwork
+
 import Firebase
 import KakaoSDKUser
 import Moya

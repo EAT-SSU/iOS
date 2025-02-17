@@ -8,8 +8,8 @@
 import Foundation
 
 public struct BaseResponse<T: Codable>: Codable {
-    let isSuccess: Bool
-    let code: Int
-    let message: String
-    let result: T
+    public let isSuccess: Bool
+    public let code: Int
+    public let message: String
+    public let result: T
 }

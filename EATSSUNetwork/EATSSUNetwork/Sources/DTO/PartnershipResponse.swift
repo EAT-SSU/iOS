@@ -11,6 +11,6 @@ struct PartnershipResponse: Codable {
     let id: Int
     let partnershipType, storeName, description, startDate: String
     let endDate, restaurantType: String
-    let longitude, latitude: Int
+    let longitude, latitude: Double
     let collegeNames, departmentNames: [String]
 }

@@ -25,25 +25,29 @@ final class PartnershipRouterNetworkTests: XCTestCase {
         provider.request(.fetchAllPartnerships) { result in
             switch result {
             case let .success(response):
-                // 응답 상태 코드 확인
-                debugPrint("응답 상태 코드: \(response.statusCode)")
+                XCTAssertEqual(response.statusCode, 200, "응답 상태 코드가 200이 아닙니다.")
+                XCTAssertFalse(response.data.isEmpty, "응답 데이터가 비어있습니다.")
 
-                // 요청 URL 및 헤더 정보 출력
-                if let urlResponse = response.response {
-                    debugPrint("요청 URL: \(urlResponse.url?.absoluteString ?? "URL 없음")")
-                    debugPrint("응답 헤더: \(urlResponse.allHeaderFields)")
-                }
+                do {
+                    // 응답 데이터를 DTO로 변환하여 검증
+                    let partnershipsResponse = try JSONDecoder().decode(BaseResponse<[PartnershipResponse]>.self, from: response.data)
 
-                // 응답 데이터 확인 (문자열로 변환)
-                if let responseDataString = String(data: response.data, encoding: .utf8) {
-                    debugPrint("응답 데이터: \(responseDataString)")
-                } else {
-                    debugPrint("응답 데이터: 변환 실패")
+                    XCTAssertNotNil(partnershipsResponse, "디코딩된 데이터가 nil입니다.")
+
+                    // JSON을 보기 좋게 출력
+                    if let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: response.data) {
+                        print("📌 Pretty JSON Response:\n\(prettyJSON)")
+                    } else {
+                        print("⚠️ JSON 포맷 변환 실패")
+                    }
+
+                } catch {
+                    XCTFail("디코딩 실패: \(error)")
                 }
 
                 expectation.fulfill()
             case let .failure(error):
-                XCTFail("요청 실패: \(error)")
+                XCTFail("fetchAllPartnerships 요청 실패: \(error)")
             }
         }
 
@@ -58,12 +62,14 @@ final class PartnershipRouterNetworkTests: XCTestCase {
         provider.request(.fetchPartnershipDetail(partnershipId: partnershipId)) { result in
             switch result {
             case let .success(response):
-                // 응답 상태 코드 및 데이터 유효성 체크
                 XCTAssertEqual(response.statusCode, 200)
                 XCTAssertFalse(response.data.isEmpty, "응답 데이터가 비어있습니다.")
 
                 do {
                     let detailResponse = try JSONDecoder().decode(BaseResponse<PartnershipDetailResponse>.self, from: response.data)
+
+                    // DTO 필드 검증
+                    XCTAssertNotNil(detailResponse, "디코딩된 데이터가 nil입니다.")
 
                     // JSONPrettyPrinter를 활용한 디버깅 출력
                     if let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: response.data) {
@@ -73,7 +79,7 @@ final class PartnershipRouterNetworkTests: XCTestCase {
                     }
 
                 } catch {
-                    XCTFail("디코딩 또는 인코딩 실패: \(error)")
+                    XCTFail("디코딩 실패: \(error)")
                 }
 
                 expectation.fulfill()
