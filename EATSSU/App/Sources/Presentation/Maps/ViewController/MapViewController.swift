@@ -144,12 +144,26 @@ final class MapViewController: BaseViewController {
 
     @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
         // segmented control의 값이 변경되었을 때 처리할 코드를 작성합니다.
+
+        clearAllMarkers()
+
         #if DEBUG
             print("Selected segment index: \(sender.selectedSegmentIndex)")
         #endif
 
-        // 예시: 선택된 인덱스에 따라 지도 스타일 변경 등
-        // if sender.selectedSegmentIndex == 0 { ... } else { ... }
+        switch sender.selectedSegmentIndex {
+        case 0:
+            #if DEBUG
+                print("전체 제휴 업체를 가져옵니다.")
+            #endif
+            fetchPartnerships()
+        case 1:
+            #if DEBUG
+                print("사용자의 제휴 업체를 가져옵니다.")
+            #endif
+        default:
+            ESAlertUtility.showConfirmAlert(title: "에러", message: "문제가 발생했습니다", in: self)
+        }
     }
 
     // MARK: - 마커 설정
@@ -176,6 +190,16 @@ final class MapViewController: BaseViewController {
         )
         marker.marker.mapView = mapView
         esMarkers.append(marker)
+    }
+
+    /// 지도에 추가된 모든 마커를 제거합니다.
+    private func clearAllMarkers() {
+        // 저장된 모든 ESMarker를 지도에서 제거
+        for marker in esMarkers {
+            marker.marker.mapView = nil
+        }
+        // 배열 초기화
+        esMarkers.removeAll()
     }
 
     // MARK: - 상세정보 표시
