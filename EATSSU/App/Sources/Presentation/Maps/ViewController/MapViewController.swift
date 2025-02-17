@@ -16,31 +16,59 @@ import NMapsMap
 import RxSwift
 import SnapKit
 
-/// `MapViewController`는 네이버 지도를 표시하고, 마커를 추가하는 역할을 합니다.
+/**
+ # MapViewController
+ 네이버 지도를 표시하고, 제휴 업체(Partnership) 정보를 받아와 지도에 마커를 추가하는 역할을 담당하는 뷰 컨트롤러입니다.
+
+ ## 기능
+ - 숭실대학교를 기준으로 지도를 초기화합니다.
+ - 전체 제휴 업체 목록을 네트워크로부터 가져와 마커를 배치합니다.
+ - `UISegmentedControl`을 이용해 '내 제휴' / '전체' 등 원하는 정보만 지도 위에 표시할 수 있습니다.
+ - 마커를 탭하면 `FloatingPanel`을 이용해 선택한 마커의 상세 정보를 표시합니다.
+ - 지도 영역 외부를 탭하면 패널을 닫고 선택 상태를 해제합니다.
+
+ ## 사용 예시
+ 1. `MapViewController`를 생성합니다.
+ 2. 내비게이션 컨트롤러에 `MapViewController`를 포함시켜 화면에 표시합니다.
+ 3. 화면에 표시된 지도를 통해 제휴 업체 정보를 확인하고, 마커를 탭하면 상세 정보를 확인할 수 있습니다.
+
+ - Author: **JIWOONG CHOI**
+ - Date: 2025.01.28
+ - SeeAlso: `MarkerDetailViewController`, `FloatingPanelController`
+ */
 final class MapViewController: BaseViewController {
+    // MARK: - Properties
+
+    /// `PartnershipService` 인스턴스. 제휴 업체 정보를 가져오는 데 사용됩니다.
     private let partnershipService = PartnershipService()
+
+    /// Rx에서 사용되는 DisposeBag입니다.
     private let disposeBag = DisposeBag()
 
-    /// 네이버 지도 뷰
+    /// 네이버 지도 뷰입니다.
     private var mapView: NMFMapView!
 
-    /// 지도 위에 추가할 UISegmentedControl
+    /// 지도 상단에 표시되는 UISegmentedControl
     private var mapSegmentedControl: UISegmentedControl!
 
     /// FloatingPanelController 인스턴스 (패널이 띄워져 있을 때 참조)
     private var floatingPanelController: FloatingPanelController?
 
-    /// 현재 선택된 마커 데이터를 저장
+    /// 현재 선택된 마커 데이터를 저장합니다.
     private var selectedMarkerData: MarkerData?
 
-    /// 숭실대학교 위치 (위도, 경도)
+    /// 숭실대학교 위치 (위도, 경도). 카메라를 이동할 기본 위치로 사용됩니다.
     private let soongsilUniversityLocation = NMGLatLng(lat: 37.496389, lng: 126.957222)
 
-    /// 추가된 ESMarker들을 저장하는 배열
+    /// 지도 위에 추가된 `ESMarker` 객체들을 저장합니다.
     private var esMarkers: [ESMarker] = []
 
     // MARK: - Life Cycle
 
+    /**
+     화면이 메모리에 로드되었을 때 호출됩니다.
+     지도와 UI를 설정하고, 제휴 정보를 불러와 표시합니다.
+     */
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -51,12 +79,20 @@ final class MapViewController: BaseViewController {
 
     // MARK: - UI 설정
 
-    /// UI를 초기화하고 네비게이션 바를 설정합니다.
+    /**
+     UI를 초기화하고 네비게이션 바를 설정하는 메서드입니다.
+
+     - Note: `viewDidLoad()`에서 호출되어 최초 화면 초기화 시점에 적용됩니다.
+     */
     private func setupUI() {
         setNavigationBar()
     }
 
-    /// 네비게이션 바 스타일을 설정합니다.
+    /**
+     네비게이션 바 스타일을 설정합니다.
+
+     - Note: 배경색, 타이틀 폰트, 스크롤 시의 Appearance 등을 지정합니다.
+     */
     private func setNavigationBar() {
         navigationItem.title = ESTextLiteral.Map.mapNavTitle
         navigationController?.isNavigationBarHidden = false
@@ -74,63 +110,59 @@ final class MapViewController: BaseViewController {
 
     // MARK: - 지도 설정
 
-    /// 네이버 지도 뷰를 초기화하고 화면에 추가합니다.
+    /**
+     네이버 지도 뷰를 초기화하고 화면에 추가합니다.
+
+     - Note: 지도에서 터치 이벤트를 수신하기 위해 `touchDelegate`를 `self`로 설정합니다.
+     - SeeAlso: `moveCamera(to:zoomLevel:)`
+     */
     private func configureMapView() {
-        // 지도 뷰의 프레임을 view.frame으로 설정하면 전체를 덮게 됩니다.
         mapView = NMFMapView(frame: view.frame)
         view.addSubview(mapView)
         mapView.touchDelegate = self
-
         moveCamera(to: soongsilUniversityLocation, zoomLevel: 15.0)
     }
 
-    /// 카메라를 특정 위치로 이동합니다.
-    /// - Parameters:
-    ///   - location: 이동할 위치의 위도 및 경도 (`NMGLatLng`)
-    ///   - zoomLevel: 줌 레벨 (`Double`)
+    /**
+     카메라를 특정 위치로 이동합니다.
+
+     - Parameters:
+       - location: 이동할 위치의 위도 및 경도 (`NMGLatLng`)
+       - zoomLevel: 줌 레벨 (`Double`)
+     */
     private func moveCamera(to location: NMGLatLng, zoomLevel: Double) {
-        let cameraUpdate = NMFCameraUpdate(
-            position: NMFCameraPosition(location, zoom: zoomLevel)
-        )
+        let cameraUpdate = NMFCameraUpdate(position: NMFCameraPosition(location, zoom: zoomLevel))
         mapView.moveCamera(cameraUpdate)
     }
 
     // MARK: - UISegmentedControl 설정
 
-    /// 지도 상단에 UISegmentedControl을 추가합니다.
+    /**
+     지도 상단에 `UISegmentedControl`을 추가하고 초기 설정을 적용합니다.
+
+     - Note: Segmented Control 클릭 시 `segmentedControlChanged(_:)`를 통해 새로운 데이터를 불러오거나, 기존 마커를 지우고 다시 표시합니다.
+     */
     private func setupSegmentedControl() {
-        // segmented control에 들어갈 항목들을 설정합니다.
         let items = ["내 제휴", "전체"]
         mapSegmentedControl = UISegmentedControl(items: items)
         mapSegmentedControl.selectedSegmentIndex = 0
         mapSegmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
 
-        // 배경색 및 선택된 옵션의 색상, 곡률 반경 설정
         mapSegmentedControl.backgroundColor = .white
         mapSegmentedControl.selectedSegmentTintColor = EATSSUDesignAsset.Color.Main.primary.color
         mapSegmentedControl.layer.cornerRadius = 50
         mapSegmentedControl.layer.masksToBounds = true
 
-        // 텍스트 폰트
         let font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
-
-        // 텍스트 속성 설정
         mapSegmentedControl.setTitleTextAttributes(
-            [
-                .foregroundColor: UIColor.white,
-                .font: font,
-            ],
+            [.foregroundColor: UIColor.white, .font: font],
             for: .selected
         )
         mapSegmentedControl.setTitleTextAttributes(
-            [
-                .foregroundColor: UIColor.black,
-                .font: font,
-            ],
+            [.foregroundColor: UIColor.black, .font: font],
             for: .normal
         )
 
-        // 각 Segment의 넓이를 지정하는 대신, 전체 컨트롤의 넓이를 145로 지정합니다.
         view.addSubview(mapSegmentedControl)
         mapSegmentedControl.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8)
@@ -138,13 +170,19 @@ final class MapViewController: BaseViewController {
             make.width.equalTo(145)
         }
 
-        // 혹시 지도 뷰가 segmented control 위에 올 수 있으므로 순서를 보장합니다.
         view.bringSubviewToFront(mapSegmentedControl)
     }
 
-    @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
-        // segmented control의 값이 변경되었을 때 처리할 코드를 작성합니다.
+    /**
+     Segmented Control 변경 이벤트 핸들러입니다.
 
+     - Parameter sender: 값을 변경한 `UISegmentedControl` 인스턴스
+
+     분기:
+     1. 0(기본: "내 제휴") 선택 시 전체 제휴 업체 데이터를 불러옵니다.
+     2. 1("전체") 선택 시 사용자의 제휴 업체 데이터(미구현)를 불러옵니다.
+     */
+    @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
         clearAllMarkers()
 
         #if DEBUG
@@ -161,20 +199,34 @@ final class MapViewController: BaseViewController {
             #if DEBUG
                 print("사용자의 제휴 업체를 가져옵니다.")
             #endif
+        // TODO: 사용자에 따라 필터된 제휴 데이터 가져오기
         default:
-            ESAlertUtility.showConfirmAlert(title: "에러", message: "문제가 발생했습니다", in: self)
+            ESAlertUtility.showConfirmAlert(
+                title: "에러",
+                message: "문제가 발생했습니다",
+                in: self
+            )
         }
     }
 
     // MARK: - 마커 설정
 
-    /// 특정 위치에 마커를 추가합니다.
-    /// - Parameters:
-    ///   - location: 마커를 추가할 위치 (`NMGLatLng`)
-    ///   - title: 마커의 데이터 (`String`)
-    ///   - leftText: 마커 왼쪽 텍스트 (`String`)
-    ///   - rightText: 마커 오른쪽 텍스트 (`String`)
-    private func addMarker(at location: NMGLatLng, leftText: String, rightText: String, markerData: MarkerData) {
+    /**
+     특정 위치에 마커를 추가합니다.
+
+     - Parameters:
+       - location: 마커를 추가할 `NMGLatLng` 위치
+       - leftText: 마커 왼쪽에 표시할 텍스트
+       - rightText: 마커 오른쪽에 표시할 텍스트
+       - markerData: 해당 마커에 대응하는 `MarkerData` (상세보기용 정보)
+     - Note: 마커를 탭하면 `presentMarkerDetailFloatingPanel(with:)`가 호출되어 상세 패널이 표시됩니다.
+     */
+    private func addMarker(
+        at location: NMGLatLng,
+        leftText: String,
+        rightText: String,
+        markerData: MarkerData
+    ) {
         let marker = ESMarker(
             position: location,
             leftText: leftText,
@@ -192,34 +244,38 @@ final class MapViewController: BaseViewController {
         esMarkers.append(marker)
     }
 
-    /// 지도에 추가된 모든 마커를 제거합니다.
+    /**
+     지도에 추가된 모든 마커를 제거합니다.
+
+     - Note: `esMarkers` 배열에 저장된 `ESMarker`를 순회하며, 지도에서 제거(MapView 연결 해제)한 뒤 배열을 비웁니다.
+     */
     private func clearAllMarkers() {
-        // 저장된 모든 ESMarker를 지도에서 제거
         for marker in esMarkers {
             marker.marker.mapView = nil
         }
-        // 배열 초기화
         esMarkers.removeAll()
     }
 
     // MARK: - 상세정보 표시
 
-    /// `MarkerDetailViewController`를 FloatingPanel로 표시하는 메서드
-    /// - Parameter data: 마커에 대한 데이터 (`MarkerData`)
+    /**
+     마커 상세 정보를 `FloatingPanel`로 표시합니다.
+
+     - Parameter markerData: 마커 클릭 시 표시할 데이터(`MarkerData`)
+     - Note:
+        1. 이미 동일한 마커가 선택되어 있고, 패널이 표시 중이면 그대로 유지합니다.
+        2. 새로운 마커를 탭하면, `MarkerDetailViewController`를 생성해 패널 내용으로 설정하고 부모에 추가합니다.
+     */
     private func presentMarkerDetailFloatingPanel(with markerData: MarkerData) {
-        // 만약 이미 같은 마커가 선택되어 있고, 패널이 표시 중이면 업데이트 없이 리턴
         if let currentData = selectedMarkerData, currentData == markerData,
            floatingPanelController?.parent != nil
         {
             return
         }
-        // 새로운 마커가 탭되었으므로 선택 정보를 업데이트
-        selectedMarkerData = markerData
 
-        // 상세정보를 표시할 컨텐츠 뷰 컨트롤러 생성
+        selectedMarkerData = markerData
         let detailVC = MarkerDetailViewController(markerData: markerData)
 
-        // FloatingPanelController가 없으면 생성 (한 번만 생성해 재사용)
         if floatingPanelController == nil {
             floatingPanelController = FloatingPanelController()
             floatingPanelController?.delegate = self
@@ -229,16 +285,22 @@ final class MapViewController: BaseViewController {
             floatingPanelController?.surfaceView.appearance = appearance
         }
 
-        // 컨텐츠 뷰 컨트롤러 갱신 (패널 업데이트)
         floatingPanelController?.set(contentViewController: detailVC)
 
-        // FloatingPanel이 부모에 추가되어 있지 않다면 현재 뷰 컨트롤러에 추가
         if floatingPanelController?.parent == nil {
             floatingPanelController?.addPanel(toParent: self)
         }
     }
 
-    /// 전체 제휴 목록을 가져오는 함수
+    // MARK: - 네트워크
+
+    /**
+     전체 제휴 목록을 네트워크로부터 가져오는 메서드입니다.
+
+     - Note:
+       1. 성공 시 `baseResponse.result`에 포함된 제휴 정보를 순회하며, 지도 위에 마커를 배치합니다.
+       2. 실패 시 디버그 로그를 남기고, 필요 시 사용자에게 알림을 표시하도록 TODO를 남겼습니다.
+     */
     private func fetchPartnerships() {
         partnershipService.fetchAllPartnerships()
             .subscribe(
@@ -247,7 +309,6 @@ final class MapViewController: BaseViewController {
                         print("제휴 목록 가져오기 성공: \(baseResponse)")
                     #endif
 
-                    // 응답이 성공적인지 확인합니다.
                     guard baseResponse.isSuccess else {
                         #if DEBUG
                             print("제휴 목록 가져오기 실패: \(baseResponse.message)")
@@ -257,13 +318,23 @@ final class MapViewController: BaseViewController {
 
                     let partnerships = baseResponse.result
                     for partnership in partnerships {
-                        let location = NMGLatLng(lat: partnership.latitude, lng: partnership.longitude)
-
+                        let location = NMGLatLng(
+                            lat: partnership.latitude,
+                            lng: partnership.longitude
+                        )
                         let leftText = partnership.storeName
                         let rightText = partnership.partnershipType
-                        let markerData = MarkerData(title: partnership.storeName, description: partnership.description)
+                        let markerData = MarkerData(
+                            title: partnership.storeName,
+                            description: partnership.description
+                        )
 
-                        self.addMarker(at: location, leftText: leftText, rightText: rightText, markerData: markerData)
+                        self.addMarker(
+                            at: location,
+                            leftText: leftText,
+                            rightText: rightText,
+                            markerData: markerData
+                        )
                     }
                 },
                 onFailure: { error in
@@ -277,16 +348,18 @@ final class MapViewController: BaseViewController {
     }
 }
 
-// MARK: - NMFMapViewTouchDelegate (지도 터치 이벤트)
+// MARK: - NMFMapViewTouchDelegate
 
 extension MapViewController: NMFMapViewTouchDelegate {
-    /// 사용자가 지도에서 단일 탭을 했을 때 호출됩니다.
-    /// 마커가 아닌 다른 부분을 탭하면 FloatingPanel을 제거합니다.
-    /// - Parameters:
-    ///   - latlng: 사용자가 탭한 위치 (`NMGLatLng`)
-    ///   - point: 터치된 화면 좌표 (`CGPoint`)
+    /**
+     사용자가 지도에서 단일 탭했을 때 호출됩니다.
+     마커가 아닌 다른 부분을 탭하면 FloatingPanel을 제거합니다.
+
+     - Parameters:
+       - latlng: 탭한 위치의 `NMGLatLng`
+       - point: 탭한 화면 좌표(`CGPoint`)
+     */
     func mapView(_: NMFMapView, didTapMap latlng: NMGLatLng, point _: CGPoint) {
-        // FloatingPanel이 표시 중이면 제거
         if let fpc = floatingPanelController, fpc.parent != nil {
             fpc.removePanelFromParent(animated: true)
             floatingPanelController = nil
@@ -297,13 +370,15 @@ extension MapViewController: NMFMapViewTouchDelegate {
         #endif
     }
 
-    /// 사용자가 지도에서 길게 눌렀을 때 호출됩니다.
-    /// 마커가 아닌 다른 부분을 길게 누르면 FloatingPanel을 제거합니다.
-    /// - Parameters:
-    ///   - latlng: 사용자가 길게 누른 위치 (`NMGLatLng`)
-    ///   - point: 터치된 화면 좌표 (`CGPoint`)
+    /**
+     사용자가 지도에서 길게 누를 때 호출됩니다.
+     마커가 아닌 다른 부분을 길게 누르면 FloatingPanel을 제거합니다.
+
+     - Parameters:
+       - latlng: 길게 누른 위치의 `NMGLatLng`
+       - point: 터치된 화면 좌표(`CGPoint`)
+     */
     func mapView(_: NMFMapView, didLongTapMap latlng: NMGLatLng, point _: CGPoint) {
-        // FloatingPanel이 표시 중이면 제거
         if let fpc = floatingPanelController, fpc.parent != nil {
             fpc.removePanelFromParent(animated: true)
             floatingPanelController = nil
@@ -318,8 +393,13 @@ extension MapViewController: NMFMapViewTouchDelegate {
 // MARK: - FloatingPanelControllerDelegate
 
 extension MapViewController: FloatingPanelControllerDelegate {
+    /**
+     FloatingPanel이 제거되었을 때 호출됩니다.
+     패널과 선택된 마커 데이터를 초기화합니다.
+
+     - Parameter fpc: 제거된 `FloatingPanelController`
+     */
     func floatingPanelDidRemove(_: FloatingPanelController) {
-        // 패널이 제거되었을 때 필요한 처리가 있다면 구현합니다.
         floatingPanelController = nil
         selectedMarkerData = nil
     }
