@@ -1,5 +1,18 @@
 import ProjectDescription
 
+let networkFrameworkInfoPlist: InfoPlist = .extendingDefault(with: [
+    "CFBundleDisplayName": "$(PRODUCT_NAME)",
+    "BASE_URL": "https://$(BASE_URL)",
+])
+
+let networkFrameworkSettings: Settings = .settings(
+    configurations: [
+        .debug(name: "Debug", xcconfig: "EATSSUNetwork/Resources/Secrets/Debug.xcconfig"),
+        .release(name: "Release", xcconfig: "EATSSUNetwork/Resources/Secrets/Release.xcconfig"),
+    ],
+    defaultSettings: .recommended
+)
+
 let project = Project(
     name: "EATSSUNetwork",
     targets: [
@@ -9,29 +22,24 @@ let project = Project(
             product: .framework,
             bundleId: "com.EATSSU.EATSSUNetwork",
             deploymentTargets: .iOS("15.0"),
-            infoPlist: .extendingDefault(
-                with: [
-                    "UILaunchScreen": [
-                        "UIColorName": "",
-                        "UIImageName": "",
-                    ],
-                ]
-            ),
+            infoPlist: networkFrameworkInfoPlist,
             sources: ["EATSSUNetwork/Sources/**"],
             dependencies: [
                 .external(name: "RxMoya"),
                 .external(name: "Moya"),
-            ]
+            ],
+            settings: networkFrameworkSettings
         ),
         .target(
             name: "EATSSUNetworkTests",
             destinations: .iOS,
             product: .unitTests,
             bundleId: "com.EATSSU.EATSSUNetworkTests",
-            infoPlist: .default,
+            infoPlist: networkFrameworkInfoPlist,
             sources: ["EATSSUNetwork/Tests/**"],
             resources: [],
-            dependencies: [.target(name: "EATSSUNetwork")]
+            dependencies: [.target(name: "EATSSUNetwork")],
+            settings: networkFrameworkSettings
         ),
     ]
 )
