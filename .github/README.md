@@ -36,7 +36,7 @@ tuist generate
 
 ```zsh
 brew tap tuist/tuist
-brew install --formula tuist@4.24.0
+brew install --formula tuist@latest
 ```
 
 ## Issue Title
