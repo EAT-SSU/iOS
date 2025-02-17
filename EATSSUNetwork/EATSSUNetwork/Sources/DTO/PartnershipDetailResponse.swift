@@ -8,11 +8,11 @@
 import Foundation
 
 public struct PartnershipDetailResponse: Codable {
-    let id: Int
-    let partnershipType, storeName, description, startDate: String
-    let endDate, restaurantType: String
-    let longitude, latitude: Double
-    let collegeNames, departmentNames: [String]
-    let partnershipLikeCount: Int
-    let likedByUser: Bool
+    public let id: Int
+    public let partnershipType, storeName, description, startDate: String
+    public let endDate, restaurantType: String
+    public let longitude, latitude: Double
+    public let collegeNames, departmentNames: [String]
+    public let partnershipLikeCount: Int
+    public let likedByUser: Bool
 }
