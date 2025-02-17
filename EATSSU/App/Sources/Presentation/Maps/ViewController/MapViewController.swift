@@ -81,7 +81,7 @@ final class MapViewController: BaseViewController {
         view.addSubview(mapView)
         mapView.touchDelegate = self
 
-        moveCamera(to: soongsilUniversityLocation, zoomLevel: 16.0)
+        moveCamera(to: soongsilUniversityLocation, zoomLevel: 15.0)
     }
 
     /// 카메라를 특정 위치로 이동합니다.
@@ -219,30 +219,34 @@ final class MapViewController: BaseViewController {
         partnershipService.fetchAllPartnerships()
             .subscribe(
                 onSuccess: { (baseResponse: BaseResponse<[PartnershipResponse]>) in
-                    print("제휴 목록 가져오기 성공: \(baseResponse)")
+                    #if DEBUG
+                        print("제휴 목록 가져오기 성공: \(baseResponse)")
+                    #endif
 
                     // 응답이 성공적인지 확인합니다.
                     guard baseResponse.isSuccess else {
-                        print("제휴 목록 가져오기 실패: \(baseResponse.message)")
+                        #if DEBUG
+                            print("제휴 목록 가져오기 실패: \(baseResponse.message)")
+                        #endif
                         return
                     }
 
-                    // baseResponse.result는 PartnershipResponse 배열입니다.
                     let partnerships = baseResponse.result
                     for partnership in partnerships {
                         let location = NMGLatLng(lat: partnership.latitude, lng: partnership.longitude)
 
-                        // 마커에 표시할 텍스트와 데이터를 설정합니다.
                         let leftText = partnership.storeName
-                        let rightText = partnership.description
+                        let rightText = partnership.partnershipType
                         let markerData = MarkerData(title: partnership.storeName, description: partnership.description)
 
-                        // 각 제휴 데이터에 대해 마커를 추가합니다.
                         self.addMarker(at: location, leftText: leftText, rightText: rightText, markerData: markerData)
                     }
                 },
                 onFailure: { error in
-                    print("제휴 목록 가져오기 실패: \(error.localizedDescription)")
+                    #if DEBUG
+                        print("제휴 목록 가져오기 실패: \(error.localizedDescription)")
+                    #endif
+                    // TODO: 네트워크 연결을 실패했을 때, 해야 할 로직 작성
                 }
             )
             .disposed(by: disposeBag)
