@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct PartnershipResponse: Codable {
-    let id: Int
-    let partnershipType, storeName, description, startDate: String
-    let endDate, restaurantType: String
-    let longitude, latitude: Double
-    let collegeNames, departmentNames: [String]
+public struct PartnershipResponse: Codable {
+    public let id: Int
+    public let partnershipType, storeName, description, startDate: String
+    public let endDate, restaurantType: String
+    public let longitude, latitude: Double
+    public let collegeNames, departmentNames: [String]
 }
