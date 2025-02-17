@@ -46,7 +46,6 @@ final class MapViewController: BaseViewController {
         setupUI()
         configureMapView()
         setupSegmentedControl()
-        addSoongsilMarker()
         fetchPartnerships()
     }
 
@@ -177,26 +176,6 @@ final class MapViewController: BaseViewController {
         )
         marker.marker.mapView = mapView
         esMarkers.append(marker)
-    }
-
-    /// 숭실대학교 위치에 마커를 추가합니다.
-    private func addSoongsilMarker() {
-        let soongsilMarker = ESMarker(
-            position: soongsilUniversityLocation,
-            leftText: "숭실대학교",
-            rightText: "Soongsil Univ",
-            touchHandler: { (_: NMFOverlay) -> Bool in
-                #if DEBUG
-                    print("마커가 탭되었습니다!")
-                #endif
-                let data = MarkerData(title: "숭실대학교", description: "EATSSU의 서비스 지역")
-                self.presentMarkerDetailFloatingPanel(with: data)
-                return true
-            },
-            markerData: MarkerData(title: "숭실대학교", description: "EATSSU의 서비스 지역")
-        )
-        soongsilMarker.marker.mapView = mapView
-        esMarkers.append(soongsilMarker)
     }
 
     // MARK: - 상세정보 표시
