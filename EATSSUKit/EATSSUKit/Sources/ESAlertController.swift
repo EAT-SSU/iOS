@@ -1,5 +1,5 @@
 //
-//  ESAlertUtility.swift
+//  ESAlertController.swift
 //  EATSSUKit
 //
 //  Created by JIWOONG CHOI on 1/31/25.
@@ -8,7 +8,7 @@
 import UIKit
 
 /// - Note: 앱 전반에서 재사용할 수 있는 알림창(팝업) 유틸리티 클래스입니다.
-public enum ESAlertUtility {
+public enum ESAlertController {
     // MARK: - Common Alert
 
     /// - Note: 일반적인 알림 창을 생성하는 함수입니다.

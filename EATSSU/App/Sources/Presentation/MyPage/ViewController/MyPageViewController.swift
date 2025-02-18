@@ -140,7 +140,7 @@ final class MyPageViewController: BaseViewController {
 
     /// - Note: 로그아웃 알림창을 화면에 표시하고, 로그아웃 시에는 DB 초기화 및 로그인화면으로 전환합니다.
     private func showLogoutAlert() {
-        ESAlertUtility.showConfirmAlert(
+        ESAlertController.showConfirmAlert(
             title: "로그아웃",
             message: "정말 로그아웃 하시겠습니까?",
             confirmTitle: "로그아웃",
