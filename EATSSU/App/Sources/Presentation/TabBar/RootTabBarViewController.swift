@@ -72,21 +72,43 @@ class RootTabBarViewController: UITabBarController {
 
 extension RootTabBarViewController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        // Create and trigger a haptic feedback generator
+        // 탭바의 아이템을 선택했을 때, 제공하는 햅틱 피드백
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
         feedbackGenerator.impactOccurred()
 
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else { return }
 
-        if selectedIndex == 2 {
+        switch selectedIndex {
+        case 0:
             #if DEBUG
-                print("마이페이 탭(tag 2)이 선택되었습니다.")
+                print("홈 탭이 선택되었습니다.")
+            #endif
+        case 1:
+            #if DEBUG
+                print("제휴지도 탭이 선택되었습니다.")
+            #endif
+            
+            if userEnteredDepartmentInfo() {
+                
+            } else {
+                
+            }
+        case 2:
+            #if DEBUG
+                print("마이페이 탭이 선택되었습니다.")
             #endif
             handleMyPageTabSelected()
+        default:
+            fatalError("선택될 수 없는 탭이 선택됨.")
         }
     }
+    
+    /// 사용자가 학과 정보를 입력했는지 확인
+    private func userEnteredDepartmentInfo() -> Bool {
+        // TODO: 서버에 사용자의 학과 정보를 조회하는 로직 설계
+        return false
+    }
 
-    // TODO: 로그인 유무를 확인하는 비즈니스 로직이 TabBarController와 MyPageViewController 어디에 있는 것이 더 적합한지 고민
     private func handleMyPageTabSelected() {
         if !RealmService.shared.isAccessTokenPresent() {
             presentLoginAlert()
