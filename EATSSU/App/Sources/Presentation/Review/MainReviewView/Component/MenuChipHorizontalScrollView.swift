@@ -74,7 +74,7 @@ class MenuChipHorizontalScrollView: BaseUIView {
         config.background.strokeColor = EATSSUDesignAsset.Color.Main.primary.color
         config.background.strokeWidth = 0.5
         
-        config.image = EATSSUDesignAsset.Images.thumbUp.image
+        config.image = EATSSUDesignAsset.Images.filledThumbUp.image
         config.imagePadding = 1
         config.cornerStyle = .capsule
         config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 6, bottom: 5, trailing: 6)
