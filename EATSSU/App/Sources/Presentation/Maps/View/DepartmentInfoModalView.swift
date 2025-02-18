@@ -5,60 +5,78 @@
 //  Created by JIWOONG CHOI on 2/18/25.
 //
 
-
 import UIKit
+
+import EATSSUDesign
+
+import SnapKit
 
 /// 학과 정보 모달의 UI를 구성하는 커스텀 뷰
 public class DepartmentInfoModalView: UIView {
-    
-    /// 메시지 레이블 (상단)
-    public let messageLabel: UILabel = {
+    /// 상단 제목 레이블
+    public let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "학과 정보가 입력되지 않았습니다."
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "학과를 입력하고\n나만의 제휴를 확인해보세요!"
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        label.numberOfLines = 2
         return label
     }()
-    
-    /// 이동 버튼 (하단)
+
+    /// 중간 이미지 뷰 (이미지 리소스는 추후 설정)
+    public let contentImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = EATSSUDesignAsset.Images.mapModalLogo.image
+        return imageView
+    }()
+
+    /// 하단 버튼
     public let actionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("학과 정보 입력하기", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        button.backgroundColor = UIColor.systemBlue
+        button.setTitle("학과 입력하기", for: .normal)
+        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        button.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
         button.tintColor = .white
-        button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 12
         return button
     }()
-    
-    public override init(frame: CGRect) {
+
+    override public init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .white
+        backgroundColor = .white
         setupUI()
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been 구현되지 않음")
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:)는 구현되지 않음")
     }
-    
-    /// UI 컴포넌트 추가 및 오토레이아웃 설정
+
+    /// UI 컴포넌트 추가 및 SnapKit을 이용한 오토레이아웃 설정
     private func setupUI() {
-        addSubview(messageLabel)
+        addSubview(titleLabel)
+        addSubview(contentImageView)
         addSubview(actionButton)
-        
-        NSLayoutConstraint.activate([
-            // 메시지 레이블: 상단 20pt, 좌우 20pt 여백
-            messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            
-            // 버튼: 메시지 레이블 아래 20pt, 좌우 40pt 여백, 높이 44pt
-            actionButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 20),
-            actionButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40),
-            actionButton.heightAnchor.constraint(equalToConstant: 44)
-        ])
+
+        // 상단 제목 레이블 제약조건
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(40)
+            make.leading.equalToSuperview().inset(20)
+        }
+
+        // 중간 이미지 뷰 제약조건
+        contentImageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+
+        // 하단 버튼 제약조건
+        actionButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(52)
+            make.bottom.equalToSuperview().inset(40)
+        }
     }
 }
