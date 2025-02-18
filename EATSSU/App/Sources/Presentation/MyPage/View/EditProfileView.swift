@@ -1,5 +1,5 @@
 //
-//  MyInfoView.swift
+//  EditProfileView.swift
 //  EATSSU
 //
 //  Created by Jiwoong CHOI on 01/31/25.
@@ -13,7 +13,7 @@ import SnapKit
 import Then
 
 /// 사용자의 닉네임과 소속(단과대학 및 학과)을 설정하는 화면의 View
-final class MyInfoView: BaseView {
+final class EditProfileView: BaseView {
     // MARK: - Properties
 
     /// 사용자가 입력한 닉네임 값
@@ -206,7 +206,7 @@ final class MyInfoView: BaseView {
 
 // MARK: - UITextFieldDelegate
 
-extension MyInfoView: UITextFieldDelegate {
+extension EditProfileView: UITextFieldDelegate {
     /// 사용자가 Return 키를 누르면 키보드를 내림
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -253,7 +253,7 @@ extension MyInfoView: UITextFieldDelegate {
 
 // MARK: - UIPickerViewDataSource, UIPickerViewDelegate
 
-extension MyInfoView: UIPickerViewDataSource, UIPickerViewDelegate {
+extension EditProfileView: UIPickerViewDataSource, UIPickerViewDelegate {
     func numberOfComponents(in _: UIPickerView) -> Int { 1 }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent _: Int) -> Int {
@@ -320,7 +320,7 @@ extension MyInfoView: UIPickerViewDataSource, UIPickerViewDelegate {
 
 // MARK: - Validation User Information
 
-extension MyInfoView {
+extension EditProfileView {
     /// 닉네임 입력 값이 없을 때 기본 메시지 표시
     func updateTextFieldForEmptyState() {
         nicknameValidationLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
