@@ -7,8 +7,8 @@
 
 import UIKit
 
-import EATSSUKit
 import EATSSUDesign
+import EATSSUKit
 
 class RootTabBarViewController: UITabBarController {
     override func viewDidLoad() {
@@ -50,7 +50,8 @@ class RootTabBarViewController: UITabBarController {
             title: "로그인이 필요한 서비스입니다.",
             message: "로그인 하시겠습니까?",
             confirmTitle: "확인",
-            in: self) { [weak self] in
+            in: self
+        ) { [weak self] in
             self?.changeIntoLoginVC()
         }
     }
@@ -73,19 +74,19 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
         // 탭바 아이템 선택 시 햅틱 피드백 제공
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
         feedbackGenerator.impactOccurred()
-        
+
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else { return }
-        
+
         switch selectedIndex {
         case 0:
             #if DEBUG
-            print("홈 탭이 선택되었습니다.")
+                print("홈 탭이 선택되었습니다.")
             #endif
         case 1:
             #if DEBUG
-            print("제휴지도 탭이 선택되었습니다.")
+                print("제휴지도 탭이 선택되었습니다.")
             #endif
-            
+
             if userEnteredDepartmentInfo() {
                 // 학과 정보가 입력된 경우 기존 로직 수행
             } else {
@@ -94,49 +95,49 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
             }
         case 2:
             #if DEBUG
-            print("마이페이 탭이 선택되었습니다.")
+                print("마이페이 탭이 선택되었습니다.")
             #endif
             handleMyPageTabSelected()
         default:
             fatalError("선택될 수 없는 탭이 선택됨.")
         }
     }
-    
+
     /// 학과 정보 입력 여부에 따라 모달 시트를 표시하는 메서드
     private func presentDepartmentInfoModal() {
         let modalVC = DepartmentInfoModalViewController()
         modalVC.modalPresentationStyle = .pageSheet
-        
+
         // iOS 15 이상에서 UISheetPresentationController를 이용해 시트 높이를 조정
         if let sheet = modalVC.sheetPresentationController {
-            sheet.detents = [.medium()]  // 화면의 절반 정도 높이
+            sheet.detents = [.medium()] // 화면의 절반 정도 높이
             sheet.prefersGrabberVisible = true
         }
-        
+
         // 모달 내 버튼 탭 시 실행될 동작 (예시로 학과 정보 입력 화면으로 이동)
         modalVC.onButtonTapped = { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             // 학과 정보 입력 화면 (필요에 따라 실제 뷰 컨트롤러로 변경)
             let departmentInputVC = UIViewController()
             departmentInputVC.modalPresentationStyle = .fullScreen
-            self.present(departmentInputVC, animated: true)
+            present(departmentInputVC, animated: true)
         }
-        
+
         present(modalVC, animated: true)
     }
-    
+
     /// 사용자가 학과 정보를 입력했는지 확인 (임시 로직)
     private func userEnteredDepartmentInfo() -> Bool {
         // TODO: 서버에서 사용자의 학과 정보 조회 로직 설계
-        return false
+        false
     }
-    
+
     private func handleMyPageTabSelected() {
         if !RealmService.shared.isAccessTokenPresent() {
             presentLoginAlert()
         } else {
             #if DEBUG
-            print("MyPageViewController로 이동")
+                print("MyPageViewController로 이동")
             #endif
         }
     }
