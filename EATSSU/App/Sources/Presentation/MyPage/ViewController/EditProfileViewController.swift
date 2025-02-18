@@ -97,10 +97,10 @@ final class EditProfileViewController: BaseViewController {
     @objc
     func tappedCompleteNickNameButton() {
         guard let nickname = myInfoView.nicknameTextField.text, !nickname.isEmpty else {
-            self.view.showToast(message: "닉네임을 입력해주세요")
+            view.showToast(message: "닉네임을 입력해주세요")
             return
         }
-        
+
         setUserNickname(nickname: nickname)
     }
 
@@ -109,10 +109,10 @@ final class EditProfileViewController: BaseViewController {
     func tappedCheckButton() {
         // 닉네임 값이 nil이거나 빈 문자열인 경우 추가 동작 수행
         guard let nickname = myInfoView.nicknameTextField.text, !nickname.isEmpty else {
-            self.view.showToast(message: "닉네임을 입력해주세요")
+            view.showToast(message: "닉네임을 입력해주세요")
             return
         }
-        
+
         // 닉네임 값이 존재하면 API 요청 실행
         checkNickname(nickname: nickname)
     }
@@ -143,10 +143,14 @@ extension EditProfileViewController {
                             }
                         }
                     }
+                    #if DEBUG
                     print(moyaResponse.statusCode)
+                    #endif
                 }
             case let .failure(err):
+                #if DEBUG
                 print(err.localizedDescription)
+                #endif
             }
         }
     }
@@ -174,10 +178,14 @@ extension EditProfileViewController {
                             NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
                     }
                 } catch let err {
+                    #if DEBUG
                     print(err.localizedDescription)
+                    #endif
                 }
             case let .failure(err):
+                #if DEBUG
                 print(err.localizedDescription)
+                #endif
             }
         }
     }
