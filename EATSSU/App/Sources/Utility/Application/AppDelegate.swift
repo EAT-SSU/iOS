@@ -9,7 +9,7 @@ import AuthenticationServices
 import UIKit
 
 import Firebase
-import GoogleMobileAds
+//import GoogleMobileAds
 import KakaoSDKCommon
 
 @main
@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate Methods
 
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        configureGoogleMobileAds()
+//        configureGoogleMobileAds()
         setupNotificationPermissions()
         startNetworkMonitoring()
         configureFirebase()
@@ -41,9 +41,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Private Methods
 
     /// Google Mobile Ads SDK를 초기화합니다.
-    private func configureGoogleMobileAds() {
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
-    }
+//    private func configureGoogleMobileAds() {
+//        GADMobileAds.sharedInstance().start(completionHandler: nil)
+//    }
 
     /// 푸시 알림 권한을 요청하고 설정을 처리합니다.
     private func setupNotificationPermissions() {
