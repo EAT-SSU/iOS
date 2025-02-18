@@ -107,20 +107,18 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
     private func presentDepartmentInfoModal() {
         let modalVC = DepartmentInfoModalViewController()
         modalVC.modalPresentationStyle = .pageSheet
+        modalVC.isModalInPresentation = true
 
-        // iOS 15 이상에서 UISheetPresentationController를 이용해 시트 높이를 조정
         if let sheet = modalVC.sheetPresentationController {
             sheet.detents = [.medium()] // 화면의 절반 정도 높이
-            sheet.prefersGrabberVisible = true
+            sheet.prefersGrabberVisible = false
         }
 
-        // 모달 내 버튼 탭 시 실행될 동작 (예시로 학과 정보 입력 화면으로 이동)
         modalVC.onButtonTapped = { [weak self] in
-            guard let self else { return }
-            // 학과 정보 입력 화면 (필요에 따라 실제 뷰 컨트롤러로 변경)
-            let departmentInputVC = UIViewController()
-            departmentInputVC.modalPresentationStyle = .fullScreen
-            present(departmentInputVC, animated: true)
+            self?.dismiss(animated: true) {
+                self?.selectedIndex = 2
+                self?.handleMyPageTabSelected()
+            }
         }
 
         present(modalVC, animated: true)
