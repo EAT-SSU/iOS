@@ -1,5 +1,5 @@
 //
-//  MyInfoViewController.swift
+//  EditProfileViewController.swift
 //  EATSSU
 //
 //  Created by Jiwoong CHOI on 01/31/25.
@@ -12,7 +12,7 @@ import EATSSUNetwork
 import Moya
 
 /// 사용자의 닉네임을 설정 및 검증할 수 있는 화면입니다.
-final class MyInfoViewController: BaseViewController {
+final class EditProfileViewController: BaseViewController {
     // MARK: - Properties
 
     /// 현재 키보드 높이를 저장하는 변수입니다.
@@ -24,7 +24,7 @@ final class MyInfoViewController: BaseViewController {
     // MARK: - UI Components
 
     /// 사용자 정보 입력 및 닉네임 설정 UI를 포함하는 뷰입니다.
-    let myInfoView = MyInfoView()
+    let myInfoView = EditProfileView()
 
     // MARK: - Life Cycle
 
@@ -127,7 +127,7 @@ final class MyInfoViewController: BaseViewController {
 
 // MARK: - 네트워크 요청
 
-extension MyInfoViewController {
+extension EditProfileViewController {
     /// 사용자의 닉네임을 서버에 설정하는 API 요청을 보냅니다.
     /// - Parameter nickname: 사용자가 입력한 닉네임
     func setUserNickname(nickname: String) {

@@ -286,7 +286,7 @@ extension MyPageViewController: UITableViewDelegate {
             }
 
         case MyPageLabelsIndex.MyInfo.rawValue:
-            let myInfoViewController = MyInfoViewController()
+            let myInfoViewController = EditProfileViewController()
             navigationController?.pushViewController(myInfoViewController, animated: true)
 
         // "내가 쓴 리뷰"
