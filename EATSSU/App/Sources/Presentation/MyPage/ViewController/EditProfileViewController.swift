@@ -96,13 +96,25 @@ final class EditProfileViewController: BaseViewController {
     /// "닉네임 설정 완료" 버튼을 눌렀을 때 호출됩니다.
     @objc
     func tappedCompleteNickNameButton() {
-        setUserNickname(nickname: myInfoView.nicknameTextField.text ?? "")
+        guard let nickname = myInfoView.nicknameTextField.text, !nickname.isEmpty else {
+            self.view.showToast(message: "닉네임을 입력해주세요")
+            return
+        }
+        
+        setUserNickname(nickname: nickname)
     }
 
     /// "중복 확인" 버튼을 눌렀을 때 호출됩니다.
     @objc
     func tappedCheckButton() {
-        checkNickname(nickname: myInfoView.nicknameTextField.text ?? "")
+        // 닉네임 값이 nil이거나 빈 문자열인 경우 추가 동작 수행
+        guard let nickname = myInfoView.nicknameTextField.text, !nickname.isEmpty else {
+            self.view.showToast(message: "닉네임을 입력해주세요")
+            return
+        }
+        
+        // 닉네임 값이 존재하면 API 요청 실행
+        checkNickname(nickname: nickname)
     }
 }
 
