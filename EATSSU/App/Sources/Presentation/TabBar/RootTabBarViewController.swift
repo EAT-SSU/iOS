@@ -7,6 +7,7 @@
 
 import UIKit
 
+import EATSSUKit
 import EATSSUDesign
 
 class RootTabBarViewController: UITabBarController {
@@ -44,20 +45,17 @@ class RootTabBarViewController: UITabBarController {
         tabBar.backgroundColor = .white
     }
 
-    // FIXME: EATSSUKit으로 이관하여 재사용성 높이기
     private func presentLoginAlert() {
-        let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
-                                      message: "로그인 하시겠습니까?",
-                                      preferredStyle: .alert)
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            self?.navigateToLogin()
+        ESAlertController.showConfirmOnlyAlert(
+            title: "로그인이 필요한 서비스입니다.",
+            message: "로그인 하시겠습니까?",
+            confirmTitle: "확인",
+            in: self) { [weak self] in
+            self?.changeIntoLoginVC()
         }
-        alert.addAction(confirmAction)
-        present(alert, animated: true, completion: nil)
     }
 
-    // FIXME: EATSSUKit으로 이관하여 재사용성 높이기
-    private func navigateToLogin() {
+    private func changeIntoLoginVC() {
         let loginVC = LoginViewController()
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let sceneDelegate = windowScene.delegate as? SceneDelegate,
