@@ -158,7 +158,7 @@ extension MyReviewViewController {
                     #if DEBUG
                         print(err.localizedDescription)
                     #endif
-                    ESAlertUtility.showConfirmOnlyAlert(title: "알림", message: "서버 문제가 발생했습니다.", in: self) { [weak self] in
+                    ESAlertController.showConfirmOnlyAlert(title: "알림", message: "서버 문제가 발생했습니다.", in: self) { [weak self] in
                         self?.navigationController?.popViewController(animated: true)
                     }
                 }
@@ -166,7 +166,7 @@ extension MyReviewViewController {
                 #if DEBUG
                     print(err.localizedDescription)
                 #endif
-                ESAlertUtility.showConfirmOnlyAlert(title: "알림", message: "서버 문제가 발생했습니다.", in: self) { [weak self] in
+                ESAlertController.showConfirmOnlyAlert(title: "알림", message: "서버 문제가 발생했습니다.", in: self) { [weak self] in
                     self?.navigationController?.popViewController(animated: true)
                 }
             }
