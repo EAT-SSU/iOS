@@ -11,12 +11,41 @@ import EATSSUNetwork
 
 import Moya
 
-/// 사용자의 닉네임을 설정 및 검증할 수 있는 화면입니다.
+/**
+ 사용자의 닉네임을 설정 및 검증할 수 있는 화면을 관리하는 뷰 컨트롤러입니다.
+
+ 이 클래스는 사용자가 입력한 닉네임을 서버에 전송하여 설정하고, 중복 여부를 확인하는 API 요청을 수행합니다.
+ 또한, 사용자의 입력에 따라 UI를 업데이트하며, 닉네임 설정 완료 후 적절한 화면으로 전환합니다.
+
+ ## 주요 기능
+ - **닉네임 설정 API 요청**
+   - `setUserNickname(nickname:)`: 사용자가 입력한 닉네임을 서버에 전송하여 저장합니다.
+ - **닉네임 중복 확인 API 요청**
+   - `checkNickname(nickname:)`: 사용자가 입력한 닉네임의 중복 여부를 확인합니다.
+ - **UI 구성 및 이벤트 처리**
+   - `EditProfileView`를 통해 사용자 정보 입력 및 닉네임 설정 UI를 구성합니다.
+   - 닉네임 설정 완료 및 중복 확인 버튼의 이벤트를 처리합니다.
+ - **네비게이션 및 화면 전환**
+   - 닉네임 설정 완료 후 MyPage 혹은 Home 화면으로 전환합니다.
+
+ ## 사용 예시
+ ```swift
+ let editProfileVC = EditProfileViewController()
+ navigationController?.pushViewController(editProfileVC, animated: true)
+ ```
+
+ ## 관련 클래스 및 타입
+ - `EditProfileView`: 사용자 정보 입력 및 닉네임 설정 UI를 담당하는 뷰
+ - `UserNicknameRouter`: Moya를 사용한 닉네임 관련 API 요청 라우터
+ - `UserInfoManager`: 사용자 정보를 관리하는 싱글턴 객체
+ - `MyPageViewController`, `HomeViewController`: 화면 전환 시 사용되는 뷰 컨트롤러
+
+ ## 주의사항
+ - API 요청은 비동기로 처리되며, 네트워크 오류 발생 시 에러 메시지가 콘솔에 출력됩니다.
+ - 닉네임 중복 확인 결과에 따라 UI의 상태(버튼 활성화, 레이블 색상 및 메시지)가 업데이트됩니다.
+ */
 final class EditProfileViewController: BaseViewController {
     // MARK: - Properties
-
-    /// 현재 키보드 높이를 저장하는 변수입니다.
-    var currentKeyboardHeight: CGFloat = 0.0
 
     /// 닉네임 관련 API 요청을 위한 Moya Provider입니다.
     let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [ESMoyaLoggingPlugin()])
@@ -30,17 +59,14 @@ final class EditProfileViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        dismissKeyboard()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        addKeyboardNotifications()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-//        removeKeyboardNotifications()
     }
 
     // MARK: - UI 설정
@@ -78,51 +104,6 @@ final class EditProfileViewController: BaseViewController {
     func tappedCheckButton() {
         checkNickname(nickname: myInfoView.nicknameTextField.text ?? "")
     }
-
-    // MARK: - 키보드 감지
-
-//    /// 키보드 이벤트 감지를 위한 옵저버를 추가합니다.
-//    func addKeyboardNotifications() {
-//        NotificationCenter.default.addObserver(self,
-//                                               selector: #selector(keyboardWillShow(_:)),
-//                                               name: UIResponder.keyboardWillShowNotification,
-//                                               object: nil)
-//        NotificationCenter.default.addObserver(self,
-//                                               selector: #selector(keyboardWillHide(_:)),
-//                                               name: UIResponder.keyboardWillHideNotification,
-//                                               object: nil)
-//    }
-//
-//    /// 키보드 이벤트 옵저버를 제거합니다.
-//    func removeKeyboardNotifications() {
-//        NotificationCenter.default.removeObserver(self,
-//                                                  name: UIResponder.keyboardWillShowNotification,
-//                                                  object: nil)
-//        NotificationCenter.default.removeObserver(self,
-//                                                  name: UIResponder.keyboardWillHideNotification,
-//                                                  object: nil)
-//    }
-//
-//    /// 키보드가 나타날 때 호출됩니다.
-//    @objc
-//    func keyboardWillShow(_ notification: Notification) {
-//        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-//            let updateKeyboardHeight = keyboardSize.height
-//            let difference = updateKeyboardHeight - currentKeyboardHeight
-//
-//            myInfoView.completeButton.frame.origin.y -= difference
-//            currentKeyboardHeight = updateKeyboardHeight
-//        }
-//    }
-//
-//    /// 키보드가 사라질 때 호출됩니다.
-//    @objc
-//    func keyboardWillHide(_ notification: Notification) {
-//        if ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue) != nil {
-//            myInfoView.completeButton.frame.origin.y += currentKeyboardHeight
-//            currentKeyboardHeight = 0.0
-//        }
-//    }
 }
 
 // MARK: - 네트워크 요청
