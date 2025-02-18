@@ -62,28 +62,4 @@ public enum ESAlertUtility {
         alert.addAction(confirmAction)
         viewController.present(alert, animated: true, completion: nil)
     }
-
-    // MARK: - Action Sheet
-
-    /// - Note: 사용자에게 여러 선택지를 제공하는 액션 시트를 생성하는 함수입니다.
-    public static func showActionSheet(
-        title: String?,
-        message: String?,
-        actions: [(String, UIAlertAction.Style, (() -> Void)?)],
-        in viewController: UIViewController
-    ) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
-
-        for (title, style, handler) in actions {
-            let action = UIAlertAction(title: title, style: style) { _ in
-                handler?()
-            }
-            alert.addAction(action)
-        }
-
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        alert.addAction(cancelAction)
-
-        viewController.present(alert, animated: true, completion: nil)
-    }
 }
