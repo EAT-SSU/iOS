@@ -1,5 +1,5 @@
 //
-//  RateNumberView.swift
+//  StarRatingView.swift
 //  EatSSU-iOS
 //
 //  Created by 박윤빈 on 2023/06/29.
@@ -20,15 +20,19 @@ final class StarRatingView: BaseUIView {
         return imageView
     }()
     
-    private lazy var rateNumberLabel: UILabel = {
+    private lazy var ratingLabel: UILabel = {
         let label = UILabel()
         label.text = "5"
         label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 40)
         return label
     }()
     
-    private lazy var rateNumberStackView = UIStackView(arrangedSubviews: [starImageView,
-                                                                          rateNumberLabel])
+    private lazy var starRatingStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [starImageView, ratingLabel])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        return stackView
+    }()
     
     // MARK: - init
 
@@ -44,17 +48,7 @@ final class StarRatingView: BaseUIView {
     // MARK: - Functions
 
     override func configureUI() {
-        addSubviews(rateNumberStackView)
-
-        rateNumberLabel.do {
-            $0.text = "5"
-            $0.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 40)
-        }
-
-        rateNumberStackView.do {
-            $0.axis = .horizontal
-            $0.spacing = 8
-        }
+        addSubviews(starRatingStackView)
     }
 
     override func setLayout() {
@@ -63,12 +57,12 @@ final class StarRatingView: BaseUIView {
             $0.width.equalTo(24.adjusted)
         }
 
-        rateNumberStackView.snp.makeConstraints {
+        starRatingStackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
     
     public func updateStarRating(_ rate: Double) {
-        rateNumberLabel.text = String(format: "%.1f", rate)
+        ratingLabel.text = String(format: "%.1f", rate)
     }
 }
