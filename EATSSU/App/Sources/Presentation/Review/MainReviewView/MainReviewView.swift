@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import SnapKit
 
+import SnapKit
 import EATSSUDesign
 
 final class MainReviewView: BaseUIView {
@@ -22,11 +22,7 @@ final class MainReviewView: BaseUIView {
     private let contentView = UIView()
 
     /// 리뷰 상단 summary
-    let summaryView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .red
-        return view
-    }()
+    let summaryView = ReviewSummaryView()
     
     /// 리뷰 리스트
     lazy var tableView: UITableView = {
@@ -73,7 +69,6 @@ final class MainReviewView: BaseUIView {
         summaryView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(200)
         }
         tableView.snp.makeConstraints { make in
             make.top.equalTo(summaryView.snp.bottom)
