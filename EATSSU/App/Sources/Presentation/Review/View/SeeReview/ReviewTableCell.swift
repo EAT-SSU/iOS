@@ -21,9 +21,9 @@ final class ReviewTableCell: UITableViewCell {
 
     // MARK: - UI Components
 
-    lazy var totalRateView = StarRatingView()
-    lazy var tasteRateView = StarRatingView()
-    lazy var quantityRateView = StarRatingView()
+    lazy var totalRateView = RateNumberView()
+    lazy var tasteRateView = RateNumberView()
+    lazy var quantityRateView = RateNumberView()
 
     private let tasteLabel: UILabel = {
         let label = UILabel()
