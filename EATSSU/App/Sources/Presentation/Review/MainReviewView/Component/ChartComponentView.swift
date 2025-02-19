@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import EATSSUDesign
 
-class ChartComponentView: BaseUIView {
+final class ChartComponentView: BaseUIView {
     
     private lazy var chartBarView = UIView()
     
