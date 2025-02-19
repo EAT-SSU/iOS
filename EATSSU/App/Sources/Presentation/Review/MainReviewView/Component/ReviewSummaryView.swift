@@ -31,7 +31,6 @@ final class ReviewSummaryView: BaseUIView {
     private lazy var thumbCountStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [thumbupCountView, thumbdownpCountView])
         stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
         stackView.spacing = 14
         stackView.backgroundColor = .purple
         return stackView
@@ -40,7 +39,8 @@ final class ReviewSummaryView: BaseUIView {
     private lazy var ratingSummaryStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [starRatingView, thumbCountStackView])
         stackView.axis = .vertical
-        stackView.spacing = 20
+        stackView.alignment = .center
+        stackView.spacing = 15
         stackView.backgroundColor = .gray300
         return stackView
     }()
@@ -51,7 +51,8 @@ final class ReviewSummaryView: BaseUIView {
         let label = UILabel()
         label.text = "총 리뷰 수"
         label.font = .caption2
-        label.textColor = .black
+        label.backgroundColor = .red
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
 
@@ -103,7 +104,6 @@ final class ReviewSummaryView: BaseUIView {
         let stackView = UIStackView(arrangedSubviews: [ratingSummaryStackView,
                                                        reviewDistributionStackView])
         stackView.axis = .horizontal
-//        stackView.spacing = 44
         stackView.backgroundColor = .brown
         return stackView
     }()
@@ -114,6 +114,7 @@ final class ReviewSummaryView: BaseUIView {
         let stackView = UIStackView(arrangedSubviews: [menuLabel, ratingAndDistributionStackView])
         stackView.axis = .vertical
         stackView.spacing = 15
+        stackView.alignment = .center
         stackView.backgroundColor = .orange
         return stackView
     }()
@@ -129,6 +130,9 @@ final class ReviewSummaryView: BaseUIView {
             make.top.equalToSuperview()
             make.horizontalEdges.equalToSuperview().inset(20.adjusted)
             make.bottom.equalToSuperview()
+        }
+        starRatingView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20.adjusted)
         }
     }
 }

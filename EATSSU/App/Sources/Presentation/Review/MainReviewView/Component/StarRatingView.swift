@@ -22,8 +22,8 @@ final class StarRatingView: BaseUIView {
     
     private lazy var ratingLabel: UILabel = {
         let label = UILabel()
-        label.text = "5"
-        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 40)
+        label.text = "5.0"
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 35)
         return label
     }()
     
@@ -53,8 +53,8 @@ final class StarRatingView: BaseUIView {
 
     override func setLayout() {
         starImageView.snp.makeConstraints {
-            $0.height.equalTo(24.adjusted)
-            $0.width.equalTo(24.adjusted)
+            $0.height.equalTo(25.adjusted)
+            $0.width.equalTo(25.adjusted)
         }
 
         starRatingStackView.snp.makeConstraints {

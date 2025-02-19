@@ -52,7 +52,6 @@ final class ChartComponentView: BaseUIView {
         chartBarView.snp.makeConstraints { make in
             make.width.equalTo(115.adjusted)
             make.height.equalTo(10.adjusted)
-            
         }
         chartBarforegroundView.snp.makeConstraints { make in
             make.width.equalTo(80.adjusted)
@@ -63,7 +62,7 @@ final class ChartComponentView: BaseUIView {
             make.edges.equalToSuperview()
         }
         chartComponentStackView.snp.makeConstraints { make in
-            make.top.leading.bottom.equalToSuperview()
+            make.edges.equalToSuperview()
         }
     }
 }
