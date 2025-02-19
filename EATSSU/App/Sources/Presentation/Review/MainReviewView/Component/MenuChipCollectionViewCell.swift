@@ -24,7 +24,7 @@ final class MenuChipCollectionViewCell: UICollectionViewCell {
     }()
     
     private let thumbsupImageView: UIImageView = {
-        let imageView = UIImageView(image: EATSSUDesignAsset.Images.thumbUp.image)
+        let imageView = UIImageView(image: EATSSUDesignAsset.Images.filledThumbUp.image)
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()

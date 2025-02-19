@@ -7,8 +7,8 @@
 
 import UIKit
 
-import SnapKit
 import EATSSUDesign
+import SnapKit
 
 final class ChartComponentView: BaseUIView {
     
