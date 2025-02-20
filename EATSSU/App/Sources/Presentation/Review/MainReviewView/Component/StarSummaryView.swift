@@ -1,5 +1,5 @@
 //
-//  StarRatingView.swift
+//  StarSummaryView.swift
 //  EatSSU-iOS
 //
 //  Created by 박윤빈 on 2023/06/29.
@@ -10,7 +10,7 @@ import UIKit
 import EATSSUDesign
 import SnapKit
 
-final class StarRatingView: BaseUIView {
+final class StarSummaryView: BaseUIView {
     
     // MARK: - UI Components
 

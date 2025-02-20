@@ -24,7 +24,7 @@ final class ReviewSummaryView: BaseUIView {
     
     // MARK: 좌측
     
-    private var starRatingView = StarRatingView()
+    private var starSummaryView = StarSummaryView()
     private let thumbupCountView = ThumbsCountView(thumbType: .up)
     private let thumbdownpCountView = ThumbsCountView(thumbType: .down)
     
@@ -37,7 +37,7 @@ final class ReviewSummaryView: BaseUIView {
     }()
     
     private lazy var ratingSummaryStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [starRatingView, thumbCountStackView])
+        let stackView = UIStackView(arrangedSubviews: [starSummaryView, thumbCountStackView])
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.spacing = 15
@@ -131,12 +131,8 @@ final class ReviewSummaryView: BaseUIView {
             make.horizontalEdges.equalToSuperview().inset(20.adjusted)
             make.bottom.equalToSuperview()
         }
-        starRatingView.snp.makeConstraints { make in
+        starSummaryView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20.adjusted)
         }
     }
-}
-
-extension ReviewSummaryView {
-    
 }

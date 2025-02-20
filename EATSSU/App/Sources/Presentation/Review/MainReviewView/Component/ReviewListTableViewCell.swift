@@ -22,7 +22,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     
     // MARK: - UI Components
     
-    lazy var totalRateView = StarRatingView()
+    lazy var totalRateView = StarSummaryView()
     lazy var reactionView = ReactionView()
     
     private var dateLabel: UILabel = {
