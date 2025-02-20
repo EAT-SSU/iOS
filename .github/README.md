@@ -12,6 +12,12 @@
 - [App Store](https://apps.apple.com/kr/app/eat-ssu-%EC%88%AD%EC%8B%A4%EB%8C%80-%ED%95%99%EC%8B%9D-%EB%A6%AC%EB%B7%B0-%EC%95%B1/id6472618331)
 - [Play Store](https://play.google.com/store/apps/details?id=com.eatssu.android)
 
+## 보안규정
+
+- `xcconfig` 파일을 사용해서 민감한 정보를 관리합니다.
+- 해당 파일들은 팀 내부에서만 공유됩니다.
+- 해당 파일들은 `App/Resources/Secrets` 경로에 위치해야 합니다.
+
 ## Tuist 개발환경
 
 > 개발자 별 로컬에서 어떤 방법을 사용해서 `tuist`의 버전을 괸리하느냐에 따라서 호환성 통일을 위해서 확인해야 합니다.
@@ -24,10 +30,6 @@
 - 이 때 `Homebrew`로도 `mise`를 설치할 수 있는데, 정상동작하지 않기 때문에 꼭 위의 링크로 진행해야 합니다.
 - 아래의 명령어를 진행해서 사용하면 됩니다.
 - mise를 사용하면 프로젝트 별로 tuist 버전을 다르게 사용할 수 있어서, 이 방법을 채택하는 것을 권장합니다.
-```zsh
-tuist install
-tuist generate
-```
 
 ### Homebrew 사용 시
 
@@ -37,6 +39,23 @@ tuist generate
 ```zsh
 brew tap tuist/tuist
 brew install --formula tuist@latest
+```
+
+## 프로젝트 실행방법
+
+- Xcode에서 해당 프로젝트를 열지 않습니다.
+- `tuist generate` 명령어를 사용해서 프로젝트를 실행합니다.
+
+### 의존성 설치
+
+```zsh
+tuist install
+```
+
+### 프로젝트 실행
+
+```zsh
+tuist generate
 ```
 
 ## Issue Title
