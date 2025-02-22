@@ -12,10 +12,9 @@ final class MainReviewViewController: BaseViewController {
     // MARK: - Properties
     private var dataSource = [String]()
     
-    // View Properties
+    // MARK: - UI Components
+
     private let mainReviewView = MainReviewView()
-    
-    // MARK: - View Life Cycle
     
     // MARK: - Functions
     
@@ -64,6 +63,7 @@ extension MainReviewViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: ReviewListTableViewCell.id,
                                                  for: indexPath) as! ReviewListTableViewCell
 //        let row = self.dataSource[indexPath.row]
+        cell.selectionStyle = .none
         cell.prepare(review: "name: Jay", menuChipList: dataSource)
         return cell
     }
