@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import SnapKit
 
+import SnapKit
 import EATSSUDesign
 
 final class ReviewListTableViewCell: BaseTableViewCell {
@@ -22,7 +22,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     
     // MARK: - UI Components
     
-    lazy var totalRateView = StarSummaryView()
+    lazy var starRatingView = StarRatingView()
     lazy var reactionView = ReactionView()
     
     private var dateLabel: UILabel = {
@@ -89,7 +89,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     
     /// (이름 + 닉네임) + 별점
     lazy var infoStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [nameMenuStackView, totalRateView])
+        let stackView = UIStackView(arrangedSubviews: [nameMenuStackView, starRatingView])
         stackView.axis = .vertical
         stackView.spacing = 4.adjusted
         stackView.alignment = .leading
@@ -183,6 +183,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     override func configureUI() {
         setCollectionView()
         contentView.addSubviews(cellStackView)
+        starRatingView.rating = 4
     }
     
     override func setLayout() {
@@ -199,11 +200,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
         cellStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        topStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(5)
-        }
-        
+
         menuChipCollectionView.snp.makeConstraints { make in
 //            make.top.equalTo(dateReportStackView.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview()
