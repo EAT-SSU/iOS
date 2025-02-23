@@ -7,8 +7,6 @@
 
 import Foundation
 
-import EATSSUNetwork
-
 import Moya
 
 enum HomeRouter {

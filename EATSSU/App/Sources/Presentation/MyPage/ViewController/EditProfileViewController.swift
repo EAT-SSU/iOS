@@ -7,8 +7,6 @@
 
 import UIKit
 
-import EATSSUNetwork
-
 import Moya
 
 /**

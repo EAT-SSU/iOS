@@ -8,7 +8,6 @@
 import UIKit
 
 import EATSSUDesign
-import EATSSUNetwork
 
 import Moya
 import SnapKit

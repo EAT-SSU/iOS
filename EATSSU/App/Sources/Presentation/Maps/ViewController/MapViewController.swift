@@ -9,7 +9,6 @@ import UIKit
 
 import EATSSUDesign
 import EATSSUKit
-import EATSSUNetwork
 
 import FloatingPanel
 import NMapsMap
