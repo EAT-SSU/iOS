@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 /// 제휴 관련 API 요청을 정의합니다.
-public enum PartnershipRouter {
+enum PartnershipRouter {
     /// 전체 제휴 목록을 조회합니다.
     case fetchAllPartnerships
 
@@ -22,22 +22,12 @@ public enum PartnershipRouter {
 
 extension PartnershipRouter: TargetType {
     /// API 기본 URL
-    public var baseURL: URL {
-        // 현재 프레임워크의 번들을 가져옵니다.
-        let bundle = Bundle(for: NetworkBundle.self)
-
-        // Info.plist에서 BASE_URL 값을 읽어옵니다.
-        guard let baseUrlString = bundle.infoDictionary?["BASE_URL"] as? String,
-              let url = URL(string: baseUrlString)
-        else {
-            fatalError("Info.plist에 BASE_URL이 올바르게 설정되지 않았습니다.")
-        }
-
-        return url
+    var baseURL: URL {
+        URL(string: AppConfiguration.baseURL)!
     }
 
     /// API 경로 설정
-    public var path: String {
+    var path: String {
         switch self {
         case .fetchAllPartnerships:
             "/partnerships"
@@ -49,7 +39,7 @@ extension PartnershipRouter: TargetType {
     }
 
     /// HTTP 메서드 설정
-    public var method: Moya.Method {
+    var method: Moya.Method {
         switch self {
         case .fetchAllPartnerships, .fetchPartnershipDetail:
             .get
@@ -59,7 +49,7 @@ extension PartnershipRouter: TargetType {
     }
 
     /// 요청 Task 설정
-    public var task: Moya.Task {
+    var task: Moya.Task {
         switch self {
         case .fetchAllPartnerships, .fetchPartnershipDetail, .togglePartnershipFavorite:
             // 파라미터가 없는 경우
@@ -68,7 +58,7 @@ extension PartnershipRouter: TargetType {
     }
 
     /// HTTP 헤더 설정 (JSON 기반 요청)
-    public var headers: [String: String]? {
+    var headers: [String: String]? {
         ["Content-Type": "application/json"]
     }
 }

@@ -20,15 +20,5 @@ let project = Project(
             sources: ["EATSSUKit/Sources/**"],
             dependencies: []
         ),
-        .target(
-            name: "EATSSUKitTests",
-            destinations: .iOS,
-            product: .unitTests,
-            bundleId: "com.EATSSU.EATSSUKitTests",
-            infoPlist: .default,
-            sources: ["EATSSUKit/Tests/**"],
-            resources: [],
-            dependencies: [.target(name: "EATSSUKit")]
-        ),
     ]
 )

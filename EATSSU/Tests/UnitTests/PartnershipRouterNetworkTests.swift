@@ -1,13 +1,17 @@
 //
-//  EATSSUNetworkTests.swift
-//  EATSSUNetwork
+//  PartnershipRouterNetworkTests.swift
+//  EATSSU
 //
 //  Created by JIWOONG CHOI on 2/17/25.
 //
 
-@testable import EATSSUNetwork
-import Moya
+@testable import EATSSU_DEV
+
+import EATSSUKit
+
 import XCTest
+
+import Moya
 
 final class PartnershipRouterNetworkTests: XCTestCase {
     var provider: MoyaProvider<PartnershipRouter>!
@@ -30,6 +34,7 @@ final class PartnershipRouterNetworkTests: XCTestCase {
 
                 do {
                     // 응답 데이터를 DTO로 변환하여 검증
+
                     let partnershipsResponse = try JSONDecoder().decode(BaseResponse<[PartnershipResponse]>.self, from: response.data)
 
                     XCTAssertNotNil(partnershipsResponse, "디코딩된 데이터가 nil입니다.")

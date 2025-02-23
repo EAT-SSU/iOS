@@ -17,7 +17,7 @@ import Foundation
     - "BASE_URL" 키를 사용하여 앱의 Base URL 값을 반환합니다.
     - 설정 정보가 없을 경우 `fatalError`를 발생시켜 문제를 즉시 확인할 수 있도록 합니다.
  */
-public enum AppConfiguration {
+enum AppConfiguration {
     /**
       Info.plist에 사용되는 키들을 정의하는 네임스페이스입니다.
 
@@ -40,7 +40,7 @@ public enum AppConfiguration {
     }()
 }
 
-public extension AppConfiguration {
+extension AppConfiguration {
     /**
      Info.plist에서 읽어온 Base URL 값을 반환합니다.
 

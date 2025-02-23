@@ -144,12 +144,12 @@ extension EditProfileViewController {
                         }
                     }
                     #if DEBUG
-                    print(moyaResponse.statusCode)
+                        print(moyaResponse.statusCode)
                     #endif
                 }
             case let .failure(err):
                 #if DEBUG
-                print(err.localizedDescription)
+                    print(err.localizedDescription)
                 #endif
             }
         }
@@ -179,12 +179,12 @@ extension EditProfileViewController {
                     }
                 } catch let err {
                     #if DEBUG
-                    print(err.localizedDescription)
+                        print(err.localizedDescription)
                     #endif
                 }
             case let .failure(err):
                 #if DEBUG
-                print(err.localizedDescription)
+                    print(err.localizedDescription)
                 #endif
             }
         }
