@@ -29,7 +29,7 @@ final class UserDepartmentRouterNetworkTests: XCTestCase {
     /// 부서 추가 API 테스트 (실제 서버 요청)
     func testAddDepartmentResponse() {
         let expectation = expectation(description: "addDepartment")
-        let testDepartmentName = "소프트"
+        let testDepartmentName = "컴퓨터학부"
 
         provider.request(.addDepartment(departmentName: testDepartmentName)) { result in
             switch result {
@@ -50,7 +50,7 @@ final class UserDepartmentRouterNetworkTests: XCTestCase {
                 do {
                     let responseString = try response.mapString()
                     XCTAssertNotNil(responseString, "응답 문자열이 nil입니다.")
-                    
+
                     if let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: response.data) {
                         print("📌 Pretty JSON Response:\n\(prettyJSON)")
                     } else {

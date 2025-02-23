@@ -37,7 +37,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
     var path: String {
         switch self {
         case .addDepartment:
-            return "/users/department"
+            "/users/department"
         }
     }
 
@@ -47,7 +47,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
     var method: Moya.Method {
         switch self {
         case .addDepartment:
-            return .post
+            .post
         }
     }
 
@@ -58,7 +58,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
         switch self {
         case let .addDepartment(departmentName):
             let params: [String: Any] = [
-                "departmentName": departmentName
+                "departmentName": departmentName,
             ]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
         }
@@ -73,7 +73,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
             let token = RealmService.shared.getToken()
             return [
                 "Content-Type": "application/json",
-                "Authorization": "Bearer \(token)"
+                "Authorization": "Bearer \(token)",
             ]
         }
     }
@@ -84,7 +84,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
     var authorizationType: Moya.AuthorizationType? {
         switch self {
         default:
-            return .bearer
+            .bearer
         }
     }
 }

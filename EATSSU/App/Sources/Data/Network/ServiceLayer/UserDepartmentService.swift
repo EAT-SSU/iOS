@@ -13,17 +13,16 @@ import Moya
 /// 이 클래스는 사용자 부서 관련 API 요청을 수행하며, 부서 추가 기능을 제공합니다.
 /// MoyaProvider를 사용하여 API 요청을 처리하며, 인증 토큰은 RealmService를 통해 가져옵니다.
 final class UserDepartmentService {
-    
     /// MoyaProvider 인스턴스
     private let provider: MoyaProvider<UserDepartmentRouter>
-    
+
     /// 초기화 메서드
     ///
     /// - Parameter provider: 기본값은 `MoyaProvider<UserDepartmentRouter>()`입니다.
-    private init(provider: MoyaProvider<UserDepartmentRouter> = MoyaProvider<UserDepartmentRouter>()) {
+    init(provider: MoyaProvider<UserDepartmentRouter> = MoyaProvider<UserDepartmentRouter>()) {
         self.provider = provider
     }
-    
+
     /// 부서 추가 API 요청을 수행합니다.
     ///
     /// - Parameters:
@@ -36,8 +35,18 @@ final class UserDepartmentService {
             case let .success(response):
                 do {
                     // 서버 응답을 문자열 형태로 매핑합니다.
-                    let responseString = try response.mapString()
-                    completion(.success(responseString))
+                    let decodedData = try JSONDecoder().decode(BaseResponseWithoutResult.self, from: response.data)
+                    if decodedData.isSuccess {
+                        completion(.success(decodedData.message))
+                    } else {
+                        // 서버에서 전달한 메시지를 포함한 에러 반환
+                        let error = NSError(
+                            domain: "UserDepartmentService",
+                            code: -1,
+                            userInfo: [NSLocalizedDescriptionKey: decodedData.message]
+                        )
+                        completion(.failure(error))
+                    }
                 } catch {
                     completion(.failure(error))
                 }

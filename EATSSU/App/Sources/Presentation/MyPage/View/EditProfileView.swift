@@ -72,8 +72,6 @@ final class EditProfileView: BaseView {
         $0.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
     }
 
-    // MARK: - 학과 선택 UI Components
-
     /// 학과 선택 UILabel
     let departmentLabel = UILabel().then {
         $0.text = "학과 선택"
@@ -86,13 +84,8 @@ final class EditProfileView: BaseView {
         $0.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
     }
 
-    // MARK: - [Picker] 단과대학 및 학과 선택을 위한 Picker Views
-
     /// 단과대학 목록
-    private let colleges = [
-        "인문대", "자연대", "법과대", "사회대",
-        "경통대", "경영대", "공과대", "IT대", "자유전공",
-    ]
+    private let colleges = ESTextLiteral.MyPage.colleges
 
     /// 단과대학 선택용 UIPickerView
     private let affiliationPicker = UIPickerView()
@@ -101,16 +94,7 @@ final class EditProfileView: BaseView {
     private let departmentPicker = UIPickerView()
 
     /// 단과대학별 학과 목록 (자유전공은 학과가 없으므로 제외)
-    private let departments: [String: [String]] = [
-        "인문대": ["기독교학과", "국어국문학과", "영어영문학과", "독어독문학과", "불어불문학과", "중어중문학과", "일어일문학과", "철학과", "사학과", "예술창작학부", "스포츠학부"],
-        "자연대": ["수학과", "물리학과", "화학과", "정보통계수리학과", "의생명시스템학부"],
-        "법과대": ["법학과", "국제법무학과"],
-        "사회대": ["사회복지학부", "행정학부", "정치외교학과", "정보사회학과", "언론홍보학과", "평생교육학과"],
-        "경통대": ["경제학과", "글로벌통상학과", "금융경제학과", "국제무역학과", "통상산업학과"],
-        "경영대": ["경영학부", "벤처중소기업학과", "회계학과", "금융학부", "벤처경영학과", "혁신경영학과", "복지경영학과", "회계세무학과"],
-        "공과대": ["화학공학과", "산업정보시스템공학과", "전기공학부", "기계공학부", "건축학부", "신소재공학과"],
-        "IT대": ["컴퓨터학부", "전자정보공학부", "글로벌미디어학부", "소프트웨어학부", "스마트시스템소프트웨어학과", "미디어경영학과", "전자정보공학부", "정보보호학과"],
-    ]
+    private let departments: [String: [String]] = ESTextLiteral.MyPage.departments
 
     // MARK: - Initializer
 

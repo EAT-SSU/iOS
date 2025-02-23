@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUKit
+
 import Moya
 
 /**
@@ -47,6 +49,8 @@ final class EditProfileViewController: BaseViewController {
 
     /// 닉네임 관련 API 요청을 위한 Moya Provider입니다.
     let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [ESMoyaLoggingPlugin()])
+
+    let userDepartmentService = UserDepartmentService()
 
     // MARK: - UI Components
 
@@ -94,12 +98,11 @@ final class EditProfileViewController: BaseViewController {
     /// "닉네임 설정 완료" 버튼을 눌렀을 때 호출됩니다.
     @objc
     func tappedCompleteNickNameButton() {
-        guard let nickname = myInfoView.nicknameTextField.text, !nickname.isEmpty else {
-            view.showToast(message: "닉네임을 입력해주세요")
-            return
+        if let nickname = myInfoView.nicknameTextField.text, !nickname.isEmpty {
+            setUserNickname(nickname: nickname)
+        } else if let department = myInfoView.departmentTextField.text, !department.isEmpty {
+            setUserDepartment(department: department)
         }
-
-        setUserNickname(nickname: nickname)
     }
 
     /// "중복 확인" 버튼을 눌렀을 때 호출됩니다.
@@ -129,7 +132,7 @@ extension EditProfileViewController {
                     if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
                         UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
                     }
-                    self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
+                    self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다", style: .cancel) {
                         if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
                             self.navigationController?.popToViewController(myPageViewController, animated: true)
                         } else {
@@ -144,11 +147,13 @@ extension EditProfileViewController {
                     #if DEBUG
                         print(moyaResponse.statusCode)
                     #endif
+                    ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
                 }
             case let .failure(err):
                 #if DEBUG
                     print(err.localizedDescription)
                 #endif
+                ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
             }
         }
     }
@@ -179,11 +184,43 @@ extension EditProfileViewController {
                     #if DEBUG
                         print(err.localizedDescription)
                     #endif
+                    ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
                 }
             case let .failure(err):
                 #if DEBUG
                     print(err.localizedDescription)
                 #endif
+                ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
+            }
+        }
+    }
+
+    func setUserDepartment(department: String) {
+        userDepartmentService.addDepartment(departmentName: department) { result in
+            switch result {
+            case let .success(data):
+                #if DEBUG
+                    print("학과 변경 성공")
+                    print(data)
+                #endif
+                self.showAlertController(title: "완료", message: "학과 설정이 완료되었습니다", style: .cancel) {
+                    if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
+                        self.navigationController?.popToViewController(myPageViewController, animated: true)
+                    } else {
+                        let homeViewController = HomeViewController()
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                        {
+                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
+                        }
+                    }
+                }
+            case let .failure(error):
+                #if DEBUG
+                    print("학과 변경 실패")
+                    print(error.localizedDescription)
+                #endif
+                ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
             }
         }
     }
