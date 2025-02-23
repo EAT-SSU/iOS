@@ -71,9 +71,6 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
         switch self {
         default:
             let token = RealmService.shared.getToken()
-#if DEBUG
-            print("Token: \(token)")
-#endif
             return [
                 "Content-Type": "application/json",
                 "Authorization": "Bearer \(token)"
