@@ -59,8 +59,8 @@ final class ReviewListTableViewHeader: UITableViewHeaderFooterView {
             $0.height.equalTo(90)
         }
         reviewThumbnailImageView.snp.makeConstraints { make in
-            make.height.width.equalTo(82)
             make.verticalEdges.equalToSuperview().inset(12)
+            make.width.equalTo(reviewThumbnailImageView.snp.height)
         }
     }
 }
