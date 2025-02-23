@@ -1,5 +1,5 @@
 //
-//  AppConfiguration.swift
+//  NetworkConfiguration.swift
 //  EATSSU
 //
 //  Edited by Jiwoong CHOI on 02/17/2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- # AppConfiguration
+ # NetworkConfiguration
 
  앱의 설정 정보를 Info.plist에서 읽어오는 역할을 수행합니다.
 
@@ -17,7 +17,7 @@ import Foundation
     - "BASE_URL" 키를 사용하여 앱의 Base URL 값을 반환합니다.
     - 설정 정보가 없을 경우 `fatalError`를 발생시켜 문제를 즉시 확인할 수 있도록 합니다.
  */
-enum AppConfiguration {
+enum NetworkConfiguration {
     /**
       Info.plist에 사용되는 키들을 정의하는 네임스페이스입니다.
 
@@ -40,7 +40,7 @@ enum AppConfiguration {
     }()
 }
 
-extension AppConfiguration {
+extension NetworkConfiguration {
     /**
      Info.plist에서 읽어온 Base URL 값을 반환합니다.
 
@@ -53,7 +53,7 @@ extension AppConfiguration {
      ```
      */
     static let baseURL: String = {
-        guard let key = AppConfiguration.infoDictionary[Keys.Plist.baseURL] as? String else {
+        guard let key = NetworkConfiguration.infoDictionary[Keys.Plist.baseURL] as? String else {
             fatalError("Base URL is not set in plist for this configuration.")
         }
         return key

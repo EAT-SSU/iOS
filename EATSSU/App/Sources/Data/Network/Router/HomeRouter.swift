@@ -18,7 +18,7 @@ enum HomeRouter {
 
 extension HomeRouter: TargetType {
     var baseURL: URL {
-        URL(string: AppConfiguration.baseURL)!
+        URL(string: NetworkConfiguration.baseURL)!
     }
 
     var path: String {

@@ -20,7 +20,7 @@ enum AuthRouter {
 
 extension AuthRouter: TargetType {
     public var baseURL: URL {
-        URL(string: AppConfiguration.baseURL)!
+        URL(string: NetworkConfiguration.baseURL)!
     }
 
     var path: String {

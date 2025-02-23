@@ -23,7 +23,7 @@ enum PartnershipRouter {
 extension PartnershipRouter: TargetType {
     /// API 기본 URL
     var baseURL: URL {
-        URL(string: AppConfiguration.baseURL)!
+        URL(string: NetworkConfiguration.baseURL)!
     }
 
     /// API 경로 설정

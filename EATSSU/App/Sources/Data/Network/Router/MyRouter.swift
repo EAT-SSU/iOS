@@ -20,7 +20,7 @@ enum MyRouter {
 
 extension MyRouter: TargetType, AccessTokenAuthorizable {
     var baseURL: URL {
-        URL(string: AppConfiguration.baseURL)!
+        URL(string: NetworkConfiguration.baseURL)!
     }
 
     var path: String {

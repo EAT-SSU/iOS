@@ -26,7 +26,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
 
     /// API 기본 URL (Info.plist의 BASE_URL 값을 사용합니다.)
     var baseURL: URL {
-        URL(string: AppConfiguration.baseURL)!
+        URL(string: NetworkConfiguration.baseURL)!
     }
 
     /// 엔드포인트 경로 설정
