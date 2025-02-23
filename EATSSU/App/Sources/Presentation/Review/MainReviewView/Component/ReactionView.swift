@@ -14,7 +14,7 @@ final class ReactionView: BaseUIView {
     
     // MARK: - UI Components
     
-    private let unlikeImageView: UIImageView = {
+    private let likeImageView: UIImageView = {
         let imageView = UIImageView(image: EATSSUDesignAsset.Images.like.image)
         imageView.contentMode = .scaleAspectFit
         return imageView
@@ -28,7 +28,7 @@ final class ReactionView: BaseUIView {
     }()
     
     lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [unlikeImageView, likeCountLabel])
+        let stackView = UIStackView(arrangedSubviews: [likeImageView, likeCountLabel])
         stackView.axis = .horizontal
         stackView.spacing = 3
         return stackView
@@ -43,9 +43,6 @@ final class ReactionView: BaseUIView {
     override func setLayout() {
         stackView.snp.makeConstraints { make in
             make.height.equalTo(20)
-        }
-        unlikeImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(12)
         }
     }
 }
