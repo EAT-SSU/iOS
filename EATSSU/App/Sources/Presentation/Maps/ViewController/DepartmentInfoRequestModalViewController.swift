@@ -1,5 +1,5 @@
 //
-//  DepartmentInfoModalViewController.swift
+//  DepartmentInfoRequestModalViewController.swift
 //  EATSSU
 //
 //  Created by JIWOONG CHOI on 2/18/25.
@@ -8,7 +8,7 @@
 import UIKit
 
 /// 학과 정보가 입력되지 않은 경우, 모달 시트를 띄워 학과 정보 입력 화면으로 유도하는 뷰 컨트롤러.
-final class DepartmentInfoModalViewController: BaseViewController {
+final class DepartmentInfoRequestModalViewController: BaseViewController {
     public var onButtonTapped: (() -> Void)?
 
     override public func loadView() {

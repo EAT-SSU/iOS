@@ -105,7 +105,7 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
 
     /// 학과 정보 입력 여부에 따라 모달 시트를 표시하는 메서드
     private func presentDepartmentInfoModal() {
-        let modalVC = DepartmentInfoModalViewController()
+        let modalVC = DepartmentInfoRequestModalViewController()
         modalVC.modalPresentationStyle = .pageSheet
         modalVC.isModalInPresentation = true
 
