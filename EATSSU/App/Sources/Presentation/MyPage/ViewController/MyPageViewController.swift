@@ -145,6 +145,7 @@ final class MyPageViewController: BaseViewController {
         ) {
             RealmService.shared.resetDB()
 
+            // TODO: Window에 적용되는 ViewController를 교체하는 코드를 모듈화
             let loginViewController = LoginViewController()
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })

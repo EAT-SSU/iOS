@@ -173,7 +173,8 @@ extension EditProfileViewController {
                             title: "사용가능한 닉네임이에요",
                             icon: .done,
                             style: .iOS17AppleMusic,
-                            haptic: .success)
+                            haptic: .success
+                        )
                         self.myInfoView.completeButton.isEnabled = true
                         self.myInfoView.nicknameValidationLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
                         self.myInfoView.nicknameValidationLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
@@ -182,7 +183,8 @@ extension EditProfileViewController {
                             title: "이미 사용 중인 닉네임이에요",
                             icon: .error,
                             style: .iOS17AppleMusic,
-                            haptic: .error)
+                            haptic: .error
+                        )
                         self.myInfoView.completeButton.isEnabled = false
                         self.myInfoView.nicknameValidationLabel.text =
                             NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage

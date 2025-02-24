@@ -7,6 +7,8 @@
 
 import UIKit
 
+import AlertKit
+
 import Moya
 import Realm
 import SnapKit
@@ -16,7 +18,7 @@ final class UserWithdrawViewController: BaseViewController {
     // MARK: - Properties
 
     private var nickName = String()
-    var currentKeyboardHeight: CGFloat = 0.0
+    private var currentKeyboardHeight: CGFloat = 0.0
     private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     // MARK: - UI Components
@@ -70,15 +72,17 @@ final class UserWithdrawViewController: BaseViewController {
     }
 
     override func setButtonEvent() {
-        userWithdrawView.completeSignOutButton.addTarget(self, action: #selector(completeNickNameButtonTapped), for: .touchUpInside)
+        userWithdrawView.completeSignOutButton.addTarget(
+            self, action: #selector(signoutButtonTapped), for: .touchUpInside
+        )
     }
 
     @objc
-    func completeNickNameButtonTapped() {
+    func signoutButtonTapped() {
         deleteUser()
     }
 
-    // MARK: - 디바이스 키보드 감지
+    // MARK: - Detect device keyboard
 
     private func addKeyboardNotifications() {
         NotificationCenter.default.addObserver(self,
@@ -131,18 +135,33 @@ extension UserWithdrawViewController {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
                     if responseData.result {
                         RealmService.shared.resetDB()
+
+                        // TODO: Window에 적용되는 ViewController를 교체하는 코드를 모듈화
                         let loginViewController = LoginViewController()
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                            let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
                         {
                             keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
+                            AlertKitAPI.present(
+                                title: "탈퇴가 완료되었습니다", icon: .error, style: .iOS17AppleMusic, haptic: .success
+                            )
                         }
                     }
                 } catch let err {
-                    print(err.localizedDescription)
+                    #if DEBUG
+                        print(err.localizedDescription)
+                    #endif
+                    AlertKitAPI.present(
+                        title: "문제가 발생했습니다", subtitle: "다시 시도하세요", icon: .error, style: .iOS17AppleMusic, haptic: .success
+                    )
                 }
             case let .failure(err):
-                print(err.localizedDescription)
+                #if DEBUG
+                    print(err.localizedDescription)
+                #endif
+                AlertKitAPI.present(
+                    title: "문제가 발생했습니다", subtitle: "다시 시도하세요", icon: .error, style: .iOS17AppleMusic, haptic: .success
+                )
             }
         }
     }
