@@ -12,7 +12,6 @@ import UIKit
 ///
 /// 이 헬퍼는 현재 앱의 활성 윈도우에서 루트 뷰 컨트롤러를 교체할 때 사용됩니다.
 public enum WindowManageHelper {
-    
     /// 현재 활성 윈도우의 루트 뷰 컨트롤러를 주어진 뷰 컨트롤러로 교체합니다.
     ///
     /// - Parameter viewController: 새로운 루트로 설정할 `UIViewController` 인스턴스입니다.

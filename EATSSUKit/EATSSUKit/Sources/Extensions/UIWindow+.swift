@@ -7,9 +7,9 @@
 
 import UIKit
 
-extension UIWindow {
+public extension UIWindow {
     /// Window의 RootViewController에 접근해서 전환하는 메소드입니다.
-    public func replaceRootViewController(_ replacementController: UIViewController) {
+    func replaceRootViewController(_ replacementController: UIViewController) {
         UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve) {
             self.rootViewController = replacementController
         }

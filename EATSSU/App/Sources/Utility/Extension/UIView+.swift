@@ -22,11 +22,11 @@ extension UIView {
 }
 
 public extension UIView {
-    @available(*, deprecated, message: "showToast(message:)는 더 이상 사용되지 않습니다. AlertKit를 사용하세요.")
     /// 파라미터로 입력받은 문자열을 토스트 메시지를 전달합니다.
     ///
     /// - Parameters:
     ///   - message: 토스트 메시지로 전달할 문자열
+    @available(*, deprecated, message: "showToast(message:)는 더 이상 사용되지 않습니다. AlertKit를 사용하세요.")
     func showToast(message: String) {
         let toastLabel = UILabel()
         toastLabel.numberOfLines = 2

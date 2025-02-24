@@ -126,12 +126,12 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
     }
 
     private func handleMyPageTabSelected() {
-        if !RealmService.shared.isAccessTokenPresent() {
-            presentLoginAlert()
-        } else {
+        if RealmService.shared.isAccessTokenPresent() {
             #if DEBUG
                 print("MyPageViewController로 이동")
             #endif
+        } else {
+            presentLoginAlert()
         }
     }
 }
