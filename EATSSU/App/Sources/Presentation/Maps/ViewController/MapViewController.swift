@@ -200,7 +200,7 @@ final class MapViewController: BaseViewController {
             #endif
         // TODO: 사용자에 따라 필터된 제휴 데이터 가져오기
         default:
-            ESAlertController.showConfirmAlert(
+            AlertControllerHelper.showConfirmAlert(
                 title: "에러",
                 message: "문제가 발생했습니다",
                 in: self

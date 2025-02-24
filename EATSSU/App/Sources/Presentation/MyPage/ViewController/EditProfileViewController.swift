@@ -148,13 +148,13 @@ extension EditProfileViewController {
                     #if DEBUG
                         print(moyaResponse.statusCode)
                     #endif
-                    ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
+                    AlertControllerHelper.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
                 }
             case let .failure(err):
                 #if DEBUG
                     print(err.localizedDescription)
                 #endif
-                ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
+                AlertControllerHelper.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
             }
         }
     }
@@ -195,13 +195,13 @@ extension EditProfileViewController {
                     #if DEBUG
                         print(err.localizedDescription)
                     #endif
-                    ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
+                    AlertControllerHelper.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
                 }
             case let .failure(err):
                 #if DEBUG
                     print(err.localizedDescription)
                 #endif
-                ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
+                AlertControllerHelper.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
             }
         }
     }
@@ -231,7 +231,7 @@ extension EditProfileViewController {
                     print("학과 변경 실패")
                     print(error.localizedDescription)
                 #endif
-                ESAlertController.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
+                AlertControllerHelper.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
             }
         }
     }

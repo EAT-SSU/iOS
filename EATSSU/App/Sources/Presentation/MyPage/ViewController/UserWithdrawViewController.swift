@@ -7,8 +7,9 @@
 
 import UIKit
 
-import AlertKit
+import EATSSUKit
 
+import AlertKit
 import Moya
 import Realm
 import SnapKit
@@ -136,16 +137,11 @@ extension UserWithdrawViewController {
                     if responseData.result {
                         RealmService.shared.resetDB()
 
-                        // TODO: Window에 적용되는 ViewController를 교체하는 코드를 모듈화
                         let loginViewController = LoginViewController()
-                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                        {
-                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
-                            AlertKitAPI.present(
-                                title: "탈퇴가 완료되었습니다", icon: .error, style: .iOS17AppleMusic, haptic: .success
-                            )
-                        }
+                        WindowManageHelper.replaceWindowViewControllerWith(loginViewController)
+                        AlertKitAPI.present(
+                            title: "탈퇴가 완료되었습니다", icon: .error, style: .iOS17AppleMusic, haptic: .success
+                        )
                     }
                 } catch let err {
                     #if DEBUG
