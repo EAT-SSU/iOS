@@ -57,13 +57,8 @@ class RootTabBarViewController: UITabBarController {
     }
 
     private func changeIntoLoginVC() {
-        let loginVC = LoginViewController()
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let sceneDelegate = windowScene.delegate as? SceneDelegate,
-           let window = sceneDelegate.window
-        {
-            window.replaceRootViewController(loginVC)
-        }
+        let loginViewController = LoginViewController()
+        WindowManageHelper.replaceWindowViewControllerWith(loginViewController)
     }
 }
 
