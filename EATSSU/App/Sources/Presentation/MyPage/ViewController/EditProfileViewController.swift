@@ -9,6 +9,7 @@ import UIKit
 
 import EATSSUKit
 
+import AlertKit
 import Moya
 
 /**
@@ -168,12 +169,20 @@ extension EditProfileViewController {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
                     let isSuccess = responseData.result
                     if isSuccess {
-                        self.view.showToast(message: "사용 가능한 닉네임이에요")
+                        AlertKitAPI.present(
+                            title: "사용가능한 닉네임이에요",
+                            icon: .done,
+                            style: .iOS17AppleMusic,
+                            haptic: .success)
                         self.myInfoView.completeButton.isEnabled = true
                         self.myInfoView.nicknameValidationLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
                         self.myInfoView.nicknameValidationLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
                     } else {
-                        self.view.showToast(message: "이미 사용 중인 닉네임이에요")
+                        AlertKitAPI.present(
+                            title: "이미 사용 중인 닉네임이에요",
+                            icon: .error,
+                            style: .iOS17AppleMusic,
+                            haptic: .error)
                         self.myInfoView.completeButton.isEnabled = false
                         self.myInfoView.nicknameValidationLabel.text =
                             NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage

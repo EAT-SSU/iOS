@@ -41,6 +41,7 @@ import PackageDescription
             "NMapsMap": .framework,
 
             "FloatingPanel": .framework,
+            "AlertKit": .framework,
         ]
     )
 #endif
@@ -62,5 +63,6 @@ let package = Package(
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "11.0.0"),
         .package(url: "https://github.com/navermaps/SPM-NMapsMap", from: "3.20.0"),
         .package(url: "https://github.com/scenee/FloatingPanel.git", from: "2.8.0"),
+        .package(url: "https://github.com/sparrowcode/AlertKit.git", from: "5.1.8"),
     ]
 )
