@@ -11,6 +11,7 @@ import WebKit
 
 import EATSSUKit
 
+import AlertKit
 import FirebaseAnalytics
 import KakaoSDKCommon
 import KakaoSDKTalk
@@ -264,13 +265,23 @@ extension MyPageViewController: UITableViewDelegate {
                                 print("푸시 알림을 발송합니다.")
                             #endif
                             NotificationManager.shared.scheduleWeekday11AMNotification()
-                            self.view.showToast(message: "EAT-SSU 알림 수신을 동의하였습니다.\n(\(formattedDate))")
+                            AlertKitAPI.present(
+                                title: "알림 수신을 동의하였습니다.\n(\(formattedDate))",
+                                icon: .done,
+                                style: .iOS17AppleMusic,
+                                haptic: .success
+                            )
                         } else {
                             #if DEBUG
                                 print("푸시 알림을 발송하지 않습니다.")
                             #endif
                             NotificationManager.shared.cancelWeekday11AMNotification()
-                            self.view.showToast(message: "EAT-SSU 알림 수신을 거절하였습니다.\n(\(formattedDate))")
+                            AlertKitAPI.present(
+                                title: "알림 수신을 거절하였습니다.\n(\(formattedDate))",
+                                icon: .done,
+                                style: .iOS17AppleMusic,
+                                haptic: .success
+                            )
                         }
                         // UserDefaults에 상태 저장
                         self.saveSwitchStateToUserDefaults()
