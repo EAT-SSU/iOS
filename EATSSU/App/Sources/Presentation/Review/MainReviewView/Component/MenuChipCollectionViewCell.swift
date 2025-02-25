@@ -34,9 +34,6 @@ final class MenuChipCollectionViewCell: UICollectionViewCell {
         label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 10)
         label.textColor = EATSSUDesignAsset.Color.Main.primary.color
         label.text = "김치볶음바바바밥"
-//        label.numberOfLines = 1
-//        label.sizeToFit()
-//        label.frame.size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: 22)
         return label
     }()
     
@@ -44,6 +41,7 @@ final class MenuChipCollectionViewCell: UICollectionViewCell {
         let stackView = UIStackView(arrangedSubviews: [thumbsupImageView, menuLabel])
         stackView.axis = .horizontal
         stackView.spacing = 1
+        stackView.alignment = .center
         stackView.backgroundColor = .green
         return stackView
     }()
@@ -65,60 +63,44 @@ final class MenuChipCollectionViewCell: UICollectionViewCell {
     }
     
     private func setLayout() {
-        setupDynamicLayout()
-
-//        menuChipStackView.snp.makeConstraints { make in
-//                        make.edges.equalToSuperview()
-
-//            make.verticalEdges.equalToSuperview().inset(5)
-//            make.horizontalEdges.equalToSuperview().inset(6)
-//        }
-//        menuChipView.snp.makeConstraints { make in
-//            make.edges.equalToSuperview()
-//        }
         thumbsupImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(10)
+            make.width.height.equalTo(12)
         }
-        
+        menuLabel.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(12)
+        }
+        menuChipStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(5)
+            make.height.greaterThanOrEqualTo(12)
+        }
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         self.prepare(name: nil)
-      }
-      func prepare(name: String?) {
-          self.menuLabel.text = name
-          setupDynamicLayout()
-      }
+    }
+    
+    func prepare(name: String?) {
+        self.menuLabel.text = name
+        setupDynamicLayout()
+    }
+    
     private func setupDynamicLayout() {
         menuLabel.sizeToFit()
         let viewSize = menuLabel.intrinsicContentSize
         let width = viewSize.width + 30
         let height = viewSize.height + 48
-
+        
         menuChipView.snp.remakeConstraints { make in
             make.width.equalTo(width)
             make.height.equalTo(height)
         }
-
+        
         menuChipStackView.snp.remakeConstraints { make in
             make.width.equalTo(width)
             make.height.equalTo(height)
         }
-
+        
         layoutIfNeeded()
     }
-    
-//    private func setupDynamicLayout() {
-//        menuLabel.sizeToFit()
-//        let viewSize = menuLabel.intrinsicContentSize
-//        let width = viewSize.width + 58
-//        let height = viewSize.height + 48
-////        menuChipStackView.frame.size = CGSize(width: width, height: height)
-//        menuChipStackView.frame.size = CGSize(width: width, height: height)
-//        menuChipView.frame.size = CGSize(width: width, height: height)
-//        
-////        menuChipStackView.center = CGPoint(x: width / 2, y: height / 2)
-//    }
-    
 }
