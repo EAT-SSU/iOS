@@ -118,37 +118,37 @@ final class UserDepartmentRouterNetworkTests: XCTestCase {
         let expectation = expectation(description: "부서 추가 서비스")
         let service = UserDepartmentService()
         let testDepartmentName = "컴퓨터학부"
-        
+
         service.addDepartment(departmentName: testDepartmentName) { result in
             switch result {
-            case .success(let message):
+            case let .success(message):
                 XCTAssertFalse(message.isEmpty, "응답 메시지가 비어있습니다.")
                 print("📌 Success Message: \(message)")
                 expectation.fulfill()
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("부서 추가 실패: \(error.localizedDescription)")
             }
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
     }
-    
+
     /// UserDepartmentService를 사용한 부서 검증 테스트
     func testValidateDepartmentWithService() {
         let expectation = expectation(description: "부서 검증 서비스")
         let service = UserDepartmentService()
-        
+
         service.validateDepartment { result in
             switch result {
-            case .success(let message):
+            case let .success(message):
                 XCTAssertFalse(message.isEmpty, "응답 메시지가 비어있습니다.")
                 print("📌 Validation Message: \(message)")
                 expectation.fulfill()
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("부서 검증 실패: \(error.localizedDescription)")
             }
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
-    } 
+    }
 }

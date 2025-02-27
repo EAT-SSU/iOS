@@ -60,14 +60,14 @@ final class UserDepartmentService {
     ///
     /// - Parameter completion: 요청 완료 후 호출되는 클로저.
     ///                        성공 시 서버의 응답 문자열을 반환하고, 실패 시 에러를 반환합니다.
-    func validateDepartment(completion: @escaping (Result<String, Error>) -> Void) {
+    func validateDepartment(completion: @escaping (Result<Bool, Error>) -> Void) {
         provider.request(.validateDepartment) { result in
             switch result {
             case let .success(response):
                 do {
-                    let decodedData = try JSONDecoder().decode(BaseResponseWithoutResult.self, from: response.data)
+                    let decodedData = try JSONDecoder().decode(BaseResponse<Bool>.self, from: response.data)
                     if decodedData.isSuccess {
-                        completion(.success(decodedData.message))
+                        completion(.success(decodedData.result))
                     } else {
                         let error = NSError(
                             domain: "UserDepartmentService",

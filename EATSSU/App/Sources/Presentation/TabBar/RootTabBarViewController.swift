@@ -11,36 +11,34 @@ import EATSSUDesign
 import EATSSUKit
 
 class RootTabBarViewController: UITabBarController {
+    private let userDepartmentService = UserDepartmentService()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
         setupTabBar()
     }
 
-    // RootTabBarViewController.swift 수정 내용 (setupTabBar 메서드 내)
     private func setupTabBar() {
-        // 탭바 인스턴스를 ESTabBar로 교체
+        // 기존 탭바를 커스텀 탭바로 교체
         tabBar.removeFromSuperview()
         let estTabBar = ESTabBar()
-        // KVC를 사용하여 탭바 교체, 프레임워크에서 제공하는 탭바를 제거하고 커스텀 탭바를 컨트롤러에 등록
-        // forKey 값의 tabBar는 탭바를 변경하기 위한 프레임워크에서 예약된 키값
         setValue(estTabBar, forKey: "tabBar")
 
-        // 기존 코드 유지
-        let homeViewController = HomeViewController()
-        let searchViewController = MapViewController()
-        let mypageViewController = MyPageViewController(hasAccessToken: RealmService.shared.isAccessTokenPresent())
+        // 각 탭에 해당하는 뷰 컨트롤러 생성 및 네비게이션 컨트롤러 래핑
+        let homeVC = HomeViewController()
+        let mapVC = MapViewController()
+        let mypageVC = MyPageViewController(hasAccessToken: RealmService.shared.isAccessTokenPresent())
 
-        let homeNav = UINavigationController(rootViewController: homeViewController)
-        let mapNav = UINavigationController(rootViewController: searchViewController)
-        let mypageNav = UINavigationController(rootViewController: mypageViewController)
+        let homeNav = UINavigationController(rootViewController: homeVC)
+        let mapNav = UINavigationController(rootViewController: mapVC)
+        let mypageNav = UINavigationController(rootViewController: mypageVC)
 
         homeNav.tabBarItem = UITabBarItem(title: "학식", image: UIImage(systemName: "fork.knife"), tag: 0)
         mapNav.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
         mypageNav.tabBarItem = UITabBarItem(title: "마이", image: UIImage(systemName: "person.fill"), tag: 2)
 
         viewControllers = [homeNav, mapNav, mypageNav]
-
         tabBar.tintColor = EATSSUDesignAsset.Color.Main.primary.color
         tabBar.backgroundColor = .white
     }
@@ -61,28 +59,48 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
             #if DEBUG
                 print("홈 탭이 선택되었습니다.")
             #endif
+
         case 1:
             #if DEBUG
                 print("제휴지도 탭이 선택되었습니다.")
             #endif
 
-            if userEnteredDepartmentInfo() {
-                // 학과 정보가 입력된 경우 기존 로직 수행
-            } else {
-                // 학과 정보가 입력되지 않은 경우 모달 시트 표시
-                presentDepartmentInfoModal()
+            // 비동기적으로 학과 정보 입력 여부 확인
+            userEnteredDepartmentInfo { [weak self] isEntered in
+                DispatchQueue.main.async {
+                    if isEntered {
+                        // 학과 정보가 입력된 경우, 기존 로직 실행
+                        // 예: 해당 탭의 뷰 컨트롤러로 전환 등 추가 로직
+                    } else {
+                        self?.presentDepartmentInfoModal()
+                    }
+                }
             }
+
         case 2:
             #if DEBUG
                 print("마이페이 탭이 선택되었습니다.")
             #endif
             handleMyPageTabSelected()
+
         default:
             fatalError("선택될 수 없는 탭이 선택됨.")
         }
     }
 
-    /// 학과 정보 입력 여부에 따라 모달 시트를 표시하는 메서드
+    /// 학과 정보 입력 여부를 비동기적으로 확인하는 메서드
+    private func userEnteredDepartmentInfo(completion: @escaping (Bool) -> Void) {
+        userDepartmentService.validateDepartment { result in
+            switch result {
+            case let .success(isEntered):
+                completion(isEntered)
+            case .failure:
+                completion(false)
+            }
+        }
+    }
+
+    /// 학과 정보 입력이 되어있지 않은 경우 모달 시트를 표시하는 메서드
     private func presentDepartmentInfoModal() {
         let modalVC = DepartmentInfoRequestModalViewController()
         modalVC.modalPresentationStyle = .pageSheet
@@ -103,12 +121,7 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
         present(modalVC, animated: true)
     }
 
-    /// 사용자가 학과 정보를 입력했는지 확인 (임시 로직)
-    private func userEnteredDepartmentInfo() -> Bool {
-        // TODO: 서버에서 사용자의 학과 정보 조회 로직 설계
-        false
-    }
-
+    /// 마이 페이지 탭 선택 시 로그인 여부에 따라 로직을 분기하는 메서드
     private func handleMyPageTabSelected() {
         if RealmService.shared.isAccessTokenPresent() {
             #if DEBUG
@@ -118,7 +131,8 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
             presentLoginAlert()
         }
     }
-    
+
+    /// 로그인이 필요한 경우 확인 알림을 표시하는 메서드
     private func presentLoginAlert() {
         AlertControllerHelper.showConfirmOnlyAlert(
             title: "로그인이 필요한 서비스입니다.",
@@ -130,6 +144,7 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
         }
     }
 
+    /// 로그인 뷰 컨트롤러로 전환하는 메서드
     private func changeIntoLoginVC() {
         let loginViewController = LoginViewController()
         WindowManageHelper.replaceWindowViewControllerWith(loginViewController)
