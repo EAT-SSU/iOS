@@ -8,6 +8,8 @@
 import AuthenticationServices
 import UIKit
 
+import EATSSUKit
+
 import Firebase
 import KakaoSDKUser
 import Moya
@@ -104,9 +106,7 @@ final class LoginViewController: BaseViewController {
               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
         else { return }
 
-        keyWindow.replaceRootViewController(
-            rootTabBarViewController
-        )
+        keyWindow.replaceRootViewController(rootTabBarViewController)
     }
 
     /// 닉네임 설정이 필요한지 확인 후, 필요하면 닉네임 설정 화면으로, 아니면 홈 화면으로 이동한다.

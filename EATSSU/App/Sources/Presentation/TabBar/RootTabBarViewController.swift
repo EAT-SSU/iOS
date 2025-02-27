@@ -44,22 +44,6 @@ class RootTabBarViewController: UITabBarController {
         tabBar.tintColor = EATSSUDesignAsset.Color.Main.primary.color
         tabBar.backgroundColor = .white
     }
-
-    private func presentLoginAlert() {
-        AlertControllerHelper.showConfirmOnlyAlert(
-            title: "로그인이 필요한 서비스입니다.",
-            message: "로그인 하시겠습니까?",
-            confirmTitle: "확인",
-            in: self
-        ) { [weak self] in
-            self?.changeIntoLoginVC()
-        }
-    }
-
-    private func changeIntoLoginVC() {
-        let loginViewController = LoginViewController()
-        WindowManageHelper.replaceWindowViewControllerWith(loginViewController)
-    }
 }
 
 // MARK: - UITabBarControllerDelegate
@@ -133,5 +117,21 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
         } else {
             presentLoginAlert()
         }
+    }
+    
+    private func presentLoginAlert() {
+        AlertControllerHelper.showConfirmOnlyAlert(
+            title: "로그인이 필요한 서비스입니다.",
+            message: "로그인 하시겠습니까?",
+            confirmTitle: "확인",
+            in: self
+        ) { [weak self] in
+            self?.changeIntoLoginVC()
+        }
+    }
+
+    private func changeIntoLoginVC() {
+        let loginViewController = LoginViewController()
+        WindowManageHelper.replaceWindowViewControllerWith(loginViewController)
     }
 }
