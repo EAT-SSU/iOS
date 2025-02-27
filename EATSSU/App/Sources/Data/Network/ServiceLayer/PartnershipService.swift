@@ -24,7 +24,6 @@ final class PartnershipService {
     /// - Returns: 성공 시 `[PartnershipResponse]`를 반환하는 Single, 실패 시 에러 전파
     func fetchAllPartnerships() -> Single<BaseResponse<[PartnershipResponse]>> {
         provider.rx.request(.fetchAllPartnerships)
-            .filterSuccessfulStatusCodes() // 200~299 상태 코드만 통과
             .flatMap { response -> Single<BaseResponse<[PartnershipResponse]>> in
                 do {
                     let decoder = JSONDecoder()

@@ -75,6 +75,10 @@ final class MapViewController: BaseViewController {
         setupSegmentedControl()
         fetchPartnerships()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        fetchPartnerships()
+    }
 
     // MARK: - UI 설정
 
@@ -340,7 +344,7 @@ final class MapViewController: BaseViewController {
                     #if DEBUG
                         print("제휴 목록 가져오기 실패: \(error.localizedDescription)")
                     #endif
-                    // TODO: 네트워크 연결을 실패했을 때, 해야 할 로직 작성
+                    AlertControllerHelper.showConfirmAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", confirmTitle: "확인", in: self)
                 }
             )
             .disposed(by: disposeBag)
