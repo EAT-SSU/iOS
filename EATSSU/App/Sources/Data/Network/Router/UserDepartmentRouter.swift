@@ -21,6 +21,9 @@ enum UserDepartmentRouter {
     ///
     /// - Parameter departmentName: 추가할 부서의 이름
     case addDepartment(departmentName: String)
+    
+    /// 부서 검증 API 요청
+    case validateDepartment
 }
 
 extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
@@ -38,6 +41,8 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
         switch self {
         case .addDepartment:
             "/users/department"
+        case .validateDepartment:
+            "/users/validate/department"
         }
     }
 
@@ -48,6 +53,8 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
         switch self {
         case .addDepartment:
             .post
+        case .validateDepartment:
+            .get
         }
     }
 
@@ -61,6 +68,9 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
                 "departmentName": departmentName,
             ]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
+            
+        case .validateDepartment:
+            return .requestPlain  // 파라미터 없이 단순 GET 요청
         }
     }
 
