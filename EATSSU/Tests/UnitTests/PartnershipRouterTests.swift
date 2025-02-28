@@ -1,5 +1,5 @@
 //
-//  PartnershipRouterNetworkTests.swift
+//  PartnershipRouterTests.swift
 //  EATSSU
 //
 //  Created by JIWOONG CHOI on 2/17/25.
@@ -13,7 +13,7 @@ import XCTest
 
 import Moya
 
-final class PartnershipRouterNetworkTests: XCTestCase {
+final class PartnershipRouterTests: XCTestCase {
     var provider: MoyaProvider<PartnershipRouter>!
 
     override func setUp() {

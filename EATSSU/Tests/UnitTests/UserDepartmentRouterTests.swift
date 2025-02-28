@@ -1,5 +1,5 @@
 //
-//  UserDepartmentRouterNetworkTests.swift
+//  UserDepartmentRouterTests.swift
 //  EATSSU
 //
 //  Created by JIWOONG CHOI on 2/23/25.
@@ -12,7 +12,7 @@ import EATSSUKit
 
 import Moya
 
-final class UserDepartmentRouterNetworkTests: XCTestCase {
+final class UserDepartmentRouterTests: XCTestCase {
     var provider: MoyaProvider<UserDepartmentRouter>!
 
     override func setUp() {
