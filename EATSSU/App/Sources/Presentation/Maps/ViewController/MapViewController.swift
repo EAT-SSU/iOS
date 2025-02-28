@@ -79,18 +79,19 @@ final class MapViewController: BaseViewController {
     }
 
     override func viewWillAppear(_: Bool) {
-        fetchPartnerships()
-        setInitialSegmentedControlSetting()
+        fetchAllPartnershipsAndDisplay()
+        resetSegmentedControlToDefault()
     }
+}
 
-    // MARK: - UI 설정
-
+// MARK: - UI Configuration
+private extension MapViewController {
     /**
      네비게이션 바 스타일을 설정합니다.
 
      - Note: 배경색, 타이틀 폰트, 스크롤 시의 Appearance 등을 지정합니다.
      */
-    private func configureNavigationBar() {
+    func configureNavigationBar() {
         navigationItem.title = ESTextLiteral.Map.mapNavTitle
         navigationController?.isNavigationBarHidden = false
 
@@ -113,11 +114,11 @@ final class MapViewController: BaseViewController {
      - Note: 지도에서 터치 이벤트를 수신하기 위해 `touchDelegate`를 `self`로 설정합니다.
      - SeeAlso: `moveCamera(to:zoomLevel:)`
      */
-    private func configureMapView() {
+    func configureMapView() {
         mapView = NMFMapView(frame: view.frame)
         view.addSubview(mapView)
         mapView.touchDelegate = self
-        moveCamera(to: soongsilUniversityLocation, zoomLevel: 15.0)
+        moveCameraToLocation(soongsilUniversityLocation, zoomLevel: 15.0)
     }
 
     /**
@@ -127,7 +128,7 @@ final class MapViewController: BaseViewController {
        - location: 이동할 위치의 위도 및 경도 (`NMGLatLng`)
        - zoomLevel: 줌 레벨 (`Double`)
      */
-    private func moveCamera(to location: NMGLatLng, zoomLevel: Double) {
+    func moveCameraToLocation(_ location: NMGLatLng, zoomLevel: Double) {
         let cameraUpdate = NMFCameraUpdate(position: NMFCameraPosition(location, zoom: zoomLevel))
         mapView.moveCamera(cameraUpdate)
     }
@@ -139,7 +140,7 @@ final class MapViewController: BaseViewController {
 
      - Note: Segmented Control 클릭 시 `segmentedControlChanged(_:)`를 통해 새로운 데이터를 불러오거나, 기존 마커를 지우고 다시 표시합니다.
      */
-    private func configureSegmentedControl() {
+    func configureSegmentedControl() {
         let items = ["전체", "내 제휴"]
         mapSegmentedControl = UISegmentedControl(items: items)
         mapSegmentedControl.selectedSegmentIndex = 0
@@ -170,7 +171,12 @@ final class MapViewController: BaseViewController {
         view.bringSubviewToFront(mapSegmentedControl)
     }
 
-    private func setInitialSegmentedControlSetting() {
+    /**
+     세그먼트 컨트롤을 기본 상태(전체)로 초기화합니다.
+     
+     - Note: viewWillAppear에서 호출되어 화면이 나타날 때마다 세그먼트 컨트롤을 초기 상태로 되돌립니다.
+     */
+    func resetSegmentedControlToDefault() {
         mapSegmentedControl.selectedSegmentIndex = 0
     }
 
@@ -183,8 +189,8 @@ final class MapViewController: BaseViewController {
      1. 0(기본: "내 제휴") 선택 시 전체 제휴 업체 데이터를 불러옵니다.
      2. 1("전체") 선택 시 사용자의 제휴 업체 데이터(미구현)를 불러옵니다.
      */
-    @objc private func segmentedControlChanged(_ sender: UISegmentedControl) {
-        clearAllMarkers()
+    @objc func segmentedControlChanged(_ sender: UISegmentedControl) {
+        removeAllMarkersFromMap()
 
         #if DEBUG
             print("Selected segment index: \(sender.selectedSegmentIndex)")
@@ -195,12 +201,12 @@ final class MapViewController: BaseViewController {
             #if DEBUG
                 print("전체 제휴 업체를 가져옵니다.")
             #endif
-            fetchPartnerships()
+            fetchAllPartnershipsAndDisplay()
         case 1:
             #if DEBUG
                 print("사용자의 제휴 업체를 가져옵니다.")
             #endif
-            fetchUserPartnership()
+            fetchUserPartnershipsAndDisplay()
         default:
             AlertControllerHelper.showConfirmAlert(
                 title: "에러",
@@ -209,9 +215,10 @@ final class MapViewController: BaseViewController {
             )
         }
     }
+}
 
-    // MARK: - 마커 설정
-
+// MARK: - Marker Management
+private extension MapViewController {
     /**
      특정 위치에 마커를 추가합니다.
 
@@ -222,7 +229,7 @@ final class MapViewController: BaseViewController {
        - markerData: 해당 마커에 대응하는 `MarkerData` (상세보기용 정보)
      - Note: 마커를 탭하면 `presentMarkerDetailFloatingPanel(with:)`가 호출되어 상세 패널이 표시됩니다.
      */
-    private func addMarker(
+    func createAndAddMarker(
         at location: NMGLatLng,
         leftText: String,
         rightText: String,
@@ -236,7 +243,7 @@ final class MapViewController: BaseViewController {
                 #if DEBUG
                     print("마커가 탭되었습니다!")
                 #endif
-                self.presentMarkerDetailFloatingPanel(with: markerData)
+                self.showMarkerDetailPanel(with: markerData)
                 return true
             },
             markerData: markerData
@@ -250,15 +257,42 @@ final class MapViewController: BaseViewController {
 
      - Note: `esMarkers` 배열에 저장된 `ESMarker`를 순회하며, 지도에서 제거(MapView 연결 해제)한 뒤 배열을 비웁니다.
      */
-    private func clearAllMarkers() {
+    func removeAllMarkersFromMap() {
         for marker in esMarkers {
             marker.marker.mapView = nil
         }
         esMarkers.removeAll()
     }
 
-    // MARK: - 상세정보 표시
+    /**
+     파트너십 응답 데이터를 기반으로 지도에 마커들을 생성하고 표시합니다.
+     
+     - Parameter partnerships: 서버로부터 받은 파트너십 응답 데이터 배열
+     - Note: 각 파트너십 데이터에 대해 위치 정보와 마커 데이터를 생성하여 지도에 표시합니다.
+     */
+    func displayPartnershipsOnMap(from partnerships: [PartnershipResponse]) {
+        for partnership in partnerships {
+            let location = NMGLatLng(
+                lat: partnership.latitude,
+                lng: partnership.longitude
+            )
+            let markerData = MarkerData(
+                title: partnership.storeName,
+                description: partnership.description
+            )
 
+            createAndAddMarker(
+                at: location,
+                leftText: partnership.storeName,
+                rightText: partnership.partnershipType,
+                markerData: markerData
+            )
+        }
+    }
+}
+
+// MARK: - FloatingPanel Management
+private extension MapViewController {
     /**
      마커 상세 정보를 `FloatingPanel`로 표시합니다.
 
@@ -267,7 +301,7 @@ final class MapViewController: BaseViewController {
         1. 이미 동일한 마커가 선택되어 있고, 패널이 표시 중이면 그대로 유지합니다.
         2. 새로운 마커를 탭하면, `MarkerDetailViewController`를 생성해 패널 내용으로 설정하고 부모에 추가합니다.
      */
-    private func presentMarkerDetailFloatingPanel(with markerData: MarkerData) {
+    func showMarkerDetailPanel(with markerData: MarkerData) {
         if let currentData = selectedMarkerData, currentData == markerData,
            floatingPanelController?.parent != nil
         {
@@ -292,9 +326,10 @@ final class MapViewController: BaseViewController {
             floatingPanelController?.addPanel(toParent: self)
         }
     }
+}
 
-    // MARK: - 네트워크
-
+// MARK: - Network Operations
+private extension MapViewController {
     /**
      전체 제휴 목록을 네트워크로부터 가져오는 메서드입니다.
 
@@ -302,7 +337,7 @@ final class MapViewController: BaseViewController {
        1. 성공 시 `baseResponse.result`에 포함된 제휴 정보를 순회하며, 지도 위에 마커를 배치합니다.
        2. 실패 시 디버그 로그를 남기고, 필요 시 사용자에게 알림을 표시하도록 TODO를 남겼습니다.
      */
-    private func fetchPartnerships() {
+    func fetchAllPartnershipsAndDisplay() {
         partnershipService.fetchAllPartnerships()
             .subscribe(
                 onSuccess: { [weak self] (baseResponse: BaseResponse<[PartnershipResponse]>) in
@@ -319,16 +354,24 @@ final class MapViewController: BaseViewController {
                         return
                     }
 
-                    createMarkers(from: baseResponse.result)
+                    displayPartnershipsOnMap(from: baseResponse.result)
                 },
                 onFailure: { [weak self] error in
-                    self?.handlePartnershipError(error)
+                    self?.showPartnershipErrorAlert(error)
                 }
             )
             .disposed(by: disposeBag)
     }
 
-    private func fetchUserPartnership() {
+    /**
+     사용자의 학과/단과대 관련 제휴 목록을 네트워크로부터 가져와 표시하는 메서드입니다.
+     
+     - Note:
+       1. UserDepartmentService를 통해 사용자의 학과/단과대 관련 제휴 정보를 요청합니다.
+       2. 성공 시 받아온 제휴 정보를 지도에 마커로 표시합니다.
+       3. 실패 시 사용자에게 에러 알림을 표시합니다.
+     */
+    func fetchUserPartnershipsAndDisplay() {
         userDepartmentService.getUserPartnership()
             .subscribe(
                 onSuccess: { [weak self] (baseResponse: BaseResponse<[PartnershipResponse]>) in
@@ -345,18 +388,35 @@ final class MapViewController: BaseViewController {
                         return
                     }
 
-                    createMarkers(from: baseResponse.result)
+                    displayPartnershipsOnMap(from: baseResponse.result)
                 },
                 onFailure: { [weak self] error in
-                    self?.handlePartnershipError(error)
+                    self?.showPartnershipErrorAlert(error)
                 }
             )
             .disposed(by: disposeBag)
     }
+
+    /**
+     파트너십 데이터 요청 실패 시 에러 알림을 표시하는 함수입니다.
+     
+     - Parameter error: 발생한 에러 객체
+     - Note: 디버그 모드에서는 에러 상세 정보를 로그로 출력하고, 사용자에게는 간단한 에러 메시지를 알림으로 표시합니다.
+     */
+    func showPartnershipErrorAlert(_ error: Error) {
+        #if DEBUG
+            print("제휴 목록 가져오기 실패: \(error.localizedDescription)")
+        #endif
+        AlertControllerHelper.showConfirmAlert(
+            title: "문제가 발생했습니다",
+            message: "다시 시도하세요",
+            confirmTitle: "확인",
+            in: self
+        )
+    }
 }
 
 // MARK: - NMFMapViewTouchDelegate
-
 extension MapViewController: NMFMapViewTouchDelegate {
     /**
      사용자가 지도에서 단일 탭했을 때 호출됩니다.
@@ -398,7 +458,6 @@ extension MapViewController: NMFMapViewTouchDelegate {
 }
 
 // MARK: - FloatingPanelControllerDelegate
-
 extension MapViewController: FloatingPanelControllerDelegate {
     /**
      FloatingPanel이 제거되었을 때 호출됩니다.
@@ -409,41 +468,5 @@ extension MapViewController: FloatingPanelControllerDelegate {
     func floatingPanelDidRemove(_: FloatingPanelController) {
         floatingPanelController = nil
         selectedMarkerData = nil
-    }
-}
-
-private extension MapViewController {
-    /// 파트너십 응답 데이터를 기반으로 지도에 마커를 생성하는 함수
-    func createMarkers(from partnerships: [PartnershipResponse]) {
-        for partnership in partnerships {
-            let location = NMGLatLng(
-                lat: partnership.latitude,
-                lng: partnership.longitude
-            )
-            let markerData = MarkerData(
-                title: partnership.storeName,
-                description: partnership.description
-            )
-
-            addMarker(
-                at: location,
-                leftText: partnership.storeName,
-                rightText: partnership.partnershipType,
-                markerData: markerData
-            )
-        }
-    }
-
-    /// 파트너십 데이터 요청 실패 시 처리하는 함수
-    func handlePartnershipError(_ error: Error) {
-        #if DEBUG
-            print("제휴 목록 가져오기 실패: \(error.localizedDescription)")
-        #endif
-        AlertControllerHelper.showConfirmAlert(
-            title: "문제가 발생했습니다",
-            message: "다시 시도하세요",
-            confirmTitle: "확인",
-            in: self
-        )
     }
 }
