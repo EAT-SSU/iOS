@@ -70,33 +70,24 @@ final class MapViewController: BaseViewController {
      */
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        configureNavigationBar()
         configureMapView()
-        setupSegmentedControl()
-        fetchPartnerships()
+        configureSegmentedControl()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         fetchPartnerships()
+        setInitialSegmentedControlSetting()
     }
 
     // MARK: - UI 설정
-
-    /**
-     UI를 초기화하고 네비게이션 바를 설정하는 메서드입니다.
-
-     - Note: `viewDidLoad()`에서 호출되어 최초 화면 초기화 시점에 적용됩니다.
-     */
-    private func setupUI() {
-        setNavigationBar()
-    }
-
+    
     /**
      네비게이션 바 스타일을 설정합니다.
 
      - Note: 배경색, 타이틀 폰트, 스크롤 시의 Appearance 등을 지정합니다.
      */
-    private func setNavigationBar() {
+    private func configureNavigationBar() {
         navigationItem.title = ESTextLiteral.Map.mapNavTitle
         navigationController?.isNavigationBarHidden = false
 
@@ -145,8 +136,8 @@ final class MapViewController: BaseViewController {
 
      - Note: Segmented Control 클릭 시 `segmentedControlChanged(_:)`를 통해 새로운 데이터를 불러오거나, 기존 마커를 지우고 다시 표시합니다.
      */
-    private func setupSegmentedControl() {
-        let items = ["내 제휴", "전체"]
+    private func configureSegmentedControl() {
+        let items = ["전체", "내 제휴"]
         mapSegmentedControl = UISegmentedControl(items: items)
         mapSegmentedControl.selectedSegmentIndex = 0
         mapSegmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
@@ -174,6 +165,10 @@ final class MapViewController: BaseViewController {
         }
 
         view.bringSubviewToFront(mapSegmentedControl)
+    }
+    
+    private func setInitialSegmentedControlSetting() {
+        mapSegmentedControl.selectedSegmentIndex = 0
     }
 
     /**
