@@ -9,20 +9,17 @@ import Foundation
 
 import Moya
 
-/// 부서 관련 API 요청을 정의하는 라우터입니다.
+/// 단과대/학부 관련 API 요청을 정의하는 라우터입니다.
 ///
-/// 이 열거형은 사용자 부서와 관련된 API 요청을 관리합니다.
-/// 현재는 부서를 추가하는 기능을 제공합니다.
-///
-/// - Note: `Moya.TargetType` 및 `AccessTokenAuthorizable` 프로토콜을 준수하여
-///   API 요청의 세부 정보를 정의하고 인증 토큰을 처리합니다.
+/// 이 열거형은 사용자 단과대/학부와 관련된 API 요청을 관리합니다.
+/// 현재는 단과대/학부를 추가하는 기능을 제공합니다.
 enum UserDepartmentRouter {
-    /// 부서 추가 API 요청
+    /// 단과대/학부 추가 API 요청
     ///
-    /// - Parameter departmentName: 추가할 부서의 이름
+    /// - Parameter departmentName: 추가할 단과대/학부의 이름
     case addDepartment(departmentName: String)
 
-    /// 부서 검증 API 요청
+    /// 단과대/학부 검증 API 요청
     case validateDepartment
 }
 
