@@ -5,6 +5,7 @@
 //  Created by Jiwoong CHOI on 01/31/25.
 //
 
+import RxSwift
 import UIKit
 
 import EATSSUKit
@@ -52,6 +53,7 @@ final class EditProfileViewController: BaseViewController {
     let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     let userDepartmentService = UserDepartmentService()
+    private let disposeBag = DisposeBag()
 
     // MARK: - UI Components
 
@@ -207,14 +209,15 @@ extension EditProfileViewController {
     }
 
     func setUserDepartment(department: String) {
-        userDepartmentService.addDepartment(departmentName: department) { result in
-            switch result {
-            case let .success(data):
+        userDepartmentService.addDepartment(departmentName: department)
+            .subscribe(onSuccess: { [weak self] response in
+                guard let self else { return }
                 #if DEBUG
                     print("학과 변경 성공")
-                    print(data)
+                    print(response)
                 #endif
-                self.showAlertController(title: "완료", message: "학과 설정이 완료되었습니다", style: .cancel) {
+
+                showAlertController(title: "완료", message: "학과 설정이 완료되었습니다", style: .cancel) {
                     if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
                         self.navigationController?.popToViewController(myPageViewController, animated: true)
                     } else {
@@ -226,13 +229,14 @@ extension EditProfileViewController {
                         }
                     }
                 }
-            case let .failure(error):
+            }, onFailure: { [weak self] error in
+                guard let self else { return }
                 #if DEBUG
                     print("학과 변경 실패")
                     print(error.localizedDescription)
                 #endif
                 AlertControllerHelper.showConfirmOnlyAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", in: self)
-            }
-        }
+            })
+            .disposed(by: disposeBag)
     }
 }

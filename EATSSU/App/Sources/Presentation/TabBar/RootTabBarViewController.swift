@@ -5,6 +5,7 @@
 //  Created by JIWOONG CHOI on 1/27/25.
 //
 
+import RxSwift
 import UIKit
 
 import EATSSUDesign
@@ -12,6 +13,7 @@ import EATSSUKit
 
 class RootTabBarViewController: UITabBarController {
     private let userDepartmentService = UserDepartmentService()
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,14 +92,13 @@ extension RootTabBarViewController: UITabBarControllerDelegate {
 
     /// 학과 정보 입력 여부를 비동기적으로 확인하는 메서드
     private func userEnteredDepartmentInfo(completion: @escaping (Bool) -> Void) {
-        userDepartmentService.validateDepartment { result in
-            switch result {
-            case let .success(isEntered):
-                completion(isEntered)
-            case .failure:
+        userDepartmentService.validateDepartment()
+            .subscribe(onSuccess: { response in
+                completion(response.result)
+            }, onFailure: { _ in
                 completion(false)
-            }
-        }
+            })
+            .disposed(by: disposeBag)
     }
 
     /// 학과 정보 입력이 되어있지 않은 경우 모달 시트를 표시하는 메서드

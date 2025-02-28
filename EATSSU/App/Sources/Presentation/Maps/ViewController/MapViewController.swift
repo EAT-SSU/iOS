@@ -41,6 +41,9 @@ final class MapViewController: BaseViewController {
     /// `PartnershipService` 인스턴스. 제휴 업체 정보를 가져오는 데 사용됩니다.
     private let partnershipService = PartnershipService()
 
+    /// `UserDepartmentService` 인스턴스. 사용자의 학부와 관련된 정보를 서버에 요청하는 객체입니다.
+    private let userDepartmentService = UserDepartmentService()
+
     /// Rx에서 사용되는 DisposeBag입니다.
     private let disposeBag = DisposeBag()
 
@@ -344,6 +347,8 @@ final class MapViewController: BaseViewController {
             )
             .disposed(by: disposeBag)
     }
+
+    private func fetchUserPartnership() {}
 }
 
 // MARK: - NMFMapViewTouchDelegate

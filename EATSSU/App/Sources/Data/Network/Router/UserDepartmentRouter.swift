@@ -21,7 +21,7 @@ enum UserDepartmentRouter {
 
     /// 단과대/학부 검증 API 요청
     case validateDepartment
-    
+
     /// 사용자 단과대의 제휴업체 요청
     case getUserPartnership
 }
