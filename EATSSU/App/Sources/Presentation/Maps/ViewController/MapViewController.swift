@@ -74,14 +74,14 @@ final class MapViewController: BaseViewController {
         configureMapView()
         configureSegmentedControl()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
+
+    override func viewWillAppear(_: Bool) {
         fetchPartnerships()
         setInitialSegmentedControlSetting()
     }
 
     // MARK: - UI 설정
-    
+
     /**
      네비게이션 바 스타일을 설정합니다.
 
@@ -166,7 +166,7 @@ final class MapViewController: BaseViewController {
 
         view.bringSubviewToFront(mapSegmentedControl)
     }
-    
+
     private func setInitialSegmentedControlSetting() {
         mapSegmentedControl.selectedSegmentIndex = 0
     }

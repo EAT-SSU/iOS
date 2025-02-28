@@ -84,4 +84,33 @@ final class UserDepartmentService {
             }
         }
     }
+
+    /// 사용자 단과대의 제휴업체 목록을 요청합니다.
+    ///
+    /// - Parameter completion: 요청 완료 후 호출되는 클로저.
+    ///                        성공 시 제휴업체 목록을 반환하고, 실패 시 에러를 반환합니다.
+    func getUserPartnership(completion: @escaping (Result<[PartnershipResponse], Error>) -> Void) {
+        provider.request(.getUserPartnership) { result in
+            switch result {
+            case let .success(response):
+                do {
+                    let decodedData = try JSONDecoder().decode(BaseResponse<[PartnershipResponse]>.self, from: response.data)
+                    if decodedData.isSuccess {
+                        completion(.success(decodedData.result))
+                    } else {
+                        let error = NSError(
+                            domain: "UserDepartmentService",
+                            code: -1,
+                            userInfo: [NSLocalizedDescriptionKey: decodedData.message]
+                        )
+                        completion(.failure(error))
+                    }
+                } catch {
+                    completion(.failure(error))
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
 }

@@ -21,6 +21,9 @@ enum UserDepartmentRouter {
 
     /// 단과대/학부 검증 API 요청
     case validateDepartment
+    
+    /// 사용자 단과대의 제휴업체 요청
+    case getUserPartnership
 }
 
 extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
@@ -40,6 +43,8 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
             "/users/department"
         case .validateDepartment:
             "/users/validate/department"
+        case .getUserPartnership:
+            "/users/department/partnerships"
         }
     }
 
@@ -50,7 +55,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
         switch self {
         case .addDepartment:
             .post
-        case .validateDepartment:
+        case .validateDepartment, .getUserPartnership:
             .get
         }
     }
@@ -66,7 +71,7 @@ extension UserDepartmentRouter: TargetType, AccessTokenAuthorizable {
             ]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
 
-        case .validateDepartment:
+        case .validateDepartment, .getUserPartnership:
             return .requestPlain
         }
     }
