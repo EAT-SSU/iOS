@@ -200,7 +200,7 @@ final class MapViewController: BaseViewController {
             #if DEBUG
                 print("사용자의 제휴 업체를 가져옵니다.")
             #endif
-        // TODO: 사용자에 따라 필터된 제휴 데이터 가져오기
+            fetchUserPartnership()
         default:
             AlertControllerHelper.showConfirmAlert(
                 title: "에러",
@@ -305,7 +305,9 @@ final class MapViewController: BaseViewController {
     private func fetchPartnerships() {
         partnershipService.fetchAllPartnerships()
             .subscribe(
-                onSuccess: { (baseResponse: BaseResponse<[PartnershipResponse]>) in
+                onSuccess: { [weak self] (baseResponse: BaseResponse<[PartnershipResponse]>) in
+                    guard let self else { return }
+
                     #if DEBUG
                         print("제휴 목록 가져오기 성공: \(baseResponse)")
                     #endif
@@ -317,38 +319,40 @@ final class MapViewController: BaseViewController {
                         return
                     }
 
-                    let partnerships = baseResponse.result
-                    for partnership in partnerships {
-                        let location = NMGLatLng(
-                            lat: partnership.latitude,
-                            lng: partnership.longitude
-                        )
-                        let leftText = partnership.storeName
-                        let rightText = partnership.partnershipType
-                        let markerData = MarkerData(
-                            title: partnership.storeName,
-                            description: partnership.description
-                        )
-
-                        self.addMarker(
-                            at: location,
-                            leftText: leftText,
-                            rightText: rightText,
-                            markerData: markerData
-                        )
-                    }
+                    createMarkers(from: baseResponse.result)
                 },
-                onFailure: { error in
-                    #if DEBUG
-                        print("제휴 목록 가져오기 실패: \(error.localizedDescription)")
-                    #endif
-                    AlertControllerHelper.showConfirmAlert(title: "문제가 발생했습니다", message: "다시 시도하세요", confirmTitle: "확인", in: self)
+                onFailure: { [weak self] error in
+                    self?.handlePartnershipError(error)
                 }
             )
             .disposed(by: disposeBag)
     }
 
-    private func fetchUserPartnership() {}
+    private func fetchUserPartnership() {
+        userDepartmentService.getUserPartnership()
+            .subscribe(
+                onSuccess: { [weak self] (baseResponse: BaseResponse<[PartnershipResponse]>) in
+                    guard let self else { return }
+
+                    #if DEBUG
+                        print("사용자 제휴 목록 가져오기 성공: \(baseResponse)")
+                    #endif
+
+                    guard baseResponse.isSuccess else {
+                        #if DEBUG
+                            print("사용자 제휴 목록 가져오기 실패: \(baseResponse.message)")
+                        #endif
+                        return
+                    }
+
+                    createMarkers(from: baseResponse.result)
+                },
+                onFailure: { [weak self] error in
+                    self?.handlePartnershipError(error)
+                }
+            )
+            .disposed(by: disposeBag)
+    }
 }
 
 // MARK: - NMFMapViewTouchDelegate
@@ -405,5 +409,41 @@ extension MapViewController: FloatingPanelControllerDelegate {
     func floatingPanelDidRemove(_: FloatingPanelController) {
         floatingPanelController = nil
         selectedMarkerData = nil
+    }
+}
+
+private extension MapViewController {
+    /// 파트너십 응답 데이터를 기반으로 지도에 마커를 생성하는 함수
+    func createMarkers(from partnerships: [PartnershipResponse]) {
+        for partnership in partnerships {
+            let location = NMGLatLng(
+                lat: partnership.latitude,
+                lng: partnership.longitude
+            )
+            let markerData = MarkerData(
+                title: partnership.storeName,
+                description: partnership.description
+            )
+
+            addMarker(
+                at: location,
+                leftText: partnership.storeName,
+                rightText: partnership.partnershipType,
+                markerData: markerData
+            )
+        }
+    }
+
+    /// 파트너십 데이터 요청 실패 시 처리하는 함수
+    func handlePartnershipError(_ error: Error) {
+        #if DEBUG
+            print("제휴 목록 가져오기 실패: \(error.localizedDescription)")
+        #endif
+        AlertControllerHelper.showConfirmAlert(
+            title: "문제가 발생했습니다",
+            message: "다시 시도하세요",
+            confirmTitle: "확인",
+            in: self
+        )
     }
 }
