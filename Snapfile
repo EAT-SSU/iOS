@@ -2,11 +2,11 @@
 
 # A list of devices you want to take the screenshots from
 devices([
-    "iPhone 16 Pro",
+    "iPhone 16 Pro"
     # "iPhone 16 Pro Max",
     # "iPhone 16",
     # "iPhone 16 Plus",
-    "iPhone SE (3rd generation)"
+    # "iPhone SE (3rd generation)"
 #   "iPhone 8",
 #   "iPhone 8 Plus",
 #   "iPhone SE",
