@@ -74,5 +74,4 @@ Tuist/.build
 *.plist
 
 ### Fastlane ###
-fastlane/screenshots
-fastlane/test_output
+screenshots
