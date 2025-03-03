@@ -24,6 +24,40 @@ final class MainReviewViewController: BaseViewController {
         setTableView()
         self.dataSource = ["고구마치즈돈까스", "막국수", "요구르트","김치","수육+겉절이김치참치", "온두부", "국","짜파게티"]
         mainReviewView.tableView.reloadData()
+//        mainReviewView.updateReviewSummaryHeight()
+//        mainReviewView.updateTableViewHeight()
+        updateReviewSummaryHeight()
+        updateTableViewHeight()
+        
+    }
+    
+    var a: CGFloat = 1
+    
+    func updateReviewSummaryHeight() {
+        mainReviewView.summaryView.layoutIfNeeded()
+        let height = mainReviewView.summaryView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+        a = height
+        mainReviewView.reviewSummaryHeightConstraint?.update(offset: height) // 높이 업데이트
+        view.layoutIfNeeded()
+    }
+    
+    // MARK: - 테이블뷰 높이 업데이트
+//    func updateTableViewHeight() {
+//        mainReviewView.tableView.layoutIfNeeded()
+//        let height = mainReviewView.tableView.contentSize.height + a
+//        debugPrint("tableView height:\(mainReviewView.tableView.contentSize.height)")
+//        debugPrint("a: \(a)")
+//        mainReviewView.tableViewHeightConstraint?.update(offset: height) // 높이 업데이트
+//        view.layoutIfNeeded()
+//    }
+    func updateTableViewHeight() {
+        DispatchQueue.main.async {
+            self.mainReviewView.tableView.layoutIfNeeded()
+            let height = self.mainReviewView.tableView.contentSize.height
+            debugPrint("tableView height: \(height)")
+            self.mainReviewView.tableViewHeightConstraint?.update(offset: height)
+            self.view.layoutIfNeeded()
+        }
     }
     
     override func configureUI() {

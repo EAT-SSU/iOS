@@ -55,10 +55,10 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     
     private var sideButton: BaseButton = {
         let button = BaseButton()
-//        button.setImage(EATSSUDesignAsset.Images.icInfo.image, for: .normal)
         button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray400.color, for: .normal)
         button.titleLabel?.font = .caption2
         button.setTitle("신고", for: .normal)
+//        button.setImage(EATSSUDesignAsset.Images.icInfo.image, for: .normal)
         button.configuration?.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 15)
         return button
     }()
@@ -120,7 +120,6 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     lazy var topStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [profileStackView, dateReportStackView])
         stackView.axis = .horizontal
-//        stackView.spacing = 8.adjusted
         stackView.alignment = .fill
         stackView.distribution = .fill
         stackView.backgroundColor = .yellow
@@ -141,7 +140,8 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     private lazy var menuChipCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 50
+        // MARK: - TODO
+        layout.minimumLineSpacing = 4
 //        layout.minimumInteritemSpacing = 60
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.dataSource = self
@@ -168,8 +168,7 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     
     private let dividerView: UIView = {
         let view = UIView()
-//        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray200.color
-        view.backgroundColor = .red
+        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray200.color
         return view
     }()
     
@@ -187,48 +186,29 @@ final class ReviewListTableViewCell: BaseTableViewCell {
     }
     
     override func setLayout() {
-//        profileStackView.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(5)
-//            make.leading.equalToSuperview().offset(16)
-//            make.height.equalTo(30)
-//        }
-//        
-//        dateReportStackView.snp.makeConstraints { make in
-//            make.top.equalTo(profileStackView)
-//            make.trailing.equalToSuperview().inset(16)
-//        }
         cellStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
         menuChipCollectionView.snp.makeConstraints { make in
-//            make.top.equalTo(dateReportStackView.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(22)
         }
-        
         contentStackView.snp.makeConstraints { make in
-//            make.top.equalTo(menuChipCollectionView.snp.bottom)
             make.horizontalEdges.equalToSuperview()
         }
-        
         foodImageView.snp.makeConstraints { make in
             make.height.width.equalTo(358)
         }
-        
         sideButton.snp.makeConstraints { make in
             make.height.equalTo(12.adjusted)
         }
-        
         reactionView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(20)
         }
-        
         dividerView.snp.makeConstraints { make in
             make.height.equalTo(1)
         }
-        
     }
     
     override func prepareForReuse() {

@@ -19,6 +19,10 @@ final class WritingReviewModalViewController: BaseViewController {
     private var userPickedImage: UIImage?
 
     // MARK: - UI Components
+    
+    // FIXME: - Menu Feedback View TEST
+    let menus = ["고구마치즈돈까스", "막국수", "단무지", "요구르트", "파전", "설렁탕"]
+    
 
     private var rateView = RateView()
     private let imagePickerController = UIImagePickerController()
@@ -98,10 +102,33 @@ final class WritingReviewModalViewController: BaseViewController {
 //        let button = UIButton(configuration: config)
 //        return button
 //    }()
+    
+//    lazy var sv: UIStackView = {
+//        let mf = MenuFeedbackView()
+//        mf.configure(with: "떡국")
+//        let sv = UIStackView(arrangedSubviews: [mf])
+//        sv.axis = .vertical
+//        return sv
+//    }()
+    
+    let sv: MenuFeedbackView = {
+        let a = MenuFeedbackView()
+        a.configure(with: "고구마치즈돈까스")
+        return a
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setDelegate()
+        
+        
+        
+//        for menu in menus {
+//            let menuView = MenuFeedbackView()
+//            menuView.configure(with: menu)
+//            sv.addSubview(menuView)
+//        }
     }
 
     override func viewWillAppear(_: Bool) {
@@ -120,6 +147,7 @@ final class WritingReviewModalViewController: BaseViewController {
             titleLabel,
             questionLabel,
             rateView,
+            sv,
             maximumWordLabel,
             selectImageButton,
             userReviewImageView,
@@ -144,9 +172,15 @@ final class WritingReviewModalViewController: BaseViewController {
             make.centerX.equalToSuperview()
             make.height.equalTo(24)
         }
+        
+        sv.snp.makeConstraints { make in
+            make.top.equalTo(rateView.snp.bottom).offset(40)
+            make.horizontalEdges.equalToSuperview().inset(48)
+            make.height.equalTo(28)
+        }
 
         userReviewTextView.snp.makeConstraints { make in
-            make.top.equalTo(rateView.snp.bottom).offset(40)
+            make.top.equalTo(sv.snp.bottom).offset(40)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(181)
@@ -192,7 +226,7 @@ final class WritingReviewModalViewController: BaseViewController {
     
     @objc
     func didTappedimageView() {
-        userReviewImageView.image = nil // 이미지 삭제
+        userReviewImageView.image = nil
         userPickedImage = nil
     }
     

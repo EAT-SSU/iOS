@@ -52,7 +52,7 @@ final class ReviewSummaryView: BaseUIView {
         label.text = "총 리뷰 수"
         label.font = .caption2
         label.backgroundColor = .red
-        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+//        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return label
     }()
 
@@ -131,8 +131,20 @@ final class ReviewSummaryView: BaseUIView {
             make.horizontalEdges.equalToSuperview().inset(20.adjusted)
             make.bottom.equalToSuperview()
         }
-        starSummaryView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20.adjusted)
-        }
+//        starSummaryView.snp.makeConstraints { make in
+//            make.height.equalToSuperview().dividedBy(2.3)
+//        }
+//        reviewDistributionStackView.snp.makeConstraints { make in
+//            make.verticalEdges.equalToSuperview()
+//        }
+//        totalReviewStackView.snp.makeConstraints { make in
+//            make.top.horizontalEdges.equalToSuperview()
+//            make.height.equalTo(18)
+//        }
+//        yAxisStackView.snp.makeConstraints { make in
+//            make.top.equalTo(totalReviewStackView.snp.bottom)
+//            make.height.equalTo(90)
+//            make.bottom.horizontalEdges.equalToSuperview()
+//        }
     }
 }

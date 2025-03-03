@@ -17,6 +17,7 @@ final class StarSummaryView: BaseUIView {
     private let starImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = EATSSUDesignAsset.Images.icStarYellow.image
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     

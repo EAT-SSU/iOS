@@ -18,8 +18,17 @@ final class MainReviewView: BaseUIView {
     
     // MARK: - UI Components
     
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
+//    private let scrollView = UIScrollView()
+    private let scrollView: UIScrollView = {
+        let sv = UIScrollView()
+        sv.backgroundColor = .green
+        return sv
+    }()
+    private let contentView: UIView = {
+        let cv = UIView()
+        cv.backgroundColor = .gray
+        return cv
+    }()
 
     /// 리뷰 상단 summary
     let summaryView = ReviewSummaryView()
@@ -30,6 +39,7 @@ final class MainReviewView: BaseUIView {
         tableView.separatorStyle = .none
         tableView.backgroundColor = .yellow
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 100
         tableView.isScrollEnabled = false
         return tableView
     }()
@@ -38,6 +48,12 @@ final class MainReviewView: BaseUIView {
     public let writingReviewButton = ESButton(size: .big, title: "리뷰 작성하기")
     
     // MARK: - Functions
+    var reviewSummaryHeightConstraint: Constraint?
+        var tableViewHeightConstraint: Constraint?
+    var a: CGFloat = 1
+   
+    
+   
     
     override func configureUI() {
         addSubviews(
@@ -54,21 +70,21 @@ final class MainReviewView: BaseUIView {
     override func setLayout() {
         writingReviewButton.snp.makeConstraints { make in
             make.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(16)
-            make.bottom.equalTo(safeAreaLayoutGuide)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(5)
         }
         scrollView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(safeAreaLayoutGuide)
+            make.top.horizontalEdges.equalTo(safeAreaLayoutGuide)
             make.bottom.equalTo(writingReviewButton.snp.top).offset(-10)
         }
         contentView.snp.makeConstraints { make in
-            make.edges.equalTo(scrollView.contentLayoutGuide)
-            make.width.equalTo(scrollView.frameLayoutGuide)
-            // TODO: 수정 필요
-            make.height.equalTo(2000)
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalToSuperview()
+//            make.bottom.equalTo(tableView.snp.bottom).priority(.low)
+//            make.height.greaterThanOrEqualTo(scrollView.snp.height)
         }
         summaryView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.horizontalEdges.equalToSuperview()
+            make.top.horizontalEdges.equalToSuperview()
         }
         tableView.snp.makeConstraints { make in
             make.top.equalTo(summaryView.snp.bottom)
@@ -76,7 +92,6 @@ final class MainReviewView: BaseUIView {
             make.bottom.equalToSuperview()
         }
     }
-    
 }
 
 #if DEBUG
