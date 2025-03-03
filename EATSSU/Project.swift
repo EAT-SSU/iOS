@@ -214,6 +214,10 @@ let project = Project(
             sources: ["App/Tests/UnitTests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
+
+                .external(name: "RxTest"),
+                .external(name: "RxBlocking"),
+
             ],
             settings: projectSettings
         ),

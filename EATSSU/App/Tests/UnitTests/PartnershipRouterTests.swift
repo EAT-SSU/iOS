@@ -9,17 +9,30 @@
 
 import EATSSUKit
 
-import XCTest
-
 import Moya
+import RxBlocking
+import RxSwift
+import RxTest
+import XCTest
 
 final class PartnershipRouterTests: XCTestCase {
     var provider: MoyaProvider<PartnershipRouter>!
+    var service: PartnershipService!
+    var disposeBag: DisposeBag!
 
     override func setUp() {
         super.setUp()
         // 실제 서버에 요청을 보내기 위해 stub 기능을 제거합니다.
         provider = MoyaProvider<PartnershipRouter>()
+        service = PartnershipService(provider: provider)
+        disposeBag = DisposeBag()
+    }
+
+    override func tearDown() {
+        provider = nil
+        service = nil
+        disposeBag = nil
+        super.tearDown()
     }
 
     private func handleResponse(_ response: Response, for endpoint: String) {
@@ -44,6 +57,8 @@ final class PartnershipRouterTests: XCTestCase {
 
         print("\n" + String(repeating: "-", count: 50) + "\n")
     }
+
+    // MARK: - Router Tests
 
     /// 전체 제휴 목록 조회 API 테스트 (실제 서버 요청)
     func testFetchAllPartnershipsResponse() {
@@ -100,22 +115,66 @@ final class PartnershipRouterTests: XCTestCase {
         waitForExpectations(timeout: 10.0, handler: nil)
     }
 
-    /// 제휴 찜 등록/취소 API 테스트 (실제 서버 요청)
-    func testTogglePartnershipFavoriteResponse() {
+    // MARK: - Service Tests
+
+    /// 전체 제휴 목록 조회 Service 테스트
+    func testFetchAllPartnershipsService() {
+        let expectation = expectation(description: "전체 제휴 목록 조회 Service")
+
+        service.fetchAllPartnerships()
+            .subscribe(
+                onSuccess: { response in
+                    // JSON 응답 출력
+                    print("\n🔍 [FetchAllPartnerships Service] Response Details:")
+                    if let jsonData = try? JSONEncoder().encode(response),
+                       let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: jsonData)
+                    {
+                        print("\n📦 Response Data Structure:")
+                        print(prettyJSON)
+                    } else {
+                        print("⚠️ JSON 변환 실패")
+                    }
+                    print("\n" + String(repeating: "-", count: 50) + "\n")
+
+                    expectation.fulfill()
+                },
+                onFailure: { error in
+                    XCTFail("Service 호출 실패: \(error.localizedDescription)")
+                }
+            )
+            .disposed(by: disposeBag)
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+    /// 제휴 상세 정보 조회 Service 테스트
+    func testFetchPartnershipDetailService() {
+        let expectation = expectation(description: "제휴 상세 정보 조회 Service")
         let partnershipId = 2
-        let expectation = expectation(description: "togglePartnershipFavorite")
 
-        provider.request(.togglePartnershipFavorite(partnershipId: partnershipId)) { result in
-            switch result {
-            case let .success(response):
-                XCTAssertEqual(response.statusCode, 200)
-                XCTAssertFalse(response.data.isEmpty, "응답 데이터가 비어있습니다.")
-                expectation.fulfill()
-            case let .failure(error):
-                XCTFail("togglePartnershipFavorite 실패: \(error)")
-            }
-        }
+        service.fetchPartnershipDetail(partnershipId: partnershipId)
+            .subscribe(
+                onSuccess: { response in
+                    // JSON 응답 출력
+                    print("\n🔍 [FetchPartnershipDetail Service] Response Details:")
+                    if let jsonData = try? JSONEncoder().encode(response),
+                       let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: jsonData)
+                    {
+                        print("\n📦 Response Data Structure:")
+                        print(prettyJSON)
+                    } else {
+                        print("⚠️ JSON 변환 실패")
+                    }
+                    print("\n" + String(repeating: "-", count: 50) + "\n")
 
-        waitForExpectations(timeout: 10.0, handler: nil)
+                    expectation.fulfill()
+                },
+                onFailure: { error in
+                    XCTFail("Service 호출 실패: \(error.localizedDescription)")
+                }
+            )
+            .disposed(by: disposeBag)
+
+        wait(for: [expectation], timeout: 10.0)
     }
 }

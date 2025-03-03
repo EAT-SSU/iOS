@@ -1,0 +1,13 @@
+---
+description: EATSSU-iOS 프로젝트에서 Cursor가 유의해야 할 점
+globs: *.swift
+alwaysApply: false
+---
+
+# 문서 작성 요령
+
+- 코드를 설계하거나 리팩터링을 할 때, 유의해야 할 점으로 메소드에 대한 설명을 적는 것.
+- 파라미터값과 리턴값으로 어떤 자료형을 사용하는 명시하는 것이 중요.
+- 클래스 안에서 사용하는 코드면 private 접근제한자를 명시할 것.
+- 그외에는 internal을 사용. internal은 Swift에서 기본 접근제한자이기 때문에 명시하지 말 것.
+- Framework에 해당하는 코드일 때는 public을 명시에서 앱 모듈에서 사용할 수 있게 명시할 것.

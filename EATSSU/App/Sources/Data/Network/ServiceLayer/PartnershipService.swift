@@ -34,4 +34,20 @@ final class PartnershipService {
                 }
             }
     }
+
+    /// 특정 제휴 상세 정보 조회 API 호출
+    /// - Parameter partnershipId: 조회할 제휴 ID
+    /// - Returns: 성공 시 `PartnershipDetailResponse`를 반환하는 Single, 실패 시 에러 전파
+    func fetchPartnershipDetail(partnershipId: Int) -> Single<BaseResponse<PartnershipDetailResponse>> {
+        provider.rx.request(.fetchPartnershipDetail(partnershipId: partnershipId))
+            .flatMap { response -> Single<BaseResponse<PartnershipDetailResponse>> in
+                do {
+                    let decoder = JSONDecoder()
+                    let baseResponse = try decoder.decode(BaseResponse<PartnershipDetailResponse>.self, from: response.data)
+                    return Single.just(baseResponse)
+                } catch {
+                    return Single.error(error)
+                }
+            }
+    }
 }
