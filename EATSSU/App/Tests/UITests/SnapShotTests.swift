@@ -14,7 +14,7 @@ final class SnapShotTests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        setupSnapshot(app)  // fastlane snapshot 초기화
+        setupSnapshot(app) // fastlane snapshot 초기화
         app.launch()
     }
 
@@ -31,7 +31,7 @@ final class SnapShotTests: XCTestCase {
         expectation(for: mealPredicate, evaluatedWith: mealButton, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
         snapshot("01_Restaurant")
-        
+
         // 2. "지도" 탭 선택 및 스크린샷 촬영
         let mapButton = app.tabBars.buttons["지도"]
         mapButton.tap()
@@ -39,7 +39,7 @@ final class SnapShotTests: XCTestCase {
         expectation(for: mapPredicate, evaluatedWith: mapButton, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
         snapshot("02_Map")
-        
+
         // 3. "마이" 탭 선택 및 스크린샷 촬영
         let myButton = app.tabBars.buttons["마이"]
         myButton.tap()

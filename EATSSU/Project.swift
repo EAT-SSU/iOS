@@ -200,7 +200,7 @@ let project = Project(
             destinations: [.iPhone],
             product: .uiTests,
             bundleId: "com.jiwoo.EatSSU.UITests",
-            sources: ["Tests/UITests/**"],
+            sources: ["App/Tests/UITests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
             ],
@@ -211,7 +211,7 @@ let project = Project(
             destinations: [.iPhone],
             product: .unitTests,
             bundleId: "com.jiwoo.EatSSU.UnitTests",
-            sources: ["Tests/UnitTests/**"],
+            sources: ["App/Tests/UnitTests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
             ],
