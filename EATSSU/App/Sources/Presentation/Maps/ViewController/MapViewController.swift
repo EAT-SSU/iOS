@@ -210,7 +210,7 @@ private extension MapViewController {
 
             createAndAddMarker(
                 at: location,
-                leftText: partnership.storeName,
+                leftText: partnership.collegeNames.first ?? "에러", // FIXME: 서버에서 문자열 배열로 받아서 처리하는 과정 해결
                 rightText: partnership.partnershipType,
                 markerData: markerData
             )
