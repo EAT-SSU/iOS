@@ -22,6 +22,29 @@ final class PartnershipRouterTests: XCTestCase {
         provider = MoyaProvider<PartnershipRouter>()
     }
 
+    private func handleResponse(_ response: Response, for endpoint: String) {
+        print("\n🔍 [\(endpoint)] Response Details:")
+        print("📊 Status Code: \(response.statusCode)")
+
+        // 요청 헤더 정보 출력
+        if let request = response.request {
+            print("\n📡 Request Headers:")
+            request.allHTTPHeaderFields?.forEach { key, value in
+                print("   \(key): \(value)")
+            }
+        }
+
+        // 응답 데이터 파싱 및 출력
+        if let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: response.data) {
+            print("\n📦 Response Data Structure:")
+            print(prettyJSON)
+        } else {
+            print("⚠️ JSON 파싱 실패")
+        }
+
+        print("\n" + String(repeating: "-", count: 50) + "\n")
+    }
+
     /// 전체 제휴 목록 조회 API 테스트 (실제 서버 요청)
     func testFetchAllPartnershipsResponse() {
         let expectation = expectation(description: "fetchAllPartnerships")
@@ -33,19 +56,9 @@ final class PartnershipRouterTests: XCTestCase {
                 XCTAssertFalse(response.data.isEmpty, "응답 데이터가 비어있습니다.")
 
                 do {
-                    // 응답 데이터를 DTO로 변환하여 검증
-
                     let partnershipsResponse = try JSONDecoder().decode(BaseResponse<[PartnershipResponse]>.self, from: response.data)
-
                     XCTAssertNotNil(partnershipsResponse, "디코딩된 데이터가 nil입니다.")
-
-                    // JSON을 보기 좋게 출력
-                    if let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: response.data) {
-                        print("📌 Pretty JSON Response:\n\(prettyJSON)")
-                    } else {
-                        print("⚠️ JSON 포맷 변환 실패")
-                    }
-
+                    self.handleResponse(response, for: "FetchAllPartnerships")
                 } catch {
                     XCTFail("디코딩 실패: \(error)")
                 }
@@ -72,17 +85,8 @@ final class PartnershipRouterTests: XCTestCase {
 
                 do {
                     let detailResponse = try JSONDecoder().decode(BaseResponse<PartnershipDetailResponse>.self, from: response.data)
-
-                    // DTO 필드 검증
                     XCTAssertNotNil(detailResponse, "디코딩된 데이터가 nil입니다.")
-
-                    // JSONPrettyPrinter를 활용한 디버깅 출력
-                    if let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: response.data) {
-                        print("📌 Pretty JSON Response:\n\(prettyJSON)")
-                    } else {
-                        print("⚠️ JSON 포맷 변환 실패")
-                    }
-
+                    self.handleResponse(response, for: "FetchPartnershipDetail")
                 } catch {
                     XCTFail("디코딩 실패: \(error)")
                 }
@@ -98,7 +102,7 @@ final class PartnershipRouterTests: XCTestCase {
 
     /// 제휴 찜 등록/취소 API 테스트 (실제 서버 요청)
     func testTogglePartnershipFavoriteResponse() {
-        let partnershipId = 456
+        let partnershipId = 2
         let expectation = expectation(description: "togglePartnershipFavorite")
 
         provider.request(.togglePartnershipFavorite(partnershipId: partnershipId)) { result in

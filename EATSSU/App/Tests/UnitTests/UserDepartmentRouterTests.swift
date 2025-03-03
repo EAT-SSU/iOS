@@ -111,7 +111,15 @@ final class UserDepartmentRouterTests: XCTestCase {
                 onSuccess: { response in
                     XCTAssertNotNil(response, "응답이 nil입니다.")
                     XCTAssertFalse(response.message.isEmpty, "응답 메시지가 비어있습니다.")
-                    print("📌 Success Message: \(response.message)")
+
+                    // 응답 데이터를 JSON 형태로 출력
+                    if let jsonData = try? JSONEncoder().encode(response),
+                       let prettyJSON = JSONPrettyPrinter.prettyPrintedJSONString(from: jsonData)
+                    {
+                        print("\n📦 Response Data Structure:")
+                        print(prettyJSON)
+                    }
+
                     expectation.fulfill()
                 },
                 onFailure: { error in
