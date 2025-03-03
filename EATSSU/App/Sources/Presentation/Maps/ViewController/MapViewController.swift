@@ -203,6 +203,7 @@ private extension MapViewController {
                 lng: partnership.longitude
             )
             let markerData = MarkerData(
+                id: partnership.id,
                 title: partnership.storeName,
                 description: partnership.description
             )
