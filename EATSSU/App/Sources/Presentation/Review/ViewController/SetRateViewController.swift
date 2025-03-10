@@ -131,13 +131,38 @@ final class SetRateViewController: BaseViewController {
         $0.addGestureRecognizer(tapGesture)
     }
 
+    private lazy var imageContainer = UIView().then {
+        $0.addSubview(selectImageButton)
+        $0.addSubview(imageCountLabel)
+    }
+    
     private lazy var selectImageButton = UIButton().then {
-        $0.setImage(UIImage(named: "AddImageButton"), for: .normal)
+        var config = UIButton.Configuration.plain()
+        config.image = EATSSUDesignAsset.Images.addImageButton.image
+        config.contentInsets = NSDirectionalEdgeInsets(top: -5, leading: 0, bottom: 5, trailing: 0)
+
+        $0.configuration = config
         $0.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
+
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
+
+        $0.contentVerticalAlignment = .center
+        $0.contentHorizontalAlignment = .center
+    }
+
+    
+    private let imageCountLabel = UILabel().then {
+        $0.text = "사진 0/1"
+        $0.font = .caption3
+        $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        $0.textAlignment = .center
     }
 
     private let deleteMethodLabel = UILabel().then {
-        $0.text = "이미지 클릭 시, 삭제됩니다"
+        $0.text = "사진 클릭 시, 삭제됩니다"
         $0.font = .caption3
         $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
     }
@@ -183,6 +208,7 @@ final class SetRateViewController: BaseViewController {
                                 userReviewTextView,
                                 maximumWordLabel,
                                 selectImageButton,
+                                imageCountLabel,
                                 userReviewImageView,
                                 deleteMethodLabel,
                                 nextButton)
@@ -265,6 +291,12 @@ final class SetRateViewController: BaseViewController {
             $0.leading.equalToSuperview().offset(15)
             $0.width.equalTo(60)
             $0.height.equalTo(60)
+        }
+        
+        imageCountLabel.snp.makeConstraints {
+            $0.top.equalTo(selectImageButton.snp.bottom).offset(-19)
+            $0.centerX.equalTo(selectImageButton)
+            $0.width.equalTo(selectImageButton)
         }
 
         userReviewImageView.snp.makeConstraints {
@@ -386,6 +418,7 @@ final class SetRateViewController: BaseViewController {
     func didTappedimageView() {
         userReviewImageView.image = nil // 이미지 삭제
         userPickedImage = nil
+        imageCountLabel.text = "사진 0/1"
     }
 
     private func prepareForNextReview() {
@@ -511,6 +544,7 @@ extension SetRateViewController: UIImagePickerControllerDelegate {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             userReviewImageView.image = image
             userPickedImage = image
+            imageCountLabel.text = "사진 1/1"
         }
         picker.dismiss(animated: true, completion: nil)
     }

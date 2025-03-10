@@ -129,10 +129,17 @@ extension HomeTimeTabmanController: PageboyViewControllerDataSource, TMBarDataSo
             return TMBarItem(title: title)
         }
     }
-
+    
     func setLayoutTabBar(ctBar: TMBar.ButtonBar) {
-        ctBar.backgroundColor = .white
-        ctBar.backgroundView.style = .blur(style: .regular)
+        // 투명도 줄이기 활성화 체크
+        if UIAccessibility.isReduceTransparencyEnabled {
+            ctBar.backgroundView.style = .flat(color: .white)
+            ctBar.backgroundColor = .white.withAlphaComponent(1.0)
+        } else {
+            ctBar.backgroundView.style = .blur(style: .regular)
+            ctBar.backgroundColor = .clear
+        }
+
         ctBar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
         ctBar.buttons.customize { button in
             button.tintColor = .gray700 // 선택 안되어 있을 때
