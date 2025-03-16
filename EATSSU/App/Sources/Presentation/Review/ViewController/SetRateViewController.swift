@@ -135,7 +135,7 @@ final class SetRateViewController: BaseViewController {
         $0.addSubview(selectImageButton)
         $0.addSubview(imageCountLabel)
     }
-    
+
     private lazy var selectImageButton = UIButton().then {
         var config = UIButton.Configuration.plain()
         config.image = EATSSUDesignAsset.Images.addImageButton.image
@@ -153,7 +153,6 @@ final class SetRateViewController: BaseViewController {
         $0.contentHorizontalAlignment = .center
     }
 
-    
     private let imageCountLabel = UILabel().then {
         $0.text = "사진 0/1"
         $0.font = .caption3
@@ -292,7 +291,7 @@ final class SetRateViewController: BaseViewController {
             $0.width.equalTo(60)
             $0.height.equalTo(60)
         }
-        
+
         imageCountLabel.snp.makeConstraints {
             $0.top.equalTo(selectImageButton.snp.bottom).offset(-19)
             $0.centerX.equalTo(selectImageButton)
