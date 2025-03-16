@@ -129,7 +129,7 @@ extension HomeTimeTabmanController: PageboyViewControllerDataSource, TMBarDataSo
             return TMBarItem(title: title)
         }
     }
-    
+
     func setLayoutTabBar(ctBar: TMBar.ButtonBar) {
         // 투명도 줄이기 활성화 체크
         if UIAccessibility.isReduceTransparencyEnabled {

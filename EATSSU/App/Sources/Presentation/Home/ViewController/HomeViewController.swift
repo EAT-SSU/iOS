@@ -10,7 +10,6 @@ import UIKit
 import EATSSUDesign
 
 import FirebaseAnalytics
-import GoogleMobileAds
 import Moya
 import SnapKit
 
