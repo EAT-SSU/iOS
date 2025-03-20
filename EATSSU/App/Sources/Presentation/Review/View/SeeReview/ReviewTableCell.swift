@@ -200,7 +200,7 @@ final class ReviewTableCell: UITableViewCell {
         }
 
         dateReportStackView.snp.makeConstraints { make in
-            make.top.equalTo(profileStackView)
+            make.centerY.equalTo(profileStackView)
             make.trailing.equalToSuperview().inset(16)
         }
 
@@ -248,7 +248,7 @@ extension ReviewTableCell {
             foodImageView.isHidden = true
         }
 
-        response.isWriter ? sideButton.setImage(ImageLiteral.greySideButton, for: .normal) : sideButton.setTitle("신고", for: .normal)
+        response.isWriter ? sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal) : sideButton.setTitle("신고", for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
     }
 
@@ -269,7 +269,7 @@ extension ReviewTableCell {
             foodImageView.isHidden = true
         }
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
-        sideButton.setImage(ImageLiteral.greySideButton, for: .normal)
+        sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.setTitle("", for: .normal)
         reviewId = response.reviewID
     }
