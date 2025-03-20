@@ -235,7 +235,7 @@ extension MyPageViewController: UITableViewDelegate {
 
         // "내가 쓴 리뷰" 스크린으로 이동
         case MyPageLabels.MyReview.rawValue:
-            let myReviewViewController = MyReviewViewController()
+            let myReviewViewController = MyReviewViewController(nickname: nickName)
             navigationController?.pushViewController(myReviewViewController, animated: true)
 
         // "문의하기" 스크린으로 이동

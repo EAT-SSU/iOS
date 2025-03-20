@@ -52,7 +52,7 @@ final class RateNumberView: BaseUIView {
         rateNumberStackView.do {
             $0.axis = .horizontal
             $0.spacing = 3
-            $0.alignment = .top
+            $0.alignment = .center
         }
     }
 

@@ -67,7 +67,8 @@ final class ReviewTableCell: UITableViewCell {
 
     private let userProfileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "userProfile.svg")
+//        imageView.image = UIImage(named: "userProfile.svg")
+        imageView.image = EATSSUDesignAsset.Images.profile.image
         return imageView
     }()
 
@@ -147,7 +148,7 @@ final class ReviewTableCell: UITableViewCell {
         let stackView = UIStackView(arrangedSubviews: [userProfileImageView, infoStackView])
         stackView.axis = .horizontal
         stackView.spacing = 8.adjusted
-        stackView.alignment = .leading
+        stackView.alignment = .center
         return stackView
     }()
 

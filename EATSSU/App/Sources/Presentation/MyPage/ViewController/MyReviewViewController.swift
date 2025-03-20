@@ -24,6 +24,11 @@ final class MyReviewViewController: BaseViewController {
     // MARK: - UI Components
 
     let myReviewView = MyReviewView()
+    
+    init(nickname: String) {
+        self.nickname = nickname
+        super.init(nibName: nil, bundle: nil)
+    }
 
     private lazy var noMyReviewImageView: UIImageView = {
         let imageView = UIImageView()
@@ -74,8 +79,8 @@ final class MyReviewViewController: BaseViewController {
         myReviewView.myReviewTableView.dataSource = self
     }
 
-    func dataBind(nikcname: String) {
-        nickname = nikcname
+    func dataBind(nickname: String) {
+        self.nickname = nickname
     }
 
     private func showFixOrDeleteAlert(reviewID: Int, menuName: String) {
