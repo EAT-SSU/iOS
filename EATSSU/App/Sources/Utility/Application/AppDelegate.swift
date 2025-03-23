@@ -15,7 +15,7 @@ import KakaoSDKCommon
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate Methods
 
-    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         setupNotificationPermissions()
         startNetworkMonitoring()
         configureFirebase()
@@ -34,6 +34,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_: UIApplication, didDiscardSceneSessions _: Set<UISceneSession>) {
         // 사용자가 scene 세션을 버릴 때 호출됩니다.
         // 여기서 버려진 scene과 관련된 리소스를 해제할 수 있습니다.
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        LaunchSourceManager.shared.setSource(.localNotification)
+        completionHandler()
     }
 
     // MARK: - Private Methods
