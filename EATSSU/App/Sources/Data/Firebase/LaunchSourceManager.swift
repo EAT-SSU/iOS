@@ -28,22 +28,35 @@ class LaunchSourceManager {
     /// 앱 실행 소스를 설정합니다
     /// - Parameter source: 설정할 실행 소스
     func setSource(_ source: LaunchSource) {
-        // 무조건 위젯이면 업데이트하도록 수정
-        if source == .widget {
+        print("소스 설정 시도: \(source.rawValue) (현재 소스: \(self.source.rawValue), 로깅 상태: \(hasLogged))")
+        
+        // 로컬 알림 소스 설정은 항상 우선시
+        if source == .localNotification {
+            let changed = self.source != source
             self.source = source
-            // 로깅 상태도 리셋해서 위젯 이벤트가 기록되도록 함
-            hasLogged = false
-        }
-        // 이미 로깅했으면 소스 변경 없음
-        else if hasLogged { return }
-        // 나머지 우선순위 로직은 유지
-        else {
-            switch (self.source, source) {
-            case (.icon, _), (.localNotification, .widget):
-                self.source = source
-            default:
-                break
+            
+            // 소스가 변경되었으면 로깅 상태 초기화
+            if changed {
+                hasLogged = false
             }
+            return
+        }
+        
+        // 위젯 소스 설정도 항상 우선시
+        if source == .widget {
+            let changed = self.source != source
+            self.source = source
+            
+            if changed {
+                hasLogged = false
+            }
+            return
+        }
+        
+        // 아이콘 소스는 기존 소스가 없을 때만 설정
+        if source == .icon && self.source == .icon {
+            // 이미 아이콘으로 설정되어 있으면 변경 없음
+            return
         }
     }
     

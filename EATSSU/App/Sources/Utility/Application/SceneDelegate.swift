@@ -63,6 +63,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print("App launched from Widget (initial connection)")
             LaunchSourceManager.shared.setSource(.widget)
         }
+        
+        // 알림으로 실행됨을 감지
+        if let notificationResponse = connectionOptions.notificationResponse {
+            LaunchSourceManager.shared.setSource(.localNotification)
+        }
 
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
