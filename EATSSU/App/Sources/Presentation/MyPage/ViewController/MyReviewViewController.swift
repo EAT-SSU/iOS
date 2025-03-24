@@ -164,16 +164,21 @@ extension MyReviewViewController {
             }
         }
     }
-
+    
+    // 리뷰 삭제 알람 추가
     func deleteReview(reviewID: Int) {
-        reviewProvider.request(.deleteReview(reviewID)) { response in
-            switch response {
-            case .success:
-                self.getMyReview()
-                self.view.showToast(message: "삭제되었어요 !")
-            case let .failure(err):
-                print(err.localizedDescription)
+        let alert = UIAlertController(title: "리뷰 삭제", message: "리뷰를 삭제하시겠습니까?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
+            self.reviewProvider.request(.deleteReview(reviewID)) { response in
+                switch response {
+                case .success:
+                    self.getMyReview()
+                case let .failure(err):
+                    print(err.localizedDescription)
+                }
             }
-        }
+        })
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
     }
 }
