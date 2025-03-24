@@ -79,12 +79,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
             print("URL opened: \(url.absoluteString)")
-            
+            // 카카오 로그인
             if AuthApi.isKakaoTalkLoginUrl(url) {
                 _ = AuthController.handleOpenUrl(url: url)
                 return
             }
-            
+            // 위젯 체크
             if url.host == "from_widget" {
                 LaunchSourceManager.shared.setSource(.widget)
             } else {
