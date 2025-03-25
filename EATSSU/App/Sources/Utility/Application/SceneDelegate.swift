@@ -15,12 +15,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // MARK: - UIWindowSceneDelegate Methods
 
-    func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        window = UIWindow(windowScene: windowScene)
+        // 스플래시
+        let splashVC = NoticeSplashViewController()
+        window?.rootViewController = splashVC
+        window?.makeKeyAndVisible()
 
-        configureWindow(with: windowScene)
-        fetchNoticeAndConfigureRootViewController()
-        checkForAppUpdate()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
+            self?.fetchNoticeAndConfigureRootViewController()
+            self?.checkForAppUpdate()
+        }
     }
 
     func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
