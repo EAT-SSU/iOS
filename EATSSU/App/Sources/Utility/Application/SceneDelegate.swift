@@ -82,12 +82,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print("앱스토어 버전을 찾지 못했습니다.")
             return
         }
-
         let currentVersion = AppStoreCheck.appVersion ?? ""
-        if latestVersion != currentVersion {
+        
+        let compareResult = latestVersion.compare(currentVersion, options: .numeric)
+        switch compareResult {
+        case .orderedAscending, .orderedSame:
+            debugPrint("현재 최신 버전입니다.")
+        case .orderedDescending:
             showUpdateAlert()
-        } else {
-            print("현재 최신 버전입니다.")
         }
     }
 
