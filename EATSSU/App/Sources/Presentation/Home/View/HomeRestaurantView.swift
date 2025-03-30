@@ -37,7 +37,7 @@ final class HomeRestaurantView: BaseUIView {
 
     override func setLayout() {
         restaurantTableView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(45)
+            $0.top.equalToSuperview()
             $0.leading.bottom.trailing.equalToSuperview()
         }
     }
