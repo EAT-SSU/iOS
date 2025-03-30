@@ -67,7 +67,6 @@ final class ReviewTableCell: UITableViewCell {
 
     private let userProfileImageView: UIImageView = {
         let imageView = UIImageView()
-//        imageView.image = UIImage(named: "userProfile.svg")
         imageView.image = EATSSUDesignAsset.Images.profile.image
         return imageView
     }()
