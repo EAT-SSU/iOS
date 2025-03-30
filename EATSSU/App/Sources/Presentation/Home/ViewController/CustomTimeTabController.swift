@@ -6,7 +6,9 @@
 //
 
 import UIKit
+
 import EATSSUDesign
+
 import SnapKit
 
 final class CustomTimeTabController: UIViewController {
@@ -44,38 +46,48 @@ final class CustomTimeTabController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupPageViewController()
-        selectedIndex = getInitialTabIndex()
+
+        let initialIndex = getInitialTabIndex()
+        let initialVC = viewControllers[initialIndex]
+
+        pageViewController.setViewControllers([initialVC], direction: .forward, animated: false)
+
+        self.selectedIndex = initialIndex
     }
+
 
     // MARK: - Setup
 
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
 
-        // Tab Container Wrapper View (no shadow)
         view.addSubview(tabShadowWrapperView)
         tabShadowWrapperView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(52)
+            $0.height.equalTo(50)
         }
-        tabShadowWrapperView.backgroundColor = UIColor(hex: "#efeef6")
+        tabShadowWrapperView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
 
-        // Tab Container View
+        // 탭 배경 + 하단 그림자
         tabShadowWrapperView.addSubview(tabContainerView)
         tabContainerView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(45)
         }
-//        tabShadowWrapperView.layer.shadowColor = UIColor.black.cgColor
-//        tabShadowWrapperView.layer.shadowOpacity = 0.8
-//        tabShadowWrapperView.layer.shadowOffset = CGSize(width: 0, height: 2)
-//        tabShadowWrapperView.layer.shadowRadius = 8
-//        tabShadowWrapperView.layer.masksToBounds = false
-
-        
         tabContainerView.backgroundColor = .white
-        tabContainerView.layer.cornerRadius = 30
+        tabContainerView.layer.cornerRadius = 35
         tabContainerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-//        tabContainerView.layer.masksToBounds = true
+        tabContainerView.layer.masksToBounds = false
+        tabContainerView.layer.shadowColor = UIColor.black.cgColor
+        tabContainerView.layer.shadowOpacity = 0.6
+        tabContainerView.layer.shadowOffset = CGSize(width: 0, height: 0)
+        tabContainerView.layer.shadowRadius = 8
+
+        let shadowPath = UIBezierPath(
+            rect: CGRect(x: 0, y: 45 - 2, width: UIScreen.main.bounds.width, height: 2)
+        )
+        tabContainerView.layer.shadowPath = shadowPath.cgPath
+
 
         // Tab StackView
         tabStackView.axis = .horizontal
@@ -103,19 +115,22 @@ final class CustomTimeTabController: UIViewController {
         tabContainerView.addSubview(indicatorView)
         indicatorView.snp.makeConstraints {
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(2)
-            $0.width.equalTo(80)
+            $0.height.equalTo(3)
+            $0.width.equalTo(50)
             $0.centerX.equalTo(tabButtons.first!.snp.centerX)
         }
+        indicatorView.layer.cornerRadius = 1
+        indicatorView.layer.masksToBounds = true
     }
 
     private func setupPageViewController() {
         addChild(pageViewController)
         view.addSubview(pageViewController.view)
         pageViewController.view.snp.makeConstraints {
-            $0.top.equalTo(tabShadowWrapperView.snp.bottom)
+            $0.top.equalTo(tabShadowWrapperView.snp.bottom).inset(-10)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+
         pageViewController.didMove(toParent: self)
         pageViewController.dataSource = self
         pageViewController.delegate = self
