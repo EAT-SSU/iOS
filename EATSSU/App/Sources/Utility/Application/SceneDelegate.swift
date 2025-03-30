@@ -19,14 +19,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         // 스플래시
-        let splashVC = NoticeSplashViewController()
+        let splashVC = SplashViewController()
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
-            self?.fetchNoticeAndConfigureRootViewController()
-            self?.checkForAppUpdate()
-        }
+        fetchNoticeAndConfigureRootViewController()
+        checkForAppUpdate()
     }
 
     func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
