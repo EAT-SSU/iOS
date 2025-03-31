@@ -75,13 +75,13 @@ final class CustomTimeTabController: UIViewController {
             $0.height.equalTo(45)
         }
         tabContainerView.backgroundColor = .white
-        tabContainerView.layer.cornerRadius = 35
+        tabContainerView.layer.cornerRadius = 30
         tabContainerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         tabContainerView.layer.masksToBounds = false
         tabContainerView.layer.shadowColor = UIColor.black.cgColor
         tabContainerView.layer.shadowOpacity = 0.6
         tabContainerView.layer.shadowOffset = CGSize(width: 0, height: 0)
-        tabContainerView.layer.shadowRadius = 8
+        tabContainerView.layer.shadowRadius = 7
 
         let shadowPath = UIBezierPath(
             rect: CGRect(x: 0, y: 45 - 2, width: UIScreen.main.bounds.width, height: 2)
