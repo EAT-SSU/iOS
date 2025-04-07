@@ -67,7 +67,6 @@ final class ReviewTableCell: UITableViewCell {
 
     private let userProfileImageView: UIImageView = {
         let imageView = UIImageView()
-//        imageView.image = UIImage(named: "userProfile.svg")
         imageView.image = EATSSUDesignAsset.Images.profile.image
         return imageView
     }()
@@ -248,7 +247,7 @@ extension ReviewTableCell {
             foodImageView.isHidden = true
         }
 
-        response.isWriter ? sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal) : sideButton.setTitle("신고", for: .normal)
+        sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
     }
 
