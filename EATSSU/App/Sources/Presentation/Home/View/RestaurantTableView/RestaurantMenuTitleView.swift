@@ -1,0 +1,63 @@
+//
+//  RestaurantMenuTitleView.swift
+//  EATSSU
+//
+//  Created by 황상환 on 4/6/25.
+//
+
+import UIKit
+import SnapKit
+
+final class RestaurantMenuTitleView: BaseUIView {
+
+    private let nameLabel = UILabel().then {
+        $0.text = TextLiteral.Home.todayMenu
+        $0.font = .body2
+    }
+
+    private let priceLabel = UILabel().then {
+        $0.text = TextLiteral.Home.price
+        $0.font = .body2
+        $0.textAlignment = .center
+    }
+
+    private let ratingLabel = UILabel().then {
+        $0.text = TextLiteral.Home.rating
+        $0.font = .body2
+        $0.textAlignment = .center
+    }
+
+    private let lineView = UIView().then {
+        $0.backgroundColor = .gray200
+    }
+
+    private lazy var infoTableStackView = UIStackView().then {
+        $0.addArrangedSubviews([nameLabel, priceLabel, ratingLabel])
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 24
+    }
+
+    override func configureUI() {
+        self.addSubviews(infoTableStackView, lineView)
+    }
+
+    override func setLayout() {
+        infoTableStackView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(18)
+            $0.horizontalEdges.equalToSuperview().inset(12)
+        }
+
+        nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        priceLabel.snp.makeConstraints { $0.width.equalTo(47) }
+        ratingLabel.snp.makeConstraints { $0.width.equalTo(25) }
+
+        lineView.snp.makeConstraints {
+            $0.top.equalTo(infoTableStackView.snp.bottom).offset(11)
+            $0.horizontalEdges.equalToSuperview().inset(8)
+            $0.height.equalTo(1)
+            $0.bottom.equalToSuperview().inset(6)
+        }
+    }
+}

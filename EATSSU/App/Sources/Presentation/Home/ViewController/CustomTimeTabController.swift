@@ -11,7 +11,7 @@ import EATSSUDesign
 
 import SnapKit
 
-final class CustomTimeTabController: UIViewController {
+final class CustomTimeTabController: BaseViewController {
     // MARK: - Properties
 
     private let tabTitles = ["아침", "점심", "저녁"]
@@ -40,40 +40,20 @@ final class CustomTimeTabController: UIViewController {
     private var tabButtons: [UIButton] = []
     private let indicatorView = UIView()
 
-    // MARK: - Life Cycle
-
+    // MARK: - Override
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-        setupPageViewController()
-
-        let initialIndex = getInitialTabIndex()
-        let initialVC = viewControllers[initialIndex]
-
-        pageViewController.setViewControllers([initialVC], direction: .forward, animated: false)
-
-        self.selectedIndex = initialIndex
+        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
     }
 
-
-    // MARK: - Setup
-
-    private func setupUI() {
+    override func configureUI() {
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
 
         view.addSubview(tabShadowWrapperView)
-        tabShadowWrapperView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(50)
-        }
         tabShadowWrapperView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
 
-        // 탭 배경 + 하단 그림자
         tabShadowWrapperView.addSubview(tabContainerView)
-        tabContainerView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(45)
-        }
         tabContainerView.backgroundColor = .white
         tabContainerView.layer.cornerRadius = 30
         tabContainerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -82,45 +62,53 @@ final class CustomTimeTabController: UIViewController {
         tabContainerView.layer.shadowOpacity = 0.6
         tabContainerView.layer.shadowOffset = CGSize(width: 0, height: 0)
         tabContainerView.layer.shadowRadius = 7
+        tabContainerView.layer.shadowPath = UIBezierPath(rect: CGRect(x: 0, y: 43, width: UIScreen.main.bounds.width, height: 2)).cgPath
 
-        let shadowPath = UIBezierPath(
-            rect: CGRect(x: 0, y: 45 - 2, width: UIScreen.main.bounds.width, height: 2)
-        )
-        tabContainerView.layer.shadowPath = shadowPath.cgPath
-
-
-        // Tab StackView
+        tabContainerView.addSubview(tabStackView)
         tabStackView.axis = .horizontal
         tabStackView.distribution = .fillEqually
         tabStackView.alignment = .fill
-        tabContainerView.addSubview(tabStackView)
-        tabStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 4, left: 0, bottom: 8, right: 0))
-        }
 
-        // Tab Buttons
         for (index, title) in tabTitles.enumerated() {
             let button = UIButton(type: .system)
             button.setTitle(title, for: .normal)
             button.setTitleColor(.gray700, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+            button.titleLabel?.font = .semiBold(size: 16)
             button.tag = index
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
             tabStackView.addArrangedSubview(button)
             tabButtons.append(button)
         }
 
-        // Indicator
-        indicatorView.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
         tabContainerView.addSubview(indicatorView)
+        indicatorView.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        indicatorView.layer.cornerRadius = 1
+        indicatorView.layer.masksToBounds = true
+    }
+
+    override func setLayout() {
+        tabShadowWrapperView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(50)
+        }
+
+        tabContainerView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(45)
+        }
+
+        tabStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 4, left: 0, bottom: 8, right: 0))
+        }
+
         indicatorView.snp.makeConstraints {
             $0.bottom.equalToSuperview()
             $0.height.equalTo(3)
             $0.width.equalTo(50)
             $0.centerX.equalTo(tabButtons.first!.snp.centerX)
         }
-        indicatorView.layer.cornerRadius = 1
-        indicatorView.layer.masksToBounds = true
+
+        setupPageViewController()
     }
 
     private func setupPageViewController() {
@@ -140,6 +128,10 @@ final class CustomTimeTabController: UIViewController {
             scroll.delegate = self
             scrollView = scroll
         }
+
+        let initialIndex = getInitialTabIndex()
+        pageViewController.setViewControllers([viewControllers[initialIndex]], direction: .forward, animated: false)
+        self.selectedIndex = initialIndex
     }
 
     private func setPage(index: Int, direction: UIPageViewController.NavigationDirection) {
@@ -148,8 +140,6 @@ final class CustomTimeTabController: UIViewController {
             self?.isProgrammaticScroll = false
         }
     }
-
-    // MARK: - Actions
 
     @objc private func tabButtonTapped(_ sender: UIButton) {
         guard selectedIndex != sender.tag else { return }
@@ -165,12 +155,14 @@ final class CustomTimeTabController: UIViewController {
 
         let tabWidth = view.frame.width / CGFloat(tabTitles.count)
         let x = tabWidth * CGFloat(selectedIndex)
+        let transform = CGAffineTransform(translationX: x, y: 0)
+
         if animated {
             UIView.animate(withDuration: 0.25) {
-                self.indicatorView.transform = CGAffineTransform(translationX: x, y: 0)
+                self.indicatorView.transform = transform
             }
         } else {
-            self.indicatorView.transform = CGAffineTransform(translationX: x, y: 0)
+            self.indicatorView.transform = transform
         }
     }
 
