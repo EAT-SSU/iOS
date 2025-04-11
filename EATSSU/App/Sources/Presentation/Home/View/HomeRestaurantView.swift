@@ -7,8 +7,6 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import Moya
 import SnapKit
 import Then
@@ -21,7 +19,6 @@ final class HomeRestaurantView: BaseUIView {
     lazy var restaurantTableView = UITableView(frame: .zero, style: .insetGrouped).then {
         $0.separatorStyle = .none
         $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        $0.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
     }
 
     // MARK: - init
@@ -40,7 +37,7 @@ final class HomeRestaurantView: BaseUIView {
 
     override func setLayout() {
         restaurantTableView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(-10)
+            $0.top.equalToSuperview().offset(45)
             $0.leading.bottom.trailing.equalToSuperview()
         }
     }

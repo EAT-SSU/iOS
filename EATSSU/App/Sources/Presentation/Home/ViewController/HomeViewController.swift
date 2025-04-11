@@ -24,7 +24,7 @@ final class HomeViewController: BaseViewController {
         }
     }
 
-    private let tabmanController = CustomTimeTabController()
+    private let tabmanController = HomeTimeTabmanController()
     private let homeCalendarView = HomeCalendarView()
 
     // MARK: - Life Cycle

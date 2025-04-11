@@ -18,56 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // MARK: - UIWindowSceneDelegate Methods
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        var isFromWidget = false
-        
-        // URL 확인
-        if !connectionOptions.urlContexts.isEmpty,
-           let url = connectionOptions.urlContexts.first?.url,
-           url.absoluteString.contains("from_widget") {
-            isFromWidget = true
-        }
-        
-        // userActivity 확인
-        if !isFromWidget && !connectionOptions.userActivities.isEmpty {
-            isFromWidget = connectionOptions.userActivities.contains { activity in
-                let activityType = activity.activityType
-                return activityType.contains("Intent") ||
-                      activityType.contains("Widget") ||
-                      activityType == "INStartIntent"
-            }
-        }
-        
-        // UserDefaults로 체크
-        if !isFromWidget {
-            let sharedDefaults = UserDefaults(suiteName: "EATSSU_WidgetGroup")
-            let launchedFromWidget = sharedDefaults?.bool(forKey: "launchedFromWidget") ?? false
-            
-            // 최근 5초 이내에 위젯으로 실행 요청이 있었는지 확인
-            if launchedFromWidget {
-                let currentTime = Date().timeIntervalSince1970
-                let widgetLaunchTime = sharedDefaults?.double(forKey: "widgetLaunchTime") ?? 0
-                
-                if currentTime - widgetLaunchTime < 5 {
-                    isFromWidget = true
-                    print("앱 그룹 UserDefaults로 위젯 실행 감지")
-                    
-                    // 사용 후 초기화
-                    sharedDefaults?.set(false, forKey: "launchedFromWidget")
-                    sharedDefaults?.synchronize()
-                }
-            }
-        }
-        
-        // 위젯에서 실행됨을 감지
-        if isFromWidget {
-            print("App launched from Widget (initial connection)")
-            LaunchSourceManager.shared.setSource(.widget)
-        }
-        
-        // 알림으로 실행됨을 감지
-        if let notificationResponse = connectionOptions.notificationResponse {
-            LaunchSourceManager.shared.setSource(.localNotification)
-        }
+        detectLaunchSource(connectionOptions: connectionOptions)
 
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
@@ -189,4 +140,53 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         alert.addAction(updateAction)
         window?.rootViewController?.present(alert, animated: true, completion: nil)
     }
+    
+    private func detectLaunchSource(connectionOptions: UIScene.ConnectionOptions) {
+        var isFromWidget = false
+
+        // URL 확인
+        if !connectionOptions.urlContexts.isEmpty,
+           let url = connectionOptions.urlContexts.first?.url,
+           url.absoluteString.contains("from_widget") {
+            isFromWidget = true
+        }
+
+        // userActivity 확인
+        if !isFromWidget && !connectionOptions.userActivities.isEmpty {
+            isFromWidget = connectionOptions.userActivities.contains { activity in
+                let activityType = activity.activityType
+                return activityType.contains("Intent") ||
+                      activityType.contains("Widget") ||
+                      activityType == "INStartIntent"
+            }
+        }
+
+        // UserDefaults 체크
+        if !isFromWidget {
+            let sharedDefaults = UserDefaults(suiteName: "EATSSU_WidgetGroup")
+            let launchedFromWidget = sharedDefaults?.bool(forKey: "launchedFromWidget") ?? false
+
+            if launchedFromWidget {
+                let currentTime = Date().timeIntervalSince1970
+                let widgetLaunchTime = sharedDefaults?.double(forKey: "widgetLaunchTime") ?? 0
+
+                if currentTime - widgetLaunchTime < 5 {
+                    isFromWidget = true
+                    print("앱 그룹 UserDefaults로 위젯 실행 감지")
+                    sharedDefaults?.set(false, forKey: "launchedFromWidget")
+                    sharedDefaults?.synchronize()
+                }
+            }
+        }
+
+        if isFromWidget {
+            print("App launched from Widget (initial connection)")
+            LaunchSourceManager.shared.setSource(.widget)
+        }
+
+        if let _ = connectionOptions.notificationResponse {
+            LaunchSourceManager.shared.setSource(.localNotification)
+        }
+    }
+
 }
