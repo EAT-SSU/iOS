@@ -18,11 +18,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // MARK: - UIWindowSceneDelegate Methods
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+
         detectLaunchSource(connectionOptions: connectionOptions)
-
+        
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        window = UIWindow(windowScene: windowScene)
+        // 스플래시
+        let splashVC = SplashViewController()
+        window?.rootViewController = splashVC
+        window?.makeKeyAndVisible()
 
-        configureWindow(with: windowScene)
         fetchNoticeAndConfigureRootViewController()
         checkForAppUpdate()
     }
@@ -117,12 +122,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print("앱스토어 버전을 찾지 못했습니다.")
             return
         }
-
         let currentVersion = AppStoreCheck.appVersion ?? ""
-        if latestVersion != currentVersion {
+        
+        let compareResult = latestVersion.compare(currentVersion, options: .numeric)
+        switch compareResult {
+        case .orderedAscending, .orderedSame:
+            debugPrint("현재 최신 버전입니다.")
+        case .orderedDescending:
             showUpdateAlert()
-        } else {
-            print("현재 최신 버전입니다.")
         }
     }
 

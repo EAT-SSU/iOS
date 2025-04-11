@@ -166,7 +166,8 @@ final class ReviewViewController: BaseViewController {
     private func showReportAlert(reviewID: Int) {
         let alert = UIAlertController(title: "리뷰 신고하기",
                                       message: "해당 리뷰를 신고하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.alert)
+                                      preferredStyle: UIAlertController.Style.actionSheet)
+//                                      preferredStyle: UIAlertController.Style.alert)
 
         let cancelAction = UIAlertAction(title: "취소",
                                          style: .cancel,
@@ -179,9 +180,8 @@ final class ReviewViewController: BaseViewController {
                                              reportViewController.bindData(reviewID: reviewID)
                                              self.navigationController?.pushViewController(reportViewController, animated: true)
                                          })
-
-        alert.addAction(cancelAction)
         alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
     }
 
