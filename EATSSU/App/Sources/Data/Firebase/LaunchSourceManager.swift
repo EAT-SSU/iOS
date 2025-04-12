@@ -13,6 +13,8 @@ enum LaunchSource: String {
     case icon = "icon"
     case localNotification = "local_notification"
     case widget = "widget"
+    case background = "background"
+    
 }
 
 class LaunchSourceManager {
@@ -88,12 +90,22 @@ class LaunchSourceManager {
         
         // 아직 로깅하지 않았으면 로깅 수행
         if !hasLogged {
-            Analytics.logEvent("app_launch", parameters: ["source": source.rawValue])
+            Analytics.logEvent("app_launch", parameters: ["launch_path": source.rawValue])
             hasLogged = true
             
             print("App launch logged: \(source.rawValue) (New session: \(isNewSession))")
         }
         
         backgroundEntryTime = nil
+    }
+    
+    /// 백그라운드 복귀 시, 새로운 세션이 아니라면 launch_source를 background로 설정
+    func forceBackgroundIfNeeded() {
+        let isNewSession = checkNewSession()        
+        // background 진입 감지
+        if !isNewSession {
+            self.source = .background
+            hasLogged = false
+        }
     }
 }

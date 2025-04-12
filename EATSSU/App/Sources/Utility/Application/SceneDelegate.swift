@@ -55,6 +55,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     // 앱이 완전히 포그라운드에 들어올 때
     func sceneDidBecomeActive(_ scene: UIScene) {
+        LaunchSourceManager.shared.forceBackgroundIfNeeded()
         LaunchSourceManager.shared.logIfNeeded()
     }
     
