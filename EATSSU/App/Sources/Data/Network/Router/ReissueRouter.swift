@@ -50,8 +50,8 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
 
     var authorizationType: Moya.AuthorizationType? {
         switch self {
-        default:
-            .bearer
+        case .reissuance:
+            return nil
         }
     }
 }
