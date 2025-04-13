@@ -94,9 +94,11 @@ final class ESMoyaLoggingPlugin: PluginType {
         logger.logResponse(response, target: target)
 
         switch response.statusCode {
-        case 401, 403:
-            logger.log("인증이 만료되었습니다. 토큰을 재발급합니다.")
+        case 401:
+            logger.log("[401] 인증이 만료되었습니다. 토큰을 재발급합니다.")
             reissueToken()
+        case 403:
+            logger.log("[403] 해당 리소스 권한 없음")
         default:
             logger.log("응답 상태 코드: \(response.statusCode) - 정상 처리되었습니다.")
         }
@@ -148,8 +150,11 @@ final class ESMoyaLoggingPlugin: PluginType {
     /// - Parameter error: 토큰 재발급 실패 오류
     private func handleReissueFailure(_ error: MoyaError) {
         switch error {
+        case let .statusCode(response) where response.statusCode == 401:
+            logger.log("[401] 토큰 재발급 실패: 토큰이 만료되었습니다. 로그인 화면으로 이동합니다.")
+            handleTokenExpiry()
         case let .statusCode(response) where response.statusCode == 403:
-            logger.log("토큰 재발급 실패: 접근이 거부되었습니다. 로그인 화면으로 이동합니다.")
+            logger.log("[403] 토큰 재발급 실패: 접근이 거부되었습니다. 로그인 화면으로 이동합니다.")
             handleTokenExpiry()
         case let .underlying(_, response):
             logger.log("서버 연결 오류가 발생했습니다. 로그인 화면으로 이동합니다.")
