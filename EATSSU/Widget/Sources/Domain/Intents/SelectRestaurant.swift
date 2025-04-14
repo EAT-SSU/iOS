@@ -89,28 +89,24 @@ struct SelectRestaurant: WidgetConfigurationIntent, AppIntent {
         default: RestaurantOptions.haksik
     )
     var selectedRestaurant: RestaurantOptions
-    
+
     // 앱을 실행하도록 설정
     static var openAppWhenRun: Bool { true }
 
     /// 사용자가 식당을 선택했을 때 수행되는 함수
     ///
-    /// 선택된 식당의 값을 출력하고, 결과를 반환합니다.
-    ///
-    /// - Returns: 성공적인 수행 결과
+    /// 선택된 식당 정보를 앱 그룹에 저장하고 앱 실행을 트리거합니다.
     @MainActor
     func perform() async throws -> some IntentResult {
-        print("Selected restaurant: \(selectedRestaurant.rawValue)")
-        
-        // 앱 그룹을 통해 위젯 실행 정보 저장
         let sharedDefaults = UserDefaults(suiteName: "EATSSU_WidgetGroup")
         sharedDefaults?.set(true, forKey: "launchedFromWidget")
         sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "widgetLaunchTime")
         sharedDefaults?.synchronize()
-        
-        return .result()
+
+        return .result(dialog: "앱이 실행됩니다.")
     }
-    
+
+    /// 앱 전환 시 사용할 userActivity 객체 설정
     var userActivity: NSUserActivity {
         let activity = NSUserActivity(activityType: "com.eatssu.widgetIntent")
         activity.title = "Widget launched"

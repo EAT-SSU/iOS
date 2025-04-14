@@ -5,19 +5,18 @@
 //  Created by 황상환 on 3/23/25.
 //
 
-import Foundation
 import UIKit
+
 import FirebaseAnalytics
 
 enum LaunchSource: String {
-    case icon = "icon"
+    case icon
     case localNotification = "local_notification"
-    case widget = "widget"
-    case background = "background"
-    
+    case widget
+    case background
 }
 
-class LaunchSourceManager {
+final class LaunchSourceManager {
     static let shared = LaunchSourceManager()
     
     private(set) var source: LaunchSource = .icon
@@ -32,33 +31,23 @@ class LaunchSourceManager {
     func setSource(_ source: LaunchSource) {
         print("소스 설정 시도: \(source.rawValue) (현재 소스: \(self.source.rawValue), 로깅 상태: \(hasLogged))")
         
-        // 로컬 알림 소스 설정은 항상 우선시
-        if source == .localNotification {
+        // 알림 또는 위젯을 통해 실행된 경우, 항상 우선적으로 해당 소스로 설정
+        // 명시적으로 설정된 실행 경로가 없을 경우 기본값은 .icon
+        switch source {
+        case .localNotification, .widget:
             let changed = self.source != source
             self.source = source
-            
-            // 소스가 변경되었으면 로깅 상태 초기화
             if changed {
                 hasLogged = false
             }
             return
-        }
-        
-        // 위젯 소스 설정도 항상 우선시
-        if source == .widget {
-            let changed = self.source != source
-            self.source = source
-            
-            if changed {
-                hasLogged = false
+        case .icon:
+            if self.source == .icon {
+                return
             }
-            return
-        }
-        
-        // 아이콘 소스는 기존 소스가 없을 때만 설정
-        if source == .icon && self.source == .icon {
-            // 이미 아이콘으로 설정되어 있으면 변경 없음
-            return
+            fallthrough
+        default:
+            break
         }
     }
     
