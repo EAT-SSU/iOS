@@ -19,7 +19,10 @@ class RealmService {
 
     func addToken(accessToken: String, refreshToken: String) {
         let token = Token(accessToken: accessToken, refreshToken: refreshToken)
+        let existingToken = realm.objects(Token.self)
+        
         try! realm.write {
+            realm.delete(existingToken)
             realm.add(token)
         }
     }
