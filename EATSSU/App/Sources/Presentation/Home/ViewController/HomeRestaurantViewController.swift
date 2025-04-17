@@ -308,10 +308,10 @@ extension HomeRestaurantViewController {
                 do {
                     self.currentRestaurant = restaurant
                     let responseDetailDto = try responseData.map(BaseResponse<FixedMenuTableResponse>.self)
-                    let responseResult = responseDetailDto.result
-
+                    guard let data = responseDetailDto.result else { return }
+                    
                     var allMenuInformations = [Menus]()
-                    for categoryMenu in responseResult.categoryMenuListCollection {
+                    for categoryMenu in data.categoryMenuListCollection {
                         allMenuInformations += categoryMenu.menus
                     }
                     self.fixMenuTableViewData[restaurant] = allMenuInformations

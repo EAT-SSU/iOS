@@ -153,7 +153,8 @@ extension MyReviewViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<MyReviewResponse>.self)
-                    self.reviewList = responseData.result.dataList
+                    guard let data = responseData.result else { return }
+                    self.reviewList = data.dataList
                     self.checkReviewCount()
                     self.myReviewView.myReviewTableView.reloadData()
                 } catch let err {

@@ -463,7 +463,8 @@ extension SetRateViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<UploadImageResponse>.self)
-                    let reviewDTO = WriteReviewRequest(content: param, imageURL: responseData.result.url)
+                    guard let data = responseData.result else { return }
+                    let reviewDTO = WriteReviewRequest(content: param, imageURL: data.url)
                     self.postNewWriteReview(param: reviewDTO, menuID: menuId)
                 } catch let err {
                     print(err.localizedDescription)
@@ -492,14 +493,14 @@ extension SetRateViewController {
                         self.moveToReviewVC()
                     }
                 }
-
+                
             case let .failure(err):
                 print(err.localizedDescription)
                 self.view.showToast(message: "리뷰 작성에 실패했어요. 다시 시도해주세요!")
             }
         }
     }
-
+    
     private func postWriteReview(param: WriteReviewRequest,
                                  image: [UIImage?],
                                  menuId: Int)

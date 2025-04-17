@@ -144,18 +144,20 @@ extension SetNickNameViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    let isSuccess = responseData.result
-                    if isSuccess {
+                    guard let data = responseData.result else { return }
+                    
+                    if data {
                         self.view.showToast(message: "사용 가능한 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = isSuccess
+                        self.setNickNameView.completeSettingNickNameButton.isEnabled = data
                         self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
                         self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
                     } else {
                         self.view.showToast(message: "이미 사용 중인 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = isSuccess
+                        self.setNickNameView.completeSettingNickNameButton.isEnabled = data
                         self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage
                         self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
                     }
+                    
                 } catch let err {
                     print(err.localizedDescription)
                 }
