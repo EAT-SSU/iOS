@@ -50,8 +50,7 @@ extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
     var headers: [String: String]? {
         switch self {
         default:
-            let realm = RealmService()
-            let token = realm.getToken()
+            let token = RealmService.shared.getToken()
             return ["Content-Type": "application/json",
                     "Authorization": "Bearer \(token)"]
         }
