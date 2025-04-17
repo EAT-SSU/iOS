@@ -100,7 +100,7 @@ final class ESMoyaLoggingPlugin: PluginType {
         case 403:
             logger.log("[403] 해당 리소스 권한 없음")
         default:
-            logger.log("응답 상태 코드: \(response.statusCode) - 정상 처리되었습니다.")
+            logger.log("응답 상태 코드: \(response.statusCode)")
         }
     }
 
@@ -137,8 +137,9 @@ final class ESMoyaLoggingPlugin: PluginType {
     private func handleReissueSuccess(_ response: Response) {
         do {
             let baseResponse = try response.map(BaseResponse<SignResponse>.self)
-            addTokenToRealm(accessToken: baseResponse.result.accessToken,
-                            refreshToken: baseResponse.result.refreshToken)
+            guard let data = baseResponse.result else { return }
+            addTokenToRealm(accessToken: data.accessToken,
+                            refreshToken: data.refreshToken)
             logger.log("토큰이 성공적으로 재발급되었습니다.")
         } catch {
             logger.log("토큰 재발급 응답 처리 중 오류 발생: \(error.localizedDescription)")
@@ -150,47 +151,55 @@ final class ESMoyaLoggingPlugin: PluginType {
     /// - Parameter error: 토큰 재발급 실패 오류
     private func handleReissueFailure(_ error: MoyaError) {
         switch error {
-        case let .statusCode(response) where response.statusCode == 401:
-            logger.log("[401] 토큰 재발급 실패: 토큰이 만료되었습니다. 로그인 화면으로 이동합니다.")
-            handleTokenExpiry()
-        case let .statusCode(response) where response.statusCode == 403:
-            logger.log("[403] 토큰 재발급 실패: 접근이 거부되었습니다. 로그인 화면으로 이동합니다.")
-            handleTokenExpiry()
+        case let .statusCode(response):
+            logger.log("[handleReissueFailure]: \(response.statusCode)")
+            handleStatusCode(response)
         case let .underlying(_, response):
-            logger.log("서버 연결 오류가 발생했습니다. 로그인 화면으로 이동합니다.")
-            handleUnderlyingError(response: response)
+            if let response = response {
+                logger.log("[underlying]: \(response.statusCode)")
+                handleStatusCode(response)
+            } else {
+                logger.log("[Underlying] 응답 없음")
+                handleTokenExpiry()
+            }
         default:
             logger.log("토큰 재발급 중 알 수 없는 오류 발생: \(error.localizedDescription)")
+            handleTokenExpiry()
         }
     }
+    
+    private func handleStatusCode(_ response: Response) {
+        switch response.statusCode {
+        case 401:
+            logger.log("[401] 토큰 재발급 실패")
+        case 403:
+            logger.log("[403] 토큰 재발급 실패")
+        default:
+            logger.log("[\(response.statusCode)] 알 수 없는 응답")
+        }
 
-    /// 토큰 만료 시 로그인 화면으로 이동하는 메서드입니다.
+        logger.log("응답 바디: \(String(data: response.data, encoding: .utf8) ?? "없음")")
+        handleTokenExpiry()
+    }
+
     private func handleTokenExpiry() {
-        logger.log("토큰 만료로 인해 데이터를 초기화하고 로그인 화면으로 이동합니다.")
+        logger.log("handleTokenExpiry: 토큰 만료로 인해 데이터를 초기화하고 로그인 화면으로 이동합니다.")
         RealmService.shared.resetDB()
         navigateToLogin()
     }
 
-    /// 네트워크 문제가 발생했을 때 로그인 화면으로 이동하는 메서드입니다.
     private func handleUnderlyingError(response _: Response?) {
-        logger.log("네트워크 문제가 발생했습니다. 데이터를 초기화하고 로그인 화면으로 이동합니다.")
+        logger.log("handleUnderlyingError")
         RealmService.shared.resetDB()
         navigateToLogin()
     }
 
-    /// 새 토큰을 로컬 데이터베이스에 저장하는 메서드입니다.
-    ///
-    /// - Parameters:
-    ///   - accessToken: 액세스 토큰
-    ///   - refreshToken: 리프레시 토큰
     private func addTokenToRealm(accessToken: String, refreshToken: String) {
         RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
         logger.log("새로운 토큰이 성공적으로 저장되었습니다.")
     }
 
-    /// 로그인 화면으로 이동하는 메서드입니다.
     private func navigateToLogin() {
-        logger.log("로그인 화면으로 이동합니다.")
         let loginVC = LoginViewController()
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
