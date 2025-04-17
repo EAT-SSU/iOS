@@ -13,7 +13,7 @@ class RealmService {
 
     let realm = try! Realm()
 
-    init() {
+    private init() {
         print("Realm Location: ", realm.configuration.fileURL ?? "cannot find location.")
     }
 

@@ -81,8 +81,7 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        let realm = RealmService()
-        let token = realm.getToken()
+        let token = RealmService.shared.getToken()
 
         switch self {
         case .writeNewReview:
