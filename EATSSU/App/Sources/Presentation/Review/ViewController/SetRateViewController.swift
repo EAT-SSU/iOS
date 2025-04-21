@@ -500,26 +500,6 @@ extension SetRateViewController {
             }
         }
     }
-    
-    private func postWriteReview(param: WriteReviewRequest,
-                                 image: [UIImage?],
-                                 menuId: Int)
-    {
-        writeReviewProvider.request(.writeReview(param: param, image: image, menuId: menuId)) { response in
-            switch response {
-            case .success:
-                do {
-                    if self.selectedList.count == 1 {
-                        self.moveToReviewVC()
-                    } else {
-                        self.prepareForNextReview()
-                    }
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
-            }
-        }
-    }
 
     // 이거 제대로 작동 되는지 확인하기
     private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
