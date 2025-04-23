@@ -13,10 +13,13 @@ enum NoAuthRequiredPath: String, CaseIterable {
     case reissuance = "/oauths/reissue/token"
     case getChangeMenuTableResponse = "/meals"
     case getFixedMenuTableResponse = "/menus"
+    case variableMenuReviewRate = "/reviews/meals"
+    case fixedMenuReviewRate = "/reviews/menus"
+    case reviewList = "/reviews"
     
     static func contains(_ path: String) -> Bool {
         return Self.allCases.contains {
-            path.hasPrefix($0.rawValue)
+            path == $0.rawValue
         }
     }
 }
