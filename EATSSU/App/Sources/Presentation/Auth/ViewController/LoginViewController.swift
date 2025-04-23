@@ -19,8 +19,9 @@ final class LoginViewController: BaseViewController {
     // MARK: - Properties
 
     public static let isVacationPeriod = false
-    private let authProvider = MoyaProvider<AuthRouter>(plugins: [ESMoyaLoggingPlugin()])
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
+    public var toastMessage: String?
+    private let authProvider = MoyaProvider<AuthRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     // MARK: - UI Components
 
@@ -36,6 +37,11 @@ final class LoginViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureFirebaseRemoteConfig()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showToastMessageIfNeeded()
     }
 
     // MARK: - Functions
@@ -121,6 +127,11 @@ final class LoginViewController: BaseViewController {
         #if DEBUG
             print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️")
         #endif
+    }
+    
+    private func showToastMessageIfNeeded() {
+        guard let toastMessage = self.toastMessage else { return }
+        view.showToast(message: toastMessage)
     }
 
     // MARK: - 액션 메서드
