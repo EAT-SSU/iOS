@@ -19,7 +19,7 @@ enum ReviewRouter {
     case fixReview(_ reviewId: Int, _ param: BeforeSelectedImageDTO)
 }
 
-extension ReviewRouter: TargetType, AccessTokenAuthorizable {
+extension ReviewRouter: TargetType {
     var baseURL: URL {
         URL(string: Config.baseURL)!
     }
@@ -102,26 +102,14 @@ extension ReviewRouter: TargetType, AccessTokenAuthorizable {
             .requestJSONEncodable(param)
         }
     }
-
+    
     var headers: [String: String]? {
-        switch self {
-        case .reviewRate:
-            return ["Content-Type": "application/json"]
-        default:
-            let token = RealmService.shared.getToken()
-            if token == "" {
-                return ["Content-Type": "application/json"]
-            } else {
-                return ["Content-Type": "application/json",
-                        "Authorization": "Bearer \(token)"]
-            }
-        }
+        return ["Content-Type": "application/json"]
     }
+}
 
-    var authorizationType: Moya.AuthorizationType? {
-        switch self {
-        default:
-            .bearer
-        }
+extension ReviewRouter {
+    var validationType: ValidationType {
+        .successCodes
     }
 }
