@@ -81,8 +81,6 @@ extension WriteReviewRouter: TargetType {
     }
 
     var headers: [String: String]? {
-        let token = RealmService.shared.getToken()
-
         switch self {
         case .writeNewReview:
             return ["Content-Type": "application/json"]
