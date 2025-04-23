@@ -8,8 +8,8 @@
 import Foundation
 
 enum NoAuthRequiredPath: String, CaseIterable {
-    case kakaoLogin = "oauths/kakao"
-    case appleLogin = "oauths/apple"
+    case kakaoLogin = "/oauths/kakao"
+    case appleLogin = "/oauths/apple"
     case reissuance = "/oauths/reissue/token"
     case getChangeMenuTableResponse = "/meals"
     case getFixedMenuTableResponse = "/menus"
