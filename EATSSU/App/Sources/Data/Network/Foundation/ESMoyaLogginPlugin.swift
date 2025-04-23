@@ -81,5 +81,7 @@ final class ESMoyaLoggingPlugin: PluginType {
     func process(_ result: Result<Response, MoyaError>, target _: TargetType) -> Result<Response, MoyaError> {
         result
     }
+    
+    // TODO: retry 실패 시, login 이동로직 전역적으로 처리
 
 }
