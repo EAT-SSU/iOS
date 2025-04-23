@@ -64,7 +64,7 @@ final class HomeRestaurantViewController: BaseViewController {
         }
     }
 
-    let menuProvider = MoyaProvider<HomeRouter>(plugins: [ESMoyaLoggingPlugin()])
+    let menuProvider = MoyaProvider<HomeRouter>()
 
     // MARK: - UI Components
 

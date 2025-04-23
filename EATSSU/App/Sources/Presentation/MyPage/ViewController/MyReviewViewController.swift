@@ -14,8 +14,8 @@ import Then
 final class MyReviewViewController: BaseViewController {
     // MARK: - Properties
 
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     private var reviewList = [MyDataList]()
     var nickname: String = .init()
@@ -121,6 +121,17 @@ final class MyReviewViewController: BaseViewController {
             noMyReviewImageView.isHidden = true
         }
     }
+    
+    private func navigateToLogin() {
+        let loginVC = LoginViewController()
+        loginVC.toastMessage = "시스템 오류로 다시 로그인해주세요"
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
+            }
+        }
+    }
 }
 
 extension MyReviewViewController: UITableViewDelegate {}
@@ -159,9 +170,15 @@ extension MyReviewViewController {
                     self.myReviewView.myReviewTableView.reloadData()
                 } catch let err {
                     print(err.localizedDescription)
+                    
+                    RealmService.shared.resetDB()
+                    self.navigateToLogin()
                 }
             case let .failure(err):
                 print(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
             }
         }
     }
@@ -176,6 +193,9 @@ extension MyReviewViewController {
                     self.getMyReview()
                 case let .failure(err):
                     print(err.localizedDescription)
+                    
+                    RealmService.shared.resetDB()
+                    self.navigateToLogin()
                 }
             }
         })
