@@ -9,7 +9,6 @@ import UIKit
 
 import Moya
 import SnapKit
-import Then
 
 final class MyReviewViewController: BaseViewController {
     // MARK: - Properties
