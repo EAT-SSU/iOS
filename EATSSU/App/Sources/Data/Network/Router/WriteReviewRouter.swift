@@ -15,7 +15,7 @@ enum WriteReviewRouter {
     case writeReview(param: WriteReviewRequest, image: [UIImage?], menuId: Int)
 }
 
-extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
+extension WriteReviewRouter: TargetType {
     var baseURL: URL {
         URL(string: Config.baseURL)!
     }
@@ -81,23 +81,17 @@ extension WriteReviewRouter: TargetType, AccessTokenAuthorizable {
     }
 
     var headers: [String: String]? {
-        let realm = RealmService()
-        let token = realm.getToken()
-
         switch self {
         case .writeNewReview:
-            return ["Content-Type": "application/json",
-                    "Authorization": "Bearer \(token)"]
+            return ["Content-Type": "application/json"]
         case .uploadImage, .writeReview:
-            return ["Content-Type": "multipart/form-data",
-                    "Authorization": "Bearer \(token)"]
+            return ["Content-Type": "multipart/form-data"]
         }
     }
+}
 
-    var authorizationType: Moya.AuthorizationType? {
-        switch self {
-        default:
-            .bearer
-        }
+extension WriteReviewRouter {
+    var validationType: ValidationType {
+        .successCodes
     }
 }

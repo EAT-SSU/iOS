@@ -58,13 +58,13 @@ class RestaurantTableViewMenuTitleCell: BaseTableViewCell {
             $0.horizontalEdges.equalToSuperview().inset(12)
         }
         nameLabel.snp.makeConstraints {
-            $0.width.equalTo(210)
+            $0.width.equalTo(210).priority(.high)
         }
         priceLabel.snp.makeConstraints {
-            $0.width.equalTo(47)
+            $0.width.equalTo(47).priority(.high)
         }
         ratingLabel.snp.makeConstraints {
-            $0.width.equalTo(25)
+            $0.width.equalTo(25).priority(.high)
         }
         lineView.snp.makeConstraints {
             $0.top.equalTo(infoTableStackView.snp.bottom).offset(11)

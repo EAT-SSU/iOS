@@ -13,10 +13,10 @@ final class SetNickNameViewController: BaseViewController {
     // MARK: - Properties
 
     var currentKeyboardHeight: CGFloat = 0.0
-    private let nicknameProvider = MoyaProvider<UserNicknameRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let nicknameProvider = MoyaProvider<UserNicknameRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     // MARK: - UI Components
-
+    
     private let setNickNameView = SetNickNameView()
 
     // MARK: - Life Cycles
@@ -105,6 +105,17 @@ final class SetNickNameViewController: BaseViewController {
             currentKeyboardHeight = 0.0
         }
     }
+    
+    private func navigateToLogin() {
+        let loginVC = LoginViewController()
+        loginVC.toastMessage = "시스템 오류로 다시 로그인해주세요"
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
+            }
+        }
+    }
 }
 
 // MARK: - Network
@@ -114,26 +125,27 @@ extension SetNickNameViewController {
         nicknameProvider.request(.setNickname(nickname: nickname)) { response in
             switch response {
             case let .success(moyaResponse):
-                do {
-                    if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                        UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
-                    }
-                    self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
-                        if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
-                            self.navigationController?.popToViewController(myPageViewController, animated: true)
-                        } else {
-                            let homeViewController = HomeViewController()
-                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                            {
-                                keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
-                            }
+                if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
+                    UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
+                }
+                self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
+                    if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
+                        self.navigationController?.popToViewController(myPageViewController, animated: true)
+                    } else {
+                        let homeViewController = HomeViewController()
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                        {
+                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
                         }
                     }
-                    print(moyaResponse.statusCode)
                 }
+            
             case let .failure(err):
                 print(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
             }
         }
     }
@@ -144,23 +156,31 @@ extension SetNickNameViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    let isSuccess = responseData.result
-                    if isSuccess {
+                    guard let data = responseData.result else { return }
+                    
+                    if data {
                         self.view.showToast(message: "사용 가능한 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = isSuccess
+                        self.setNickNameView.completeSettingNickNameButton.isEnabled = data
                         self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
                         self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
                     } else {
                         self.view.showToast(message: "이미 사용 중인 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = isSuccess
+                        self.setNickNameView.completeSettingNickNameButton.isEnabled = data
                         self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage
                         self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
                     }
+                    
                 } catch let err {
                     print(err.localizedDescription)
+                    
+                    RealmService.shared.resetDB()
+                    self.navigateToLogin()
                 }
             case let .failure(err):
                 print(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
             }
         }
     }

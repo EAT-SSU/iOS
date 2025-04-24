@@ -6,11 +6,10 @@
 //
 
 import Foundation
+
 import Moya
 
 enum AuthRouter {
-    case signUp(param: SignUpRequest)
-    case signIn(param: SignInRequest)
     case kakaoLogin(param: KakaoLoginRequest)
     case appleLogin(param: AppleLoginRequest)
 }
@@ -22,10 +21,6 @@ extension AuthRouter: TargetType {
 
     var path: String {
         switch self {
-        case .signUp:
-            "/user/join"
-        case .signIn:
-            "/user/login"
         case .kakaoLogin:
             "/oauths/kakao"
         case .appleLogin:
@@ -35,10 +30,6 @@ extension AuthRouter: TargetType {
 
     var method: Moya.Method {
         switch self {
-        case .signUp:
-            .post
-        case .signIn:
-            .post
         case .kakaoLogin:
             .post
         case .appleLogin:
@@ -48,10 +39,6 @@ extension AuthRouter: TargetType {
 
     var task: Task {
         switch self {
-        case let .signUp(param):
-            .requestJSONEncodable(param)
-        case let .signIn(param):
-            .requestJSONEncodable(param)
         case let .kakaoLogin(param: param):
             .requestJSONEncodable(param)
         case let .appleLogin(param: param):
