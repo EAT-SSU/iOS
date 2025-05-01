@@ -19,7 +19,6 @@ import UIKit
 final class MyPageViewController: BaseViewController {
     // MARK: - Properties
 
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
     private var nickName = ""
     private var switchState = false
     private let myPageTableLabelList = MyPageLocalData.myPageTableLabelList

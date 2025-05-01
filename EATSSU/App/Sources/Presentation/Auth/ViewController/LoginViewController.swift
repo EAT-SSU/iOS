@@ -16,21 +16,18 @@ import SnapKit
 import Then
 
 final class LoginViewController: BaseViewController {
-    // MARK: - 상수
+    // MARK: - Properties
 
-    // (필요할 때를 대비해, 현재는 사용되지 않음)
     public static let isVacationPeriod = false
+    public var toastMessage: String?
+    private let authProvider = MoyaProvider<AuthRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
-    // MARK: - 프로퍼티
-
-    private let authProvider = MoyaProvider<AuthRouter>(plugins: [ESMoyaLoggingPlugin()])
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
-
-    // MARK: - UI 컴포넌트
+    // MARK: - UI Components
 
     private let loginView = LoginView()
 
-    // MARK: - 라이프 사이클
+    // MARK: - Life Cycle
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -41,8 +38,13 @@ final class LoginViewController: BaseViewController {
         super.viewDidLoad()
         configureFirebaseRemoteConfig()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showToastMessageIfNeeded()
+    }
 
-    // MARK: - 초기 설정 메서드
+    // MARK: - Functions
 
     override func configureUI() {
         view.addSubview(loginView)
@@ -72,9 +74,6 @@ final class LoginViewController: BaseViewController {
         )
     }
 
-    // MARK: - Private 메서드
-
-    /// Remote Config를 가져오고, DEBUG 모드가 아니면 Firebase Analytics 이벤트를 로깅한다.
     private func configureFirebaseRemoteConfig() {
         FirebaseRemoteConfig.shared.fetchIsVacationPeriod()
 
@@ -92,12 +91,10 @@ final class LoginViewController: BaseViewController {
         changeIntoHomeViewController()
     }
 
-    /// Realm에 저장된 액세스 토큰이 있는지 여부를 반환한다.
     private func hasStoredToken() -> Bool {
         !RealmService.shared.getToken().isEmpty
     }
 
-    /// 홈 화면으로 이동하면서, 루트 뷰 컨트롤러를 교체한다.
     private func changeIntoHomeViewController() {
         let homeVC = HomeViewController()
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -129,9 +126,12 @@ final class LoginViewController: BaseViewController {
         RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
         #if DEBUG
             print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️")
-            print("Access Token: \(RealmService.shared.getToken())")
-            print("Refresh Token: \(RealmService.shared.getRefreshToken())")
         #endif
+    }
+    
+    private func showToastMessageIfNeeded() {
+        guard let toastMessage = self.toastMessage else { return }
+        view.showToast(message: toastMessage)
     }
 
     // MARK: - 액션 메서드
@@ -188,9 +188,11 @@ extension LoginViewController {
         do {
             // 응답을 디코딩 시도
             let responseData = try JSONDecoder().decode(BaseResponse<SignResponse>.self, from: moyaResponse.data)
-            let accessToken = responseData.result.accessToken
-            let refreshToken = responseData.result.refreshToken
-
+            guard let data = responseData.result else { return }
+            
+            let accessToken = data.accessToken
+            let refreshToken = data.refreshToken
+                
             // 토큰을 로컬에 저장
             storeTokensAndPrintDebugLogs(accessToken: accessToken, refreshToken: refreshToken)
 
@@ -217,8 +219,7 @@ extension LoginViewController {
     /// 카카오 로그인을 위해 서버에 이메일/아이디를 보내는 요청
     private func postKakaoLoginRequest(email: String, id: String) {
         authProvider.request(.kakaoLogin(param: KakaoLoginRequest(email: email,
-                                                                  providerId: id)))
-        { [weak self] result in
+                                                                  providerId: id))) { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(moyaResponse):
@@ -264,7 +265,10 @@ extension LoginViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
-                    handleNicknameCheck(info: responseData.result)
+                    guard let responseData = responseData.result else {
+                        return
+                    }
+                    handleNicknameCheck(info: responseData)
                 } catch {
                     print(error.localizedDescription)
                 }

@@ -109,7 +109,7 @@ struct DefaultLogger: Logger {
     ///   - error: 발생한 `MoyaError` 객체
     ///   - target: 해당 요청의 `TargetType`
     func logNetworkError(_ error: MoyaError, target: TargetType) {
-        var log = """
+        let log = """
         🚨 네트워크 오류 발생 🚨
         오류 코드: \(error.errorCode)
         API 타겟: \(target)

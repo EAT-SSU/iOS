@@ -16,7 +16,7 @@ enum MyRouter {
     case inquiry(param: InquiryRequest)
 }
 
-extension MyRouter: TargetType, AccessTokenAuthorizable {
+extension MyRouter: TargetType {
     var baseURL: URL {
         URL(string: Config.baseURL)!
     }
@@ -66,16 +66,13 @@ extension MyRouter: TargetType, AccessTokenAuthorizable {
     var headers: [String: String]? {
         switch self {
         default:
-            let token = RealmService.shared.getToken()
-            return ["Content-Type": "application/json",
-                    "Authorization": "Bearer \(token)"]
+            return ["Content-Type": "application/json"]
         }
     }
+}
 
-    var authorizationType: Moya.AuthorizationType? {
-        switch self {
-        default:
-            .bearer
-        }
+extension MyRouter {
+    var validationType: ValidationType {
+        return .successCodes
     }
 }

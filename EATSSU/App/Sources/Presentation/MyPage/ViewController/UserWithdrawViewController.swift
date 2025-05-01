@@ -129,14 +129,14 @@ extension UserWithdrawViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    if responseData.result {
-                        RealmService.shared.resetDB()
-                        let loginViewController = LoginViewController()
-                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                        {
-                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
-                        }
+                    guard let data = responseData.result, data else { return }
+                    
+                    RealmService.shared.resetDB()
+                    let loginViewController = LoginViewController()
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                    {
+                        keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
                     }
                 } catch let err {
                     print(err.localizedDescription)

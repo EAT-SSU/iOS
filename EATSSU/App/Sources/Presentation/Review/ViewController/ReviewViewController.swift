@@ -366,14 +366,16 @@ extension ReviewViewController {
                 do {
                     if self.type == "FIXED" {
                         let responseData = try moyaResponse.map(BaseResponse<FixedReviewRateResponse>.self)
-                        self.fixedResponseData = responseData.result
+                        guard let data = responseData.result else { return }
+                        self.fixedResponseData = data
                         self.reviewTableView.reloadData()
-                        self.menuNameList = [responseData.result.menuName]
+                        self.menuNameList = [data.menuName]
                     } else {
                         let responseData = try moyaResponse.map(BaseResponse<ReviewRateResponse>.self)
-                        self.responseData = responseData.result
+                        guard let data = responseData.result else { return }
+                        self.responseData = data
                         self.reviewTableView.reloadData()
-                        self.menuNameList = responseData.result.menuNames
+                        self.menuNameList = data.menuNames
                     }
                     self.makeDictionary()
                 } catch let err {
@@ -392,8 +394,10 @@ extension ReviewViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<ReviewListResponse>.self)
-                    self.reviewList = responseData.result.dataList
+                    guard let data = responseData.result else { return }
+                    self.reviewList = data.dataList
                     self.reviewTableView.reloadData()
+                    
                 } catch let err {
                     print(err.localizedDescription)
                 }

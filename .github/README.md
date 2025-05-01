@@ -5,7 +5,7 @@
 - `학생식당`, `도담식당`, `푸드코트`, `스낵코너`, `기숙사 식당`의 모든 메뉴를 비교할 수 있어요.
 - 학식에 대한 리뷰를 통해 숭실대 학우들과 정보를 공유할 수 있어요.
 - 식당의 운영시간과 위치를 확인할 수 있어요!
-- [More & Contact](https://hi-jin-1514.notion.site/EAT-SSU-b04aaec9b7814a628c6ef6b3e08c74a3)
+- [More & Contact](https://eat-ssu.notion.site/EAT-SSU-1d2eeef75a1681198583e5282eaae6ba)
 
 ## 다운로드 
 2023.11.27~ 서비스 중

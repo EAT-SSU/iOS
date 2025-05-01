@@ -13,6 +13,7 @@ import PackageDescription
             "RxMoya": .framework,
             "SnapKit": .framework,
             "Tabman": .framework,
+            "Pageboy": .framework,
             "Then": .framework,
             "FSCalendar": .framework,
             "Kingfisher": .framework,
@@ -42,6 +43,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/SnapKit/SnapKit", from: "5.7.1"),
         .package(url: "https://github.com/uias/Tabman", from: "3.2.0"),
+        .package(url: "https://github.com/uias/Pageboy", from: "4.2.0"),
         .package(url: "https://github.com/Moya/Moya", from: "15.0.0"),
         .package(url: "https://github.com/devxoul/Then", from: "3.0.0"),
         .package(url: "https://github.com/WenchaoD/FSCalendar", from: "2.8.3"),

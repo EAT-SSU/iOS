@@ -16,8 +16,8 @@ import Then
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
 
-    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var currentPage: Int = 0 {
         didSet {
             menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
@@ -463,7 +463,8 @@ extension SetRateViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<UploadImageResponse>.self)
-                    let reviewDTO = WriteReviewRequest(content: param, imageURL: responseData.result.url)
+                    guard let data = responseData.result else { return }
+                    let reviewDTO = WriteReviewRequest(content: param, imageURL: data.url)
                     self.postNewWriteReview(param: reviewDTO, menuID: menuId)
                 } catch let err {
                     print(err.localizedDescription)
@@ -478,59 +479,48 @@ extension SetRateViewController {
             }
         }
     }
-
+    
     private func postNewWriteReview(param: WriteReviewRequest,
-                                    menuID: Int)
-    {
+                                    menuID: Int) {
         writeReviewProvider.request(.writeNewReview(param: param,
-                                                    menuID: menuID))
-        { response in
-            switch response {
-            case .success:
-                do {
-                    if self.currentPage == self.reviewList.count - 1 {
-                        self.moveToReviewVC()
-                    }
+                                                    menuID: menuID)) { result in
+            switch result {
+            case let .success(response):
+                if self.currentPage == self.reviewList.count - 1 {
+                    self.moveToReviewVC()
                 }
-
             case let .failure(err):
-                print(err.localizedDescription)
-                self.view.showToast(message: "리뷰 작성에 실패했어요. 다시 시도해주세요!")
+                debugPrint(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
             }
         }
     }
-
-    private func postWriteReview(param: WriteReviewRequest,
-                                 image: [UIImage?],
-                                 menuId: Int)
-    {
-        writeReviewProvider.request(.writeReview(param: param, image: image, menuId: menuId)) { response in
-            switch response {
-            case .success:
-                do {
-                    if self.selectedList.count == 1 {
-                        self.moveToReviewVC()
-                    } else {
-                        self.prepareForNextReview()
-                    }
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
-            }
-        }
-    }
-
+    
     // 이거 제대로 작동 되는지 확인하기
     private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
         reviewProvider.request(.fixReview(reviewId, param)) { response in
             switch response {
             case let .success(moyaResponse):
-                do {
-                    print(moyaResponse)
                     self.navigationController?.popViewController(animated: true)
-                }
+                
             case let .failure(err):
                 print(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
+            }
+        }
+    }
+    
+    private func navigateToLogin() {
+        let loginVC = LoginViewController()
+        loginVC.toastMessage = "시스템 오류로 다시 로그인해주세요"
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
             }
         }
     }
