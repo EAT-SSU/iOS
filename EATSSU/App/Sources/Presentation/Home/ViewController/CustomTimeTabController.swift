@@ -94,7 +94,7 @@ final class CustomTimeTabController: BaseViewController {
 
         tabContainerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(45)
+            $0.height.equalTo(52)
         }
 
         tabStackView.snp.makeConstraints {

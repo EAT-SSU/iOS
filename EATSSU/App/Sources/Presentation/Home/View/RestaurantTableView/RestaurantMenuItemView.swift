@@ -44,19 +44,13 @@ final class RestaurantMenuItemView: BaseUIView {
         backgroundWrapper.clipsToBounds = true
         
         contentStackView.addArrangedSubviews([nameLabel, priceLabel, ratingLabel])
-
-        let tapGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        tapGesture.minimumPressDuration = 0
-        self.addGestureRecognizer(tapGesture)
     }
 
     override func setLayout() {
         backgroundWrapper.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         contentStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(5)
-            $0.horizontalEdges.equalToSuperview().inset(8)
-            $0.bottom.equalToSuperview().inset(5)
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12))
         }
 
         nameLabel.snp.makeConstraints { $0.width.equalTo(210) }
@@ -77,18 +71,26 @@ final class RestaurantMenuItemView: BaseUIView {
         }
     }
 
-    @objc private func handleTap(_ gesture: UILongPressGestureRecognizer) {
-        switch gesture.state {
-        case .began:
-            backgroundWrapper.backgroundColor = UIColor.gray300
-        case .ended:
-            backgroundWrapper.backgroundColor = .clear
-            guard let indexPath else { return }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        backgroundWrapper.backgroundColor = UIColor.gray300
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        backgroundWrapper.backgroundColor = .clear
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        backgroundWrapper.backgroundColor = .clear
+
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+
+        if bounds.contains(location), let indexPath = indexPath {
             onTap?(indexPath)
-        case .cancelled, .failed:
-            backgroundWrapper.backgroundColor = .clear
-        default:
-            break
         }
     }
+
 }

@@ -55,7 +55,7 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
 
         menuStackView.snp.makeConstraints {
             $0.top.equalTo(titleView.snp.bottom)
-            $0.horizontalEdges.bottom.equalToSuperview().inset(6)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
 
