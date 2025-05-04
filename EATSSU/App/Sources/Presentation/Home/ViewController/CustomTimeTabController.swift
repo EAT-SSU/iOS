@@ -21,6 +21,8 @@ final class CustomTimeTabController: BaseViewController {
             setPage(index: selectedIndex, direction: selectedIndex > oldValue ? .forward : .reverse)
         }
     }
+    var todayDate: Date = .init()
+    var shouldScrollToTop = true
 
     private var isProgrammaticScroll = false
 
@@ -45,6 +47,12 @@ final class CustomTimeTabController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        dateFetchData(for: todayDate)
     }
 
     override func configureUI() {
@@ -109,6 +117,26 @@ final class CustomTimeTabController: BaseViewController {
         }
 
         setupPageViewController()
+    }
+    
+    func dateFetchData(for date: Date) {
+        morningVC.fetchData(date: date, time: "MORNING")
+        lunchVC.fetchData(date: date, time: "LUNCH")
+        dinnerVC.fetchData(date: date, time: "DINNER")
+
+        /// 스크롤 최상단 이동
+        if shouldScrollToTop {
+            for item in [morningVC, lunchVC, dinnerVC] {
+                item.view.layoutIfNeeded()
+            }
+            UIView.animate(withDuration: 0.2) {
+                for item in [self.morningVC, self.lunchVC, self.dinnerVC] {
+                    item.restaurantView.restaurantTableView.setContentOffset(CGPoint(x: 0.0, y: 0.0), animated: true)
+                }
+            }
+        }
+
+        shouldScrollToTop = true
     }
 
     private func setupPageViewController() {
@@ -179,6 +207,7 @@ final class CustomTimeTabController: BaseViewController {
     // MARK: - External API
 
     func updateDate(to date: Date) {
+        todayDate = date
         morningVC.fetchData(date: date, time: "MORNING")
         lunchVC.fetchData(date: date, time: "LUNCH")
         dinnerVC.fetchData(date: date, time: "DINNER")
