@@ -48,8 +48,6 @@ final class RestaurantMenuTitleView: BaseUIView {
             $0.horizontalEdges.equalToSuperview().inset(12)
         }
 
-        nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         priceLabel.snp.makeConstraints { $0.width.equalTo(47) }
         ratingLabel.snp.makeConstraints { $0.width.equalTo(25) }
 

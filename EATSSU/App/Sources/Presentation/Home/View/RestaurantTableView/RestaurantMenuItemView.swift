@@ -52,9 +52,6 @@ final class RestaurantMenuItemView: BaseUIView {
         addSubview(backgroundWrapper)
         backgroundWrapper.addSubview(contentStackView)
 
-        backgroundWrapper.layer.cornerRadius = 0
-        backgroundWrapper.clipsToBounds = true
-
         // 스택 뷰에 라벨들 추가
         contentStackView.addArrangedSubviews([nameLabel, priceLabel, ratingLabel])
     }

@@ -37,11 +37,10 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
         wrapperView.backgroundColor = .white
 
         menuStackView.axis = .vertical
-        menuStackView.spacing = 0
     }
 
     override func setLayout() {
-        wrapperView.snp.makeConstraints { $0.edges.equalToSuperview().inset(0) }
+        wrapperView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         titleView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
@@ -72,7 +71,7 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
             for (idx, menu) in menus.enumerated() {
                 let itemView = RestaurantMenuItemView()
                 itemView.indexPath = indexPath
-                itemView.menuIndex = idx        // ✅ 메뉴 인덱스 저장
+                itemView.menuIndex = idx       
                 itemView.onTap = onMenuTap
                 itemView.bind(menu)
                 menuStackView.addArrangedSubview(itemView)
