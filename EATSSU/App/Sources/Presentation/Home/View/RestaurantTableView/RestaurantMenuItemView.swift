@@ -53,9 +53,9 @@ final class RestaurantMenuItemView: BaseUIView {
             $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12))
         }
 
-        nameLabel.snp.makeConstraints { $0.width.equalTo(210) }
-        priceLabel.snp.makeConstraints { $0.width.equalTo(47) }
-        ratingLabel.snp.makeConstraints { $0.width.equalTo(25) }
+        nameLabel.snp.makeConstraints { $0.width.equalTo(210).priority(.high) }
+        priceLabel.snp.makeConstraints { $0.width.equalTo(47).priority(.high) }
+        ratingLabel.snp.makeConstraints { $0.width.equalTo(25).priority(.high) }
     }
 
     func bind(_ model: MenuTypeInfo) {
