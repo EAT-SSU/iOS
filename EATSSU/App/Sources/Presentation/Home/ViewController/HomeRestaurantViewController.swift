@@ -163,6 +163,7 @@ final class HomeRestaurantViewController: BaseViewController {
         if time == TextLiteral.lunchRawValue {
             // 학기 중 평일 점심인 경우에만 간식코너 고정 메뉴 요청
             if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
+                isSelectable = true
                 getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
             } else {
                 // 방학/주말에는 더미 고정 메뉴 설정
@@ -206,26 +207,26 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             menuList = changeMenuTableViewData[sectionKey]?.map { .change($0) } ?? []
         }
 
-        cell.configure(with: menuList, at: indexPath) { [weak self] selectedIndexPath in
-            self?.handleMenuTap(at: selectedIndexPath)
+        cell.configure(with: menuList, at: indexPath) { [weak self] indexPath, menuIndex in
+            self?.handleMenuTap(section: indexPath.section, menuIndex: menuIndex)
         }
         return cell
     }
 
-    private func handleMenuTap(at indexPath: IndexPath) {
-        let restaurant = getSectionKey(for: indexPath.section)
+    private func handleMenuTap(section: Int, menuIndex: Int) {
+        let restaurant = getSectionKey(for: section)
         var reviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
 
-        if [0, 1, 2].contains(indexPath.section) {
+        if [0, 1, 2].contains(section) {
             reviewMenuTypeInfo.menuType = "VARIABLE"
-            reviewMenuTypeInfo.menuID = changeMenuTableViewData[restaurant]?[indexPath.row - 1].mealId ?? 100
-            if let list = changeMenuTableViewData[restaurant]?[indexPath.row - 1].briefMenus {
-                reviewMenuTypeInfo.changeMenuIDList = list.compactMap(\ .menuId)
+            reviewMenuTypeInfo.menuID = changeMenuTableViewData[restaurant]?[menuIndex].mealId ?? 100
+            if let list = changeMenuTableViewData[restaurant]?[menuIndex].briefMenus {
+                reviewMenuTypeInfo.changeMenuIDList = list.compactMap(\.menuId)
             }
-        } else if [3].contains(indexPath.section) {
+        } else if section == 3 {
             if !isSelectable { return }
             reviewMenuTypeInfo.menuType = "FIXED"
-            reviewMenuTypeInfo.menuID = fixMenuTableViewData[restaurant]?[indexPath.row - 1].menuId ?? 100
+            reviewMenuTypeInfo.menuID = fixMenuTableViewData[restaurant]?[menuIndex].menuId ?? 100
         }
 
         let reviewViewController = ReviewViewController()

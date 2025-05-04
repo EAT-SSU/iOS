@@ -16,7 +16,8 @@ final class RestaurantMenuItemView: BaseUIView {
     var indexPath: IndexPath?
 
     // 터치 시 실행할 클로저
-    var onTap: ((IndexPath) -> Void)?
+    var onTap: ((IndexPath, Int) -> Void)?
+    var menuIndex: Int = 0
 
     // 배경 래퍼 뷰: 터치 배경 효과용
     private let backgroundWrapper = UIView()
@@ -110,7 +111,7 @@ final class RestaurantMenuItemView: BaseUIView {
 
         // 터치가 View 내부에 있을 때만 실행
         if bounds.contains(location), let indexPath = indexPath {
-            onTap?(indexPath)
+            onTap?(indexPath, menuIndex)
         }
     }
 }

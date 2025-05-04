@@ -59,7 +59,7 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
         }
     }
 
-    func configure(with menus: [MenuTypeInfo], at indexPath: IndexPath, onMenuTap: @escaping (IndexPath) -> Void) {
+    func configure(with menus: [MenuTypeInfo], at indexPath: IndexPath, onMenuTap: @escaping (IndexPath, Int) -> Void) {
         menuStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         if menus.isEmpty {
@@ -71,12 +71,13 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
 
             for (idx, menu) in menus.enumerated() {
                 let itemView = RestaurantMenuItemView()
-                let itemIndexPath = IndexPath(row: idx + 1, section: indexPath.section)
-                itemView.indexPath = itemIndexPath
+                itemView.indexPath = indexPath
+                itemView.menuIndex = idx        // ✅ 메뉴 인덱스 저장
                 itemView.onTap = onMenuTap
                 itemView.bind(menu)
                 menuStackView.addArrangedSubview(itemView)
             }
+
         }
     }
 }
