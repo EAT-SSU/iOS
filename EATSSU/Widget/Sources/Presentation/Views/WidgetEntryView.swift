@@ -26,5 +26,6 @@ struct WidgetEntryView: View {
         .onChange(of: family) { _, _ in
             WidgetCenter.shared.reloadAllTimelines()
         }
+        .widgetURL(URL(string: "eatssu://from_widget"))
     }
 }
