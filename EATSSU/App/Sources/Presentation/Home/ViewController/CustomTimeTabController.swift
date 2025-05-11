@@ -22,7 +22,6 @@ final class CustomTimeTabController: BaseViewController {
         }
     }
     var todayDate: Date = .init()
-    var shouldScrollToTop = true
 
     private var isProgrammaticScroll = false
 
@@ -124,19 +123,6 @@ final class CustomTimeTabController: BaseViewController {
         lunchVC.fetchData(date: date, time: "LUNCH")
         dinnerVC.fetchData(date: date, time: "DINNER")
 
-        /// 스크롤 최상단 이동
-        if shouldScrollToTop {
-            for item in [morningVC, lunchVC, dinnerVC] {
-                item.view.layoutIfNeeded()
-            }
-            UIView.animate(withDuration: 0.2) {
-                for item in [self.morningVC, self.lunchVC, self.dinnerVC] {
-                    item.restaurantView.restaurantTableView.setContentOffset(CGPoint(x: 0.0, y: 0.0), animated: true)
-                }
-            }
-        }
-
-        shouldScrollToTop = true
     }
 
     private func setupPageViewController() {
