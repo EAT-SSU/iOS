@@ -61,7 +61,7 @@ final class RestaurantMenuItemView: BaseUIView {
         backgroundWrapper.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         contentStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12))
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)).priority(.high)
         }
 
         // 라벨별 고정 너비 설정 (우선순위 높음)
