@@ -168,7 +168,7 @@ final class HomeRestaurantViewController: BaseViewController {
             } else {
                 // 방학/주말에는 더미 고정 메뉴 설정
                 currentRestaurant = Restaurant.snackCorner.identifier
-                fixMenuTableViewData[Restaurant.snackCorner.identifier] = [Menus(menuId: 0, name: "", price: nil, rating: nil)]
+                fixMenuTableViewData[Restaurant.snackCorner.identifier] = []
             }
         }
     }
