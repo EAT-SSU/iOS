@@ -24,7 +24,6 @@ final class HomeViewController: BaseViewController {
         }
     }
 
-//    private let tabmanController = HomeTimeTabmanController()
     private let tabmanController = CustomTimeTabController()
     private let homeCalendarView = HomeCalendarView()
 
