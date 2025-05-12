@@ -40,6 +40,8 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
 
     // UI 구성
     override func configureUI() {
+        self.selectionStyle = .none
+        self.selectedBackgroundView = UIView()
         contentView.addSubview(wrapperView)
         wrapperView.addSubviews(titleView, emptyLabel, menuStackView)
 
