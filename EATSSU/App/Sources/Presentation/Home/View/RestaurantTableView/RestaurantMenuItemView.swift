@@ -85,6 +85,13 @@ final class RestaurantMenuItemView: BaseUIView {
             ratingLabel.text = data.rating != nil ? String(format: "%.1f", data.rating!) : "-"
         }
     }
+    
+    // 리셋 함수
+    func reset() {
+        nameLabel.text = nil
+        priceLabel.text = nil
+        ratingLabel.text = nil
+    }
 
     // 터치 시작: 배경 강조 효과
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
