@@ -28,10 +28,6 @@ class CreatorsView: BaseUIView {
         let imageView = UIImageView()
         imageView.image = EATSSUDesignAsset.Images.creators.image
         imageView.contentMode = .scaleAspectFit
-        imageView.snp.makeConstraints { make in
-            make.width.equalTo(276)
-            make.height.equalTo(1770)
-        }
         return imageView
     }()
 
@@ -56,17 +52,19 @@ class CreatorsView: BaseUIView {
 
     override func setLayout() {
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview() // 화면 전체에 ScrollView
+            make.edges.equalToSuperview() 
         }
 
         contentView.snp.makeConstraints { make in
-            make.edges.equalTo(scrollView) // ScrollView 내부에 맞춤
-            make.width.equalToSuperview() // 가로 크기는 화면 크기와 동일
-            make.bottom.equalTo(creatorsImageView.snp.bottom).offset(52) // 높이 지정
+            make.edges.equalTo(scrollView)
+            make.width.equalToSuperview()
+            make.bottom.equalTo(creatorsImageView.snp.bottom).offset(52)
         }
         
         creatorsImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            make.width.equalTo(276)
+            make.height.equalTo(1770)
         }
     }
 }

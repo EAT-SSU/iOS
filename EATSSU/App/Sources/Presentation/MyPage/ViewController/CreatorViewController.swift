@@ -32,7 +32,7 @@ class CreatorViewController: BaseViewController {
     override func setLayout() {
         creatorsView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(66)
-            make.leading.trailing.equalToSuperview().inset(24)
+            make.horizontalEdges.equalToSuperview().inset(24)
             make.bottom.equalToSuperview()
         }
     }
