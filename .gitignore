@@ -70,7 +70,6 @@ Derived/
 Tuist/.build
 
 ### Configurtion files ###
-*.xcconfig
 *.plist
 
 ### Fastlane ###
