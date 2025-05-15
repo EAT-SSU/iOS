@@ -108,14 +108,16 @@ final class RestaurantMenuItemView: BaseUIView {
     // 터치 종료 시 실행: 영역 안에 있으면 onTap 클로저 실행
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        backgroundWrapper.backgroundColor = .clear
 
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
 
-        // 터치가 View 내부에 있을 때만 실행
         if bounds.contains(location), let indexPath = indexPath {
             onTap?(indexPath, menuIndex)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.backgroundWrapper.backgroundColor = .clear
         }
     }
 }
