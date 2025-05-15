@@ -16,8 +16,15 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
     static let identifier = "RestaurantMenuGroupCell"
 
     // 외곽 테두리와 그림자를 가지는 래퍼 뷰
-    private let wrapperView = UIView()
-    
+    private let wrapperView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 12
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.gray200.cgColor
+        view.backgroundColor = .white
+        return view
+    }()
+
     // "오늘의 메뉴 | 가격 | 평점" 등 타이틀 라벨이 포함된 뷰
     private let titleView = RestaurantMenuTitleView()
     
@@ -27,11 +34,11 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
     // 메뉴가 없을 때 표시할 안내 텍스트
     private let emptyLabel = UILabel().then {
         $0.text = "영업 시간이 아니에요."
-        $0.font = .semiBold(size: 10)
+        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)
         $0.textColor = .black
         $0.textAlignment = .center
         $0.numberOfLines = 0
-        $0.isHidden = true // 기본적으로 숨겨둠
+        $0.isHidden = true
     }
     
     // 메뉴 뷰(View) 재사용을 위한 풀
@@ -44,11 +51,6 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
         self.selectedBackgroundView = UIView()
         contentView.addSubview(wrapperView)
         wrapperView.addSubviews(titleView, emptyLabel, menuStackView)
-
-        wrapperView.layer.cornerRadius = 12
-        wrapperView.layer.borderWidth = 1
-        wrapperView.layer.borderColor = UIColor.gray200.cgColor
-        wrapperView.backgroundColor = .white
 
         menuStackView.axis = .vertical
     }
@@ -80,7 +82,8 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
         for view in menuStackView.arrangedSubviews {
             view.removeFromSuperview()
             if let itemView = view as? RestaurantMenuItemView {
-                itemViewPool.append(itemView) // 뷰 재사용 풀에 넣기
+                itemViewPool.append(itemView)
+                print("🔁 재사용 풀에 추가됨: \(itemView)")
             }
         }
     }
@@ -88,8 +91,10 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
     /// 재사용 가능한 뷰가 있다면 꺼내고, 없으면 새로 생성
     private func dequeueReusableItemView() -> RestaurantMenuItemView {
         if let reused = itemViewPool.popLast() {
+            print("♻️ 재사용 뷰 반환됨: \(reused)")
             return reused
         } else {
+            print("✨ 새 뷰 생성됨")
             return RestaurantMenuItemView()
         }
     }
