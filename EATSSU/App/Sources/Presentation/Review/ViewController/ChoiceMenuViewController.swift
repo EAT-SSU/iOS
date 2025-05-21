@@ -7,10 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 final class ChoiceMenuViewController: BaseViewController {
     // MARK: - Properties
@@ -52,30 +51,24 @@ final class ChoiceMenuViewController: BaseViewController {
     // MARK: - Functions
 
     override func configureUI() {
-        whichFoodLabel.do {
-            $0.text = "어떤 음식에 대한 리뷰인가요?"
-            $0.font = .subtitle1
-            $0.textColor = .black
-        }
+        whichFoodLabel.text = "어떤 음식에 대한 리뷰인가요?"
+        whichFoodLabel.font = .subtitle1
+        whichFoodLabel.textColor = .black
 
-        enjoyLabel.do {
-            $0.text = "식사는 맛있게 하셨나요?"
-            $0.font = .body1
-            $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
-        }
+        enjoyLabel.text = "식사는 맛있게 하셨나요?"
+        enjoyLabel.font = .body1
+        enjoyLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
 
-        choiceMenuTabelView.do {
-            $0.separatorStyle = .none
-        }
+        choiceMenuTabelView.separatorStyle = .none
 
-        nextButton.do {
-            $0.setTitle("다음 단계로", for: .normal)
-        }
+        nextButton.setTitle("다음 단계로", for: .normal)
 
-        view.addSubviews(enjoyLabel,
-                         whichFoodLabel,
-                         choiceMenuTabelView,
-                         nextButton)
+        view.addSubviews(
+            enjoyLabel,
+            whichFoodLabel,
+            choiceMenuTabelView,
+            nextButton
+        )
     }
 
     override func setLayout() {

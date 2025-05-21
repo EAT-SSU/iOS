@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 final class ReportView: BaseUIView {
     // MARK: - UI Components

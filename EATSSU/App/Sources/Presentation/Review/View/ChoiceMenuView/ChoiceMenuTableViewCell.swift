@@ -7,10 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 final class ChoiceMenuTableViewCell: UITableViewCell {
     // MARK: - Properties
@@ -46,18 +45,16 @@ final class ChoiceMenuTableViewCell: UITableViewCell {
     // MARK: - Functions
 
     private func setUI() {
-        checkButton.do {
-            $0.addTarget(self, action: #selector(checkButtonIsTapped), for: .touchUpInside)
-        }
+        checkButton.addTarget(self, action: #selector(checkButtonIsTapped), for: .touchUpInside)
 
-        menuLabel.do {
-            $0.font = .body1
-            $0.textColor = .black
-            $0.text = "고구마치즈돈까스"
-        }
+        menuLabel.font = .body1
+        menuLabel.textColor = .black
+        menuLabel.text = "고구마치즈돈까스"
 
-        contentView.addSubviews(checkButton,
-                                menuLabel)
+        contentView.addSubviews(
+            checkButton,
+            menuLabel
+        )
     }
 
     private func setLayout() {

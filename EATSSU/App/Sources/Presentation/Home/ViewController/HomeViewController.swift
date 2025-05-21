@@ -7,11 +7,11 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import FirebaseAnalytics
 import Moya
 import SnapKit
+
+import EATSSUDesign
 
 final class HomeViewController: BaseViewController {
     // MARK: - Properties

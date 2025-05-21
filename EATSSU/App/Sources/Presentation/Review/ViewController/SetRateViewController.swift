@@ -7,11 +7,10 @@
 
 import UIKit
 
-import EATSSUDesign
-
-import Moya
 import SnapKit
-import Then
+import Moya
+
+import EATSSUDesign
 
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
@@ -31,9 +30,6 @@ final class SetRateViewController: BaseViewController {
     private var reviewList: [(BeforeSelectedImageDTO, UIImage?)] = []
     private var selectedIDList: [Int] = []
     private var selectedList: [String] = []
-
-    /// [리뷰 수정하기]에 필요한 reviewID
-    /// 해당 값이 존재하지 않으면, 리뷰 작성하기 기능을 수행 중인 것이다
     private var reviewId: Int?
 
     // MARK: - UI Components
@@ -52,7 +48,6 @@ final class SetRateViewController: BaseViewController {
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-
         return scrollView
     }()
 
@@ -94,17 +89,21 @@ final class SetRateViewController: BaseViewController {
         return label
     }()
 
-    lazy var tasteStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 16.adjusted
-        $0.alignment = .center
-    }
+    private lazy var tasteStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 16.adjusted
+        stackView.alignment = .center
+        return stackView
+    }()
 
-    lazy var quantityStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 16.adjusted
-        $0.alignment = .center
-    }
+    private lazy var quantityStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 16.adjusted
+        stackView.alignment = .center
+        return stackView
+    }()
 
     private let userReviewTextView: UITextView = {
         let textView = UITextView()
@@ -113,58 +112,61 @@ final class SetRateViewController: BaseViewController {
         textView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
         textView.layer.borderWidth = 1.adjusted
         textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-        textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted,
-                                                   left: 16.0.adjusted,
-                                                   bottom: 16.0.adjusted,
-                                                   right: 16.0.adjusted)
+        textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted, left: 16.0.adjusted, bottom: 16.0.adjusted, right: 16.0.adjusted)
         textView.text = "3글자 이상 작성해주세요!"
         textView.textColor = .gray500
         return textView
     }()
 
-    private lazy var userReviewImageView = UIImageView().then {
-        $0.layer.cornerRadius = 10 // 원하는 둥근 모서리의 크기
-        $0.clipsToBounds = true // 이 속성을 true로 설정해야 둥근 모서리가 보입니다.
-
+    private lazy var userReviewImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
+        imageView.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTappedimageView))
-        $0.isUserInteractionEnabled = true // 사용자 상호작용을 가능하게 설정
-        $0.addGestureRecognizer(tapGesture)
-    }
+        imageView.addGestureRecognizer(tapGesture)
+        return imageView
+    }()
 
-    private lazy var imageContainer = UIView().then {
-        $0.addSubview(selectImageButton)
-        $0.addSubview(imageCountLabel)
-    }
+    private lazy var imageContainer: UIView = {
+        let view = UIView()
+        view.addSubview(selectImageButton)
+        view.addSubview(imageCountLabel)
+        return view
+    }()
 
-    private lazy var selectImageButton = UIButton().then {
+    private lazy var selectImageButton: UIButton = {
+        let button = UIButton()
         var config = UIButton.Configuration.plain()
         config.image = EATSSUDesignAsset.Images.addImageButton.image
         config.contentInsets = NSDirectionalEdgeInsets(top: -5, leading: 0, bottom: 5, trailing: 0)
+        button.configuration = config
+        button.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
+        button.layer.cornerRadius = 8
+        button.clipsToBounds = true
+        button.contentVerticalAlignment = .center
+        button.contentHorizontalAlignment = .center
+        return button
+    }()
 
-        $0.configuration = config
-        $0.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
+    private let imageCountLabel: UILabel = {
+        let label = UILabel()
+        label.text = "사진 0/1"
+        label.font = .caption3
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        label.textAlignment = .center
+        return label
+    }()
 
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
-        $0.layer.cornerRadius = 8
-        $0.clipsToBounds = true
-
-        $0.contentVerticalAlignment = .center
-        $0.contentHorizontalAlignment = .center
-    }
-
-    private let imageCountLabel = UILabel().then {
-        $0.text = "사진 0/1"
-        $0.font = .caption3
-        $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
-        $0.textAlignment = .center
-    }
-
-    private let deleteMethodLabel = UILabel().then {
-        $0.text = "사진 클릭 시, 삭제됩니다"
-        $0.font = .caption3
-        $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
-    }
+    private let deleteMethodLabel: UILabel = {
+        let label = UILabel()
+        label.text = "사진 클릭 시, 삭제됩니다"
+        label.font = .caption3
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        return label
+    }()
 
     private let maximumWordLabel: UILabel = {
         let label = UILabel()
@@ -174,9 +176,13 @@ final class SetRateViewController: BaseViewController {
         return label
     }()
 
-    private var nextButton = MainButton().then {
-        $0.title = "다음 단계로"
-    }
+    private var nextButton: MainButton = {
+        let button = MainButton()
+        button.title = "다음 단계로"
+        return button
+    }()
+
+    // MARK: - Life Cycles
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -190,6 +196,7 @@ final class SetRateViewController: BaseViewController {
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
     }
+
 
     // MARK: - Functions
 

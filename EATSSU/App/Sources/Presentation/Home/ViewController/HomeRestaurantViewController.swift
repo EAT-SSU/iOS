@@ -8,7 +8,6 @@ import UIKit
 
 import Moya
 import SnapKit
-import Then
 
 // 메뉴 리뷰 정보를 전달하는 델리게이트 프로토콜
 protocol ReviewMenuTypeInfoDelegate: AnyObject {

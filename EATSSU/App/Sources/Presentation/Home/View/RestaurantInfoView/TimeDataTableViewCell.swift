@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SnapKit
+
 final class TimeDataTableViewCell: UITableViewCell {
     // MARK: - Properties
 
@@ -14,17 +16,21 @@ final class TimeDataTableViewCell: UITableViewCell {
 
     // MARK: - UI Components
 
-    private var timepartLabel = UILabel().then {
-        $0.font = .medium(size: 16)
-        $0.textColor = .primary
-        $0.textAlignment = .left
-    }
+    private var timepartLabel: UILabel = {
+        let label = UILabel()
+        label.font = .medium(size: 16)
+        label.textColor = .primary
+        label.textAlignment = .left
+        return label
+    }()
 
-    private var timeLabel = UILabel().then {
-        $0.font = .medium(size: 16)
-        $0.numberOfLines = 0
-        $0.textAlignment = .right
-    }
+    private var timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = .medium(size: 16)
+        label.numberOfLines = 0
+        label.textAlignment = .right
+        return label
+    }()
 
     // MARK: - init
 
@@ -43,8 +49,10 @@ final class TimeDataTableViewCell: UITableViewCell {
     // MARK: - Functions
 
     func configureUI() {
-        addSubviews(timepartLabel,
-                    timeLabel)
+        addSubviews(
+            timepartLabel,
+            timeLabel
+        )
     }
 
     func setLayout() {

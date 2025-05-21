@@ -6,7 +6,10 @@
 //
 
 import UIKit
+
 import SnapKit
+
+import EATSSUDesign
 
 /// 식당 메뉴 아이템 하나를 나타내는 커스텀 뷰
 /// 구성: 메뉴명(name), 가격(price), 평점(rating)
@@ -23,29 +26,37 @@ final class RestaurantMenuItemView: BaseUIView {
     private let backgroundWrapper = UIView()
 
     // 메뉴명 라벨
-    private let nameLabel = UILabel().then {
-        $0.numberOfLines = 0
-        $0.font = .body3 // 커스텀 폰트 스타일
-    }
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.font = .body3
+        return label
+    }()
 
     // 가격 라벨
-    private let priceLabel = UILabel().then {
-        $0.font = .body3
-        $0.textAlignment = .center
-    }
+    private let priceLabel: UILabel = {
+        let label = UILabel()
+        label.font = .body3
+        label.textAlignment = .center
+        return label
+    }()
 
     // 평점 라벨
-    private let ratingLabel = UILabel().then {
-        $0.font = .body3
-        $0.textAlignment = .center
-    }
+    private let ratingLabel: UILabel = {
+        let label = UILabel()
+        label.font = .body3
+        label.textAlignment = .center
+        return label
+    }()
 
     // 콘텐츠 수평 스택 뷰 (이름, 가격, 평점 수평 정렬)
-    private let contentStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.spacing = 24
-    }
+    private let contentStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .top
+        stackView.spacing = 24
+        return stackView
+    }()
 
     // UI 구성 요소를 계층 구조에 추가
     override func configureUI() {
@@ -61,7 +72,7 @@ final class RestaurantMenuItemView: BaseUIView {
         backgroundWrapper.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         contentStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)).priority(.high)
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12))
         }
 
         // 라벨별 고정 너비 설정 (우선순위 높음)
@@ -74,23 +85,27 @@ final class RestaurantMenuItemView: BaseUIView {
     func bind(_ model: MenuTypeInfo) {
         switch model {
         case let .change(data):
-            // 여러 메뉴가 조합된 경우 이름들을 '+'로 연결
             nameLabel.text = data.briefMenus.map(\.name).joined(separator: "+")
             priceLabel.text = data.price?.formattedWithCommas ?? ""
             ratingLabel.text = data.rating != nil ? String(format: "%.1f", data.rating!) : "-"
         case let .fix(data):
-            // 단일 메뉴 정보
             nameLabel.text = data.name
             priceLabel.text = data.price?.formattedWithCommas ?? ""
             ratingLabel.text = data.rating != nil ? String(format: "%.1f", data.rating!) : "-"
         }
     }
-    
+
     // 리셋 함수
     func reset() {
         nameLabel.text = nil
         priceLabel.text = nil
         ratingLabel.text = nil
+        
+        nameLabel.numberOfLines = 0
+        nameLabel.textAlignment = .left
+        priceLabel.textAlignment = .center
+        ratingLabel.textAlignment = .center
+        backgroundWrapper.backgroundColor = .clear
     }
 
     // 터치 시작: 배경 강조 효과

@@ -7,11 +7,11 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import Pageboy
 import SnapKit
 import Tabman
+
+import EATSSUDesign
 
 final class HomeTimeTabmanController: TabmanViewController {
     // MARK: - Properties

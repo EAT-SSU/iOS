@@ -7,10 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 class MainButton: UIButton {
     private enum Size {

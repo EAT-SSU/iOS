@@ -8,7 +8,6 @@
 import UIKit
 
 import SnapKit
-import Then
 
 final class MyReviewView: BaseUIView {
     // MARK: - UI Components
@@ -29,10 +28,8 @@ final class MyReviewView: BaseUIView {
     override func configureUI() {
         addSubview(myReviewTableView)
 
-        myReviewTableView.do {
-            $0.separatorStyle = .none
-            $0.showsVerticalScrollIndicator = false
-        }
+        myReviewTableView.separatorStyle = .none
+        myReviewTableView.showsVerticalScrollIndicator = false
     }
 
     override func setLayout() {

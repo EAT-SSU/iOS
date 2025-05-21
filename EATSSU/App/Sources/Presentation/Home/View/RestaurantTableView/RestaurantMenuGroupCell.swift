@@ -7,15 +7,14 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 /// 식당의 "오늘의 메뉴" + 메뉴 리스트를 하나의 셀에서 표현하는 커스텀 테이블뷰 셀
 final class RestaurantMenuGroupCell: BaseTableViewCell {
     static let identifier = "RestaurantMenuGroupCell"
 
-    // 외곽 테두리와 그림자를 가지는 래퍼 뷰
     private let wrapperView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 12
@@ -25,21 +24,24 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
         return view
     }()
 
-    // "오늘의 메뉴 | 가격 | 평점" 등 타이틀 라벨이 포함된 뷰
     private let titleView = RestaurantMenuTitleView()
-    
-    // 개별 메뉴 뷰들이 들어갈 스택뷰 (수직 방향)
-    private let menuStackView = UIStackView()
 
-    // 메뉴가 없을 때 표시할 안내 텍스트
-    private let emptyLabel = UILabel().then {
-        $0.text = "영업 시간이 아니에요."
-        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)
-        $0.textColor = .black
-        $0.textAlignment = .center
-        $0.numberOfLines = 0
-        $0.isHidden = true
-    }
+    private let menuStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        return stack
+    }()
+
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "영업 시간이 아니에요."
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)
+        label.textColor = .black
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
     
     // 메뉴 뷰(View) 재사용을 위한 풀
     // scroll 등으로 셀이 재사용될 때 menuStackView 내부의 뷰들을 재활용하기 위함
@@ -83,7 +85,6 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
             view.removeFromSuperview()
             if let itemView = view as? RestaurantMenuItemView {
                 itemViewPool.append(itemView)
-                print("🔁 재사용 풀에 추가됨: \(itemView)")
             }
         }
     }
@@ -91,10 +92,8 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
     /// 재사용 가능한 뷰가 있다면 꺼내고, 없으면 새로 생성
     private func dequeueReusableItemView() -> RestaurantMenuItemView {
         if let reused = itemViewPool.popLast() {
-            print("♻️ 재사용 뷰 반환됨: \(reused)")
             return reused
         } else {
-            print("✨ 새 뷰 생성됨")
             return RestaurantMenuItemView()
         }
     }
@@ -118,6 +117,7 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
             // 메뉴 개수만큼 뷰 생성 or 재사용하여 추가
             for (idx, menu) in menus.enumerated() {
                 let itemView = dequeueReusableItemView()
+                itemView.removeFromSuperview()
                 itemView.reset() // label 초기화
                 itemView.indexPath = indexPath // 어떤 셀인지 기억
                 itemView.menuIndex = idx       // 어떤 메뉴인지 기억
