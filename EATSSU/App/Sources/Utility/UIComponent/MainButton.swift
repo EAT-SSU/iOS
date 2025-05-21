@@ -40,7 +40,7 @@ class MainButton: UIButton {
     // MARK: - Function
 
     func configureUI() {
-        titleLabel?.font = .button1
+        titleLabel?.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         titleLabel?.textColor = .white
         backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
         layer.cornerRadius = 10

@@ -9,6 +9,8 @@ import UIKit
 import Moya
 import SnapKit
 
+import EATSSUDesign
+
 // 메뉴 리뷰 정보를 전달하는 델리게이트 프로토콜
 protocol ReviewMenuTypeInfoDelegate: AnyObject {
     func didDelegateReviewMenuTypeInfo(for menuTypeData: ReviewMenuTypeInfo)
@@ -248,7 +250,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         // 위치 정보도 함께 표시
         if let restaurantInfo = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == restaurantName }) {
             var titleContainer = AttributeContainer()
-            titleContainer.font = .caption3
+            titleContainer.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 10)
             restaurantTableViewHeader.infoButton.configuration?.attributedTitle = AttributedString(restaurantInfo.location, attributes: titleContainer)
         }
 

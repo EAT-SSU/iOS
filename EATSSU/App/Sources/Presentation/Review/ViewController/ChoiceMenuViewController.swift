@@ -52,7 +52,7 @@ final class ChoiceMenuViewController: BaseViewController {
 
     override func configureUI() {
         whichFoodLabel.text = "어떤 음식에 대한 리뷰인가요?"
-        whichFoodLabel.font = .subtitle1
+        whichFoodLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
         whichFoodLabel.textColor = .black
 
         enjoyLabel.text = "식사는 맛있게 하셨나요?"
