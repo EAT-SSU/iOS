@@ -47,7 +47,7 @@ final class ChoiceMenuTableViewCell: UITableViewCell {
     private func setUI() {
         checkButton.addTarget(self, action: #selector(checkButtonIsTapped), for: .touchUpInside)
 
-        menuLabel.font = .body1
+        menuLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
         menuLabel.textColor = .black
         menuLabel.text = "고구마치즈돈까스"
 

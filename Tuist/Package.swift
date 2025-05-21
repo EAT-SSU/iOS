@@ -14,7 +14,6 @@ import PackageDescription
             "SnapKit": .framework,
             "Tabman": .framework,
             "Pageboy": .framework,
-            "Then": .framework,
             "FSCalendar": .framework,
             "Kingfisher": .framework,
 
@@ -45,7 +44,6 @@ let package = Package(
         .package(url: "https://github.com/uias/Tabman", from: "3.2.0"),
         .package(url: "https://github.com/uias/Pageboy", from: "4.2.0"),
         .package(url: "https://github.com/Moya/Moya", from: "15.0.0"),
-        .package(url: "https://github.com/devxoul/Then", from: "3.0.0"),
         .package(url: "https://github.com/WenchaoD/FSCalendar", from: "2.8.3"),
         .package(url: "https://github.com/kakao/kakao-ios-sdk", from: "2.22.5"),
         .package(url: "https://github.com/onevcat/Kingfisher", from: "7.12.0"),

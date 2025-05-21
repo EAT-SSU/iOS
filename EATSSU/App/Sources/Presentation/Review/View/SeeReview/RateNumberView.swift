@@ -42,7 +42,7 @@ final class RateNumberView: BaseUIView {
         starImageView.image = EATSSUDesignAsset.Images.icStarYellow.image
 
         rateNumberLabel.text = "5"
-        rateNumberLabel.font = .body2
+        rateNumberLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
         rateNumberLabel.textColor = EATSSUDesignAsset.Color.Main.primary.color
 
         rateNumberStackView.axis = .horizontal

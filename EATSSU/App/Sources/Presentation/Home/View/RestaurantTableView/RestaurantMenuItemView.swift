@@ -29,23 +29,29 @@ final class RestaurantMenuItemView: BaseUIView {
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.font = .body3
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return label
     }()
 
     // 가격 라벨
     private let priceLabel: UILabel = {
         let label = UILabel()
-        label.font = .body3
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         label.textAlignment = .center
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
     // 평점 라벨
     private let ratingLabel: UILabel = {
         let label = UILabel()
-        label.font = .body3
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         label.textAlignment = .center
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
@@ -55,6 +61,7 @@ final class RestaurantMenuItemView: BaseUIView {
         stackView.axis = .horizontal
         stackView.alignment = .top
         stackView.spacing = 24
+        stackView.distribution = .fill
         return stackView
     }()
 
@@ -75,10 +82,8 @@ final class RestaurantMenuItemView: BaseUIView {
             $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12))
         }
 
-        // 라벨별 고정 너비 설정 (우선순위 높음)
-        nameLabel.snp.makeConstraints { $0.width.equalTo(210).priority(.high) }
-        priceLabel.snp.makeConstraints { $0.width.equalTo(47).priority(.high) }
-        ratingLabel.snp.makeConstraints { $0.width.equalTo(25).priority(.high) }
+        priceLabel.snp.makeConstraints { $0.width.equalTo(47) }
+        ratingLabel.snp.makeConstraints { $0.width.equalTo(25) }
     }
 
     /// 모델을 기반으로 뷰에 데이터를 바인딩하는 함수
@@ -100,7 +105,7 @@ final class RestaurantMenuItemView: BaseUIView {
         nameLabel.text = nil
         priceLabel.text = nil
         ratingLabel.text = nil
-        
+
         nameLabel.numberOfLines = 0
         nameLabel.textAlignment = .left
         priceLabel.textAlignment = .center
