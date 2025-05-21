@@ -8,7 +8,6 @@
 import UIKit
 
 import SnapKit
-import Then
 
 enum ValidationLabelState {
     case unCorrected
@@ -86,44 +85,34 @@ final class UserWithdrawView: BaseUIView {
     }
 
     private func setProperties() {
-        nickNameLabel.do {
-            $0.text = TextLiteral.MyPage.confirmWithdrawal
-            $0.font = .bold(size: 16)
-        }
+        nickNameLabel.text = TextLiteral.MyPage.confirmWithdrawal
+        nickNameLabel.font = .bold(size: 16)
 
-        subscription.do {
-            $0.text = TextLiteral.MyPage.withdrawalNotice
-            $0.numberOfLines = 2
-            $0.font = .medium(size: 12)
-            $0.textColor = .gray700
-        }
+        subscription.text = TextLiteral.MyPage.withdrawalNotice
+        subscription.numberOfLines = 2
+        subscription.font = .medium(size: 12)
+        subscription.textColor = .gray700
 
-        inputNickNameTextField.do {
-            $0.font = .regular(size: 12)
-            $0.textColor = .black
-            $0.setRoundBorder()
-            $0.addLeftPadding()
-            $0.clearButtonMode = .whileEditing
-        }
+        inputNickNameTextField.font = .regular(size: 12)
+        inputNickNameTextField.textColor = .black
+        inputNickNameTextField.setRoundBorder()
+        inputNickNameTextField.addLeftPadding()
+        inputNickNameTextField.clearButtonMode = .whileEditing
 
-        nickNameStateGuideLabel.do {
-            $0.text = TextLiteral.inputNickName
-            $0.textColor = .gray700
-            $0.font = .medium(size: 10)
-        }
+        nickNameStateGuideLabel.text = TextLiteral.inputNickName
+        nickNameStateGuideLabel.textColor = .gray700
+        nickNameStateGuideLabel.font = .medium(size: 10)
 
-        nickNameInputStackView.do {
-            $0.axis = .vertical
-            $0.spacing = 8.0
-        }
+        nickNameInputStackView.axis = .vertical
+        nickNameInputStackView.spacing = 8.0
 
-        completeSignOutButton.do {
-            $0.addTitleAttribute(title: TextLiteral.MyPage.withdraw,
-                                 titleColor: .white,
-                                 fontName: .bold(size: 18))
-            $0.setRoundBorder(borderColor: .gray300, borderWidth: 0, cornerRadius: 10)
-            $0.isEnabled = false
-        }
+        completeSignOutButton.addTitleAttribute(
+            title: TextLiteral.MyPage.withdraw,
+            titleColor: .white,
+            fontName: .bold(size: 18)
+        )
+        completeSignOutButton.setRoundBorder(borderColor: .gray300, borderWidth: 0, cornerRadius: 10)
+        completeSignOutButton.isEnabled = false
     }
 
     private func setTextFieldDelegate() {
@@ -136,19 +125,17 @@ final class UserWithdrawView: BaseUIView {
             nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
             nickNameStateGuideLabel.textColor = .systemGreen
             completeSignOutButton.isEnabled = true
+
         case .unCorrected:
-            nickNameStateGuideLabel.do {
-                $0.isHidden = false
-                $0.text = TextLiteral.MyPage.invalidNicknameMessage
-                $0.textColor = .primary
-            }
+            nickNameStateGuideLabel.isHidden = false
+            nickNameStateGuideLabel.text = TextLiteral.MyPage.invalidNicknameMessage
+            nickNameStateGuideLabel.textColor = .primary
             completeSignOutButton.isEnabled = false
+
         case .pleaseEnter:
-            nickNameStateGuideLabel.do {
-                $0.isHidden = false
-                $0.text = TextLiteral.inputNickName
-                $0.textColor = .gray700
-            }
+            nickNameStateGuideLabel.isHidden = false
+            nickNameStateGuideLabel.text = TextLiteral.inputNickName
+            nickNameStateGuideLabel.textColor = .gray700
             completeSignOutButton.isEnabled = false
         }
     }

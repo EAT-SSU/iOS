@@ -13,7 +13,6 @@ import KakaoSDKUser
 import Moya
 import RealmSwift
 import SnapKit
-import Then
 
 final class LoginViewController: BaseViewController {
     // MARK: - Properties

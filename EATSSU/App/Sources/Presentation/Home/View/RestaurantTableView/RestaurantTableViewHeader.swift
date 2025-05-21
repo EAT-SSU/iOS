@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 class RestaurantTableViewHeader: BaseTableViewHeaderView {
     static let identifier = "RestaurantTableViewHeader"
@@ -31,23 +31,19 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
     }
 
     func setViewProperties() {
-        titleLabel.do {
-            $0.font = .subtitle1
-            $0.text = "기숙사 식당"
-        }
-        infoButton.do {
-            var configuration = UIButton.Configuration.plain()
-            configuration.baseForegroundColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
-            configuration.image = EATSSUDesignAsset.Images.icInfo.image
-            configuration.imagePlacement = .trailing
-            configuration.imagePadding = 4.0
-            $0.configuration = configuration
-        }
-        stackView.do {
-            $0.axis = .horizontal
-            $0.distribution = .equalSpacing
-            $0.alignment = .center
-        }
+        titleLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
+        titleLabel.text = "기숙사 식당"
+
+        var configuration = UIButton.Configuration.plain()
+        configuration.baseForegroundColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        configuration.image = EATSSUDesignAsset.Images.icInfo.image
+        configuration.imagePlacement = .trailing
+        configuration.imagePadding = 4.0
+        infoButton.configuration = configuration
+
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
     }
 
     func configureUI() {

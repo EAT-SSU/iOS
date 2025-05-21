@@ -7,11 +7,10 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import FSCalendar
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 protocol CalendarSeletionDelegate: AnyObject {
     func didSelectCalendar(date: Date)

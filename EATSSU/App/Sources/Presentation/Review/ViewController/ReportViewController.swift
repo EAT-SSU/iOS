@@ -7,10 +7,10 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import Moya
 import SnapKit
+
+import EATSSUDesign
 
 final class ReportViewController: BaseViewController {
     // MARK: - Properties

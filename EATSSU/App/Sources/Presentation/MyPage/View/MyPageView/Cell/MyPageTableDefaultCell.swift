@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 final class MyPageTableDefaultCell: UITableViewCell {
     // MARK: - Properties
@@ -18,15 +18,19 @@ final class MyPageTableDefaultCell: UITableViewCell {
 
     // MARK: - UI Components
 
-    let serviceLabel = UILabel().then {
-        $0.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
-        $0.textColor = .black
-    }
+    let serviceLabel: UILabel = {
+        let label = UILabel()
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        label.textColor = .black
+        return label
+    }()
 
-    let rigthChevronImage = UIImageView().then { imageView in
+    let rigthChevronImage: UIImageView = {
+        let imageView = UIImageView()
         imageView.image = UIImage(systemName: "chevron.right")
         imageView.tintColor = EATSSUDesignAsset.Color.GrayScale.gray300.color
-    }
+        return imageView
+    }()
 
     // MARK: - Initializer
 

@@ -7,10 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 final class MyPageView: BaseUIView {
     // MARK: - UI Components
@@ -22,67 +21,82 @@ final class MyPageView: BaseUIView {
     private let contentView = UIView()
 
     // 사용자 이미지
-    var userImage = UIImageView().then {
-        $0.image = EATSSUDesignAsset.Images.profile.image
-    }
+    var userImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.profile.image
+        return imageView
+    }()
 
     // 닉네임이 들어간 닉네임 변경 버튼
-    var userNicknameButton = UIButton().then {
-        $0.addTitleAttribute(
+    var userNicknameButton: UIButton = {
+        let button = UIButton()
+        button.addTitleAttribute(
             title: "다시 시도해주세요",
             titleColor: .black,
             fontName: EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
         )
-    }
+        return button
+    }()
 
     // "연결된 계정" 레이블
-    let accountTitleLabel = UILabel().then {
-        $0.text = TextLiteral.MyPage.linkedAccount
-        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-    }
+    let accountTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = TextLiteral.MyPage.linkedAccount
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        return label
+    }()
 
     // 서버에서 계정 정보를 가져오기 전 기본값
-    var accountTypeLabel = UILabel().then {
-        $0.text = "없음"
-        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-        $0.font = .bold(size: 14)
-    }
+    var accountTypeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "없음"
+        label.font = .bold(size: 14)
+        return label
+    }()
 
     // 소셜 로그인 공급업체 아이콘
     var accountTypeImage = UIImageView()
 
-    lazy var totalAccountStackView = UIStackView(
-        arrangedSubviews: [accountTitleLabel, accountStackView]).then {
-        $0.alignment = .bottom
-        $0.axis = .horizontal
-        $0.spacing = 20
-    }
+    lazy var accountStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [accountTypeLabel, accountTypeImage])
+        stack.axis = .horizontal
+        stack.alignment = .bottom
+        stack.spacing = 5
+        return stack
+    }()
 
-    lazy var accountStackView = UIStackView(
-        arrangedSubviews: [accountTypeLabel, accountTypeImage]).then {
-        $0.alignment = .bottom
-        $0.axis = .horizontal
-        $0.spacing = 5
-    }
+    lazy var totalAccountStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [accountTitleLabel, accountStackView])
+        stack.axis = .horizontal
+        stack.alignment = .bottom
+        stack.spacing = 20
+        return stack
+    }()
 
-    let myPageTableView = UITableView().then {
-        $0.separatorStyle = .none
-        $0.isScrollEnabled = false
-    }
+    let myPageTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.isScrollEnabled = false
+        return tableView
+    }()
 
     // "앱 버전" 레이블
-    private let appVersionStringLabel = UILabel().then { label in
+    private let appVersionStringLabel: UILabel = {
+        let label = UILabel()
         label.text = TextLiteral.MyPage.appVersion
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
-    }
+        return label
+    }()
 
     // 현재 배포된 앱의 버전
-    private let appVersionLabel = UILabel().then { label in
+    private let appVersionLabel: UILabel = {
+        let label = UILabel()
         label.text = MyPageRightItemData.version
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
-    }
+        return label
+    }()
 
     /// "탈퇴하기" 레이블과 탈퇴하기 아이콘
     let userWithdrawButton: UIButton = {

@@ -7,34 +7,40 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 /// 점검 혹은 공지가 필요할 때 사용하는 스플래시 뷰
 class NoticeSplashViewController: BaseViewController {
 
     // MARK: - UI Components
 
-    private let iconImageView = UIImageView().then {
-        $0.image = EATSSUDesignAsset.Images.alertCircle.image
-        $0.contentMode = .scaleAspectFit
-    }
+    private let iconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.alertCircle.image
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
 
-    private let logoImageView = UIImageView().then {
-        $0.image = EATSSUDesignAsset.Images.authLogo.image
-        $0.contentMode = .scaleAspectFit
-    }
+    private let logoImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.authLogo.image
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
 
-    private let titleLabel = UILabel().then {
-        $0.text = "긴급 서버 점검 안내"
-        $0.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
-        $0.textColor = EATSSUDesignAsset.Color.Main.primary.color
-        $0.textAlignment = .center
-    }
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "긴급 서버 점검 안내"
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
+        label.textColor = EATSSUDesignAsset.Color.Main.primary.color
+        label.textAlignment = .center
+        return label
+    }()
 
-    private let messageLabel = UILabel().then {
+    private let messageLabel: UILabel = {
+        let label = UILabel()
         let text = """
         3월 29일(토) 오후 11시부터 3월 30일(일) 오전 1시까지
         서버 점검으로 인해 앱 이용이 일시 중단됩니다.
@@ -51,9 +57,10 @@ class NoticeSplashViewController: BaseViewController {
             .paragraphStyle: paragraphStyle
         ]
 
-        $0.attributedText = NSAttributedString(string: text, attributes: attributes)
-        $0.numberOfLines = 0
-    }
+        label.attributedText = NSAttributedString(string: text, attributes: attributes)
+        label.numberOfLines = 0
+        return label
+    }()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {

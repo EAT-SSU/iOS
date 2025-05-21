@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 /// "만든 사람들"을 담고 있는 View 입니다.
 class CreatorsView: BaseUIView {

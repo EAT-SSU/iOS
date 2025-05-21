@@ -7,11 +7,11 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import FirebaseAnalytics
 import Moya
 import SnapKit
+
+import EATSSUDesign
 
 final class HomeViewController: BaseViewController {
     // MARK: - Properties
@@ -24,7 +24,7 @@ final class HomeViewController: BaseViewController {
         }
     }
 
-    private let tabmanController = HomeTimeTabmanController()
+    private let tabmanController = CustomTimeTabController()
     private let homeCalendarView = HomeCalendarView()
 
     // MARK: - Life Cycle

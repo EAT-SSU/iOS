@@ -90,9 +90,9 @@ public final class ESButton: UIButton {
 
         switch size {
         case .big:
-            titleLabel?.font = .button1
+            titleLabel?.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         case .small:
-            titleLabel?.font = .button2
+            titleLabel?.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)
         }
     }
 

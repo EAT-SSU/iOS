@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 class PostUIButton: UIButton {
     override var isEnabled: Bool {

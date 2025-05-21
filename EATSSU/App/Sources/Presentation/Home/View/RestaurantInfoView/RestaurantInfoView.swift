@@ -7,68 +7,85 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import MapKit
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 final class RestaurantInfoView: BaseUIView {
     // MARK: - UI Components
 
     let restaurantImage = UIImageView(image: EATSSUDesignAsset.Images.restaurantImage.image)
 
-    var restaurantNameLabel = UILabel().then {
-        $0.text = "학생 식당"
-        $0.font = .header1
-    }
+    var restaurantNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "학생 식당"
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 20)
+        return label
+    }()
 
-    private let locationTitleLabel = UILabel().then {
-        $0.text = "식당 위치"
-        $0.font = .header2
-    }
+    private let locationTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "식당 위치"
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        return label
+    }()
 
-    private let imageTitleLabel = UILabel().then {
-        $0.text = "식당 사진"
-        $0.font = .header2
-    }
+    private let imageTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "식당 사진"
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        return label
+    }()
 
-    private var locationLabel = UILabel().then {
-        $0.text = "숭실대학교"
-        $0.font = .body1
-    }
+    private var locationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "숭실대학교"
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        return label
+    }()
 
-    private let openingTimeTitleLabel = UILabel().then {
-        $0.text = "영업 시간"
-        $0.font = .header2
-    }
+    private let openingTimeTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "영업 시간"
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        return label
+    }()
 
-    private let openingTimeLabel = UILabel().then {
+    private let openingTimeLabel: UILabel = {
+        let label = UILabel()
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10
-        let attributedString = NSAttributedString(string: "08:00~09:30\n11:00~14:00\n17:00~18:30",
-                                                  attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        $0.attributedText = attributedString
-        $0.numberOfLines = 0
-        $0.textAlignment = .right
-        $0.font = .body1
-    }
+        label.attributedText = NSAttributedString(
+            string: "08:00~09:30\n11:00~14:00\n17:00~18:30",
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        )
+        label.numberOfLines = 0
+        label.textAlignment = .right
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        return label
+    }()
 
-    private let ectTitleLabel = UILabel().then {
-        $0.text = "비고"
-        $0.font = .header2
-    }
+    private let ectTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "비고"
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        return label
+    }()
 
-    private let ectLabel = UILabel().then {
+    private let ectLabel: UILabel = {
+        let label = UILabel()
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10
-        let attributedString = NSAttributedString(string: "아시안푸드, 돈까스, 샐러드, 국밥 등\n카페",
-                                                  attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        $0.attributedText = attributedString
-        $0.numberOfLines = 0
-        $0.textAlignment = .right
-        $0.font = .body1
-    }
+        label.attributedText = NSAttributedString(
+            string: "아시안푸드, 돈까스, 샐러드, 국밥 등\n카페",
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        )
+        label.numberOfLines = 0
+        label.textAlignment = .right
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        return label
+    }()
 
     // MARK: - Functions
 

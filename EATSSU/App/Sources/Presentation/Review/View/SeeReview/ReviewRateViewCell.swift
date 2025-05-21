@@ -14,9 +14,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 final class ReviewRateViewCell: UITableViewCell {
     // MARK: - Properties

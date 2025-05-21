@@ -10,7 +10,6 @@ import UIKit
 import Moya
 import Realm
 import SnapKit
-import Then
 
 final class UserWithdrawViewController: BaseViewController {
     // MARK: - Properties

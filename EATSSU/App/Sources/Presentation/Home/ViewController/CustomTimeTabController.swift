@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 final class CustomTimeTabController: BaseViewController {
     // MARK: - Properties
@@ -21,6 +21,7 @@ final class CustomTimeTabController: BaseViewController {
             setPage(index: selectedIndex, direction: selectedIndex > oldValue ? .forward : .reverse)
         }
     }
+    var todayDate: Date = .init()
 
     private var isProgrammaticScroll = false
 
@@ -45,6 +46,12 @@ final class CustomTimeTabController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        dateFetchData(for: todayDate)
     }
 
     override func configureUI() {
@@ -94,7 +101,7 @@ final class CustomTimeTabController: BaseViewController {
 
         tabContainerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(45)
+            $0.height.equalTo(52)
         }
 
         tabStackView.snp.makeConstraints {
@@ -109,6 +116,13 @@ final class CustomTimeTabController: BaseViewController {
         }
 
         setupPageViewController()
+    }
+    
+    func dateFetchData(for date: Date) {
+        morningVC.fetchData(date: date, time: "MORNING")
+        lunchVC.fetchData(date: date, time: "LUNCH")
+        dinnerVC.fetchData(date: date, time: "DINNER")
+
     }
 
     private func setupPageViewController() {
@@ -179,6 +193,7 @@ final class CustomTimeTabController: BaseViewController {
     // MARK: - External API
 
     func updateDate(to date: Date) {
+        todayDate = date
         morningVC.fetchData(date: date, time: "MORNING")
         lunchVC.fetchData(date: date, time: "LUNCH")
         dinnerVC.fetchData(date: date, time: "DINNER")

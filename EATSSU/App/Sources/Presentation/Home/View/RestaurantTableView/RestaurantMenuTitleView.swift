@@ -6,40 +6,52 @@
 //
 
 import UIKit
+
 import SnapKit
+
+import EATSSUDesign
 
 final class RestaurantMenuTitleView: BaseUIView {
 
-    private let nameLabel = UILabel().then {
-        $0.text = TextLiteral.Home.todayMenu
-        $0.font = .body2
-    }
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.text = TextLiteral.Home.todayMenu
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
+        return label
+    }()
 
-    private let priceLabel = UILabel().then {
-        $0.text = TextLiteral.Home.price
-        $0.font = .body2
-        $0.textAlignment = .center
-    }
+    private let priceLabel: UILabel = {
+        let label = UILabel()
+        label.text = TextLiteral.Home.price
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
+        label.textAlignment = .center
+        return label
+    }()
 
-    private let ratingLabel = UILabel().then {
-        $0.text = TextLiteral.Home.rating
-        $0.font = .body2
-        $0.textAlignment = .center
-    }
+    private let ratingLabel: UILabel = {
+        let label = UILabel()
+        label.text = TextLiteral.Home.rating
+        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
+        label.textAlignment = .center
+        return label
+    }()
 
-    private let lineView = UIView().then {
-        $0.backgroundColor = .gray200
-    }
+    private lazy var infoTableStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [nameLabel, priceLabel, ratingLabel])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 24
+        return stackView
+    }()
 
-    private lazy var infoTableStackView = UIStackView().then {
-        $0.addArrangedSubviews([nameLabel, priceLabel, ratingLabel])
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.spacing = 24
-    }
+    private let lineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray200
+        return view
+    }()
 
     override func configureUI() {
-        self.addSubviews(infoTableStackView, lineView)
+        addSubviews(infoTableStackView, lineView)
     }
 
     override func setLayout() {
@@ -48,16 +60,19 @@ final class RestaurantMenuTitleView: BaseUIView {
             $0.horizontalEdges.equalToSuperview().inset(12)
         }
 
-        nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        priceLabel.snp.makeConstraints { $0.width.equalTo(47) }
-        ratingLabel.snp.makeConstraints { $0.width.equalTo(25) }
+        priceLabel.snp.makeConstraints {
+            $0.width.equalTo(47)
+        }
+
+        ratingLabel.snp.makeConstraints {
+            $0.width.equalTo(25)
+        }
 
         lineView.snp.makeConstraints {
             $0.top.equalTo(infoTableStackView.snp.bottom).offset(11)
             $0.horizontalEdges.equalToSuperview().inset(8)
-            $0.height.equalTo(1)
-            $0.bottom.equalToSuperview().inset(6)
+            $0.height.equalTo(1).priority(UILayoutPriority.defaultLow)
+            $0.bottom.equalToSuperview().inset(6).priority(UILayoutPriority.defaultHigh) 
         }
     }
 }
