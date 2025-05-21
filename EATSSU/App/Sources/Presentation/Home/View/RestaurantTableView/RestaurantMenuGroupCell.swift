@@ -59,7 +59,10 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
 
     // 오토레이아웃 설정
     override func setLayout() {
-        wrapperView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        wrapperView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().priority(UILayoutPriority.defaultHigh) 
+        }
 
         titleView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()

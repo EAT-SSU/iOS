@@ -127,6 +127,8 @@ final class HomeRestaurantViewController: BaseViewController {
             forHeaderFooterViewReuseIdentifier: RestaurantTableViewHeader.identifier)
         restaurantView.restaurantTableView.register(RestaurantMenuGroupCell.self,
                                                     forCellReuseIdentifier: RestaurantMenuGroupCell.identifier)
+        restaurantView.restaurantTableView.rowHeight = UITableView.automaticDimension
+        restaurantView.restaurantTableView.estimatedRowHeight = 100
     }
 
     // 식당 이름을 통해 섹션 index 반환

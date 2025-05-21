@@ -71,8 +71,8 @@ final class RestaurantMenuTitleView: BaseUIView {
         lineView.snp.makeConstraints {
             $0.top.equalTo(infoTableStackView.snp.bottom).offset(11)
             $0.horizontalEdges.equalToSuperview().inset(8)
-            $0.height.equalTo(1)
-            $0.bottom.equalToSuperview().inset(6)
+            $0.height.equalTo(1).priority(UILayoutPriority.defaultLow)
+            $0.bottom.equalToSuperview().inset(6).priority(UILayoutPriority.defaultHigh) 
         }
     }
 }
