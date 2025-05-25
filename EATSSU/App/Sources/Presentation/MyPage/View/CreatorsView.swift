@@ -15,14 +15,18 @@ import SnapKit
 class CreatorsView: BaseUIView {
     // MARK: - UI Components
     
-    let scrollView: UIScrollView = UIScrollView().then {
-        $0.showsVerticalScrollIndicator = false
-        $0.contentInsetAdjustmentBehavior = .never 
-    }
+    let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.contentInsetAdjustmentBehavior = .never
+        return scrollView
+    }()
     
-    let contentView: UIView = UIView().then {
-        $0.backgroundColor = .clear
-    }
+    let contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
 
     private let creatorsImageView: UIImageView = {
         let imageView = UIImageView()
