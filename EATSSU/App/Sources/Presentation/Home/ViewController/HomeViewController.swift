@@ -23,6 +23,12 @@ final class HomeViewController: BaseViewController {
             #endif
         }
     }
+    
+    private let logoImageView: UIImageView = {
+        let imageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
 
     private let tabmanController = CustomTimeTabController()
     private let homeCalendarView = HomeCalendarView()
@@ -31,11 +37,12 @@ final class HomeViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
         setupDelegates()
         configureUI()
         setLayout()
         registerTabman()
-        setupNavigationBar()
+//        setupNavigationBar()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -46,12 +53,19 @@ final class HomeViewController: BaseViewController {
     // MARK: - UI Configuration
 
     override func configureUI() {
+        view.addSubview(logoImageView)
         view.addSubview(homeCalendarView)
     }
 
     override func setLayout() {
+        logoImageView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide) 
+            make.centerX.equalToSuperview()
+            make.height.equalTo(28)
+        }
+
         homeCalendarView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(logoImageView.snp.bottom).offset(13)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(80)
         }
@@ -71,29 +85,29 @@ final class HomeViewController: BaseViewController {
 
     // MARK: - Navigation
 
-    private func setupNavigationBar() {
-        let logoImageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
-        navigationItem.titleView = logoImageView
-
-        let rightButton = UIBarButtonItem(
-            image: EATSSUDesignAsset.Images.myPageIcon.image,
-            style: .plain,
-            target: self,
-            action: #selector(didTapRightBarButton)
-        )
-        rightButton.tintColor = EATSSUDesignAsset.Color.Main.primary.color
-        navigationItem.rightBarButtonItem = rightButton
-        navigationController?.isNavigationBarHidden = false
-    }
-
-    @objc
-    private func didTapRightBarButton() {
-        if RealmService.shared.isAccessTokenPresent() {
-            navigateToMyPage()
-        } else {
-            presentLoginAlert()
-        }
-    }
+//    private func setupNavigationBar() {
+//        let logoImageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
+//        navigationItem.titleView = logoImageView
+//
+//        let rightButton = UIBarButtonItem(
+//            image: EATSSUDesignAsset.Images.myPageIcon.image,
+//            style: .plain,
+//            target: self,
+//            action: #selector(didTapRightBarButton)
+//        )
+//        rightButton.tintColor = EATSSUDesignAsset.Color.Main.primary.color
+//        navigationItem.rightBarButtonItem = rightButton
+//        navigationController?.isNavigationBarHidden = false
+//    }
+//
+//    @objc
+//    private func didTapRightBarButton() {
+//        if RealmService.shared.isAccessTokenPresent() {
+//            navigateToMyPage()
+//        } else {
+//            presentLoginAlert()
+//        }
+//    }
 
     private func navigateToMyPage() {
         let myPageVC = MyPageViewController()

@@ -95,14 +95,12 @@ final class LoginViewController: BaseViewController {
     }
 
     private func changeIntoHomeViewController() {
-        let homeVC = HomeViewController()
+        let rootTabBar = RootTabBarViewController()
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
         else { return }
 
-        keyWindow.replaceRootViewController(
-            UINavigationController(rootViewController: homeVC)
-        )
+        keyWindow.replaceRootViewController(rootTabBar)
     }
 
     /// 닉네임 설정이 필요한지 확인 후, 필요하면 닉네임 설정 화면으로, 아니면 홈 화면으로 이동한다.
