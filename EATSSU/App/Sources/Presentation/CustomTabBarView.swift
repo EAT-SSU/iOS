@@ -31,7 +31,6 @@ final class CustomTabBarView: UIView {
             let button = UIButton(configuration: config, primaryAction: nil)
             button.tag = index
 
-            // Pretendard 글꼴 설정 (regular 11pt)
             let font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
             var attrTitle = AttributedString(pair.0)
             attrTitle.font = font
@@ -42,8 +41,6 @@ final class CustomTabBarView: UIView {
             return button
         }
     }()
-
-
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,7 +60,7 @@ final class CustomTabBarView: UIView {
         // 그림자
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.06
-        layer.shadowOffset = CGSize(width: 0, height: -6)
+        layer.shadowOffset = CGSize(width: 0, height: -3)
         layer.shadowRadius = 12
 
         // 버튼 스택
