@@ -11,9 +11,9 @@ final class CustomTabBarContainerController: BaseViewController {
 
     private let tabBarView = CustomTabBarView()
     private let viewControllers: [UIViewController] = [
-        HomeViewController(),
-        HomeViewController(),
-        MyPageViewController()
+        UINavigationController(rootViewController: HomeViewController()),
+        UINavigationController(rootViewController: HomeViewController()),
+        UINavigationController(rootViewController: MyPageViewController())
     ]
     private var currentIndex = 0
 
