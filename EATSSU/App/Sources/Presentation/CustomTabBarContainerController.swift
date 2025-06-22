@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CustomTabBarContainerController: UIViewController {
+final class CustomTabBarContainerController: BaseViewController {
 
     private let tabBarView = CustomTabBarView()
     private let viewControllers: [UIViewController] = [
@@ -19,29 +19,29 @@ final class CustomTabBarContainerController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        setupTabBar()
         switchToViewController(at: currentIndex)
     }
 
-    private func setupTabBar() {
+    override func configureUI() {
         view.addSubview(tabBarView)
-        tabBarView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
-            $0.height.equalTo(74)
-        }
 
         tabBarView.buttonTapped = { [weak self] index in
             guard let self = self else { return }
 
-            // 로그인 요청 띄우기
             if index == 2, RealmService.shared.isAccessTokenPresent() == false {
                 self.presentLoginAlert()
                 return
             }
 
             self.switchToViewController(at: index)
+        }
+    }
+
+    override func setLayout() {
+        tabBarView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
+            $0.height.equalTo(74)
         }
     }
 
@@ -64,7 +64,7 @@ final class CustomTabBarContainerController: UIViewController {
         tabBarView.setSelectedIndex(index)
         currentIndex = index
     }
-    
+
     private func presentLoginAlert() {
         let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
                                       message: "로그인 하시겠습니까?",
@@ -78,7 +78,7 @@ final class CustomTabBarContainerController: UIViewController {
         }
         alert.addAction(confirmAction)
         alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
+        present(alert, animated: true)
     }
 
     private func navigateToLogin() {
@@ -89,5 +89,4 @@ final class CustomTabBarContainerController: UIViewController {
             window.replaceRootViewController(loginVC)
         }
     }
-
 }

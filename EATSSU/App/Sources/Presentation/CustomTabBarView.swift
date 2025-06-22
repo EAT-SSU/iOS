@@ -9,7 +9,7 @@ import UIKit
 
 import EATSSUDesign
 
-final class CustomTabBarView: UIView {
+final class CustomTabBarView: BaseUIView {
 
     var buttonTapped: ((Int) -> Void)?
 
@@ -42,28 +42,24 @@ final class CustomTabBarView: UIView {
         }
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
-
-    private func setupUI() {
+    override func configureUI() {
         backgroundColor = .white
         layer.cornerRadius = 10
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         layer.masksToBounds = false
 
-        // 그림자
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.06
         layer.shadowOffset = CGSize(width: 0, height: -3)
         layer.shadowRadius = 12
 
-        // 버튼 스택
+        buttons.forEach { button in
+            button.setTitleColor(.gray, for: .normal)
+            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+        }
+    }
+
+    override func setLayout() {
         let stack = UIStackView(arrangedSubviews: buttons)
         stack.axis = .horizontal
         stack.distribution = .fillEqually
@@ -71,11 +67,6 @@ final class CustomTabBarView: UIView {
         addSubview(stack)
 
         stack.snp.makeConstraints { $0.edges.equalToSuperview().inset(8) }
-
-        buttons.forEach { button in
-            button.setTitleColor(.gray, for: .normal)
-            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-        }
     }
 
     func setSelectedIndex(_ index: Int) {
@@ -89,9 +80,7 @@ final class CustomTabBarView: UIView {
                 attrTitle.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 11)
                 attrTitle.foregroundColor = color
                 config.attributedTitle = attrTitle
-
                 config.baseForegroundColor = color
-
                 button.configuration = config
             }
         }
