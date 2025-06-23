@@ -36,6 +36,19 @@ final class HomeViewController: BaseViewController {
         setLayout()
         registerTabman()
         setupNavigationBar()
+        
+        // 이미 등록된 옵저버가 있으면 먼저 제거
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewDayNotification(_:)),
+            name: .didEnterNewDay,
+            object: nil
+        )
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -136,6 +149,16 @@ final class HomeViewController: BaseViewController {
 
     private func setupDelegates() {
         homeCalendarView.delegate = tabmanController
+    }
+    
+    @objc private func handleNewDayNotification(_ notification: Notification) {
+        // 백그라운드에서 돌아와 새로운 날로 판단될 때, 오늘 날짜로 갱신
+        DispatchQueue.main.async {
+            let today = Date()
+            self.currentDate = today
+            // 달력뷰에 오늘 날짜가 선택되도록 호출
+            self.homeCalendarView.setSelected(date: today)
+        }
     }
 }
 
