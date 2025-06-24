@@ -37,6 +37,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     ],
     // 사용 국가 지정
     "CFBundleDevelopmentRegion": "ko",
+    "NAVER_CLIENT_ID": "$(NAVER_CLIENT_ID)",
 ])
 
 let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
@@ -99,7 +100,8 @@ let project = Project(
                 .external(name: "KakaoSDKUser"),
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
-
+                .external(name: "NMapsMap"),
+                
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
@@ -134,7 +136,8 @@ let project = Project(
                 .external(name: "KakaoSDKUser"),
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
-
+                .external(name: "NMapsMap"),
+                
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],

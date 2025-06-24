@@ -10,6 +10,7 @@ import UIKit
 
 import Firebase
 import KakaoSDKCommon
+import NMapsMap
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -22,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         handleAppleSignIn()
         initializeKakaoSDK()
         setupDebugConfigurations()
+        configureNaverMapAuth()
         UNUserNotificationCenter.current().delegate = self
 
         return true
@@ -41,6 +43,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         LaunchSourceManager.shared.setSource(.localNotification)
         completionHandler()
     }
+    
+    // 네이버 맵 키 설정
+    private func configureNaverMapAuth() {
+        if let key = Bundle.main.infoDictionary?["NAVER_CLIENT_ID"] as? String {
+            NMFAuthManager.shared().ncpKeyId = key
+            print("NaverMap Client ID 설정 완료: \(key)")
+        } else {
+            print("NAVER_CLIENT_ID 못 찾음")
+        }
+    }
+
 
     // MARK: - Private Methods
 
