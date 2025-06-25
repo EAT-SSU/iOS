@@ -26,7 +26,7 @@ final class MainMapViewController: UIViewController {
         // 배경색 채우기
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.backgroundColor = .white // 원하는 색상
+        navBarAppearance.backgroundColor = .white 
         navBarAppearance.titleTextAttributes = [
             .foregroundColor: UIColor.black,
             .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)

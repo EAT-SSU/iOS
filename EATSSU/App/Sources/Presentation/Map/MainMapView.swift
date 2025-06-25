@@ -50,7 +50,7 @@ final class MainMapView: UIView {
 
         wholeButton.setTitle("전체", for: .normal)
         myOnlyButton.setTitle("내 제휴", for: .normal)
-        selectWhole(true) // 초기 선택 상태
+        selectWhole(true)
         toggleBackgroundView.addSubview(wholeButton)
         toggleBackgroundView.addSubview(myOnlyButton)
 
