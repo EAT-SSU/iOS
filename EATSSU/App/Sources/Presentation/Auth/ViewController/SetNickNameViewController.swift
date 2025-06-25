@@ -18,11 +18,25 @@ final class SetNickNameViewController: BaseViewController {
     // MARK: - UI Components
     
     private let setNickNameView = SetNickNameView()
+    private func getDepartments(for college: String) -> [String] {
+        switch college {
+        case "인문대": return ["국어국문학과", "영어영문학과", "철학과"]
+        case "자연대": return ["수학과", "물리학과", "화학과"]
+        default: return []
+        }
+    }
+
 
     // MARK: - Life Cycles
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        setNickNameView.collegeDropDownView.onSelect = { [weak self] selectedCollege in
+            // 학과 목록 업데이트
+            let deptList = self?.getDepartments(for: selectedCollege) ?? []
+            self?.setNickNameView.departmentDropDownView.updateItems(deptList)
+        }
 
         dismissKeyboard()
     }

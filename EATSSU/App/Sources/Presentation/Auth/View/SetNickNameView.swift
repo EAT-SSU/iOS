@@ -15,6 +15,8 @@ final class SetNickNameView: BaseUIView {
     // MARK: - Properties
 
     private var userNickname: String = ""
+    public let collegeDropDownView = DropDownView(title: "단과대", items: ["인문대", "자연대",])
+    public let departmentDropDownView = DropDownView(title: "학과", items: [])
 
     // MARK: - UI Components
 
@@ -63,36 +65,10 @@ final class SetNickNameView: BaseUIView {
         return label
     }()
 
-    public let collegeSelectButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("단과대", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-        button.contentHorizontalAlignment = .left
-        button.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
-        button.layer.cornerRadius = 8
-        button.layer.borderWidth = 1
-        button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-        return button
-    }()
-
-    public let departmentSelectButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("학과", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-        button.contentHorizontalAlignment = .left
-        button.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
-        button.layer.cornerRadius = 8
-        button.layer.borderWidth = 1
-        button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-        return button
-    }()
-
     private lazy var affiliationStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            collegeSelectButton,
-            departmentSelectButton
+            collegeDropDownView,
+            departmentDropDownView
         ])
         stackView.axis = .vertical
         stackView.spacing = 12
@@ -109,7 +85,7 @@ final class SetNickNameView: BaseUIView {
 
     public let connectedProviderLabel: UILabel = {
         let label = UILabel()
-        label.text = "APPLE" // 예시, 동적으로 설정 가능
+        label.text = "APPLE"
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         return label
     }()
@@ -178,16 +154,11 @@ final class SetNickNameView: BaseUIView {
             $0.top.equalTo(affiliationLabel.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(24)
         }
-
-        collegeSelectButton.snp.makeConstraints {
-            $0.height.equalTo(48)
-        }
-        departmentSelectButton.snp.makeConstraints {
-            $0.height.equalTo(48)
-        }
+        collegeDropDownView.snp.makeConstraints { $0.height.equalTo(48) }
+        departmentDropDownView.snp.makeConstraints { $0.height.equalTo(48) }
 
         connectedAccountLabel.snp.makeConstraints {
-            $0.top.equalTo(affiliationStackView.snp.bottom).offset(24)
+            $0.top.equalTo(affiliationStackView.snp.bottom).offset(40)
             $0.leading.equalToSuperview().inset(24)
         }
 
