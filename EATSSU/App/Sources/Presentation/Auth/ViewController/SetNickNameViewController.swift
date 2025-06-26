@@ -32,12 +32,6 @@ final class SetNickNameViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setNickNameView.collegeDropDownView.onSelect = { [weak self] selectedCollege in
-            // 학과 목록 업데이트
-            let deptList = self?.getDepartments(for: selectedCollege) ?? []
-            self?.setNickNameView.departmentDropDownView.updateItems(deptList)
-        }
-
         dismissKeyboard()
     }
 

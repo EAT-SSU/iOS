@@ -15,7 +15,7 @@ final class SetNickNameView: BaseUIView {
     // MARK: - Properties
 
     private var userNickname: String = ""
-    public let collegeDropDownView = DropDownView(title: "단과대", items: ["인문대", "자연대",])
+    public let collegeDropDownView = DropDownView(title: "단과대", items: CollegeDepartmentStore.colleges)
     public let departmentDropDownView = DropDownView(title: "학과", items: [])
 
     // MARK: - UI Components
@@ -108,6 +108,7 @@ final class SetNickNameView: BaseUIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setTextFieldDelegate()
+        bindCollegeDepartmentDropDown()
     }
 
     // MARK: - Functions
@@ -138,12 +139,7 @@ final class SetNickNameView: BaseUIView {
         }
         nicknameDoubleCheckButton.snp.makeConstraints {
             $0.top.equalTo(inputNickNameTextField)
-            $0.width.equalTo(75)
-            $0.height.equalTo(48)
             $0.trailing.equalToSuperview().inset(16)
-        }
-        inputNickNameTextField.snp.makeConstraints {
-            $0.height.equalTo(48)
         }
         affiliationLabel.snp.makeConstraints {
             $0.top.equalTo(setNickNameStackView.snp.bottom).offset(24)
@@ -175,12 +171,20 @@ final class SetNickNameView: BaseUIView {
         completeSettingNickNameButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(26)
-            $0.height.equalTo(52)
         }
     }
 
     func setTextFieldDelegate() {
         inputNickNameTextField.delegate = self
+    }
+    
+    private func bindCollegeDepartmentDropDown() {
+        collegeDropDownView.onSelectItem = { [weak self] college in
+            guard let self else { return }
+            let departments = CollegeDepartmentStore.departments(of: college)
+            departmentDropDownView.updateItems(departments)
+            departmentDropDownView.setTitle("학과")  // 타이틀 초기화
+        }
     }
 }
 

@@ -16,7 +16,7 @@ final class DropDownView: UIView {
     // MARK: - Properties
 
     private var items: [String]
-    public var onSelect: ((String) -> Void)?
+    public var onSelectItem: ((String) -> Void)?
     private var isDropdownVisible = false
     private var dropdownTableView: UITableView?
 
@@ -66,7 +66,6 @@ final class DropDownView: UIView {
 
         button.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.height.equalTo(52)
         }
 
         arrow.snp.makeConstraints {
@@ -109,7 +108,7 @@ final class DropDownView: UIView {
 
             let origin = self.convert(self.bounds.origin, to: parentView)
             tableView.snp.makeConstraints {
-                $0.top.equalTo(origin.y + 52)
+                $0.top.equalTo(origin.y + 48 + 6)
                 $0.leading.equalTo(origin.x)
                 $0.width.equalTo(self.bounds.width)
                 $0.height.equalTo(min(items.count * 44, 200))
@@ -162,8 +161,8 @@ extension DropDownView: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selected = items[indexPath.row]
-           setTitle(selected)
-           onSelect?(selected)
-           toggleDropdown()
+            setTitle(selected)
+            onSelectItem?(selected)
+            toggleDropdown()
     }
 }
