@@ -238,7 +238,7 @@ extension ReviewTableCell {
         dateLabel.text = response.writedAt
         reviewTextView.text = response.content
         reviewId = response.reviewID
-        if let firstImageUrl = response.imgURLList.first(where: { ($0 ?? "").isEmpty == false }) {
+        if let firstImageUrl = response.imgURLList.compactMap({ $0 }).first(where: { !$0.isEmpty }) {
             foodImageView.isHidden = false
             foodImageView.kfSetImage(url: firstImageUrl)
         } else {
