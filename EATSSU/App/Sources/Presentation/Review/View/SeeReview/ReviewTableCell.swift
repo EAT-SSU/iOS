@@ -238,15 +238,12 @@ extension ReviewTableCell {
         dateLabel.text = response.writedAt
         reviewTextView.text = response.content
         reviewId = response.reviewID
-        if response.imgURLList.count != 0 {
-            if response.imgURLList[0] != "" {
-                foodImageView.isHidden = false
-                foodImageView.kfSetImage(url: response.imgURLList[0])
-            }
+        if let firstImageUrl = response.imgURLList.first(where: { ($0 ?? "").isEmpty == false }) {
+            foodImageView.isHidden = false
+            foodImageView.kfSetImage(url: firstImageUrl)
         } else {
             foodImageView.isHidden = true
         }
-
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
     }
