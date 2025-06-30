@@ -67,7 +67,11 @@ final class SetNickNameViewController: BaseViewController {
 
     @objc
     func tappedCompleteNickNameButton() {
-        setUserNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
+        let nickname = setNickNameView.inputNickNameTextField.text ?? ""
+        let department = setNickNameView.departmentDropDownView.getSelectedTitle() ?? ""
+
+        setUserNickname(nickname: nickname)
+        setUserDepartment(department: department)
     }
 
     @objc
@@ -132,7 +136,7 @@ extension SetNickNameViewController {
     private func setUserNickname(nickname: String) {
         nicknameProvider.request(.setNickname(nickname: nickname)) { response in
             switch response {
-            case let .success(moyaResponse):
+            case .success(_):
                 if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
                     UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
                 }
@@ -189,6 +193,17 @@ extension SetNickNameViewController {
                 
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
+            }
+        }
+    }
+    
+    private func setUserDepartment(department: String) {
+        nicknameProvider.request(.setDepartment(department: department)) { response in
+            switch response {
+            case .success:
+                print("학과 등록 성공: \(department)")
+            case let .failure(error):
+                print("학과 등록 실패: \(error.localizedDescription)")
             }
         }
     }

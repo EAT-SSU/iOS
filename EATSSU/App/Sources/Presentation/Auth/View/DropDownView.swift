@@ -139,6 +139,13 @@ final class DropDownView: UIView {
         config?.titleAlignment = .leading
         button.configuration = config
     }
+    
+    public func getSelectedTitle() -> String? {
+        if let attributed = button.configuration?.attributedTitle {
+            return NSAttributedString(attributed).string
+        }
+        return nil
+    }
 }
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
