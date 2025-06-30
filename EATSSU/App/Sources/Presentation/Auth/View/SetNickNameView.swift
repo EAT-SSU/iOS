@@ -134,7 +134,7 @@ final class SetNickNameView: BaseUIView {
         }
         setNickNameStackView.snp.makeConstraints {
             $0.top.equalTo(nickNameLabel.snp.bottom).offset(8)
-            $0.leading.equalToSuperview().inset(20)
+            $0.leading.equalToSuperview().inset(24)
             $0.trailing.equalTo(nicknameDoubleCheckButton.snp.leading).offset(-5)
         }
         nicknameDoubleCheckButton.snp.makeConstraints {
