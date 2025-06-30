@@ -196,8 +196,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController?.present(alert, animated: true, completion: nil)
     }
     
-    /// 마지막 활성화 날짜와 비교해 “새로운 날”이면 알림을 보내고,
-    /// 마지막 활성화 시간을 갱신합니다.
+    /// 마지막 활성화 날짜와 비교해 “새로운 날”이면 알림을 보내고, 마지막 활성화 시간을 갱신
     private func checkAndNotifyNewDay() {
         let defaults = UserDefaults.standard
         let calendar = Calendar.current
@@ -209,7 +208,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let lastDay = calendar.startOfDay(for: lastActive)
             // 오늘이 마지막 활성화 날짜보다 이후인지 검사
             if calendar.compare(today, to: lastDay, toGranularity: .day) == .orderedDescending {
-                // 새로운 날로 판단될 때, 관련 로직이 실행되도록 알림을 보냅니다.
+                // 새로운 날로 판단될 때, 알림을 보냄
                 NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
             }
         } else {
@@ -217,7 +216,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
         }
         
-        // 마지막 활성화 날짜를 현재 시점으로 업데이트하여 다음 비교에 사용합니다.
+        // 마지막 활성화 날짜를 현재 시점으로 업데이트하여 다음 비교에 사용
         defaults.set(Date(), forKey: "lastActiveDate")
     }
 }
