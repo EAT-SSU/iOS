@@ -73,7 +73,7 @@ final class MainMapViewController: UIViewController {
             let marker = NMFMarker()
             marker.position = NMGLatLng(lat: partnership.latitude, lng: partnership.longitude)
             
-            let markerImage = makeMarkerImage(title: partnership.storeName)
+            let markerImage = makeMarkerImage(type: partnership.restaurantType, title: partnership.storeName)
             marker.iconImage = NMFOverlayImage(image: markerImage)
             marker.width = CGFloat(UInt32(markerImage.size.width))
             marker.height = CGFloat(UInt32(markerImage.size.height))
@@ -92,29 +92,35 @@ final class MainMapViewController: UIViewController {
             mainView.mapView.mapView.moveCamera(cameraUpdate)
         }
     }
-    
-    private func makeMarkerImage(title: String) -> UIImage {
-        let label = UILabel()
-        label.text = "🍻 \(title)"
-        label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        label.textColor = .white
-        label.backgroundColor = UIColor(red: 72/255, green: 194/255, blue: 196/255, alpha: 1) // #48C2C4
-        label.textAlignment = .center
-        label.layer.cornerRadius = 14
-        label.layer.masksToBounds = true
-        label.sizeToFit()
-        
-        let padding: CGFloat = 10
-        let imageSize = CGSize(width: label.frame.width + padding * 2, height: label.frame.height + padding)
-        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0.0)
-        label.frame = CGRect(x: padding, y: 0, width: label.frame.width, height: label.frame.height)
-        label.drawHierarchy(in: label.frame, afterScreenUpdates: true)
-        let image = UIGraphicsGetImageFromCurrentImageContext() ?? UIImage()
-        UIGraphicsEndImageContext()
-        return image
+
+    private func makeMarkerImage(type: String, title: String) -> UIImage {
+        let icon: UIImage?
+
+        switch type {
+        case "RESTAURANT":
+            icon = EATSSUDesignAsset.Images.restaurantPin.image
+        case "CAFE":
+            icon = EATSSUDesignAsset.Images.cafePin.image
+        case "PUB":
+            icon = EATSSUDesignAsset.Images.pubPin.image
+        default:
+            icon = EATSSUDesignAsset.Images.restaurantPin.image
+        }
+
+        let markerView = MapMarkerView(icon: icon, title: title)
+        markerView.setNeedsLayout()
+        markerView.layoutIfNeeded()
+
+        let fittingSize = markerView.systemLayoutSizeFitting(
+            CGSize(width: UIView.layoutFittingCompressedSize.width,
+                   height: 24)
+        )
+
+        markerView.frame = CGRect(origin: .zero, size: fittingSize)
+        return markerView.toImage()
+
     }
 
-    
     // MARK: - Network
 
     private func fetchPartnerships() {
