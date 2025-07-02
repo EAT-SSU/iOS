@@ -32,7 +32,7 @@ final class MapMarkerView: UIView {
 
         iconImageView.image = icon
         iconImageView.contentMode = .scaleAspectFit
-        iconImageView.snp.makeConstraints { $0.size.equalTo(20) }
+        iconImageView.snp.makeConstraints { $0.width.equalTo(20) }
 
         titleLabel.text = title
         titleLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)

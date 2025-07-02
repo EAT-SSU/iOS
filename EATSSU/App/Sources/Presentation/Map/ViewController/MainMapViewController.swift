@@ -78,6 +78,12 @@ final class MainMapViewController: UIViewController {
             marker.width = CGFloat(UInt32(markerImage.size.width))
             marker.height = CGFloat(UInt32(markerImage.size.height))
             
+            marker.touchHandler = { [weak self] _ in
+               let vc = PartnershipDetailSheetViewController(partnership: partnership)
+               self?.present(vc, animated: true)
+               return true
+           }
+            
             marker.mapView = mainView.mapView.mapView
             markers.append(marker)
 
@@ -112,8 +118,9 @@ final class MainMapViewController: UIViewController {
         markerView.layoutIfNeeded()
 
         let fittingSize = markerView.systemLayoutSizeFitting(
-            CGSize(width: UIView.layoutFittingCompressedSize.width,
-                   height: 24)
+            CGSize(width: UIView.layoutFittingCompressedSize.width, height: 24),
+            withHorizontalFittingPriority: .fittingSizeLevel,
+            verticalFittingPriority: .required
         )
 
         markerView.frame = CGRect(origin: .zero, size: fittingSize)
