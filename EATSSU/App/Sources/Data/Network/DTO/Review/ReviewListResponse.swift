@@ -23,7 +23,7 @@ struct MenuDataList: Codable {
     let writerNickname: String
     let mainRating, amountRating, tasteRating: Int
     let writedAt, content: String
-    let imgURLList: [String]
+    let imgURLList: [String?]
 
     enum CodingKeys: String, CodingKey {
         case reviewID = "reviewId"
