@@ -6,21 +6,21 @@
 //
 
 import UIKit
-
+import SnapKit
 import EATSSUDesign
 
 final class PartnershipDetailSheetViewController: UIViewController {
 
     private let storeName: String
     private let restaurantType: String
-    private let info: PartnershipInfoDTO
-    
-    init(storeName: String, restaurantType: String, info: PartnershipInfoDTO) {
+    private let partnershipInfos: [PartnershipInfoDTO]
+
+    init(storeName: String, restaurantType: String, partnershipInfos: [PartnershipInfoDTO]) {
         self.storeName = storeName
         self.restaurantType = restaurantType
-        self.info = info
-        
+        self.partnershipInfos = partnershipInfos
         super.init(nibName: nil, bundle: nil)
+
         modalPresentationStyle = .pageSheet
         if let sheet = sheetPresentationController {
             sheet.detents = [.medium(), .large()]
@@ -33,10 +33,10 @@ final class PartnershipDetailSheetViewController: UIViewController {
     }
 
     private let storeNameLabel = UILabel()
-    private let descriptionLabel = UILabel()
-    private let dateLabel = UILabel()
-    private let collegeLabel = UILabel()
-    private let departmentLabel = UILabel()
+    private let typeStackView = UIStackView()
+    private let typeIconImageView = UIImageView()
+    private let typeTextLabel = UILabel()
+    private let infoListStackView = UIStackView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,53 +47,127 @@ final class PartnershipDetailSheetViewController: UIViewController {
     }
 
     private func setupViews() {
-        storeNameLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
-        descriptionLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-        dateLabel.font = EATSSUDesignFontFamily.Pretendard.light.font(size: 12)
-        collegeLabel.font = EATSSUDesignFontFamily.Pretendard.light.font(size: 12)
-        departmentLabel.font = EATSSUDesignFontFamily.Pretendard.light.font(size: 12)
+        storeNameLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
+        storeNameLabel.textColor = .label
 
-        descriptionLabel.numberOfLines = 0
-        collegeLabel.numberOfLines = 0
-        departmentLabel.numberOfLines = 0
+        typeIconImageView.contentMode = .scaleAspectFit
+        typeIconImageView.snp.makeConstraints { $0.width.height.equalTo(18) }
 
-        [storeNameLabel, descriptionLabel, dateLabel, collegeLabel, departmentLabel].forEach {
+        typeTextLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)
+        typeTextLabel.textColor = .gray
+
+        typeStackView.axis = .horizontal
+        typeStackView.alignment = .center
+        typeStackView.spacing = 4
+        typeStackView.addArrangedSubview(typeIconImageView)
+        typeStackView.addArrangedSubview(typeTextLabel)
+
+        infoListStackView.axis = .vertical
+        infoListStackView.spacing = 0
+        infoListStackView.alignment = .fill
+        infoListStackView.distribution = .fill
+        infoListStackView.isLayoutMarginsRelativeArrangement = true
+        infoListStackView.layoutMargins = .init(top: 10, left: 0, bottom: 10, right: 0)
+
+        [storeNameLabel, typeStackView, infoListStackView].forEach {
             view.addSubview($0)
         }
     }
 
     private func setupLayout() {
         storeNameLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(24)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
 
-        descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(storeNameLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(20)
+        typeStackView.snp.makeConstraints {
+            $0.top.equalTo(storeNameLabel.snp.bottom).offset(4)
+            $0.leading.equalTo(storeNameLabel)
         }
 
-        dateLabel.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-
-        collegeLabel.snp.makeConstraints {
-            $0.top.equalTo(dateLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-
-        departmentLabel.snp.makeConstraints {
-            $0.top.equalTo(collegeLabel.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview().inset(20)
+        infoListStackView.snp.makeConstraints {
+            $0.top.equalTo(typeStackView.snp.bottom).offset(10)
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
 
     private func configureData() {
         storeNameLabel.text = storeName
+
+        switch restaurantType {
+        case "RESTAURANT":
+            typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
+            typeTextLabel.text = "음식점"
+        case "CAFE":
+            typeIconImageView.image = EATSSUDesignAsset.Images.cafePin.image
+            typeTextLabel.text = "카페"
+        case "PUB":
+            typeIconImageView.image = EATSSUDesignAsset.Images.pubPin.image
+            typeTextLabel.text = "주점"
+        default:
+            typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
+            typeTextLabel.text = restaurantType
+        }
+
+        for (index, info) in partnershipInfos.enumerated() {
+            let isLast = index == partnershipInfos.count - 1
+            let card = makeInfoCard(info: info, isLast: isLast)
+            infoListStackView.addArrangedSubview(card)
+        }
+    }
+
+    private func makeInfoCard(info: PartnershipInfoDTO, isLast: Bool) -> UIView {
+        let collegeName = info.collegeName ?? info.departmentName
+        let start = String(info.startDate.dropFirst(5))
+        let end = String(info.endDate.dropFirst(5))
+
+        let titleDateLabel = UILabel()
+        let fullText = "\(collegeName)  \(start) ~ \(end)"
+        let attrText = NSMutableAttributedString(string: fullText)
+
+        let collegeRange = (fullText as NSString).range(of: collegeName)
+        let dateRange = (fullText as NSString).range(of: "\(start) ~ \(end)")
+
+        attrText.addAttributes([
+            .font: EATSSUDesignFontFamily.Pretendard.medium.font(size: 14),
+            .foregroundColor: UIColor.label
+        ], range: collegeRange)
+
+        attrText.addAttributes([
+            .font: EATSSUDesignFontFamily.Pretendard.regular.font(size: 10),
+            .foregroundColor: EATSSUDesignColors.Color.gray700,
+            .baselineOffset: +2
+        ], range: dateRange)
+
+        titleDateLabel.attributedText = attrText
+
+        let descriptionLabel = UILabel()
+        descriptionLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        descriptionLabel.textColor = EATSSUDesignColors.Color.gray700
+        descriptionLabel.numberOfLines = 0
         descriptionLabel.text = info.description
-        dateLabel.text = "기간: \(info.startDate) ~ \(info.endDate)"
-        collegeLabel.text = "대학: \(info.collegeName ?? "-")"
-        departmentLabel.text = "학과: \(info.departmentName)"
+
+        let contentStack = UIStackView(arrangedSubviews: [titleDateLabel, descriptionLabel])
+        contentStack.axis = .vertical
+        contentStack.spacing = 4
+
+        let separator = UIView()
+        separator.backgroundColor = EATSSUDesignColors.Color.gray200
+        separator.isHidden = isLast
+        separator.snp.makeConstraints {
+            $0.height.equalTo(1)
+        }
+
+        let container = UIStackView(arrangedSubviews: [contentStack, separator])
+        container.axis = .vertical
+        container.spacing = 10
+
+        let paddedContainer = UIView()
+        paddedContainer.addSubview(container)
+        container.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0))
+        }
+
+        return paddedContainer
     }
 }
