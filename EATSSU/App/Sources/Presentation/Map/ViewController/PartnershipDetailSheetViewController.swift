@@ -11,10 +11,15 @@ import EATSSUDesign
 
 final class PartnershipDetailSheetViewController: UIViewController {
 
-    private let partnership: PartnershipDTO
-
-    init(partnership: PartnershipDTO) {
-        self.partnership = partnership
+    private let storeName: String
+    private let restaurantType: String
+    private let info: PartnershipInfoDTO
+    
+    init(storeName: String, restaurantType: String, info: PartnershipInfoDTO) {
+        self.storeName = storeName
+        self.restaurantType = restaurantType
+        self.info = info
+        
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .pageSheet
         if let sheet = sheetPresentationController {
@@ -85,10 +90,10 @@ final class PartnershipDetailSheetViewController: UIViewController {
     }
 
     private func configureData() {
-        storeNameLabel.text = partnership.storeName
-        descriptionLabel.text = partnership.description
-        dateLabel.text = "기간: \(partnership.startDate) ~ \(partnership.endDate)"
-        collegeLabel.text = "대학: \(partnership.collegeNames.joined(separator: ", "))"
-        departmentLabel.text = "학과: \(partnership.departmentNames.joined(separator: ", "))"
+        storeNameLabel.text = storeName
+        descriptionLabel.text = info.description
+        dateLabel.text = "기간: \(info.startDate) ~ \(info.endDate)"
+        collegeLabel.text = "대학: \(info.collegeName ?? "-")"
+        departmentLabel.text = "학과: \(info.departmentName)"
     }
 }

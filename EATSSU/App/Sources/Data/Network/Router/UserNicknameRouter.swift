@@ -12,6 +12,7 @@ enum UserNicknameRouter {
     case setNickname(nickname: String)
     case checkNickname(nickname: String)
     case setDepartment(department: String)
+//    case check
 }
 
 extension UserNicknameRouter: TargetType {

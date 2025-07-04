@@ -42,7 +42,7 @@ final class MapMarkerView: UIView {
         hStack.axis = .horizontal
         hStack.alignment = .center
         hStack.spacing = 2
-        hStack.layoutMargins = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 8)
+        hStack.layoutMargins = UIEdgeInsets(top: 3, left: 2, bottom: 3, right: 8)
         hStack.isLayoutMarginsRelativeArrangement = true
 
         addSubview(hStack)

@@ -79,9 +79,15 @@ final class MainMapViewController: UIViewController {
             marker.height = CGFloat(UInt32(markerImage.size.height))
             
             marker.touchHandler = { [weak self] _ in
-               let vc = PartnershipDetailSheetViewController(partnership: partnership)
-               self?.present(vc, animated: true)
-               return true
+                guard let info = partnership.partnershipInfos.first else { return true }
+
+                let vc = PartnershipDetailSheetViewController(
+                    storeName: partnership.storeName,
+                    restaurantType: partnership.restaurantType,
+                    info: info
+                )
+                self?.present(vc, animated: true)
+                return true
            }
             
             marker.mapView = mainView.mapView.mapView

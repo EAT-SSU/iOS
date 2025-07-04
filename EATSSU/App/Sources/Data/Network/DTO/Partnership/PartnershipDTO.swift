@@ -8,15 +8,21 @@
 import Foundation
 
 struct PartnershipDTO: Codable {
+    let storeName: String
+    let longitude: Double
+    let latitude: Double
+    let restaurantType: String
+    let partnershipInfos: [PartnershipInfoDTO]
+}
+
+struct PartnershipInfoDTO: Codable {
     let id: Int
     let partnershipType: String
-    let storeName: String
+    let collegeName: String?
+    let departmentName: String
+    let likeCount: Int
+    let isLiked: Bool
     let description: String
     let startDate: String
     let endDate: String
-    let restaurantType: String
-    let longitude: Double
-    let latitude: Double
-    let collegeNames: [String]
-    let departmentNames: [String]
 }
