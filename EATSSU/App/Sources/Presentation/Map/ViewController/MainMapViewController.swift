@@ -53,12 +53,12 @@ final class MainMapViewController: UIViewController {
 
     @objc private func didTapWhole() {
         mainView.selectWhole(true)
-        print("전체 보기")
+        fetchPartnerships()
     }
 
     @objc private func didTapMyOnly() {
         mainView.selectWhole(false)
-        print("내 제휴 보기")
+        fetchMyPartnerships()
     }
 
     @objc private func didTapHeart() {
@@ -141,7 +141,7 @@ final class MainMapViewController: UIViewController {
     }
 
     // MARK: - Network
-
+    // 전체 제휴
     private func fetchPartnerships() {
         partnershipProvider.request(.getAllPartnerships) { [weak self] result in
             switch result {
@@ -158,7 +158,7 @@ final class MainMapViewController: UIViewController {
             }
         }
     }
-    
+    // 학과 제휴
     private func fetchDepartmentAndUpdateButton() {
         myProvider.request(.getDepartment) { [weak self] result in
             switch result {
@@ -180,4 +180,22 @@ final class MainMapViewController: UIViewController {
             }
         }
     }
+    
+    private func fetchMyPartnerships() {
+        myProvider.request(.getMyPartnerships) { [weak self] result in
+            switch result {
+            case .success(let response):
+                do {
+                    let decoded = try response.map(BaseResponse<[PartnershipDTO]>.self)
+                    guard let partnerships = decoded.result else { return }
+                    self?.displayMarkers(partnerships)
+                } catch {
+                    print("유저 제휴 디코딩 실패: \(error)")
+                }
+            case .failure(let error):
+                print("유저 제휴 네트워크 오류: \(error)")
+            }
+        }
+    }
+
 }
