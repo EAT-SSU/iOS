@@ -70,8 +70,14 @@ final class SetNickNameViewController: BaseViewController {
         let nickname = setNickNameView.inputNickNameTextField.text ?? ""
         let department = setNickNameView.departmentDropDownView.getSelectedTitle() ?? ""
 
-        setUserNickname(nickname: nickname)
-        setUserDepartment(department: department)
+        setUserNickname(nickname) { [weak self] nickOK in
+            guard nickOK, let self else { return }
+
+            self.setUserDepartment(department) { deptOK in
+                guard deptOK else { return }
+                self.showCompletionAlert()
+            }
+        }
     }
 
     @objc
@@ -133,31 +139,18 @@ final class SetNickNameViewController: BaseViewController {
 // MARK: - Network
 
 extension SetNickNameViewController {
-    private func setUserNickname(nickname: String) {
-        nicknameProvider.request(.setNickname(nickname: nickname)) { response in
-            switch response {
-            case .success(_):
-                if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                    UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
+    private func setUserNickname(_ nickname: String, completion: @escaping (Bool) -> Void) {
+        nicknameProvider.request(.setNickname(nickname: nickname)) { result in
+            switch result {
+            case .success:
+                if let user = UserInfoManager.shared.getCurrentUserInfo() {
+                    UserInfoManager.shared.updateNickname(for: user, nickname: nickname)
                 }
-                self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
-                    if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
-                        self.navigationController?.popToViewController(myPageViewController, animated: true)
-                    } else {
-                        let homeViewController = HomeViewController()
-                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                        {
-                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
-                        }
-                    }
-                }
-            
-            case let .failure(err):
-                print(err.localizedDescription)
-                
+                completion(true)
+            case .failure:
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
+                completion(false)
             }
         }
     }
@@ -172,7 +165,7 @@ extension SetNickNameViewController {
                     
                     if data {
                         self.view.showToast(message: "사용 가능한 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = data
+                        self.setNickNameView.setNicknameChecked(true)
                         self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
                         self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
                     } else {
@@ -197,13 +190,37 @@ extension SetNickNameViewController {
         }
     }
     
-    private func setUserDepartment(department: String) {
-        nicknameProvider.request(.setDepartment(department: department)) { response in
-            switch response {
+    private func setUserDepartment(_ department: String, completion: @escaping (Bool) -> Void) {
+        nicknameProvider.request(.setDepartment(department: department)) { result in
+            switch result {
             case .success:
                 print("학과 등록 성공: \(department)")
-            case let .failure(error):
+                completion(true)
+            case .failure(let error):
                 print("학과 등록 실패: \(error.localizedDescription)")
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
+                completion(false)
+            }
+        }
+    }
+    
+    private func showCompletionAlert() {
+        self.showAlertController(title: "완료",
+                                 message: "설정이 완료되었습니다.",
+                                 style: .cancel) {
+            if let myPageVC = self.navigationController?
+                .viewControllers
+                .first(where: { $0 is MyPageViewController }) {
+                self.navigationController?.popToViewController(myPageVC, animated: true)
+            } else {
+                let homeVC = HomeViewController()
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                    keyWindow.replaceRootViewController(
+                        UINavigationController(rootViewController: homeVC)
+                    )
+                }
             }
         }
     }

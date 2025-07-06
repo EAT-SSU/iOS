@@ -17,6 +17,11 @@ final class SetNickNameView: BaseUIView {
     private var userNickname: String = ""
     public let collegeDropDownView = DropDownView(title: "단과대", items: CollegeDepartmentStore.colleges)
     public let departmentDropDownView = DropDownView(title: "학과", items: [])
+    // 저장하기 버튼 활성화
+    private var isNicknameChecked = false
+    private var selectedCollege: String?
+    private var selectedDepartment: String?
+
 
     // MARK: - UI Components
 
@@ -181,10 +186,30 @@ final class SetNickNameView: BaseUIView {
     private func bindCollegeDepartmentDropDown() {
         collegeDropDownView.onSelectItem = { [weak self] college in
             guard let self else { return }
+            selectedCollege = college
             let departments = CollegeDepartmentStore.departments(of: college)
             departmentDropDownView.updateItems(departments)
-            departmentDropDownView.setTitle("학과")  // 타이틀 초기화
+            departmentDropDownView.setTitle("학과")
+            selectedDepartment = nil
+            updateCompleteButtonState()
         }
+
+        departmentDropDownView.onSelectItem = { [weak self] department in
+            guard let self else { return }
+            selectedDepartment = department
+            updateCompleteButtonState()
+        }
+    }
+    
+    private func updateCompleteButtonState() {
+        let isCollegeSelected = selectedCollege != nil && selectedCollege != "단과대"
+        let isDepartmentSelected = selectedDepartment != nil && selectedDepartment != "학과"
+        completeSettingNickNameButton.isEnabled = isNicknameChecked && isCollegeSelected && isDepartmentSelected
+    }
+    
+    public func setNicknameChecked(_ checked: Bool) {
+        isNicknameChecked = checked
+        updateCompleteButtonState()
     }
 }
 
@@ -234,7 +259,8 @@ private extension SetNickNameView {
     }
 
     func nicknameInputChanged(nickname: String) -> Bool {
-        completeSettingNickNameButton.isEnabled = false
+        isNicknameChecked = false
+        updateCompleteButtonState()
 
         if nickname.count > 1, nickname.count < 9 {
             nicknameDoubleCheckButton.isEnabled = true
