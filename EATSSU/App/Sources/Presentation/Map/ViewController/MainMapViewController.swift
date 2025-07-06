@@ -17,6 +17,8 @@ final class MainMapViewController: UIViewController {
     private let mainView = MainMapView()
     
     private let partnershipProvider = MoyaProvider<PartnershipRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
+
     private var markers: [NMFMarker] = []
 
     override func loadView() {
@@ -45,6 +47,7 @@ final class MainMapViewController: UIViewController {
         mainView.myOnlyButton.addTarget(self, action: #selector(didTapMyOnly), for: .touchUpInside)
         mainView.heartButton.addTarget(self, action: #selector(didTapHeart), for: .touchUpInside)
         
+        fetchDepartmentAndUpdateButton()
         fetchPartnerships()
     }
 
@@ -62,6 +65,11 @@ final class MainMapViewController: UIViewController {
         print("하트 버튼 클릭됨")
     }
     
+    func reloadContent() {
+        fetchDepartmentAndUpdateButton()
+        fetchPartnerships()
+    }
+
     private func displayMarkers(_ partnerships: [PartnershipDTO]) {
         markers.forEach { $0.mapView = nil }
         markers.removeAll()
@@ -147,6 +155,28 @@ final class MainMapViewController: UIViewController {
                 }
             case .failure(let error):
                 print("네트워크 오류: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func fetchDepartmentAndUpdateButton() {
+        myProvider.request(.getDepartment) { [weak self] result in
+            switch result {
+            case .success(let response):
+                do {
+                    let decoded = try response.map(BaseResponse<GetDepartmentResponse>.self)
+                    if let department = decoded.result?.departmentName {
+                        self?.mainView.myOnlyButton.setTitle(department, for: .normal)
+                    } else {
+                        self?.mainView.myOnlyButton.setTitle("내 제휴", for: .normal)
+                    }
+                } catch {
+                    print("학과 응답 디코딩 실패: \(error)")
+                    self?.mainView.myOnlyButton.setTitle("내 제휴", for: .normal)
+                }
+            case .failure(let error):
+                print("학과 API 요청 실패: \(error)")
+                self?.mainView.myOnlyButton.setTitle("내 제휴", for: .normal)
             }
         }
     }

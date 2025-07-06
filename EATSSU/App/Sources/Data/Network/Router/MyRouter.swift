@@ -14,6 +14,7 @@ enum MyRouter {
     case myInfo
     case signOut
     case inquiry(param: InquiryRequest)
+    case getDepartment
 }
 
 extension MyRouter: TargetType {
@@ -31,6 +32,8 @@ extension MyRouter: TargetType {
             "/users"
         case .inquiry:
             "/inquiries/"
+        case .getDepartment:
+            "/users/department"
         }
     }
 
@@ -38,7 +41,7 @@ extension MyRouter: TargetType {
         switch self {
         case .myReview:
             .get
-        case .myInfo:
+        case .myInfo, .getDepartment:
             .get
         case .signOut:
             .delete
@@ -60,6 +63,8 @@ extension MyRouter: TargetType {
             .requestPlain
         case let .inquiry(param):
             .requestJSONEncodable(param)
+        case .getDepartment:
+            .requestPlain
         }
     }
 

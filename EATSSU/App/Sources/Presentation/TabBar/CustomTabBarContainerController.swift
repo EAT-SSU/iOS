@@ -32,6 +32,13 @@ final class CustomTabBarContainerController: BaseViewController {
                 self.presentLoginAlert()
                 return
             }
+            
+            if index == self.currentIndex {
+                if let nav = self.viewControllers[index] as? UINavigationController,
+                   let mapVC = nav.viewControllers.first as? MainMapViewController {
+                    mapVC.reloadContent()
+                }
+            }
 
             self.switchToViewController(at: index)
         }
