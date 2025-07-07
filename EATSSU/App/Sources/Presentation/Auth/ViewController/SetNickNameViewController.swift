@@ -26,7 +26,6 @@ final class SetNickNameViewController: BaseViewController {
         }
     }
 
-
     // MARK: - Life Cycles
 
     override func viewDidLoad() {

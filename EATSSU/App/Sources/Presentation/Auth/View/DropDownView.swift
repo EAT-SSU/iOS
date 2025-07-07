@@ -19,6 +19,7 @@ final class DropDownView: UIView {
     public var onSelectItem: ((String) -> Void)?
     private var isDropdownVisible = false
     private var dropdownTableView: UITableView?
+    private static var currentlyOpenDropdown: DropDownView?
 
     // MARK: - UI Components
 
@@ -85,39 +86,58 @@ final class DropDownView: UIView {
 
     @objc private func toggleDropdown() {
         guard let parentView = self.window else { return }
+        // 드롭메뉴 중복 생성 방지
+        if DropDownView.currentlyOpenDropdown == self, isDropdownVisible {
+            dismissDropdown()
+            return
+        }
+        DropDownView.currentlyOpenDropdown?.dismissDropdown()
 
-        if isDropdownVisible {
-            dropdownTableView?.removeFromSuperview()
-            dropdownTableView = nil
-        } else {
-            let tableView = UITableView()
-            tableView.layer.cornerRadius = 12
-            tableView.layer.borderWidth = 1
-            tableView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-            tableView.layer.shadowColor = UIColor.black.cgColor
-            tableView.layer.shadowOpacity = 0.1
-            tableView.layer.shadowOffset = CGSize(width: 0, height: 2)
-            tableView.layer.shadowRadius = 4
-            tableView.isScrollEnabled = true
-            tableView.separatorStyle = .none
-            tableView.delegate = self
-            tableView.dataSource = self
-            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        let backgroundButton = UIButton()
+        backgroundButton.backgroundColor = .clear
+        backgroundButton.frame = parentView.bounds
+        backgroundButton.addTarget(self, action: #selector(dismissDropdown), for: .touchUpInside)
+        backgroundButton.tag = 999
+        parentView.addSubview(backgroundButton)
+        
+        // 드롭메뉴 생성
+        let tableView = UITableView()
+        tableView.layer.cornerRadius = 12
+        tableView.layer.borderWidth = 1
+        tableView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        tableView.layer.shadowColor = UIColor.black.cgColor
+        tableView.layer.shadowOpacity = 0.1
+        tableView.layer.shadowOffset = CGSize(width: 0, height: 2)
+        tableView.layer.shadowRadius = 4
+        tableView.isScrollEnabled = true
+        tableView.separatorStyle = .none
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        parentView.addSubview(tableView)
 
-            parentView.addSubview(tableView)
-
-            let origin = self.convert(self.bounds.origin, to: parentView)
-            tableView.snp.makeConstraints {
-                $0.top.equalTo(origin.y + 48 + 6)
-                $0.leading.equalTo(origin.x)
-                $0.width.equalTo(self.bounds.width)
-                $0.height.equalTo(min(items.count * 44, 200))
-            }
-
-            dropdownTableView = tableView
+        let origin = self.convert(self.bounds.origin, to: parentView)
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(origin.y + 48 + 6)
+            $0.leading.equalTo(origin.x)
+            $0.width.equalTo(self.bounds.width)
+            $0.height.equalTo(min(items.count * 44, 200))
         }
 
-        isDropdownVisible.toggle()
+        dropdownTableView = tableView
+        isDropdownVisible = true
+        DropDownView.currentlyOpenDropdown = self
+    }
+    // 드롭메뉴 중복 생성 방지
+    @objc public func dismissDropdown() {
+        dropdownTableView?.superview?.viewWithTag(999)?.removeFromSuperview()
+        dropdownTableView?.removeFromSuperview()
+        dropdownTableView = nil
+        isDropdownVisible = false
+
+        if DropDownView.currentlyOpenDropdown == self {
+            DropDownView.currentlyOpenDropdown = nil
+        }
     }
 
     // MARK: - Public
