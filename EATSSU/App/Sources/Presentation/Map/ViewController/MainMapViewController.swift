@@ -67,7 +67,11 @@ final class MainMapViewController: UIViewController {
     
     func reloadContent() {
         fetchDepartmentAndUpdateButton()
-        fetchPartnerships()
+        if mainView.wholeButton.backgroundColor == EATSSUDesignAsset.Color.Main.primary.color {
+            fetchPartnerships()
+        } else {
+            fetchMyPartnerships()
+        }
     }
 
     private func displayMarkers(_ partnerships: [PartnershipDTO]) {
@@ -106,7 +110,9 @@ final class MainMapViewController: UIViewController {
         if !partnerships.isEmpty {
             let centerLat = latSum / Double(partnerships.count)
             let centerLng = lngSum / Double(partnerships.count)
-            let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: centerLat, lng: centerLng))
+            let center = NMGLatLng(lat: centerLat, lng: centerLng)
+
+            let cameraUpdate = NMFCameraUpdate(scrollTo: center, zoomTo: 15.5)
             mainView.mapView.mapView.moveCamera(cameraUpdate)
         }
     }
