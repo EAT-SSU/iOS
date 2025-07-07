@@ -202,21 +202,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         
-        // 이전에 저장된 마지막 활성화 날짜가 있는지 확인
-        if let lastActive = defaults.object(forKey: "lastActiveDate") as? Date {
-            // 저장된 날짜의 시점을 계산하여 비교 기준으로 사용
-            let lastDay = calendar.startOfDay(for: lastActive)
-            // 오늘이 마지막 활성화 날짜보다 이후인지 검사
-            if calendar.compare(today, to: lastDay, toGranularity: .day) == .orderedDescending {
-                // 새로운 날로 판단될 때, 알림을 보냄
-                NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
-            }
-        } else {
-            // 저장된 날짜가 없으면 첫 실행이므로 초기 업데이트를 위해 알림을 보냅니다.
+        defer {
+            // 마지막 활성화 날짜를 현재 시점으로 업데이트하여 다음 비교에 사용
+            defaults.set(Date(), forKey: "lastActiveDate")
+        }
+
+        guard let lastActive = defaults.object(forKey: "lastActiveDate") as? Date else {
+            // 저장된 날짜가 없으면 첫 실행이므로 초기 업데이트를 위해 알림을 보냄
             NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
+            return
         }
         
-        // 마지막 활성화 날짜를 현재 시점으로 업데이트하여 다음 비교에 사용
-        defaults.set(Date(), forKey: "lastActiveDate")
+        // 저장된 날짜의 시점을 계산하여 비교 기준으로 사용
+        let lastDay = calendar.startOfDay(for: lastActive)
+        // 오늘이 마지막 활성화 날짜보다 이후인지 검사
+        if calendar.compare(today, to: lastDay, toGranularity: .day) == .orderedDescending {
+            // 새로운 날로 판단될 때, 알림을 보냄
+            NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
+        }
     }
 }
