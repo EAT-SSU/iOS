@@ -48,6 +48,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillEnterForeground(_ scene: UIScene) {
         // 백그라운드에서 포그라운드로 전환 시 필요한 작업 수행
+        checkAndNotifyNewDay()
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
@@ -193,5 +194,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         alert.addAction(updateAction)
         window?.rootViewController?.present(alert, animated: true, completion: nil)
+    }
+    
+    /// 마지막 활성화 날짜와 비교해 “새로운 날”이면 알림을 보내고, 마지막 활성화 시간을 갱신
+    private func checkAndNotifyNewDay() {
+        let defaults = UserDefaults.standard
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        
+        defer {
+            // 마지막 활성화 날짜를 현재 시점으로 업데이트하여 다음 비교에 사용
+            defaults.set(Date(), forKey: "lastActiveDate")
+        }
+
+        guard let lastActive = defaults.object(forKey: "lastActiveDate") as? Date else {
+            // 저장된 날짜가 없으면 첫 실행이므로 초기 업데이트를 위해 알림을 보냄
+            NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
+            return
+        }
+        
+        // 저장된 날짜의 시점을 계산하여 비교 기준으로 사용
+        let lastDay = calendar.startOfDay(for: lastActive)
+        // 오늘이 마지막 활성화 날짜보다 이후인지 검사
+        if calendar.compare(today, to: lastDay, toGranularity: .day) == .orderedDescending {
+            // 새로운 날로 판단될 때, 알림을 보냄
+            NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
+        }
     }
 }
