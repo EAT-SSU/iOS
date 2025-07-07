@@ -42,7 +42,6 @@ final class HomeViewController: BaseViewController {
         configureUI()
         setLayout()
         registerTabman()
-        setupNavigationBar()
         
         // 이미 등록된 옵저버가 있으면 먼저 제거
         NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)

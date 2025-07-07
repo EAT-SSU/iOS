@@ -7,8 +7,6 @@
 
 import Foundation
 
-// Sources/Data/CollegeDepartmentStore.swift
-
 struct CollegeDepartment {
     let college: String
     let departments: [String]
