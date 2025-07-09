@@ -12,9 +12,10 @@ import Moya
 
 import EATSSUDesign
 
-final class MainMapViewController: UIViewController {
+final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
 
     private let mainView = MainMapView()
+    private let locationManager = CLLocationManager()
     
     private let partnershipProvider = MoyaProvider<PartnershipRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
@@ -27,7 +28,9 @@ final class MainMapViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        
         title = "제휴 지도"
 
         // 배경색 채우기
@@ -71,6 +74,18 @@ final class MainMapViewController: UIViewController {
             fetchPartnerships()
         } else {
             fetchMyPartnerships()
+        }
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            if let location = manager.location?.coordinate {
+                let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: location.latitude, lng: location.longitude), zoomTo: 15.5)
+                mainView.mapView.mapView.moveCamera(cameraUpdate)
+            }
+        default:
+            break
         }
     }
 

@@ -32,6 +32,8 @@ final class MainMapView: UIView {
         backgroundColor = .white
 
         mapView.showZoomControls = false
+        mapView.showLocationButton = true
+        mapView.mapView.positionMode = .direction
         addSubview(mapView)
 
         toggleBackgroundView.layer.cornerRadius = 20

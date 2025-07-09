@@ -16,6 +16,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
         "kakaoplus",
         "kakaotalk",
     ],
+    "NSLocationWhenInUseUsageDescription": "내 위치를 확인하기 위해 권한이 필요합니다.",
     "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
         "UISceneConfigurations": [
