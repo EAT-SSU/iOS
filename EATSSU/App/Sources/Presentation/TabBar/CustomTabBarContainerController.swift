@@ -96,4 +96,13 @@ final class CustomTabBarContainerController: BaseViewController {
             window.replaceRootViewController(loginVC)
         }
     }
+    
+    public func setTab(index: Int) {
+        switchToViewController(at: index)
+    }
+    
+    public func getNavController(at index: Int) -> UINavigationController? {
+        guard index < viewControllers.count else { return nil }
+        return viewControllers[index] as? UINavigationController
+    }
 }

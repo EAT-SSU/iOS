@@ -70,7 +70,7 @@ final class NoDepartmentSheetViewController: UIViewController {
         }
 
         logoStackView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(90)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(100)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(160)
             $0.height.equalTo(70)
@@ -78,16 +78,25 @@ final class NoDepartmentSheetViewController: UIViewController {
 
         inputButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(26)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(5)
             $0.height.equalTo(52)
         }
     }
 
     @objc private func goToDepartmentSetting() {
-        let vc = SetNickNameViewController()
-        if let nav = presentingViewController as? UINavigationController {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let sceneDelegate = windowScene.delegate as? SceneDelegate,
+              let tabContainer = sceneDelegate.window?.rootViewController as? CustomTabBarContainerController else {
+            dismiss(animated: true)
+            return
+        }
+
+        // 탭 전환
+        tabContainer.setTab(index: 2)
+
+        if let myNav = tabContainer.getNavController(at: 2) {
             dismiss(animated: true) {
-                nav.pushViewController(vc, animated: true)
+                myNav.pushViewController(SetNickNameViewController(), animated: true)
             }
         } else {
             dismiss(animated: true)

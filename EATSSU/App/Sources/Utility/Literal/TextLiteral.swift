@@ -36,7 +36,7 @@ enum TextLiteral {
     static let signInWithApple: String = "Apple로 로그인"
     static let signInWithKakao: String = "카카오 로그인"
     static let lookingWithNoSignIn: String = "둘러보기"
-    static let setNickName: String = "닉네임 설정"
+    static let setNickName: String = "내 정보"
     static let nickNameLabel: String = "닉네임"
     static let inputNickName: String = "닉네임을 입력해주세요"
     static let inputNickNameLabel: String = "닉네임을 설정해 주세요."
