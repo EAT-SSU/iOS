@@ -16,6 +16,7 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
 
     private let mainView = MainMapView()
     private let locationManager = CLLocationManager()
+    private var currentDepartmentName: String?
     
     private let partnershipProvider = MoyaProvider<PartnershipRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
@@ -50,7 +51,7 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
         mainView.myOnlyButton.addTarget(self, action: #selector(didTapMyOnly), for: .touchUpInside)
         mainView.heartButton.addTarget(self, action: #selector(didTapHeart), for: .touchUpInside)
         
-        fetchDepartmentAndUpdateButton()
+//        fetchDepartmentAndUpdateButton()
         fetchPartnerships()
     }
 
@@ -60,8 +61,18 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     @objc private func didTapMyOnly() {
+        if currentDepartmentName?.isEmpty ?? true {
+            presentNoDepartmentSheet()
+            return
+        }
+
         mainView.selectWhole(false)
-        fetchMyPartnerships()
+//        fetchMyPartnerships()
+    }
+    
+    private func presentNoDepartmentSheet() {
+        let sheetVC = NoDepartmentSheetViewController()
+        present(sheetVC, animated: true)
     }
 
     @objc private func didTapHeart() {
@@ -73,7 +84,7 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
         if mainView.wholeButton.backgroundColor == EATSSUDesignAsset.Color.Main.primary.color {
             fetchPartnerships()
         } else {
-            fetchMyPartnerships()
+//            fetchMyPartnerships()
         }
     }
     
@@ -186,17 +197,18 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
             case .success(let response):
                 do {
                     let decoded = try response.map(BaseResponse<GetDepartmentResponse>.self)
-                    if let department = decoded.result?.departmentName {
-                        self?.mainView.myOnlyButton.setTitle(department, for: .normal)
-                    } else {
-                        self?.mainView.myOnlyButton.setTitle("내 제휴", for: .normal)
-                    }
+                    let department = decoded.result?.departmentName ?? ""
+                    self?.currentDepartmentName = department // 저장
+                    let buttonTitle = department.isEmpty ? "내 제휴" : department
+                    self?.mainView.myOnlyButton.setTitle(buttonTitle, for: .normal)
                 } catch {
                     print("학과 응답 디코딩 실패: \(error)")
+                    self?.currentDepartmentName = nil
                     self?.mainView.myOnlyButton.setTitle("내 제휴", for: .normal)
                 }
             case .failure(let error):
                 print("학과 API 요청 실패: \(error)")
+                self?.currentDepartmentName = nil
                 self?.mainView.myOnlyButton.setTitle("내 제휴", for: .normal)
             }
         }
