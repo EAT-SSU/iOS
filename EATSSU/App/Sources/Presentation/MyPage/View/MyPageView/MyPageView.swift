@@ -38,41 +38,6 @@ final class MyPageView: BaseUIView {
         return button
     }()
 
-    // "연결된 계정" 레이블
-    let accountTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = TextLiteral.MyPage.linkedAccount
-        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-        return label
-    }()
-
-    // 서버에서 계정 정보를 가져오기 전 기본값
-    var accountTypeLabel: UILabel = {
-        let label = UILabel()
-        label.text = "없음"
-        label.font = .bold(size: 14)
-        return label
-    }()
-
-    // 소셜 로그인 공급업체 아이콘
-    var accountTypeImage = UIImageView()
-
-    lazy var accountStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [accountTypeLabel, accountTypeImage])
-        stack.axis = .horizontal
-        stack.alignment = .bottom
-        stack.spacing = 5
-        return stack
-    }()
-
-    lazy var totalAccountStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [accountTitleLabel, accountStackView])
-        stack.axis = .horizontal
-        stack.alignment = .bottom
-        stack.spacing = 20
-        return stack
-    }()
-
     let myPageTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -133,7 +98,6 @@ final class MyPageView: BaseUIView {
         contentView.addSubviews(
             userImage,
             userNicknameButton,
-            totalAccountStackView,
             myPageTableView,
             appVersionStringLabel,
             appVersionLabel,
@@ -164,13 +128,8 @@ final class MyPageView: BaseUIView {
             $0.height.equalTo(40)
         }
 
-        totalAccountStackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(userNicknameButton.snp.bottom).offset(10)
-        }
-
         myPageTableView.snp.makeConstraints {
-            $0.top.equalTo(accountTitleLabel.snp.bottom).offset(24)
+            $0.top.equalTo(userNicknameButton.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(420)
             $0.width.equalToSuperview()
@@ -217,15 +176,5 @@ final class MyPageView: BaseUIView {
             titleColor: .black,
             fontName: .semiBold(size: 20)
         )
-        if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
-            switch accountType {
-            case .apple:
-                accountTypeLabel.text = "APPLE"
-                accountTypeImage.image = EATSSUDesignAsset.Images.signWithApple.image
-            case .kakao:
-                accountTypeLabel.text = "카카오"
-                accountTypeImage.image = EATSSUDesignAsset.Images.signWithKakao.image
-            }
-        }
     }
 }

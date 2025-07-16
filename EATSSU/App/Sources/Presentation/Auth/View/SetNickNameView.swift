@@ -17,15 +17,12 @@ final class SetNickNameView: BaseUIView {
     private var userNickname: String = ""
     public let collegeDropDownView = DropDownView(title: "단과대", items: CollegeDepartmentStore.colleges)
     public let departmentDropDownView = DropDownView(title: "학과", items: [])
-    // 저장하기 버튼 활성화
     private var isNicknameChecked = false
     private var selectedCollege: String?
     private var selectedDepartment: String?
 
-
     // MARK: - UI Components
 
-    // 닉네임 설정
     private let nickNameLabel: UILabel = {
         let label = UILabel()
         label.text = "닉네임 설정"
@@ -61,8 +58,7 @@ final class SetNickNameView: BaseUIView {
         stackView.spacing = 8.0
         return stackView
     }()
-    
-    // 소속 설정
+
     private let affiliationLabel: UILabel = {
         let label = UILabel()
         label.text = "소속 설정"
@@ -80,7 +76,6 @@ final class SetNickNameView: BaseUIView {
         return stackView
     }()
 
-    // 연결 계정
     private let connectedAccountLabel: UILabel = {
         let label = UILabel()
         label.text = "연결된 계정"
@@ -88,18 +83,39 @@ final class SetNickNameView: BaseUIView {
         return label
     }()
 
-    public let connectedProviderLabel: UILabel = {
+    private let accountTypeLabel: UILabel = {
         let label = UILabel()
-        label.text = "APPLE"
-        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        label.text = "없음"
+        label.font = .bold(size: 14)
         return label
     }()
 
-    private let appleIconImageView: UIImageView = {
+    private let accountTypeImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUDesignAsset.Images.signWithApple.image
         imageView.contentMode = .scaleAspectFit
+        imageView.snp.makeConstraints {
+            $0.width.height.equalTo(20)
+        }
         return imageView
+    }()
+
+    private lazy var accountStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [accountTypeLabel, accountTypeImage])
+        stack.axis = .horizontal
+        stack.alignment = .bottom
+        stack.spacing = 5
+        return stack
+    }()
+
+    private lazy var totalAccountStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [
+            connectedAccountLabel,
+            accountStackView
+        ])
+        stack.axis = .horizontal
+        stack.alignment = .bottom
+        stack.spacing = 20
+        return stack
     }()
 
     public var completeSettingNickNameButton: ESButton = {
@@ -125,9 +141,7 @@ final class SetNickNameView: BaseUIView {
             nicknameDoubleCheckButton,
             affiliationLabel,
             affiliationStackView,
-            connectedAccountLabel,
-            connectedProviderLabel,
-            appleIconImageView,
+            totalAccountStackView,
             completeSettingNickNameButton
         )
     }
@@ -158,21 +172,11 @@ final class SetNickNameView: BaseUIView {
         collegeDropDownView.snp.makeConstraints { $0.height.equalTo(48) }
         departmentDropDownView.snp.makeConstraints { $0.height.equalTo(48) }
 
-        connectedAccountLabel.snp.makeConstraints {
+        totalAccountStackView.snp.makeConstraints {
             $0.top.equalTo(affiliationStackView.snp.bottom).offset(40)
-            $0.leading.equalToSuperview().inset(24)
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
 
-        connectedProviderLabel.snp.makeConstraints {
-            $0.centerY.equalTo(connectedAccountLabel)
-            $0.trailing.equalTo(appleIconImageView.snp.leading).offset(-4)
-        }
-
-        appleIconImageView.snp.makeConstraints {
-            $0.centerY.equalTo(connectedAccountLabel)
-            $0.trailing.equalToSuperview().inset(24)
-            $0.width.height.equalTo(20)
-        }
         completeSettingNickNameButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(26)
@@ -182,7 +186,7 @@ final class SetNickNameView: BaseUIView {
     func setTextFieldDelegate() {
         inputNickNameTextField.delegate = self
     }
-    
+
     private func bindCollegeDepartmentDropDown() {
         collegeDropDownView.onSelectItem = { [weak self] college in
             guard let self else { return }
@@ -200,16 +204,29 @@ final class SetNickNameView: BaseUIView {
             updateCompleteButtonState()
         }
     }
-    
+
     private func updateCompleteButtonState() {
         let isCollegeSelected = selectedCollege != nil && selectedCollege != "단과대"
         let isDepartmentSelected = selectedDepartment != nil && selectedDepartment != "학과"
         completeSettingNickNameButton.isEnabled = isNicknameChecked && isCollegeSelected && isDepartmentSelected
     }
-    
+
     public func setNicknameChecked(_ checked: Bool) {
         isNicknameChecked = checked
         updateCompleteButtonState()
+    }
+
+    public func setAccountInfo() {
+        if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
+            switch accountType {
+            case .apple:
+                accountTypeLabel.text = "APPLE"
+                accountTypeImage.image = EATSSUDesignAsset.Images.signWithApple.image
+            case .kakao:
+                accountTypeLabel.text = "카카오"
+                accountTypeImage.image = EATSSUDesignAsset.Images.signWithKakao.image
+            }
+        }
     }
 }
 

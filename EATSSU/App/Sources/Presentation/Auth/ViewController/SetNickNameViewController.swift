@@ -34,8 +34,9 @@ final class SetNickNameViewController: BaseViewController {
         dismissKeyboard()
     }
 
-    override func viewWillAppear(_: Bool) {
-        addKeyboardNotifications()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNickNameView.setAccountInfo()
     }
 
     override func viewWillDisappear(_: Bool) {
