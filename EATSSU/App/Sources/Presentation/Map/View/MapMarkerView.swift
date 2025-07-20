@@ -6,24 +6,14 @@
 //
 
 import UIKit
-
 import EATSSUDesign
 
 final class MapMarkerView: UIView {
-
     private let iconImageView = UIImageView()
     private let titleLabel = UILabel()
 
     init(icon: UIImage?, title: String) {
         super.init(frame: .zero)
-        setupUI(icon: icon, title: title)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupUI(icon: UIImage?, title: String) {
         backgroundColor = .white
         layer.cornerRadius = 13
         layer.masksToBounds = true
@@ -32,21 +22,55 @@ final class MapMarkerView: UIView {
 
         iconImageView.image = icon
         iconImageView.contentMode = .scaleAspectFit
-        iconImageView.snp.makeConstraints { $0.width.equalTo(20) }
+        addSubview(iconImageView)
 
         titleLabel.text = title
         titleLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)
         titleLabel.textColor = .black
+        addSubview(titleLabel)
+    }
 
-        let hStack = UIStackView(arrangedSubviews: [iconImageView, titleLabel])
-        hStack.axis = .horizontal
-        hStack.alignment = .center
-        hStack.spacing = 2
-        hStack.layoutMargins = UIEdgeInsets(top: 3, left: 2, bottom: 3, right: 8)
-        hStack.isLayoutMarginsRelativeArrangement = true
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-        addSubview(hStack)
-        hStack.snp.makeConstraints { $0.edges.equalToSuperview() }
+    override var intrinsicContentSize: CGSize {
+        let labelSize = titleLabel.intrinsicContentSize
+        let leftPadding: CGFloat   = 3
+        let iconSize: CGFloat      = 20
+        let textSpacing: CGFloat   = 3
+        let rightPadding: CGFloat  = 7
+        let height: CGFloat        = 25
+
+        let width = leftPadding
+                  + iconSize
+                  + textSpacing
+                  + labelSize.width
+                  + rightPadding
+        return CGSize(width: width, height: height)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let h = bounds.height
+        let leftRightPadding: CGFloat = 3
+        let iconSize: CGFloat        = 20
+        let textSpacing: CGFloat     = 3
+
+        iconImageView.frame = CGRect(
+            x: leftRightPadding,
+            y: (h - iconSize) / 2,
+            width: iconSize,
+            height: iconSize
+        )
+
+        let labelSize = titleLabel.intrinsicContentSize
+        titleLabel.frame = CGRect(
+            x: iconImageView.frame.maxX + textSpacing,
+            y: (h - labelSize.height) / 2,
+            width: labelSize.width,
+            height: labelSize.height
+        )
     }
 
     func toImage() -> UIImage {
@@ -56,5 +80,4 @@ final class MapMarkerView: UIView {
             layer.render(in: ctx.cgContext)
         }
     }
-
 }

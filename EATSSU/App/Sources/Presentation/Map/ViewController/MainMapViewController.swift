@@ -145,31 +145,18 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
 
     private func makeMarkerImage(type: String, title: String) -> UIImage {
         let icon: UIImage?
-
         switch type {
-        case "RESTAURANT":
-            icon = EATSSUDesignAsset.Images.restaurantPin.image
-        case "CAFE":
-            icon = EATSSUDesignAsset.Images.cafePin.image
-        case "PUB":
-            icon = EATSSUDesignAsset.Images.pubPin.image
-        default:
-            icon = EATSSUDesignAsset.Images.restaurantPin.image
+        case "RESTAURANT": icon = EATSSUDesignAsset.Images.restaurantPin.image
+        case "CAFE":       icon = EATSSUDesignAsset.Images.cafePin.image
+        case "PUB":        icon = EATSSUDesignAsset.Images.pubPin.image
+        default:           icon = EATSSUDesignAsset.Images.restaurantPin.image
         }
 
         let markerView = MapMarkerView(icon: icon, title: title)
-        markerView.setNeedsLayout()
         markerView.layoutIfNeeded()
-
-        let fittingSize = markerView.systemLayoutSizeFitting(
-            CGSize(width: UIView.layoutFittingCompressedSize.width, height: 24),
-            withHorizontalFittingPriority: .fittingSizeLevel,
-            verticalFittingPriority: .required
-        )
-
-        markerView.frame = CGRect(origin: .zero, size: fittingSize)
+        let size = markerView.intrinsicContentSize
+        markerView.frame = CGRect(origin: .zero, size: size)
         return markerView.toImage()
-
     }
 
     // MARK: - Network
