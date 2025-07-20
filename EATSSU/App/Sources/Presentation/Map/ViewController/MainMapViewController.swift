@@ -51,7 +51,7 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
         mainView.myOnlyButton.addTarget(self, action: #selector(didTapMyOnly), for: .touchUpInside)
         mainView.heartButton.addTarget(self, action: #selector(didTapHeart), for: .touchUpInside)
         
-//        fetchDepartmentAndUpdateButton()
+        fetchDepartmentAndUpdateButton()
         fetchPartnerships()
     }
 
@@ -67,7 +67,7 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
         }
 
         mainView.selectWhole(false)
-//        fetchMyPartnerships()
+        fetchMyPartnerships()
     }
     
     private func presentNoDepartmentSheet() {
@@ -84,7 +84,7 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
         if mainView.wholeButton.backgroundColor == EATSSUDesignAsset.Color.Main.primary.color {
             fetchPartnerships()
         } else {
-//            fetchMyPartnerships()
+            fetchMyPartnerships()
         }
     }
     

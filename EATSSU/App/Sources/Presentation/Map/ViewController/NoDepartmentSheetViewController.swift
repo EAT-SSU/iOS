@@ -79,7 +79,6 @@ final class NoDepartmentSheetViewController: UIViewController {
         inputButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(5)
-            $0.height.equalTo(52)
         }
     }
 
