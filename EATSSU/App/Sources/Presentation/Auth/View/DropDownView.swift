@@ -20,6 +20,7 @@ final class DropDownView: BaseUIView {
     private var isDropdownVisible = false
     private var dropdownTableView: UITableView?
     private static var currentlyOpenDropdown: DropDownView?
+    private let placeholderTitle: String
 
     // MARK: - UI Components
 
@@ -29,8 +30,10 @@ final class DropDownView: BaseUIView {
     // MARK: - Init
 
     init(title: String, items: [String]) {
+        self.placeholderTitle = title
         self.items = items
         super.init(frame: .zero)
+        setButtonEvent()
     }
 
     required init?(coder: NSCoder) {
@@ -40,7 +43,7 @@ final class DropDownView: BaseUIView {
     // MARK: - View Setup
 
     override func configureUI() {
-        configureButton(title: getTitleString())
+        configureButton(title: placeholderTitle)
         arrow.tintColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
         addSubviews(button, arrow)
     }
@@ -168,11 +171,6 @@ final class DropDownView: BaseUIView {
         button.layer.borderWidth = 1
         button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         button.contentHorizontalAlignment = .leading
-    }
-
-    /// 최초 타이틀 반환
-    private func getTitleString() -> String {
-        return items.first ?? "선택"
     }
 }
 

@@ -29,7 +29,7 @@ final class MainMapView: BaseUIView {
         // 네이버 지도 뷰 설정
         mapView.showZoomControls = false
         mapView.showLocationButton = true
-        mapView.mapView.positionMode = .direction
+        mapView.mapView.positionMode = .disabled
         addSubview(mapView)
 
         // 상단 버튼 배경 뷰 설정
