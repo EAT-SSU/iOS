@@ -52,6 +52,12 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
         fetchDepartmentAndUpdateButton()
         fetchPartnerships()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        fetchDepartmentAndUpdateButton()
+    }
 
     @objc private func didTapWhole() {
         mainView.selectWhole(true)
