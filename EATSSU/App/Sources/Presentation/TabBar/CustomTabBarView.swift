@@ -11,6 +11,8 @@ import EATSSUDesign
 
 final class CustomTabBarView: BaseUIView {
 
+    // MARK: - Properties
+
     var buttonTapped: ((Int) -> Void)?
 
     private let buttons: [UIButton] = {
@@ -42,7 +44,10 @@ final class CustomTabBarView: BaseUIView {
         }
     }()
 
+    // MARK: - View Setup
+
     override func configureUI() {
+        // 배경 및 그림자 설정
         backgroundColor = .white
         layer.cornerRadius = 10
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -53,6 +58,7 @@ final class CustomTabBarView: BaseUIView {
         layer.shadowOffset = CGSize(width: 0, height: -3)
         layer.shadowRadius = 12
 
+        // 각 버튼 액션 연결
         buttons.forEach { button in
             button.setTitleColor(.gray, for: .normal)
             button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
@@ -60,15 +66,21 @@ final class CustomTabBarView: BaseUIView {
     }
 
     override func setLayout() {
+        // 버튼을 수평 스택뷰로 배치
         let stack = UIStackView(arrangedSubviews: buttons)
         stack.axis = .horizontal
         stack.distribution = .fillEqually
         stack.alignment = .center
         addSubview(stack)
 
-        stack.snp.makeConstraints { $0.edges.equalToSuperview().inset(8) }
+        stack.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(8)
+        }
     }
 
+    // MARK: - Public Functions
+
+    /// 선택된 인덱스의 버튼 스타일 업데이트
     func setSelectedIndex(_ index: Int) {
         for (i, button) in buttons.enumerated() {
             let isSelected = i == index
@@ -86,6 +98,9 @@ final class CustomTabBarView: BaseUIView {
         }
     }
 
+    // MARK: - Actions
+
+    /// 버튼 클릭 시 인덱스 변경 및 콜백 호출
     @objc private func buttonTapped(_ sender: UIButton) {
         setSelectedIndex(sender.tag)
         buttonTapped?(sender.tag)

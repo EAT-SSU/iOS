@@ -6,14 +6,28 @@
 //
 
 import UIKit
+
 import SnapKit
+
 import EATSSUDesign
 
-final class PartnershipDetailSheetViewController: UIViewController {
+final class PartnershipDetailSheetViewController: BaseViewController {
+
+    // MARK: - Properties
 
     private let storeName: String
     private let restaurantType: String
     private let partnershipInfos: [PartnershipInfoDTO]
+
+    // MARK: - UI Components
+
+    private let storeNameLabel = UILabel()
+    private let typeStackView = UIStackView()
+    private let typeIconImageView = UIImageView()
+    private let typeTextLabel = UILabel()
+    private let infoListStackView = UIStackView()
+
+    // MARK: - Init
 
     init(storeName: String, restaurantType: String, partnershipInfos: [PartnershipInfoDTO]) {
         self.storeName = storeName
@@ -32,21 +46,11 @@ final class PartnershipDetailSheetViewController: UIViewController {
         fatalError()
     }
 
-    private let storeNameLabel = UILabel()
-    private let typeStackView = UIStackView()
-    private let typeIconImageView = UIImageView()
-    private let typeTextLabel = UILabel()
-    private let infoListStackView = UIStackView()
+    // MARK: - View Setup
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func configureUI() {
         view.backgroundColor = .white
-        setupViews()
-        setupLayout()
-        configureData()
-    }
 
-    private func setupViews() {
         storeNameLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
         storeNameLabel.textColor = .label
 
@@ -74,7 +78,7 @@ final class PartnershipDetailSheetViewController: UIViewController {
         }
     }
 
-    private func setupLayout() {
+    override func setLayout() {
         storeNameLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             $0.leading.trailing.equalToSuperview().inset(24)
@@ -91,6 +95,14 @@ final class PartnershipDetailSheetViewController: UIViewController {
         }
     }
 
+    // MARK: - Data Config
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureData()
+    }
+
+    /// 매장 정보와 제휴 내용을 화면에 반영
     private func configureData() {
         storeNameLabel.text = storeName
 
@@ -116,6 +128,9 @@ final class PartnershipDetailSheetViewController: UIViewController {
         }
     }
 
+    // MARK: - UI Helpers
+
+    /// 제휴 정보 카드 뷰 생성
     private func makeInfoCard(info: PartnershipInfoDTO, isLast: Bool) -> UIView {
         let collegeName = info.collegeName ?? info.departmentName
         let start = String(info.startDate.dropFirst(5))

@@ -6,10 +6,14 @@
 //
 
 import UIKit
+
 import SnapKit
+
 import EATSSUDesign
 
-final class NoDepartmentSheetViewController: UIViewController {
+final class NoDepartmentSheetViewController: BaseViewController {
+
+    // MARK: - UI Components
 
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -41,14 +45,10 @@ final class NoDepartmentSheetViewController: UIViewController {
         return button
     }()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupSheet()
-        setupLayout()
-        inputButton.addTarget(self, action: #selector(goToDepartmentSetting), for: .touchUpInside)
-    }
+    // MARK: - View Setup
 
-    private func setupSheet() {
+    override func configureUI() {
+        // 바텀시트 배경 및 모서리 설정
         view.backgroundColor = .white
         view.layer.cornerRadius = 20
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -57,12 +57,13 @@ final class NoDepartmentSheetViewController: UIViewController {
             sheet.detents = [.medium()]
             sheet.prefersGrabberVisible = true
         }
-    }
 
-    private func setupLayout() {
         view.addSubview(titleLabel)
         view.addSubview(logoStackView)
         view.addSubview(inputButton)
+    }
+
+    override func setLayout() {
 
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(40)
@@ -82,6 +83,13 @@ final class NoDepartmentSheetViewController: UIViewController {
         }
     }
 
+    override func setButtonEvent() {
+        inputButton.addTarget(self, action: #selector(goToDepartmentSetting), for: .touchUpInside)
+    }
+
+    // MARK: - Navigation
+
+    /// "학과 입력하기" 버튼 클릭 시 학과 설정 화면으로 이동
     @objc private func goToDepartmentSetting() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let sceneDelegate = windowScene.delegate as? SceneDelegate,
@@ -90,10 +98,11 @@ final class NoDepartmentSheetViewController: UIViewController {
             return
         }
 
-        // 탭 전환
+        // "내 정보" 탭으로 전환
         tabContainer.setTab(index: 2)
 
         if let myNav = tabContainer.getNavController(at: 2) {
+            // 닉네임/학과 설정 화면으로 푸시
             dismiss(animated: true) {
                 myNav.pushViewController(SetNickNameViewController(), animated: true)
             }

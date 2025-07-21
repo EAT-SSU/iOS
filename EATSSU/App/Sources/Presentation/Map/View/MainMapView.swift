@@ -6,41 +6,40 @@
 //
 
 import UIKit
+
 import NMapsMap
 import SnapKit
+
 import EATSSUDesign
 
-final class MainMapView: UIView {
+final class MainMapView: BaseUIView {
+
+    // MARK: - UI Components
 
     let mapView = NMFNaverMapView()
     let toggleBackgroundView = UIView()
     let wholeButton = UIButton(type: .system)
     let myOnlyButton = UIButton(type: .system)
+
+    // MARK: - UI Setup
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-        setLayout()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
-
-    private func setup() {
+    override func configureUI() {
         backgroundColor = .white
 
+        // 네이버 지도 뷰 설정
         mapView.showZoomControls = false
         mapView.showLocationButton = true
         mapView.mapView.positionMode = .direction
         addSubview(mapView)
 
+        // 상단 버튼 배경 뷰 설정
         toggleBackgroundView.layer.cornerRadius = 20
         toggleBackgroundView.layer.borderWidth = 1
         toggleBackgroundView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         toggleBackgroundView.backgroundColor = .white
         addSubview(toggleBackgroundView)
 
+        // 전체 버튼
         wholeButton.setTitle("전체", for: .normal)
         wholeButton.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
         wholeButton.layer.cornerRadius = 14
@@ -48,6 +47,7 @@ final class MainMapView: UIView {
         wholeButton.backgroundColor = .clear
         wholeButton.setTitleColor(.label, for: .normal)
 
+        // 내 제휴 버튼
         myOnlyButton.setTitle("내 제휴", for: .normal)
         myOnlyButton.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
         myOnlyButton.setTitleColor(.label, for: .normal)
@@ -56,12 +56,16 @@ final class MainMapView: UIView {
         myOnlyButton.clipsToBounds = true
         myOnlyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
 
+        // 초기 선택 상태 설정
         selectWhole(true)
+
         toggleBackgroundView.addSubview(wholeButton)
         toggleBackgroundView.addSubview(myOnlyButton)
     }
 
-    private func setLayout() {
+    // MARK: - Layout Setup
+    
+    override func setLayout() {
         mapView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -87,6 +91,8 @@ final class MainMapView: UIView {
         }
     }
 
+    // MARK: - Button Selection Handling
+    
     func selectWhole(_ isSelected: Bool) {
         if isSelected {
             wholeButton.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
@@ -102,5 +108,4 @@ final class MainMapView: UIView {
             myOnlyButton.setTitleColor(.white, for: .normal)
         }
     }
-
 }
