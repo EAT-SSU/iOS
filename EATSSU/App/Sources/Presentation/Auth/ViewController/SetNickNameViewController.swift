@@ -207,7 +207,7 @@ extension SetNickNameViewController {
     
     private func showCompletionAlert() {
         self.showAlertController(title: "완료",
-                                 message: "설정이 완료되었습니다.",
+                                 message: "정보 수정이 완료되었습니다.",
                                  style: .cancel) {
             if let myPageVC = self.navigationController?
                 .viewControllers
