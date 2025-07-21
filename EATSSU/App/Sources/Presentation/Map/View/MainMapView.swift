@@ -16,8 +16,7 @@ final class MainMapView: UIView {
     let toggleBackgroundView = UIView()
     let wholeButton = UIButton(type: .system)
     let myOnlyButton = UIButton(type: .system)
-    let heartButton = UIButton(type: .system)
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -60,18 +59,6 @@ final class MainMapView: UIView {
         selectWhole(true)
         toggleBackgroundView.addSubview(wholeButton)
         toggleBackgroundView.addSubview(myOnlyButton)
-
-        let heartImage = UIImage(systemName: "heart")?
-            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 13, weight: .regular))
-        heartButton.setImage(heartImage, for: .normal)
-        heartButton.tintColor = EATSSUDesignAsset.Color.Red.error.color
-        heartButton.backgroundColor = .white
-        heartButton.layer.cornerRadius = 20
-        heartButton.layer.shadowColor = UIColor.black.cgColor
-        heartButton.layer.shadowOpacity = 0.1
-        heartButton.layer.shadowRadius = 4
-        heartButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-        addSubview(heartButton)
     }
 
     private func setLayout() {
@@ -98,14 +85,7 @@ final class MainMapView: UIView {
             $0.leading.equalTo(wholeButton.snp.trailing)
             $0.trailing.equalToSuperview().inset(4)
         }
-
-        heartButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.top.equalTo(safeAreaLayoutGuide).offset(12)
-            $0.size.equalTo(40)
-        }
     }
-
 
     func selectWhole(_ isSelected: Bool) {
         if isSelected {

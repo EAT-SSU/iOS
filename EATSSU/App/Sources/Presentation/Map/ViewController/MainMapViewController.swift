@@ -34,7 +34,6 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
         
         title = "제휴 지도"
 
-        // 배경색 채우기
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.backgroundColor = .white 
@@ -49,7 +48,6 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
 
         mainView.wholeButton.addTarget(self, action: #selector(didTapWhole), for: .touchUpInside)
         mainView.myOnlyButton.addTarget(self, action: #selector(didTapMyOnly), for: .touchUpInside)
-        mainView.heartButton.addTarget(self, action: #selector(didTapHeart), for: .touchUpInside)
         
         fetchDepartmentAndUpdateButton()
         fetchPartnerships()
@@ -73,10 +71,6 @@ final class MainMapViewController: UIViewController, CLLocationManagerDelegate {
     private func presentNoDepartmentSheet() {
         let sheetVC = NoDepartmentSheetViewController()
         present(sheetVC, animated: true)
-    }
-
-    @objc private func didTapHeart() {
-        print("하트 버튼 클릭됨")
     }
     
     func reloadContent() {
