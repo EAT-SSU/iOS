@@ -74,8 +74,10 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // 화면 진입 시 학과명 다시 확인
+        // 항상 '전체' 버튼이 선택된 상태로 초기화
+        root.selectWhole(true)
         fetchDepartmentAndUpdateButton()
+        fetchPartnerships()
     }
 
     // MARK: - Action
