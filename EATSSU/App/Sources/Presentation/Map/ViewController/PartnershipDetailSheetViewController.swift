@@ -132,15 +132,15 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     /// 제휴 정보 카드 뷰 생성
     private func makeInfoCard(info: PartnershipInfoDTO, isLast: Bool) -> UIView {
-        let collegeName = info.collegeName ?? info.departmentName
+        let labelText = info.collegeName ?? info.departmentName ?? "학과 정보 없음"
+        
         let start = String(info.startDate.dropFirst(5))
         let end = String(info.endDate.dropFirst(5))
 
-        let titleDateLabel = UILabel()
-        let fullText = "\(collegeName)  \(start) ~ \(end)"
+        let fullText = "\(labelText)  \(start) ~ \(end)"
         let attrText = NSMutableAttributedString(string: fullText)
 
-        let collegeRange = (fullText as NSString).range(of: collegeName)
+        let collegeRange = (fullText as NSString).range(of: labelText)
         let dateRange = (fullText as NSString).range(of: "\(start) ~ \(end)")
 
         attrText.addAttributes([
@@ -154,6 +154,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             .baselineOffset: +2
         ], range: dateRange)
 
+        let titleDateLabel = UILabel()
         titleDateLabel.attributedText = attrText
 
         let descriptionLabel = UILabel()
@@ -185,4 +186,5 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
         return paddedContainer
     }
+
 }
