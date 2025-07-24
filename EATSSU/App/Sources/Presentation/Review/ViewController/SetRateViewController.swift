@@ -523,7 +523,7 @@ extension SetRateViewController {
     
     private func navigateToLogin() {
         let loginVC = LoginViewController()
-        loginVC.toastMessage = "시스템 오류로 다시 로그인해주세요"
+        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
