@@ -37,26 +37,20 @@ final class AuthInterceptor: RequestInterceptor {
                completion: @escaping (RetryResult) -> Void) {
         
         if let response = request.task?.response as? HTTPURLResponse {
-            print("🔁 retry 호출 – statusCode:", response.statusCode)
+            print("retry 호출 – statusCode:", response.statusCode)
         } else {
-            print("🔁 retry 호출 – response 없음, error:", error)
+            print("retry 호출 – response 없음, error:", error)
         }
         
         guard let response = request.task?.response as? HTTPURLResponse,
               (response.statusCode == 401 || response.statusCode == 403) else {
-            print("🚫 재발급 미진입 – statusCode가 401/403이 아님")
             completion(.doNotRetryWithError(error))
             return
         }
-
-        print("✅ 재발급 진입 – statusCode:", response.statusCode)
         
         reissueProvider.request(.reissuance) { [weak self] response in
-            print("🔄 reissuance API 호출 시작")
             switch response {
             case let .success(moyaResponse):
-                print("🔄 reissuance 성공 – rawData:", String(data: moyaResponse.data, encoding: .utf8) ?? "")
-
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<SignResponse>.self)
                     guard let data = responseData.result else {
@@ -64,10 +58,10 @@ final class AuthInterceptor: RequestInterceptor {
                     }
                     RealmService.shared.addToken(accessToken: data.accessToken,
                                                  refreshToken: data.refreshToken)
-                    print("🔄 재발급 완료 – 새 accessToken:", data.accessToken)
+                    print("재발급 완료 – 새 accessToken:", data.accessToken)
                     completion(.retry)
                 } catch let error {
-                    print("❌ reissuance 실패 – error:", error)
+                    print("reissuance 실패 – error:", error)
                     completion(.doNotRetryWithError(error))
                 }
                 
