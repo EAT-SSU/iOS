@@ -57,16 +57,13 @@ final class AuthInterceptor: RequestInterceptor {
         print("retry 호출 – statusCode: \(statusCode)")
         
         // Swift Concurrency 기반 비동기 재발급 처리
-        _Concurrency.Task { @MainActor in
+        _Concurrency.Task { 
             do {
-                try await TokenRefresher.shared.refreshIfNeeded()
-                completion(.retry)
+              try await TokenRefresher.shared.refreshIfNeeded()
+              await MainActor.run { completion(.retry) }
             } catch {
-                print("재발급 실패 – error: \(error)")
-                
-                // 세션 만료 등으로 재발급 실패 시 실패 처리
-                completion(.doNotRetryWithError(error))
+              await MainActor.run { completion(.doNotRetryWithError(error)) }
             }
-        }
+          }
     }
 }

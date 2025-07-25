@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         handleAppleSignIn()
         initializeKakaoSDK()
         setupDebugConfigurations()
+        TokenManager.refreshIfNeededAsync()
         UNUserNotificationCenter.current().delegate = self
 
         return true
