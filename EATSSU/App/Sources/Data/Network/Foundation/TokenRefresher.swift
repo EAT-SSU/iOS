@@ -17,6 +17,7 @@ actor TokenRefresher {
 
     private var isRefreshing = false
     private var waitingContinuations: [CheckedContinuation<Void, Error>] = []
+    private let provider = MoyaProvider<ReissueRouter>()
 
     /// accessToken이 만료되었을 경우 refreshToken으로 재발급 시도
     /// 동시에 여러 요청이 실패해도 중복 재발급 요청은 막고, 기다리게 함
@@ -54,7 +55,6 @@ actor TokenRefresher {
     /// refreshToken 기반으로 accessToken 재발급 요청
     private func performReissuance() async throws -> SignResponse {
         try await withCheckedThrowingContinuation { continuation in
-            let provider = MoyaProvider<ReissueRouter>()
             provider.request(.reissuance) { result in
                 switch result {
                 case .success(let response):
