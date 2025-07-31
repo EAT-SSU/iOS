@@ -16,7 +16,7 @@ final class UserWithdrawViewController: BaseViewController {
 
     private var nickName = String()
     var currentKeyboardHeight: CGFloat = 0.0
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     // MARK: - UI Components
 
