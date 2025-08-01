@@ -48,6 +48,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillEnterForeground(_ scene: UIScene) {
         // 백그라운드에서 포그라운드로 전환 시 필요한 작업 수행
+        TokenManager.refreshIfNeededAsync()
         checkAndNotifyNewDay()
     }
 
