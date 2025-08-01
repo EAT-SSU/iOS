@@ -39,8 +39,9 @@ actor TokenRefresher {
                 accessToken: data.accessToken,
                 refreshToken: data.refreshToken
             )
+#if DEBUG
             print("⭐️⭐️ 재발급 완료 ⭐️⭐️ – 새 accessToken:", data.accessToken)
-
+#endif
             // 대기 중인 모든 요청에 성공 전파
             waitingContinuations.forEach { $0.resume() }
             waitingContinuations.removeAll()
