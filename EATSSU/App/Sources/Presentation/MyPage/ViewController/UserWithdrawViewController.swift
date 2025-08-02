@@ -136,6 +136,7 @@ extension UserWithdrawViewController {
                        let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
                     {
                         keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
+                        loginViewController.view.showToast(message: "탈퇴 처리가 완료되었습니다.")
                     }
                 } catch let err {
                     print(err.localizedDescription)
