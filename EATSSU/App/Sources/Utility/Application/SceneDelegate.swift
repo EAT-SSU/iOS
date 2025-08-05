@@ -10,9 +10,11 @@ import UIKit
 import Intents
 
 import KakaoSDKAuth
+import RxSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
+    private let disposeBag = DisposeBag()
 
     // MARK: - UIWindowSceneDelegate Methods
 
@@ -25,7 +27,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let splashVC = SplashViewController()
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
-
+        
+        observeAuthState()
         fetchNoticeAndConfigureRootViewController()
         checkForAppUpdate()
     }
@@ -136,6 +139,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // MARK: - RootViewController & Update
 
+    private func observeAuthState() {
+        AuthService.shared.isAuthenticated
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isAuth in
+                guard let self = self else { return }
+                if isAuth {
+                    self.window?.rootViewController = HomeViewController()
+                } else {
+                    let loginVC = LoginViewController()
+                    self.window?.rootViewController = UINavigationController(rootViewController: loginVC)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func fetchNoticeAndConfigureRootViewController() {
         FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
             DispatchQueue.main.async {
