@@ -93,6 +93,7 @@ let project = Project(
                 .external(name: "GoogleAppMeasurement"),
                 .external(name: "Realm"),
                 .external(name: "RealmSwift"),
+                .external(name: "RxRelay"),
                 .external(name: "FirebaseCrashlytics"),
                 .external(name: "FirebaseAnalytics"),
                 .external(name: "FirebaseRemoteConfig"),
@@ -128,6 +129,7 @@ let project = Project(
                 .external(name: "GoogleAppMeasurement"),
                 .external(name: "Realm"),
                 .external(name: "RealmSwift"),
+                .external(name: "RxRelay"),
                 .external(name: "FirebaseCrashlytics"),
                 .external(name: "FirebaseAnalytics"),
                 .external(name: "FirebaseRemoteConfig"),
@@ -135,7 +137,6 @@ let project = Project(
                 .external(name: "KakaoSDKUser"),
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
-
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],

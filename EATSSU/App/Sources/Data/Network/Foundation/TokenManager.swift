@@ -11,7 +11,7 @@ struct TokenPayload: Decodable {
     let exp: TimeInterval
 }
 
-final class TokenManager {
+class TokenManager {
     static let shared = TokenManager()
     private init() {}
 
@@ -41,7 +41,7 @@ final class TokenManager {
     }
 
     /// JWT Payload 디코딩
-    private func decodePayload(token: String) -> TokenPayload? {
+    func decodePayload(token: String) -> TokenPayload? {
         let parts = token.split(separator: ".")
         guard parts.count == 3 else { return nil }
 

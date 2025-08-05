@@ -33,6 +33,8 @@ import PackageDescription
 
             // RxSwift
             "RxSwift": .framework,
+            "RxRelay": .framework,
+            
         ]
     )
 #endif
