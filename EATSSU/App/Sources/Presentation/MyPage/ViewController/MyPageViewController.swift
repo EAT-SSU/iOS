@@ -97,26 +97,17 @@ final class MyPageViewController: BaseViewController {
 
     /// 로그아웃 Alert를 스크린에 표시하는 메소드
     private func logoutShowAlert() {
-        let alert = UIAlertController(title: "로그아웃",
-                                      message: "정말 로그아웃 하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(
+            title: "로그아웃",
+            message: "정말 로그아웃 하시겠습니까?",
+            preferredStyle: .alert
+        )
 
-        let cancelAction = UIAlertAction(title: "취소하기",
-                                         style: .default,
-                                         handler: nil)
+        let cancelAction = UIAlertAction(title: "취소하기", style: .default, handler: nil)
 
-        let fixAction = UIAlertAction(title: "로그아웃",
-                                      style: .default,
-                                      handler: { _ in
-                                          RealmService.shared.resetDB()
-
-                                          let loginViewController = LoginViewController()
-                                          if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                             let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                                          {
-                                              keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
-                                          }
-                                      })
+        let fixAction = UIAlertAction(title: "로그아웃", style: .default) { _ in
+            AuthService.shared.logout()
+        }
 
         alert.addAction(cancelAction)
         alert.addAction(fixAction)

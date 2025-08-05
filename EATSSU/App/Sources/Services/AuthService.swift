@@ -36,6 +36,7 @@ final class AuthService {
 
     /// 로그인 처리
     func login(accessToken: String, refreshToken: String) {
+        print("[AuthService] login() 호출됨")
         RealmService.shared.addToken(
             accessToken: accessToken,
             refreshToken: refreshToken
@@ -45,19 +46,23 @@ final class AuthService {
 
     /// 로그아웃 처리
     func logout() {
+        print("[AuthService] logout() 호출됨")
         RealmService.shared.deleteAll(Token.self)
         relay.accept(false)
     }
 
     /// 토큰 유효성 검사 및 재발급
     func checkToken() async throws {
+        print("[AuthService] checkToken() 시작")
         let token = RealmService.shared.getToken()
         guard let payload = TokenManager.shared.decodePayload(token: token),
               Date(timeIntervalSince1970: payload.exp) > Date() else {
+            print("[AuthService] checkToken() 실패 → 토큰 만료됨")
             throw AuthError.tokenExpired
         }
 
         try await TokenRefresher.shared.refreshIfNeeded()
+        print("[AuthService] checkToken() 성공 → 토큰 유효")
         relay.accept(true)
     }
 }
