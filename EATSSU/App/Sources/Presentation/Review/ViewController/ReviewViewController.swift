@@ -189,7 +189,7 @@ final class ReviewViewController: BaseViewController {
 
     //    @objc
     func userTapReviewButton() {
-        if RealmService.shared.isAccessTokenPresent() {
+        if AuthService.shared.isTokenValid() {
             activityIndicatorView.isHidden = false
             DispatchQueue.global().async { // 백그라운드 스레드에서 작업을 수행
                 // 작업 완료 후 UI 업데이트를 메인 스레드에서 수행
@@ -224,15 +224,21 @@ final class ReviewViewController: BaseViewController {
                 }
             }
         } else {
+            AuthService.shared.logout()
             showAlertControllerWithCancel(title: "로그인이 필요한 서비스입니다", message: "로그인 하시겠습니까?", confirmStyle: .default) {
-                AuthService.shared.logout()
+                self.navigateToLogin()
             }
         }
     }
 
-    private func pushToLoginVC() {
+    private func navigateToLogin() {
         let loginVC = LoginViewController()
-        navigationController?.pushViewController(loginVC, animated: true)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = windowScene.delegate as? SceneDelegate,
+           let window = sceneDelegate.window
+        {
+            window.replaceRootViewController(loginVC)
+        }
     }
 
     func makeDictionary() {

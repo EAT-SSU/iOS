@@ -181,8 +181,7 @@ final class LoginViewController: BaseViewController {
 
     @objc
     private func lookingWithNoSignInButtonDidTapped() {
-        // 비로그인 모드 진입: 필요하다면 빈 토큰으로 로그인 상태만 세팅
-        AuthService.shared.login(accessToken: "", refreshToken: "")
+        changeIntoHomeViewController()
     }
 }
 

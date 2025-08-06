@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
         
         Task {
-            let ok = await AuthService.shared.checkAndRefreshTokenIfNeeded()
+            _ = await AuthService.shared.checkAndRefreshTokenIfNeeded()
             // relay.accept(true/false) 가 이미 호출된 뒤에 구독 시작
             await MainActor.run {
                 self.observeAuthState()
