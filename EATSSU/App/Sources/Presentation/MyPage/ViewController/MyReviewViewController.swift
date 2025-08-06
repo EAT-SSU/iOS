@@ -121,16 +121,16 @@ final class MyReviewViewController: BaseViewController {
         }
     }
     
-    private func navigateToLogin() {
-        let loginVC = LoginViewController()
-        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
-            }
-        }
-    }
+//    private func navigateToLogin() {
+//        let loginVC = LoginViewController()
+//        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+//        DispatchQueue.main.async {
+//            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+//                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
+//            }
+//        }
+//    }
 }
 
 extension MyReviewViewController: UITableViewDelegate {}
@@ -171,13 +171,13 @@ extension MyReviewViewController {
                     print(err.localizedDescription)
                     
                     RealmService.shared.resetDB()
-                    self.navigateToLogin()
+                    AuthService.shared.logout(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
                 }
             case let .failure(err):
                 print(err.localizedDescription)
                 
                 RealmService.shared.resetDB()
-                self.navigateToLogin()
+                AuthService.shared.logout(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
             }
         }
     }
@@ -194,7 +194,7 @@ extension MyReviewViewController {
                     print(err.localizedDescription)
                     
                     RealmService.shared.resetDB()
-                    self.navigateToLogin()
+                    AuthService.shared.logout(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
                 }
             }
         })

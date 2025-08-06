@@ -30,7 +30,8 @@ final class LoginViewController: BaseViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        handleAutoLogin()
+        showToastMessageIfNeeded()
+//        handleAutoLogin()
     }
 
     override func viewDidLoad() {
@@ -82,13 +83,13 @@ final class LoginViewController: BaseViewController {
     }
 
     /// Realm에 저장된 토큰이 있는지 확인 후, 있으면 홈 화면으로 이동한다.
-    private func handleAutoLogin() {
-        guard hasStoredToken() else { return }
-        #if DEBUG
-            print("저장된 AccessToken: ", RealmService.shared.getToken())
-        #endif
-        changeIntoHomeViewController()
-    }
+//    private func handleAutoLogin() {
+//        guard hasStoredToken() else { return }
+//        // 토큰이 남아 있으면 AuthService에 로그인 상태로 알리고, SceneDelegate가 화면 전환을 담당하게
+//        let at = RealmService.shared.getToken()
+//        let rt = RealmService.shared.getRefreshToken()
+//        AuthService.shared.login(accessToken: at, refreshToken: rt)
+//    }
 
     private func hasStoredToken() -> Bool {
         !RealmService.shared.getToken().isEmpty
@@ -108,17 +109,24 @@ final class LoginViewController: BaseViewController {
     /// 닉네임 설정이 필요한지 확인 후, 필요하면 닉네임 설정 화면으로, 아니면 홈 화면으로 이동한다.
     private func handleNicknameCheck(info: MyInfoResponse) {
         if let nickname = info.nickname {
-            // 사용자의 닉네임을 업데이트하고 홈 화면으로 이동
-            if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
+            print("[디버깅] 닉네임 존재함: \(nickname)")
+
+            let currentUser = UserInfoManager.shared.getCurrentUserInfo()
+            print("[디버깅] currentUserInfo: \(String(describing: currentUser))")
+
+            if let u = currentUser {
+                UserInfoManager.shared.updateNickname(for: u, nickname: nickname)
+                print("[디버깅] 닉네임 업데이트 완료")
+            } else {
+                print("[디버깅] currentUserInfo가 nil임")
             }
-            changeIntoHomeViewController()
         } else {
-            // 닉네임 설정이 필요한 경우
+            print("[디버깅] 닉네임이 없음 → 닉네임 설정 화면으로 이동")
             let setNicknameVC = SetNickNameViewController()
             navigationController?.pushViewController(setNicknameVC, animated: true)
         }
     }
+
 
     /// 토큰을 Realm에 저장하고, 디버깅 로그를 출력한다.
     private func storeTokensAndPrintDebugLogs(accessToken: String, refreshToken: String) {
@@ -129,8 +137,9 @@ final class LoginViewController: BaseViewController {
     }
     
     private func showToastMessageIfNeeded() {
-        guard let toastMessage = self.toastMessage else { return }
-        view.showToast(message: toastMessage)
+        guard let message = toastMessage else { return }
+        view.showToast(message: message)
+        toastMessage = nil
     }
 
     // MARK: - 액션 메서드
@@ -172,7 +181,8 @@ final class LoginViewController: BaseViewController {
 
     @objc
     private func lookingWithNoSignInButtonDidTapped() {
-        changeIntoHomeViewController()
+        // 비로그인 모드 진입: 필요하다면 빈 토큰으로 로그인 상태만 세팅
+        AuthService.shared.login(accessToken: "", refreshToken: "")
     }
 }
 
@@ -192,14 +202,17 @@ extension LoginViewController {
             let accessToken = data.accessToken
             let refreshToken = data.refreshToken
                 
-            // 토큰을 로컬에 저장
+            // 1) 토큰 저장
             storeTokensAndPrintDebugLogs(accessToken: accessToken, refreshToken: refreshToken)
 
-            // 로컬 매니저에 유저 정보 생성
+            // 2) 인증 상태 업데이트 (SceneDelegate.observeAuthState가 화면 전환 처리)
+            AuthService.shared.login(accessToken: accessToken, refreshToken: refreshToken)  //
+
+            // 3) 로컬 매니저에 유저 정보 생성
             _ = UserInfoManager.shared.createUserInfo(accountType: accountType)
 
-            // 닉네임 등 정보를 확인하기 위해 프로필 조회
-            getMyInfo()
+            // (닉네임 설정 화면으로 이동할 필요가 있으면, 아래 로직에서 분기 처리)
+//            getMyInfo()
         } catch {
             switch accountType {
             case .apple:
@@ -257,25 +270,31 @@ extension LoginViewController {
     }
 
     /// 서버에서 현재 유저 정보를 조회
-    private func getMyInfo() {
-        myProvider.request(.myInfo) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
-                    guard let responseData = responseData.result else {
-                        return
-                    }
-                    handleNicknameCheck(info: responseData)
-                } catch {
-                    print(error.localizedDescription)
-                }
-            case let .failure(error):
-                print(error.localizedDescription)
-            }
-        }
-    }
+//    private func getMyInfo() {
+//        print("[디버깅] getMyInfo() 호출됨") // ✅ 추가
+//
+//        myProvider.request(.myInfo) { [weak self] result in
+//            guard let self else { return }
+//            switch result {
+//            case let .success(moyaResponse):
+//                do {
+//                    print("[디버깅] myInfo API 응답 받음") // ✅ 추가
+//                    let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
+//                    guard let responseData = responseData.result else {
+//                        print("[디버깅] myInfo 결과 result가 nil임") // ✅ 추가
+//                        return
+//                    }
+//                    print("[디버깅] 닉네임 정보: \(responseData.nickname ?? "없음")") // ✅ 추가
+//                    handleNicknameCheck(info: responseData)
+//                } catch {
+//                    print("[디버깅] 디코딩 에러: \(error.localizedDescription)")
+//                }
+//            case let .failure(error):
+//                print("[디버깅] myInfo API 실패: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+
 }
 
 // MARK: - 카카오 사용자 정보 가져오기

@@ -106,16 +106,16 @@ final class SetNickNameViewController: BaseViewController {
         }
     }
     
-    private func navigateToLogin() {
-        let loginVC = LoginViewController()
-        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
-            }
-        }
-    }
+//    private func navigateToLogin() {
+//        let loginVC = LoginViewController()
+//        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+//        DispatchQueue.main.async {
+//            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+//                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
+//            }
+//        }
+//    }
 }
 
 // MARK: - Network
@@ -129,23 +129,17 @@ extension SetNickNameViewController {
                     UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
                 }
                 self.showAlertController(title: "완료", message: "닉네임 설정이 완료되었습니다.", style: .cancel) {
-                    if let myPageViewController = self.navigationController?.viewControllers.first(where: { $0 is MyPageViewController }) {
-                        self.navigationController?.popToViewController(myPageViewController, animated: true)
-                    } else {
-                        let homeViewController = HomeViewController()
-                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                        {
-                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: homeViewController))
-                        }
-                    }
+                    // 인증 상태만 업데이트 → SceneDelegate.observeAuthState()가 Home으로 전환
+                    let at = RealmService.shared.getToken()
+                    let rt = RealmService.shared.getRefreshToken()
+                    AuthService.shared.login(accessToken: at, refreshToken: rt)
                 }
             
             case let .failure(err):
                 print(err.localizedDescription)
-                
+
                 RealmService.shared.resetDB()
-                self.navigateToLogin()
+                AuthService.shared.logout(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
             }
         }
     }
@@ -174,13 +168,14 @@ extension SetNickNameViewController {
                     print(err.localizedDescription)
                     
                     RealmService.shared.resetDB()
-                    self.navigateToLogin()
+                    AuthService.shared.logout()
                 }
             case let .failure(err):
                 print(err.localizedDescription)
-                
+
                 RealmService.shared.resetDB()
-                self.navigateToLogin()
+                // message 파라미터 없는 logout 호출로 변경
+                AuthService.shared.logout()
             }
         }
     }

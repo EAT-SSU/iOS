@@ -28,9 +28,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
         
-        observeAuthState()
-        fetchNoticeAndConfigureRootViewController()
-        checkForAppUpdate()
+        Task {
+            let ok = await AuthService.shared.checkAndRefreshTokenIfNeeded()
+            // relay.accept(true/false) 가 이미 호출된 뒤에 구독 시작
+            await MainActor.run {
+                self.observeAuthState()
+                self.fetchNoticeAndConfigureRootViewController()
+                self.checkForAppUpdate()
+            }
+        }
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -140,35 +146,53 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // MARK: - RootViewController & Update
 
     private func observeAuthState() {
+        print("[observeAuthState] Auth 상태 구독 시작")
+
         AuthService.shared.isAuthenticated
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] isAuth in
-                guard let self = self else { return }
-                if isAuth {
-                    self.window?.rootViewController = HomeViewController()
-                } else {
-                    let loginVC = LoginViewController()
-                    self.window?.rootViewController = UINavigationController(rootViewController: loginVC)
+                guard let self = self else {
+                    print("[observeAuthState] self가 nil입니다. 종료")
+                    return
                 }
+
+                print("[observeAuthState] isAuthenticated 상태 변경 감지: \(isAuth)")
+
+                let vc: UIViewController
+
+                if isAuth {
+                    print("[observeAuthState] 로그인 상태 → HomeViewController 생성")
+                    UserInfoService.shared.fetchAndUpdateUserInfo()
+                    let homeVC = HomeViewController()
+                    vc = UINavigationController(rootViewController: homeVC)
+                } else {
+                    print("[observeAuthState] 비로그인 상태 → LoginViewController 생성")
+                    let loginVC = LoginViewController()
+                    vc = UINavigationController(rootViewController: loginVC)
+                }
+
+                print("[observeAuthState] 루트 뷰컨트롤러 변경 적용")
+                self.window?.rootViewController = vc
             })
             .disposed(by: disposeBag)
     }
+
     
     private func fetchNoticeAndConfigureRootViewController() {
         FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
+            // result가 nil이면 노티스가 없는 경우이므로 아무 동작도 하지 않음
+            guard let self = self, let notice = result, !notice.isEmpty else { return }
             DispatchQueue.main.async {
-                self?.configureRootViewController(with: result)
+                // 공지 문구가 있을 때만 루트 교체
+                self.configureRootViewController(with: notice)
             }
         }
     }
 
-    private func configureRootViewController(with noticeMessage: String?) {
-        let rootViewController: UIViewController = if let notice = noticeMessage, !notice.isEmpty {
-            UINavigationController(rootViewController: NoticeViewController(noticeMessage: notice))
-        } else {
-            UINavigationController(rootViewController: LoginViewController())
-        }
-        window?.rootViewController = rootViewController
+    private func configureRootViewController(with noticeMessage: String) {
+        let newRoot = UINavigationController(rootViewController: NoticeViewController(noticeMessage: noticeMessage))
+        window?.rootViewController = newRoot
     }
 
     private func checkForAppUpdate() {

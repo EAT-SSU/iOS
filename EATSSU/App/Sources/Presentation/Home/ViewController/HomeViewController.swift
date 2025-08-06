@@ -118,7 +118,7 @@ final class HomeViewController: BaseViewController {
                                       message: "로그인 하시겠습니까?",
                                       preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            self?.navigateToLogin()
+            AuthService.shared.logout()
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         alert.addAction(confirmAction)
@@ -126,15 +126,15 @@ final class HomeViewController: BaseViewController {
         present(alert, animated: true, completion: nil)
     }
 
-    private func navigateToLogin() {
-        let loginVC = LoginViewController()
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let sceneDelegate = windowScene.delegate as? SceneDelegate,
-           let window = sceneDelegate.window
-        {
-            window.replaceRootViewController(loginVC)
-        }
-    }
+//    private func navigateToLogin() {
+//        let loginVC = LoginViewController()
+//        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//           let sceneDelegate = windowScene.delegate as? SceneDelegate,
+//           let window = sceneDelegate.window
+//        {
+//            window.replaceRootViewController(loginVC)
+//        }
+//    }
 
     // MARK: - Firebase
 

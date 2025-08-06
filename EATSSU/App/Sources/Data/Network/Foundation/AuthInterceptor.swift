@@ -59,12 +59,11 @@ final class AuthInterceptor: RequestInterceptor {
         // Swift Concurrency 기반 비동기 재발급 처리
         _Concurrency.Task { 
             do {
-                try await AuthService.shared.checkToken()
-                   await MainActor.run { completion(.retry) }
-               } catch {
-                   AuthService.shared.logout()
-                   await MainActor.run { completion(.doNotRetry) }
-               }
+              try await TokenRefresher.shared.refreshIfNeeded()
+              await MainActor.run { completion(.retry) }
+            } catch {
+              await MainActor.run { completion(.doNotRetryWithError(error)) }
+            }
           }
     }
 }

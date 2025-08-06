@@ -18,51 +18,68 @@ final class AuthService {
     static let shared = AuthService()
     private let disposeBag = DisposeBag()
     private let relay = BehaviorRelay<Bool>(value: false)
+    let logoutMessageRelay = PublishRelay<String?>()
 
-    /// 인증 상태 스트림
-    var isAuthenticated: Observable<Bool> {
-        relay.asObservable()
-    }
-
+    var isAuthenticated: BehaviorRelay<Bool> { relay }
+    
     private init() {
-        Task {
-            do {
-                try await self.checkToken()
-            } catch {
-                self.logout()
-            }
-        }
+        let hasToken = isTokenValid()
+        relay.accept(hasToken)
     }
 
-    /// 로그인 처리
     func login(accessToken: String, refreshToken: String) {
         print("[AuthService] login() 호출됨")
-        RealmService.shared.addToken(
-            accessToken: accessToken,
-            refreshToken: refreshToken
-        )
+        RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
         relay.accept(true)
     }
 
-    /// 로그아웃 처리
-    func logout() {
+    func logout(message: String? = nil) {
         print("[AuthService] logout() 호출됨")
         RealmService.shared.deleteAll(Token.self)
+        if let message = message {
+            logoutMessageRelay.accept(message)
+        }
         relay.accept(false)
     }
+    
+    var logoutMessage: Observable<String?> {
+        logoutMessageRelay.asObservable()
+    }
 
-    /// 토큰 유효성 검사 및 재발급
-    func checkToken() async throws {
-        print("[AuthService] checkToken() 시작")
+
+    func isTokenValid() -> Bool {
         let token = RealmService.shared.getToken()
-        guard let payload = TokenManager.shared.decodePayload(token: token),
-              Date(timeIntervalSince1970: payload.exp) > Date() else {
-            print("[AuthService] checkToken() 실패 → 토큰 만료됨")
-            throw AuthError.tokenExpired
+        guard let payload = TokenManager.shared.decodePayload(token: token) else {
+            print("[AuthService] 디코딩 실패")
+            return false
+        }
+        print("[AuthService] exp: \(payload.exp), now: \(Date().timeIntervalSince1970)")
+        return Date(timeIntervalSince1970: payload.exp) > Date()
+    }
+
+    func checkAndRefreshTokenIfNeeded() async -> Bool {
+        print("[AuthService] checkAndRefreshTokenIfNeeded() 시작")
+
+        let token = RealmService.shared.getToken()
+        guard let payload = TokenManager.shared.decodePayload(token: token) else {
+            print("[AuthService] 디코딩 실패")
+            return false
+        }
+        print("[AuthService] exp: \(payload.exp), now: \(Date().timeIntervalSince1970)")
+
+        // 만료됐어도 isTokenExpiringSoon()이 true이므로 재발급 시도
+        if TokenManager.shared.isTokenExpiringSoon() {
+            do {
+                try await TokenRefresher.shared.refreshIfNeeded()
+                print("[AuthService] 토큰 재발급 성공")
+            } catch {
+                print("[AuthService] 토큰 재발급 실패")
+                return false
+            }
         }
 
-        try await TokenRefresher.shared.refreshIfNeeded()
-        print("[AuthService] checkToken() 성공 → 토큰 유효")
+        // 재발급 성공 또는 아직 유효하다면 로그인 상태로 전환
         relay.accept(true)
+        return true
     }
 }
