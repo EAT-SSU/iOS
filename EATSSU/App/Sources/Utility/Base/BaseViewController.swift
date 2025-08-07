@@ -132,15 +132,20 @@ class BaseViewController: UIViewController {
         navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
     }
     
+    /// AuthService의 logoutMessage를 구독하여 로그아웃 메시지를 저장하는 함수
+    /// - 로그인 상태가 해제될 때 전달되는 메시지를 받아서 toastMessage에 저장
+    /// - 이후 viewDidAppear에서 showToastMessageIfNeeded()로 직접 표시됨
     private func observeLogoutMessage() {
         AuthService.shared.logoutMessage
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] message in
-                self?.toastMessage = message 
+                self?.toastMessage = message
             })
             .disposed(by: disposeBag)
     }
-    
+
+    /// toastMessage가 존재할 경우 화면에 토스트로 표시하고, 내부 상태를 초기화하는 함수
+    /// - 로그인 만료 시 메시지를 한 번만 표시하도록 동작
     func showToastMessageIfNeeded() {
         guard let message = toastMessage else { return }
         view.showToast(message: message)
