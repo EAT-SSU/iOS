@@ -198,7 +198,7 @@ final class ReviewViewController: BaseViewController {
                     preferredStyle: .alert
                 )
                 let confirm = UIAlertAction(title: "확인", style: .default) { _ in
-                    AuthService.shared.logout()
+                    AuthService.shared.logout(message: nil)
                     self.navigateToLogin()
                 }
                 let cancel = UIAlertAction(title: "취소", style: .cancel)

@@ -36,8 +36,11 @@ final class AuthService {
     func logout(message: String? = nil) {
         print("[AuthService] logout() 호출됨")
         RealmService.shared.deleteAll(Token.self)
+
         if let message = message {
             logoutMessageRelay.accept(message)
+        } else {
+            logoutMessageRelay.accept(nil)
         }
         relay.accept(false)
     }

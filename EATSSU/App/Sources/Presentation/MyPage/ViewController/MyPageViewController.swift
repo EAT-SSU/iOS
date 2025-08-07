@@ -107,7 +107,7 @@ final class MyPageViewController: BaseViewController {
         let cancelAction = UIAlertAction(title: "취소하기", style: .default, handler: nil)
 
         let fixAction = UIAlertAction(title: "로그아웃", style: .default) { _ in
-            AuthService.shared.logout()
+            AuthService.shared.logout(message: nil)
         }
 
         alert.addAction(cancelAction)
