@@ -129,15 +129,9 @@ extension UserWithdrawViewController {
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
                     guard let data = responseData.result, data else { return }
-                    
+
                     RealmService.shared.resetDB()
-                    let loginViewController = LoginViewController()
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                    {
-                        loginViewController.toastMessage = "탈퇴 처리가 완료되었습니다."
-                        keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
-                    }
+                    AuthService.shared.logout(message: "탈퇴 처리가 완료되었습니다.")
                 } catch let err {
                     print(err.localizedDescription)
                 }
