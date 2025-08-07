@@ -43,7 +43,7 @@ final class MyPageViewController: BaseViewController {
         mypageView.setUserInfo(nickname: nickName)
         showToastMessageIfNeeded()
     }
-    
+     
     // MARK: - Functions
 
     override func setCustomNavigationBar() {

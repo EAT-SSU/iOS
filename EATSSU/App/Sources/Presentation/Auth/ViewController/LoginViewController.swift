@@ -80,16 +80,7 @@ final class LoginViewController: BaseViewController {
             Analytics.logEvent("LoginViewControllerLoad", parameters: nil)
         #endif
     }
-
-    /// Realm에 저장된 토큰이 있는지 확인 후, 있으면 홈 화면으로 이동한다.
-//    private func handleAutoLogin() {
-//        guard hasStoredToken() else { return }
-//        // 토큰이 남아 있으면 AuthService에 로그인 상태로 알리고, SceneDelegate가 화면 전환을 담당하게
-//        let at = RealmService.shared.getToken()
-//        let rt = RealmService.shared.getRefreshToken()
-//        AuthService.shared.login(accessToken: at, refreshToken: rt)
-//    }
-
+    
     private func hasStoredToken() -> Bool {
         !RealmService.shared.getToken().isEmpty
     }
@@ -204,8 +195,6 @@ extension LoginViewController {
             // 3) 로컬 매니저에 유저 정보 생성
             _ = UserInfoManager.shared.createUserInfo(accountType: accountType)
 
-            // (닉네임 설정 화면으로 이동할 필요가 있으면, 아래 로직에서 분기 처리)
-//            getMyInfo()
         } catch {
             switch accountType {
             case .apple:
@@ -261,33 +250,6 @@ extension LoginViewController {
             }
         }
     }
-
-    /// 서버에서 현재 유저 정보를 조회
-//    private func getMyInfo() {
-//        print("[디버깅] getMyInfo() 호출됨") // ✅ 추가
-//
-//        myProvider.request(.myInfo) { [weak self] result in
-//            guard let self else { return }
-//            switch result {
-//            case let .success(moyaResponse):
-//                do {
-//                    print("[디버깅] myInfo API 응답 받음") // ✅ 추가
-//                    let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
-//                    guard let responseData = responseData.result else {
-//                        print("[디버깅] myInfo 결과 result가 nil임") // ✅ 추가
-//                        return
-//                    }
-//                    print("[디버깅] 닉네임 정보: \(responseData.nickname ?? "없음")") // ✅ 추가
-//                    handleNicknameCheck(info: responseData)
-//                } catch {
-//                    print("[디버깅] 디코딩 에러: \(error.localizedDescription)")
-//                }
-//            case let .failure(error):
-//                print("[디버깅] myInfo API 실패: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-
 }
 
 // MARK: - 카카오 사용자 정보 가져오기
