@@ -42,6 +42,7 @@ class CreatorsView: BaseUIView {
         let imageView = UIImageView()
         imageView.image = EATSSUDesignAsset.Images.nextCreators.image
         imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
 

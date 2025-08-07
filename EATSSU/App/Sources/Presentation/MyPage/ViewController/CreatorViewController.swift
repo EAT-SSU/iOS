@@ -71,11 +71,25 @@ class CreatorViewController: BaseViewController {
     }
     
     private func setUpAction() {
+        /// @eatssu_official 인스타그램 연결
         creatorsView.instagramButton.addTarget(self, action: #selector(openInstagram), for: .touchUpInside)
+        
+        /// eatssu 랜딩페이지 연결
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(nextCreatorsImageTapped))
+        creatorsView.nextCreatorsImageView.addGestureRecognizer(tapGesture)
     }
     
+    /// @eatssu_official 인스타그램 연결 동작
     @objc private func openInstagram() {
         if let url = URL(string: "https://www.instagram.com/eatssu.official/"),
+           UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
+    
+    /// eatssu 랜딩페이지 연결 동작
+    @objc private func nextCreatorsImageTapped() {
+        if let url = URL(string: "https://eat-ssu.notion.site/eat-ssu-landing"),
            UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
