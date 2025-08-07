@@ -41,8 +41,9 @@ final class MyPageViewController: BaseViewController {
 
         nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "실패"
         mypageView.setUserInfo(nickname: nickName)
+        showToastMessageIfNeeded()
     }
-
+    
     // MARK: - Functions
 
     override func setCustomNavigationBar() {
@@ -106,7 +107,7 @@ final class MyPageViewController: BaseViewController {
         let cancelAction = UIAlertAction(title: "취소하기", style: .default, handler: nil)
 
         let fixAction = UIAlertAction(title: "로그아웃", style: .default) { _ in
-            AuthService.shared.logout()
+            AuthService.shared.logout(message: "로그아웃이 완료되었습니다.")
         }
 
         alert.addAction(cancelAction)

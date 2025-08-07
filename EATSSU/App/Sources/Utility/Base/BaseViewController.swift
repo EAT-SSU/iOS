@@ -13,6 +13,8 @@ import EATSSUDesign
 
 import Moya
 import SnapKit
+import RxSwift
+import RxRelay
 
 /// EATSSU 앱에서 Controller로 사용하는 BaseViewController 클래스입니다.
 ///
@@ -27,6 +29,8 @@ import SnapKit
 class BaseViewController: UIViewController {
     // MARK: - Properties
 
+    var toastMessage: String?
+    private let disposeBag = DisposeBag()
     private(set) lazy var className: String = type(of: self).description().components(separatedBy: ".").last ?? ""
 
     // MARK: - Initialize
@@ -52,6 +56,7 @@ class BaseViewController: UIViewController {
         setLayout()
         setButtonEvent()
         setCustomNavigationBar()
+        observeLogoutMessage()
         view.backgroundColor = .systemBackground
     }
 
@@ -125,5 +130,20 @@ class BaseViewController: UIViewController {
         let backButton = UIBarButtonItem()
         backButton.tintColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
+    }
+    
+    private func observeLogoutMessage() {
+        AuthService.shared.logoutMessage
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] message in
+                self?.toastMessage = message 
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func showToastMessageIfNeeded() {
+        guard let message = toastMessage else { return }
+        view.showToast(message: message)
+        toastMessage = nil
     }
 }

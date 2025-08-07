@@ -9,19 +9,17 @@ import Foundation
 import RxSwift
 import RxRelay
 
-enum AuthError: Error {
-    case tokenExpired
-}
-
 /// 인증 상태 및 토큰 관리 서비스
 final class AuthService {
     static let shared = AuthService()
     private let disposeBag = DisposeBag()
     private let relay = BehaviorRelay<Bool>(value: false)
-    let logoutMessageRelay = PublishRelay<String?>()
+    private let logoutMessageRelay = BehaviorRelay<String?>(value: nil)
 
-    var isAuthenticated: BehaviorRelay<Bool> { relay }
-    
+    var isAuthenticated: Observable<Bool> {
+      relay.asObservable()
+    }
+
     private init() {
         let hasToken = isTokenValid()
         relay.accept(hasToken)
@@ -30,6 +28,7 @@ final class AuthService {
     func login(accessToken: String, refreshToken: String) {
         print("[AuthService] login() 호출됨")
         RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
+        relay.accept(false)
         relay.accept(true)
     }
 
@@ -46,10 +45,10 @@ final class AuthService {
         logoutMessageRelay.asObservable()
     }
 
-
     func isTokenValid() -> Bool {
         let token = RealmService.shared.getToken()
         guard let payload = TokenManager.shared.decodePayload(token: token) else {
+            logout()
             print("[AuthService] 디코딩 실패")
             return false
         }
@@ -62,6 +61,7 @@ final class AuthService {
 
         let token = RealmService.shared.getToken()
         guard let payload = TokenManager.shared.decodePayload(token: token) else {
+            logout()
             print("[AuthService] 디코딩 실패")
             return false
         }
@@ -73,6 +73,7 @@ final class AuthService {
                 try await TokenRefresher.shared.refreshIfNeeded()
                 print("[AuthService] 토큰 재발급 성공")
             } catch {
+                logout(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
                 print("[AuthService] 토큰 재발급 실패")
                 return false
             }

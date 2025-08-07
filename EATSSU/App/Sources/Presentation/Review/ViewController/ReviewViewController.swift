@@ -189,44 +189,52 @@ final class ReviewViewController: BaseViewController {
 
     //    @objc
     func userTapReviewButton() {
-        if AuthService.shared.isTokenValid() {
+        _Concurrency.Task {
+            let valid = await AuthService.shared.checkAndRefreshTokenIfNeeded()
+            if !valid {
+                let alert = UIAlertController(
+                    title: "로그인이 필요한 서비스입니다",
+                    message: "로그인 하시겠습니까?",
+                    preferredStyle: .alert
+                )
+                let confirm = UIAlertAction(title: "확인", style: .default) { _ in
+                    AuthService.shared.logout()
+                    self.navigateToLogin()
+                }
+                let cancel = UIAlertAction(title: "취소", style: .cancel)
+                alert.addAction(confirm)
+                alert.addAction(cancel)
+                self.present(alert, animated: true)
+                return
+            }
+            // 토큰 유효 시 기존 리뷰 작성 로직
             activityIndicatorView.isHidden = false
-            DispatchQueue.global().async { // 백그라운드 스레드에서 작업을 수행
-                // 작업 완료 후 UI 업데이트를 메인 스레드에서 수행
-                DispatchQueue.main.async { [self] in
-                    // 고정메뉴인지 판별(메뉴 ID List에 nil값 들어옴)
-                    if menuIDList == nil {
-                        let setRateViewController = SetRateViewController()
-                        menuIDList = [menuID]
-                        setRateViewController.dataBind(list: menuNameList,
-                                                       idList: menuIDList ?? [],
-                                                       reviewList: nil,
-                                                       currentPage: 0)
-                        activityIndicatorView.stopAnimating()
-                        navigationController?.pushViewController(setRateViewController, animated: true)
+            DispatchQueue.global().async {
+                DispatchQueue.main.async {
+                    if self.menuIDList == nil {
+                        let vc = SetRateViewController()
+                        self.menuIDList = [self.menuID]
+                        vc.dataBind(list: self.menuNameList,
+                                    idList: self.menuIDList ?? [],
+                                    reviewList: nil,
+                                    currentPage: 0)
+                        self.activityIndicatorView.stopAnimating()
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    } else if self.menuIDList?.count == 1 {
+                        let vc = SetRateViewController()
+                        vc.dataBind(list: self.menuNameList,
+                                    idList: self.menuIDList ?? [],
+                                    reviewList: nil,
+                                    currentPage: 0)
+                        self.activityIndicatorView.stopAnimating()
+                        self.navigationController?.pushViewController(vc, animated: true)
                     } else {
-                        // 고정메뉴이고, 메뉴가 1개일때 선택창으로 안가고 바로 작성창으로 가도록
-                        if menuIDList?.count == 1 {
-                            let setRateViewController = SetRateViewController()
-                            setRateViewController.dataBind(list: menuNameList,
-                                                           idList: menuIDList ?? [],
-                                                           reviewList: nil,
-                                                           currentPage: 0)
-                            activityIndicatorView.stopAnimating()
-                            navigationController?.pushViewController(setRateViewController, animated: true)
-                        } else {
-                            let choiceMenuViewController = ChoiceMenuViewController()
-                            choiceMenuViewController.menuDataBind(menuList: menuNameList, idList: menuIDList ?? [])
-                            activityIndicatorView.stopAnimating()
-                            navigationController?.pushViewController(choiceMenuViewController, animated: true)
-                        }
+                        let vc = ChoiceMenuViewController()
+                        vc.menuDataBind(menuList: self.menuNameList, idList: self.menuIDList ?? [])
+                        self.activityIndicatorView.stopAnimating()
+                        self.navigationController?.pushViewController(vc, animated: true)
                     }
                 }
-            }
-        } else {
-            AuthService.shared.logout()
-            showAlertControllerWithCancel(title: "로그인이 필요한 서비스입니다", message: "로그인 하시겠습니까?", confirmStyle: .default) {
-                self.navigateToLogin()
             }
         }
     }

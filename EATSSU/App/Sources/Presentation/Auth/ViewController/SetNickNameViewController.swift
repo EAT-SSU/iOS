@@ -168,14 +168,13 @@ extension SetNickNameViewController {
                     print(err.localizedDescription)
                     
                     RealmService.shared.resetDB()
-                    AuthService.shared.logout()
+                    AuthService.shared.logout(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
                 }
             case let .failure(err):
                 print(err.localizedDescription)
-
+                
                 RealmService.shared.resetDB()
-                // message 파라미터 없는 logout 호출로 변경
-                AuthService.shared.logout()
+                AuthService.shared.logout(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
             }
         }
     }

@@ -104,7 +104,6 @@ final class HomeViewController: BaseViewController {
         if AuthService.shared.isTokenValid() {
             navigateToMyPage()
         } else {
-            AuthService.shared.logout()
             presentLoginAlert()
         }
     }
@@ -115,16 +114,19 @@ final class HomeViewController: BaseViewController {
     }
 
     private func presentLoginAlert() {
-        let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
-                                      message: "로그인 하시겠습니까?",
-                                      preferredStyle: .alert)
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            self?.navigateToLogin()
+        let alert = UIAlertController(
+            title: "로그인이 필요한 서비스입니다",
+            message: "로그인 하시겠습니까?",
+            preferredStyle: .alert
+        )
+        let confirm = UIAlertAction(title: "확인", style: .default) { _ in
+            AuthService.shared.logout()
+            self.navigateToLogin()
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        alert.addAction(confirmAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        alert.addAction(confirm)
+        alert.addAction(cancel)
+        present(alert, animated: true)
     }
 
     private func navigateToLogin() {

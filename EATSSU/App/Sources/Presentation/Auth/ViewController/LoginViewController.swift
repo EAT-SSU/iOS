@@ -18,7 +18,6 @@ final class LoginViewController: BaseViewController {
     // MARK: - Properties
 
     public static let isVacationPeriod = false
-    public var toastMessage: String?
     private let authProvider = MoyaProvider<AuthRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
@@ -28,11 +27,11 @@ final class LoginViewController: BaseViewController {
 
     // MARK: - Life Cycle
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        showToastMessageIfNeeded()
-//        handleAutoLogin()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        showToastMessageIfNeeded()
+////        handleAutoLogin()
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,12 +134,7 @@ final class LoginViewController: BaseViewController {
             print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️")
         #endif
     }
-    
-    private func showToastMessageIfNeeded() {
-        guard let message = toastMessage else { return }
-        view.showToast(message: message)
-        toastMessage = nil
-    }
+
 
     // MARK: - 액션 메서드
 

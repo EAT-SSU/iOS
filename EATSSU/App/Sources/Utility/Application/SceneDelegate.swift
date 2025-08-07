@@ -28,15 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
         
-        Task {
-            _ = await AuthService.shared.checkAndRefreshTokenIfNeeded()
-            // relay.accept(true/false) 가 이미 호출된 뒤에 구독 시작
-            await MainActor.run {
-                self.observeAuthState()
-                self.fetchNoticeAndConfigureRootViewController()
-                self.checkForAppUpdate()
-            }
-        }
+        performInitialTasks()
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -143,6 +135,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         LaunchSourceManager.shared.logIfNeeded()
     }
 
+    // MARK: - Initial Async Tasks
+
+    private func performInitialTasks() {
+        Task {
+            _ = await AuthService.shared.checkAndRefreshTokenIfNeeded()
+            await MainActor.run {
+                observeAuthState()
+                fetchNoticeAndConfigureRootViewController()
+                checkForAppUpdate()
+            }
+        }
+    }
+    
     // MARK: - RootViewController & Update
 
     private func observeAuthState() {
