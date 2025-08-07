@@ -23,6 +23,8 @@ class CreatorViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setUpAction()
     }
 
     // MARK: - Methods
@@ -66,5 +68,16 @@ class CreatorViewController: BaseViewController {
         gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
         view.layer.insertSublayer(gradient, at: 0)
+    }
+    
+    private func setUpAction() {
+        creatorsView.instagramButton.addTarget(self, action: #selector(openInstagram), for: .touchUpInside)
+    }
+    
+    @objc private func openInstagram() {
+        if let url = URL(string: "https://www.instagram.com/eatssu.official/"),
+           UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
     }
 }
