@@ -28,7 +28,6 @@ final class AuthService {
     func login(accessToken: String, refreshToken: String) {
         print("[AuthService] login() 호출됨")
         RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
-        relay.accept(false)
         relay.accept(true)
     }
 
