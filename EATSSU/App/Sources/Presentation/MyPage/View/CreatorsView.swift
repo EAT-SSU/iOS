@@ -32,7 +32,7 @@ class CreatorsView: BaseUIView {
     let instagramButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("@ eatssu.official", for: .normal)
-        button.setTitleColor(UIColor(hex: "#1F1F1F"), for: .normal)
+        button.setTitleColor(.gray700Basic, for: .normal)
         button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
         return button
     }()
