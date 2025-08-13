@@ -28,13 +28,30 @@ class CreatorsView: BaseUIView {
         return view
     }()
     
+    lazy var instagramStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [instagramIcon, instagramLabel])
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        stackView.alignment = .center
+        stackView.isUserInteractionEnabled = true
+        return stackView
+    }()
+    
+    let instagramIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.instagramIcon.image
+        imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
+        return imageView
+    }()
+    
     /// eatssu 인스타 계정
-    let instagramButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("@ eatssu.official", for: .normal)
-        button.setTitleColor(.gray700Basic, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
-        return button
+    let instagramLabel: UILabel = {
+        let label = UILabel()
+        label.text = "eatssu.official"
+        label.textColor = .gray700Basic
+        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
+        return label
     }()
     
     /// Who's Next 버튼
@@ -69,7 +86,7 @@ class CreatorsView: BaseUIView {
     override func configureUI() {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubview(instagramButton)
+        contentView.addSubview(instagramStackView)
         contentView.addSubview(nextCreatorsImageView)
         contentView.addSubview(creatorsImageView)
     }
@@ -85,14 +102,17 @@ class CreatorsView: BaseUIView {
             make.bottom.equalTo(creatorsImageView.snp.bottom).offset(52)
         }
         
-        
-        instagramButton.snp.makeConstraints { make in
+        instagramStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(34)
             make.centerX.equalToSuperview()
         }
         
+        instagramIcon.snp.makeConstraints { make in
+            make.width.height.equalTo(12)
+        }
+        
         nextCreatorsImageView.snp.makeConstraints { make in
-            make.top.equalTo(instagramButton.snp.bottom).offset(16)
+            make.top.equalTo(instagramStackView.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.width.equalTo(292)
             make.height.equalTo(74)

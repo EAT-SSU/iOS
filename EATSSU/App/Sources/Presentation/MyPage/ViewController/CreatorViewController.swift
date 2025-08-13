@@ -76,7 +76,9 @@ class CreatorViewController: BaseViewController {
 
     private func setUpAction() {
         /// @eatssu_official 인스타그램 연결
-        creatorsView.instagramButton.addTarget(self, action: #selector(openInstagram), for: .touchUpInside)
+        let instagramTapGesture = UITapGestureRecognizer(target: self, action: #selector(openInstagram))
+        creatorsView.instagramStackView.addGestureRecognizer(instagramTapGesture)
+           
 
         /// eatssu 랜딩페이지 연결
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(nextCreatorsImageTapped))
