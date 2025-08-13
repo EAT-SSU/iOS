@@ -43,13 +43,15 @@ final class HomeRestaurantViewController: BaseViewController {
     private let sectionHeaderRestaurant = [TextLiteral.dormitoryRestaurant,
                                            TextLiteral.dodamRestaurant,
                                            TextLiteral.studentRestaurant,
-                                           TextLiteral.snackCorner]
+                                           TextLiteral.snackCorner,
+                                           TextLiteral.facultyRestaurant]
 
     // 버튼에 표시되는 타이틀을 백엔드 식당 이름으로 매핑
     let restaurantButtonTitleToName = [TextLiteral.dormitoryRestaurant: "DORMITORY",
                                        TextLiteral.dodamRestaurant: "DODAM",
                                        TextLiteral.studentRestaurant: "HAKSIK",
-                                       TextLiteral.snackCorner: "SNACK_CORNER"]
+                                       TextLiteral.snackCorner: "SNACK_CORNER",
+                                       TextLiteral.facultyRestaurant: "FACULTY"]
 
     // 현재 보고 있는 식당 (섹션 reload 시 사용)
     var currentRestaurant = ""
@@ -138,7 +140,8 @@ final class HomeRestaurantViewController: BaseViewController {
         let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
                                   Restaurant.dodamRestaurant.identifier,
                                   Restaurant.studentRestaurant.identifier,
-                                  Restaurant.snackCorner.identifier]
+                                  Restaurant.snackCorner.identifier,
+                                  Restaurant.facultyRestaurant.identifier]
         return restaurantRawValue.firstIndex(of: restaurant)
     }
 
@@ -147,7 +150,8 @@ final class HomeRestaurantViewController: BaseViewController {
         let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
                                   Restaurant.dodamRestaurant.identifier,
                                   Restaurant.studentRestaurant.identifier,
-                                  Restaurant.snackCorner.identifier]
+                                  Restaurant.snackCorner.identifier,
+                                  Restaurant.facultyRestaurant.identifier]
         return restaurantRawValue[section]
     }
 
@@ -159,6 +163,7 @@ final class HomeRestaurantViewController: BaseViewController {
         getChageMenuData(date: formatDate, restaurant: Restaurant.dormitoryRestaurant.identifier, time: time) {}
         getChageMenuData(date: formatDate, restaurant: Restaurant.dodamRestaurant.identifier, time: time) {}
         getChageMenuData(date: formatDate, restaurant: Restaurant.studentRestaurant.identifier, time: time) {}
+        getChageMenuData(date: formatDate, restaurant: Restaurant.facultyRestaurant.identifier, time: time) {}
 
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend // 주말 여부 판단
