@@ -54,6 +54,7 @@ let projectSettings: Settings = .settings(
         "OTHER_LDFLAGS": ["-all_load -Objc"],
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "HZ8WU7PA4J",
+        "SWIFT_CONCURRENCY": "complete",
     ],
     configurations: [
         .debug(name: "Debug", xcconfig: "App/Resources/Secrets/Debug.xcconfig"),

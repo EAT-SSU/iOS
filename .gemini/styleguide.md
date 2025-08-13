@@ -1,0 +1,4 @@
+- All review comments and explanations must be written in Korean, regardless of the input language.
+- Reviews must be specific and clear.
+- Feedback should be based on logical reasoning.
+- Keep comments to a single line whenever possible.

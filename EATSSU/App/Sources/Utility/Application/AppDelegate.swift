@@ -24,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         initializeKakaoSDK()
         setupDebugConfigurations()
         configureNaverMapAuth()
+        TokenManager.refreshIfNeededAsync()
         UNUserNotificationCenter.current().delegate = self
 
         return true
