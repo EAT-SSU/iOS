@@ -15,11 +15,14 @@ final class SetNickNameView: BaseUIView {
     // MARK: - Properties
 
     private var userNickname: String = ""
-    public let collegeDropDownView = DropDownView(title: "단과대", items: CollegeDepartmentStore.colleges)
+    public let collegeDropDownView = DropDownView(title: "단과대", items: [])
     public let departmentDropDownView = DropDownView(title: "학과", items: [])
     private var isNicknameChecked = false
     private var selectedCollege: String?
     private var selectedDepartment: String?
+    
+    public var onSelectCollege: ((String) -> Void)?
+    public var onSelectDepartment: ((String) -> Void)?
 
     // MARK: - UI Components
 
@@ -191,17 +194,20 @@ final class SetNickNameView: BaseUIView {
         collegeDropDownView.onSelectItem = { [weak self] college in
             guard let self else { return }
             selectedCollege = college
-            let departments = CollegeDepartmentStore.departments(of: college)
-            departmentDropDownView.updateItems(departments)
+
+            departmentDropDownView.updateItems([])
             departmentDropDownView.setTitle("학과")
             selectedDepartment = nil
             updateCompleteButtonState()
+
+            onSelectCollege?(college)
         }
 
         departmentDropDownView.onSelectItem = { [weak self] department in
             guard let self else { return }
             selectedDepartment = department
             updateCompleteButtonState()
+            onSelectDepartment?(department)
         }
     }
 
@@ -227,6 +233,14 @@ final class SetNickNameView: BaseUIView {
                 accountTypeImage.image = EATSSUDesignAsset.Images.signWithKakao.image
             }
         }
+    }
+    
+    public func updateCollegeItems(_ items: [String]) {
+        collegeDropDownView.updateItems(items)
+    }
+
+    public func updateDepartmentItems(_ items: [String]) {
+        departmentDropDownView.updateItems(items)
     }
 }
 

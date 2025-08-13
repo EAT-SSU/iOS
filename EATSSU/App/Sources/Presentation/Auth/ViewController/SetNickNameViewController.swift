@@ -14,24 +14,21 @@ final class SetNickNameViewController: BaseViewController {
 
     var currentKeyboardHeight: CGFloat = 0.0
     private let nicknameProvider = MoyaProvider<UserNicknameRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     // MARK: - UI Components
     
     private let setNickNameView = SetNickNameView()
-    private func getDepartments(for college: String) -> [String] {
-        switch college {
-        case "인문대": return ["국어국문학과", "영어영문학과", "철학과"]
-        case "자연대": return ["수학과", "물리학과", "화학과"]
-        default: return []
-        }
-    }
+    private var colleges: [LookupItemDTO] = []
+    private var departments: [LookupItemDTO] = []
 
     // MARK: - Life Cycles
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         dismissKeyboard()
+        bindDropdownCallbacks()
+        fetchColleges()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -63,6 +60,15 @@ final class SetNickNameViewController: BaseViewController {
     override func setButtonEvent() {
         setNickNameView.completeSettingNickNameButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
         setNickNameView.nicknameDoubleCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
+    }
+    
+    private func bindDropdownCallbacks() {
+        setNickNameView.onSelectCollege = { [weak self] collegeName in
+            guard let self,
+                  let id = self.colleges.first(where: { $0.name == collegeName })?.id
+            else { return }
+            self.fetchDepartments(collegeId: id)
+        }
     }
 
     @objc
@@ -201,6 +207,44 @@ extension SetNickNameViewController {
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
                 completion(false)
+            }
+        }
+    }
+    
+    private func fetchColleges() {
+        myProvider.request(.colleges) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case let .success(res):
+                do {
+                    let decoded = try res.map(CollegesResponseDTO.self)
+                    let list = decoded.result ?? []
+                    self.colleges = list
+                    self.setNickNameView.updateCollegeItems(list.map(\.name))
+                } catch {
+                    print("단과대 파싱 실패: \(error.localizedDescription)")
+                }
+            case let .failure(err):
+                print("단과대 조회 실패: \(err.localizedDescription)")
+            }
+        }
+    }
+
+    private func fetchDepartments(collegeId: Int) {
+        myProvider.request(.departments(collegeId: collegeId)) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case let .success(res):
+                do {
+                    let decoded = try res.map(DepartmentsResponseDTO.self)
+                    let list = decoded.result ?? []
+                    self.departments = list
+                    self.setNickNameView.updateDepartmentItems(list.map(\.name))
+                } catch {
+                    print("학과 파싱 실패: \(error.localizedDescription)")
+                }
+            case let .failure(err):
+                print("학과 조회 실패: \(err.localizedDescription)")
             }
         }
     }

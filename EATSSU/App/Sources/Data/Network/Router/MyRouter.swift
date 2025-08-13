@@ -16,6 +16,8 @@ enum MyRouter {
     case inquiry(param: InquiryRequest)
     case getDepartment
     case getMyPartnerships
+    case colleges
+    case departments(collegeId: Int)
 }
 
 extension MyRouter: TargetType {
@@ -37,12 +39,16 @@ extension MyRouter: TargetType {
             "/users/department"
         case .getMyPartnerships:
             "/users/department/partnerships"
+        case .colleges:
+            "/users/lookup/colleges"
+        case .departments:
+            "/users/lookup/departments"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .myReview:
+        case .myReview, .departments, .colleges:
             .get
         case .myInfo, .getDepartment, .getMyPartnerships:
             .get
@@ -56,20 +62,25 @@ extension MyRouter: TargetType {
     var task: Moya.Task {
         switch self {
         case .myReview:
-            .requestParameters(parameters: ["page": 0,
-                                            "size": 20,
-                                            "sort": "date,DESC"],
-                               encoding: URLEncoding.queryString)
+                .requestParameters(parameters: ["page": 0,
+                                                "size": 20,
+                                                "sort": "date,DESC"],
+                                   encoding: URLEncoding.queryString)
         case .myInfo:
-            .requestPlain
+                .requestPlain
         case .signOut:
-            .requestPlain
+                .requestPlain
         case let .inquiry(param):
-            .requestJSONEncodable(param)
+                .requestJSONEncodable(param)
         case .getDepartment:
-            .requestPlain
+                .requestPlain
         case .getMyPartnerships:
-            .requestPlain
+                .requestPlain
+        case .colleges:
+                .requestPlain
+        case let .departments(collegeId):
+                .requestParameters(parameters: ["collegeId": collegeId],
+                                   encoding: URLEncoding.queryString)
         }
     }
 
