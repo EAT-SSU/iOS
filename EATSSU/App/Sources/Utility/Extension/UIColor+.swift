@@ -27,6 +27,10 @@ extension UIColor {
     static var gray700: UIColor {
         UIColor(hex: "#565656")
     }
+    
+    static var gray700Basic: UIColor {
+        UIColor(hex: "#1F1F1F")
+    }
 
     static var primary: UIColor {
         UIColor(hex: "#DF5757")
