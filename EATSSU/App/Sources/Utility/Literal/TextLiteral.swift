@@ -69,7 +69,7 @@ enum TextLiteral {
     static let dodamRestaurant: String = "도담 식당"
     static let studentRestaurant: String = "학생 식당"
     static let snackCorner: String = "스낵 코너"
-    static let facultyRestaurant: String = "교직원 식당"
+    static let facultyRestaurant: String = "FACULTY (교직원 전용)"
     static let dormitoryRawValue: String = "DORMITORY"
     static let dodamRawValue: String = "DODAM"
     static let studentRestaurantRawValue: String = "HAKSIK"

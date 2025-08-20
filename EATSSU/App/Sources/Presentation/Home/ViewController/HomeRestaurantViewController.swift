@@ -43,15 +43,17 @@ final class HomeRestaurantViewController: BaseViewController {
     private let sectionHeaderRestaurant = [TextLiteral.dormitoryRestaurant,
                                            TextLiteral.dodamRestaurant,
                                            TextLiteral.studentRestaurant,
-                                           TextLiteral.snackCorner,
-                                           TextLiteral.facultyRestaurant]
+                                           TextLiteral.facultyRestaurant,
+                                           TextLiteral.snackCorner]
 
     // 버튼에 표시되는 타이틀을 백엔드 식당 이름으로 매핑
     let restaurantButtonTitleToName = [TextLiteral.dormitoryRestaurant: "DORMITORY",
                                        TextLiteral.dodamRestaurant: "DODAM",
                                        TextLiteral.studentRestaurant: "HAKSIK",
-                                       TextLiteral.snackCorner: "SNACK_CORNER",
-                                       TextLiteral.facultyRestaurant: "FACULTY"]
+                                       TextLiteral.facultyRestaurant: "FACULTY",
+                                       TextLiteral.snackCorner: "SNACK_CORNER"]
+    
+    private let infoActionID = UIAction.Identifier("com.eatssu.header.infoTap")
 
     // 현재 보고 있는 식당 (섹션 reload 시 사용)
     var currentRestaurant = ""
@@ -140,8 +142,8 @@ final class HomeRestaurantViewController: BaseViewController {
         let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
                                   Restaurant.dodamRestaurant.identifier,
                                   Restaurant.studentRestaurant.identifier,
-                                  Restaurant.snackCorner.identifier,
-                                  Restaurant.facultyRestaurant.identifier]
+                                  Restaurant.facultyRestaurant.identifier,
+                                  Restaurant.snackCorner.identifier]
         return restaurantRawValue.firstIndex(of: restaurant)
     }
 
@@ -150,8 +152,8 @@ final class HomeRestaurantViewController: BaseViewController {
         let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
                                   Restaurant.dodamRestaurant.identifier,
                                   Restaurant.studentRestaurant.identifier,
-                                  Restaurant.snackCorner.identifier,
-                                  Restaurant.facultyRestaurant.identifier]
+                                  Restaurant.facultyRestaurant.identifier,
+                                  Restaurant.snackCorner.identifier]
         return restaurantRawValue[section]
     }
 
@@ -209,7 +211,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         let sectionKey = getSectionKey(for: indexPath.section)
 
         let menuList: [MenuTypeInfo]
-        if indexPath.section == 3 {
+        if indexPath.section == 4 {
             menuList = fixMenuTableViewData[sectionKey]?.map { .fix($0) } ?? []
         } else {
             menuList = changeMenuTableViewData[sectionKey]?.map { .change($0) } ?? []
@@ -225,13 +227,13 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         let restaurant = getSectionKey(for: section)
         var reviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
 
-        if [0, 1, 2].contains(section) {
+        if [0, 1, 2, 3].contains(section) {
             reviewMenuTypeInfo.menuType = "VARIABLE"
             reviewMenuTypeInfo.menuID = changeMenuTableViewData[restaurant]?[menuIndex].mealId ?? 100
             if let list = changeMenuTableViewData[restaurant]?[menuIndex].briefMenus {
                 reviewMenuTypeInfo.changeMenuIDList = list.compactMap(\.menuId)
             }
-        } else if section == 3 {
+        } else if section == 4 {
             if !isSelectable { return }
             reviewMenuTypeInfo.menuType = "FIXED"
             reviewMenuTypeInfo.menuID = fixMenuTableViewData[restaurant]?[menuIndex].menuId ?? 100
@@ -245,34 +247,40 @@ extension HomeRestaurantViewController: UITableViewDataSource {
 
     // 섹션 헤더 뷰 설정
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let restaurantTableViewHeader = tableView.dequeueReusableHeaderFooterView(withIdentifier: RestaurantTableViewHeader.identifier) as? RestaurantTableViewHeader else {
+        guard let header = tableView.dequeueReusableHeaderFooterView(
+            withIdentifier: RestaurantTableViewHeader.identifier
+        ) as? RestaurantTableViewHeader else {
             return nil
         }
 
         let restaurantName = sectionHeaderRestaurant[section]
-        restaurantTableViewHeader.titleLabel.text = restaurantName
+        header.titleLabel.text = restaurantName
 
-        // 위치 정보도 함께 표시
-        if let restaurantInfo = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == restaurantName }) {
-            var titleContainer = AttributeContainer()
-            titleContainer.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 10)
-            restaurantTableViewHeader.infoButton.configuration?.attributedTitle = AttributedString(restaurantInfo.location, attributes: titleContainer)
+        if let info = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == restaurantName }) {
+            var container = AttributeContainer()
+            container.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 10)
+            header.infoButton.configuration?.attributedTitle = AttributedString(info.location, attributes: container)
         }
 
-        // infoButton 클릭 시 식당 정보 화면 modal present
-        restaurantTableViewHeader.infoButton.addAction(UIAction { [weak self] _ in
-            let restaurantInfoViewController = RestaurantInfoViewController()
-            restaurantInfoViewController.modalPresentationStyle = .pageSheet
-            restaurantInfoViewController.sheetPresentationController?.prefersGrabberVisible = true
+        // 재사용 헤더의 이전 액션 제거
+        header.infoButton.removeAction(identifiedBy: infoActionID, for: .touchUpInside)
 
-            self?.infoDelegate = restaurantInfoViewController
-            self?.infoDelegate?.didTappedRestaurantInfo(restaurantName: restaurantName)
+        // 다시 액션 등록
+        header.infoButton.addAction(
+            UIAction(title: "", image: nil, identifier: infoActionID, handler: { [weak self] _ in
+                guard let self else { return }
+                let vc = RestaurantInfoViewController()
+                vc.modalPresentationStyle = .pageSheet
+                vc.sheetPresentationController?.prefersGrabberVisible = true
 
-            self?.present(restaurantInfoViewController, animated: true)
+                self.infoDelegate = vc
+                self.infoDelegate?.didTappedRestaurantInfo(restaurantName: restaurantName)
+                self.present(vc, animated: true)
+            }),
+            for: .touchUpInside
+        )
 
-        }, for: .touchUpInside)
-
-        return restaurantTableViewHeader
+        return header
     }
 }
 
