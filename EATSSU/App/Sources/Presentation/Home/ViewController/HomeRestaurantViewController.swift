@@ -53,7 +53,8 @@ final class HomeRestaurantViewController: BaseViewController {
                                        TextLiteral.facultyRestaurant: "FACULTY",
                                        TextLiteral.snackCorner: "SNACK_CORNER"]
     
-    private let infoActionID = UIAction.Identifier("com.eatssu.header.infoTap")
+    // info 버튼 UIAction 고정 식별자
+    private static let infoActionID = UIAction.Identifier("com.eatssu.header.infoTap")
 
     // 현재 보고 있는 식당 (섹션 reload 시 사용)
     var currentRestaurant = ""
@@ -263,11 +264,11 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         }
 
         // 재사용 헤더의 이전 액션 제거
-        header.infoButton.removeAction(identifiedBy: infoActionID, for: .touchUpInside)
+        header.infoButton.removeAction(identifiedBy: Self.infoActionID, for: .touchUpInside)
 
         // 다시 액션 등록
         header.infoButton.addAction(
-            UIAction(title: "", image: nil, identifier: infoActionID, handler: { [weak self] _ in
+            UIAction(title: "", image: nil, identifier: Self.infoActionID, handler: { [weak self] _ in
                 guard let self else { return }
                 let vc = RestaurantInfoViewController()
                 vc.modalPresentationStyle = .pageSheet
