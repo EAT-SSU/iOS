@@ -53,6 +53,13 @@ final class HomeRestaurantViewController: BaseViewController {
                                        TextLiteral.facultyRestaurant: "FACULTY",
                                        TextLiteral.snackCorner: "SNACK_CORNER"]
     
+    // 변경 메뉴를 가져올 식당 식별자 목록(스낵 제외)
+    private var changeRestaurantIDs: [String] {
+        sectionHeaderRestaurant
+            .compactMap { restaurantButtonTitleToName[$0] }
+            .filter { $0 != Restaurant.snackCorner.identifier }
+    }
+    
     // info 버튼 UIAction 고정 식별자
     private static let infoActionID = UIAction.Identifier("com.eatssu.header.infoTap")
 
@@ -158,22 +165,21 @@ final class HomeRestaurantViewController: BaseViewController {
     func fetchData(date: Date, time: String) {
         let formatDate = changeDateFormat(date: date)
 
-        // 변경 메뉴 요청 (기숙사/도담/학생식당)
-        getChageMenuData(date: formatDate, restaurant: Restaurant.dormitoryRestaurant.identifier, time: time) {}
-        getChageMenuData(date: formatDate, restaurant: Restaurant.dodamRestaurant.identifier, time: time) {}
-        getChageMenuData(date: formatDate, restaurant: Restaurant.studentRestaurant.identifier, time: time) {}
-        getChageMenuData(date: formatDate, restaurant: Restaurant.facultyRestaurant.identifier, time: time) {}
+        // 변경 메뉴 일괄 요청(스낵 제외, UI 순서대로)
+        changeRestaurantIDs.forEach { id in
+            getChageMenuData(date: formatDate, restaurant: id, time: time) {}
+        }
 
         let weekday = Weekday.from(date: date)
-        isWeekend = weekday.isWeekend // 주말 여부 판단
+        isWeekend = weekday.isWeekend
 
         if time == TextLiteral.lunchRawValue {
-            // 학기 중 평일 점심인 경우에만 간식코너 고정 메뉴 요청
+            // 학기 중 평일 점심에만 스낵 고정 메뉴 요청
             if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
                 isSelectable = true
-                getFixMenuData(restaurant: TextLiteral.snackCornerRawValue) {}
+                getFixMenuData(restaurant: Restaurant.snackCorner.identifier) {}
             } else {
-                // 방학/주말에는 더미 고정 메뉴 설정
+                // 방학/주말 더미
                 currentRestaurant = Restaurant.snackCorner.identifier
                 fixMenuTableViewData[Restaurant.snackCorner.identifier] = []
             }
