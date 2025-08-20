@@ -137,24 +137,20 @@ final class HomeRestaurantViewController: BaseViewController {
         restaurantView.restaurantTableView.estimatedRowHeight = 100
     }
 
-    // 식당 이름을 통해 섹션 index 반환
+    // 식당 identifier로 섹션 인덱스 반환
     func getSectionIndex(for restaurant: String) -> Int? {
-        let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
-                                  Restaurant.dodamRestaurant.identifier,
-                                  Restaurant.studentRestaurant.identifier,
-                                  Restaurant.facultyRestaurant.identifier,
-                                  Restaurant.snackCorner.identifier]
-        return restaurantRawValue.firstIndex(of: restaurant)
+        for (idx, title) in sectionHeaderRestaurant.enumerated() {
+            if restaurantButtonTitleToName[title] == restaurant {
+                return idx
+            }
+        }
+        return nil
     }
 
-    // 섹션 인덱스로 식당 이름 반환
+    // 섹션 인덱스로 식당 identifier 반환 (표시 타이틀 → identifier 매핑 기반)
     func getSectionKey(for section: Int) -> String {
-        let restaurantRawValue = [Restaurant.dormitoryRestaurant.identifier,
-                                  Restaurant.dodamRestaurant.identifier,
-                                  Restaurant.studentRestaurant.identifier,
-                                  Restaurant.facultyRestaurant.identifier,
-                                  Restaurant.snackCorner.identifier]
-        return restaurantRawValue[section]
+        let title = sectionHeaderRestaurant[section]
+        return restaurantButtonTitleToName[title] ?? ""
     }
 
     // 날짜와 시간에 따라 메뉴 데이터 fetch
@@ -207,15 +203,17 @@ extension HomeRestaurantViewController: UITableViewDataSource {
 
     // 셀 구성
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: RestaurantMenuGroupCell.identifier, for: indexPath) as! RestaurantMenuGroupCell
-        let sectionKey = getSectionKey(for: indexPath.section)
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: RestaurantMenuGroupCell.identifier,
+            for: indexPath
+        ) as! RestaurantMenuGroupCell
 
-        let menuList: [MenuTypeInfo]
-        if indexPath.section == 4 {
-            menuList = fixMenuTableViewData[sectionKey]?.map { .fix($0) } ?? []
-        } else {
-            menuList = changeMenuTableViewData[sectionKey]?.map { .change($0) } ?? []
-        }
+        let sectionKey = getSectionKey(for: indexPath.section)
+        let isSnackCorner = (sectionKey == Restaurant.snackCorner.identifier)
+
+        let menuList: [MenuTypeInfo] = isSnackCorner
+            ? (fixMenuTableViewData[sectionKey]?.map { .fix($0) } ?? [])
+            : (changeMenuTableViewData[sectionKey]?.map { .change($0) } ?? [])
 
         cell.configure(with: menuList, at: indexPath) { [weak self] indexPath, menuIndex in
             self?.handleMenuTap(section: indexPath.section, menuIndex: menuIndex)
@@ -225,15 +223,17 @@ extension HomeRestaurantViewController: UITableViewDataSource {
 
     private func handleMenuTap(section: Int, menuIndex: Int) {
         let restaurant = getSectionKey(for: section)
+        let isSnackCorner = (restaurant == Restaurant.snackCorner.identifier)
+
         var reviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
 
-        if [0, 1, 2, 3].contains(section) {
+        if !isSnackCorner {
             reviewMenuTypeInfo.menuType = "VARIABLE"
             reviewMenuTypeInfo.menuID = changeMenuTableViewData[restaurant]?[menuIndex].mealId ?? 100
             if let list = changeMenuTableViewData[restaurant]?[menuIndex].briefMenus {
                 reviewMenuTypeInfo.changeMenuIDList = list.compactMap(\.menuId)
             }
-        } else if section == 4 {
+        } else {
             if !isSelectable { return }
             reviewMenuTypeInfo.menuType = "FIXED"
             reviewMenuTypeInfo.menuID = fixMenuTableViewData[restaurant]?[menuIndex].menuId ?? 100
