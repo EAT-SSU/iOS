@@ -10,7 +10,7 @@ import Foundation
 import Moya
 
 /// 네트워크 로그 출력을 제어하는 플래그
-private let isVerboseNetworkLoggingEnabled = true
+private let isVerboseNetworkLoggingEnabled = false
 
 /// 네트워크 로깅을 위한 프로토콜
 protocol Logger {
