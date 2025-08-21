@@ -40,16 +40,16 @@ final class HomeRestaurantViewController: BaseViewController {
     private let fixedDummy = FixedMenuInfoData.Dummy()
 
     // 섹션 헤더에 들어갈 식당명 문자열 배열
-    private let sectionHeaderRestaurant = [TextLiteral.dormitoryRestaurant,
+    private let sectionHeaderRestaurant = [TextLiteral.studentRestaurant,
                                            TextLiteral.dodamRestaurant,
-                                           TextLiteral.studentRestaurant,
+                                           TextLiteral.dormitoryRestaurant,
                                            TextLiteral.facultyRestaurant,
                                            TextLiteral.snackCorner]
 
     // 버튼에 표시되는 타이틀을 백엔드 식당 이름으로 매핑
-    let restaurantButtonTitleToName = [TextLiteral.dormitoryRestaurant: "DORMITORY",
+    let restaurantButtonTitleToName = [TextLiteral.studentRestaurant: "HAKSIK",
                                        TextLiteral.dodamRestaurant: "DODAM",
-                                       TextLiteral.studentRestaurant: "HAKSIK",
+                                       TextLiteral.dormitoryRestaurant: "DORMITORY",
                                        TextLiteral.facultyRestaurant: "FACULTY",
                                        TextLiteral.snackCorner: "SNACK_CORNER"]
     
