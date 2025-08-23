@@ -249,6 +249,8 @@ extension CustomTimeTabController: UIScrollViewDelegate {
 
 extension CustomTimeTabController: CalendarSeletionDelegate {
     func didSelectCalendar(date: Date) {
+        // firebase - select_day 이벤트 호출
+        HomeAnalyticsManager.shared.logSelectDay(date: date)
         updateDate(to: date)
     }
 }
