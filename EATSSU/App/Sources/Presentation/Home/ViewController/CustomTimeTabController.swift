@@ -157,6 +157,9 @@ final class CustomTimeTabController: BaseViewController {
 
     @objc private func tabButtonTapped(_ sender: UIButton) {
         guard selectedIndex != sender.tag else { return }
+        //  firebase - select_mealtype 이벤트 호출
+        let selectedMealType = tabTitles[sender.tag]
+        HomeAnalyticsManager.shared.logSelectMealType(mealType: selectedMealType)
         isProgrammaticScroll = true
         selectedIndex = sender.tag
     }
