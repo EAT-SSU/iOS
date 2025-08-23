@@ -41,6 +41,10 @@ final class LoginViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         showToastMessageIfNeeded()
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.log3,
+                                       AnalyticsParameterScreenClass: "LoginViewController"])
     }
 
     // MARK: - Functions

@@ -8,7 +8,7 @@
 import UIKit
 
 import SnapKit
-
+import FirebaseAnalytics
 import EATSSUDesign
 
 /// 점검 혹은 공지가 필요할 때 사용하는 스플래시 뷰
@@ -66,6 +66,14 @@ class NoticeSplashViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.log2,
+                                       AnalyticsParameterScreenClass: "NoticeSplashViewController"])
     }
 
     // MARK: - UI Setup

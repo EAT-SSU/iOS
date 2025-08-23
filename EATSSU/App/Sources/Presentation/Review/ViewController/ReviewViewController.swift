@@ -63,6 +63,14 @@ final class ReviewViewController: BaseViewController {
         getReviewRate()
         getReviewList(type: type, menuId: menuID)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.review_v1_1,
+                                       AnalyticsParameterScreenClass: "ReviewViewController"])
+    }
 
     // MARK: - Functions
 

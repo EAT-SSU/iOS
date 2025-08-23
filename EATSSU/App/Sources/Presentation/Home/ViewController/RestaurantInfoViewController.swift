@@ -8,6 +8,7 @@
 import SnapKit
 
 import Moya
+import FirebaseAnalytics
 
 final class RestaurantInfoViewController: BaseViewController {
     // MARK: - UI Components
@@ -19,6 +20,15 @@ final class RestaurantInfoViewController: BaseViewController {
     override func configureUI() {
         view.addSubview(restaurantInfoView)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.home2,
+                                       AnalyticsParameterScreenClass: "RestaurantInfoViewController"])
+    }
+
 
     override func setLayout() {
         restaurantInfoView.snp.makeConstraints {

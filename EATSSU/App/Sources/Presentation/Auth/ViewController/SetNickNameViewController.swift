@@ -8,6 +8,7 @@
 import UIKit
 
 import Moya
+import FirebaseAnalytics
 
 final class SetNickNameViewController: BaseViewController {
     // MARK: - Properties
@@ -29,6 +30,14 @@ final class SetNickNameViewController: BaseViewController {
 
     override func viewWillAppear(_: Bool) {
         addKeyboardNotifications()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.log4,
+                                       AnalyticsParameterScreenClass: "SetNickNameViewController"])
     }
 
     override func viewWillDisappear(_: Bool) {

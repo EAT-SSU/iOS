@@ -10,7 +10,7 @@ import UIKit
 
 // External Module
 import SnapKit
-
+import FirebaseAnalytics
 import EATSSUDesign
 
 class CreatorViewController: BaseViewController {
@@ -29,6 +29,14 @@ class CreatorViewController: BaseViewController {
         super.viewDidLoad()
         
         setUpAction()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.home1,
+                                       AnalyticsParameterScreenClass: "HomeViewController"])
     }
 
     // MARK: - Methods

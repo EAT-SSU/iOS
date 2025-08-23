@@ -35,6 +35,14 @@ final class MyPageViewController: BaseViewController {
         setTableViewDelegate()
         loadSwitchStateFromUserDefaults()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage1,
+                                       AnalyticsParameterScreenClass: "MyPageViewController"])
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
