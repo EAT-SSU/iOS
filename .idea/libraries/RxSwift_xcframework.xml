@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="RxSwift.xcframework">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Tuist/.build/checkouts/RxSwift/RxSwift.xcframework.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
