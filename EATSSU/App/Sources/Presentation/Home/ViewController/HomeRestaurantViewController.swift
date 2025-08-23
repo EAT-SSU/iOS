@@ -207,7 +207,6 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         return 1
     }
 
-
     // 셀 구성
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
@@ -230,6 +229,13 @@ extension HomeRestaurantViewController: UITableViewDataSource {
 
     private func handleMenuTap(section: Int, menuIndex: Int) {
         let restaurant = getSectionKey(for: section)
+        
+        // firebase - click_menu 이벤트 호출
+        if section < sectionHeaderRestaurant.count {
+            let restaurantName = sectionHeaderRestaurant[section]
+            HomeAnalyticsManager.shared.logClickMenu(restaurantName: restaurantName)
+        }
+        
         let isSnackCorner = (restaurant == Restaurant.snackCorner.identifier)
 
         var reviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
