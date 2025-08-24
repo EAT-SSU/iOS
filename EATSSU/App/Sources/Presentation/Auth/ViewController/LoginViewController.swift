@@ -265,6 +265,10 @@ extension LoginViewController {
                     guard let responseData = responseData.result else {
                         return
                     }
+                    // 디버그 모드일 때만 받아온 유저 정보를 출력합니다.
+//                    #if DEBUG
+                    print("현재 로그인 정보: \(responseData)")
+//                    #endif
                     handleNicknameCheck(info: responseData)
                 } catch {
                     print(error.localizedDescription)
