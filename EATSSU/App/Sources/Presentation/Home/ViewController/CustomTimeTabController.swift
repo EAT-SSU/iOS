@@ -251,6 +251,9 @@ extension CustomTimeTabController: CalendarSeletionDelegate {
     func didSelectCalendar(date: Date) {
         // firebase - select_day 이벤트 호출
         HomeAnalyticsManager.shared.logSelectDay(date: date)
+        let currentMealType = self.tabTitles[self.selectedIndex]
+        // firebase - select_mealtype 이벤트 호출
+        HomeAnalyticsManager.shared.logSelectMealType(mealType: currentMealType)
         updateDate(to: date)
     }
 }
