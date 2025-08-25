@@ -18,7 +18,10 @@ extension MyPageLocalData {
         // "푸시 알림 설정"
         MyPageLocalData(titleLabel: TextLiteral.MyPage.pushNotificationSetting),
 
-        // "내가 쓴 리뷰"
+        // "내 정보"
+        MyPageLocalData(titleLabel: TextLiteral.MyPage.MyInfo),
+        
+        // "내 리뷰"
         MyPageLocalData(titleLabel: TextLiteral.MyPage.myReview),
 
         // "문의하기"

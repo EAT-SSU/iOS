@@ -95,12 +95,15 @@ enum TextLiteral {
 
         /// "마이페이지
         static let myPage: String = "마이페이지"
+        
+        /// "내 정보"
+        static let MyInfo: String = "내 정보"
 
         /// "연결된 계정"
         static let linkedAccount: String = "연결된 계정"
 
         /// "내가 쓴 리뷰"
-        static let myReview: String = "내가 쓴 리뷰"
+        static let myReview: String = "내 리뷰"
 
         /// "로그아웃"
         static let logout: String = "로그아웃"

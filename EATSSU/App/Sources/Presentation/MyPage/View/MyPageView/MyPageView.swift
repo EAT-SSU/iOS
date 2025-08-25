@@ -28,14 +28,12 @@ final class MyPageView: BaseUIView {
     }()
 
     // 닉네임이 들어간 닉네임 변경 버튼
-    var userNicknameButton: UIButton = {
-        let button = UIButton()
-        button.addTitleAttribute(
-            title: "다시 시도해주세요",
-            titleColor: .black,
-            fontName: EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
-        )
-        return button
+    var userNicknameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "다시 시도해주세요"
+        label.textColor = .black
+        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 20)
+        return label
     }()
 
     let myPageTableView: UITableView = {
@@ -97,7 +95,7 @@ final class MyPageView: BaseUIView {
 
         contentView.addSubviews(
             userImage,
-            userNicknameButton,
+            userNicknameLabel,
             myPageTableView,
             appVersionStringLabel,
             appVersionLabel,
@@ -122,14 +120,14 @@ final class MyPageView: BaseUIView {
             $0.height.width.equalTo(100)
         }
 
-        userNicknameButton.snp.makeConstraints {
+        userNicknameLabel.snp.makeConstraints {
             $0.top.equalTo(userImage.snp.bottom).offset(6)
             $0.centerX.equalTo(userImage)
             $0.height.equalTo(40)
         }
 
         myPageTableView.snp.makeConstraints {
-            $0.top.equalTo(userNicknameButton.snp.bottom).offset(16)
+            $0.top.equalTo(userNicknameLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(420)
             $0.width.equalToSuperview()
@@ -171,10 +169,6 @@ final class MyPageView: BaseUIView {
     }
 
     public func setUserInfo(nickname: String) {
-        userNicknameButton.addTitleAttribute(
-            title: "\(nickname)  >",
-            titleColor: .black,
-            fontName: .semiBold(size: 20)
-        )
+        userNicknameLabel.text = nickname
     }
 }
