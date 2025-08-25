@@ -12,6 +12,10 @@ class UserInfo: Object {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var nickname: String = ""
     @Persisted private var accountTypeRaw: String?
+    @Persisted var collegeId: Int?
+    @Persisted var collegeName: String?
+    @Persisted var departmentId: Int?
+    @Persisted var departmentName: String?
 
     var accountType: AccountType? {
         get {
@@ -27,9 +31,24 @@ class UserInfo: Object {
         self.init()
         self.accountType = accountType
     }
+    
+    func updateUserInfo(nickname: String, collegeId: Int?, collegeName: String?, departmentId: Int?, departmentName: String?) {
+        self.nickname = nickname
+        self.collegeId = collegeId
+        self.collegeName = collegeName
+        self.departmentId = departmentId
+        self.departmentName = departmentName
+    }
 
     func updateNickname(_ nickname: String) {
         self.nickname = nickname
+    }
+    
+    func updateDepartment(collegeId: Int?, collegeName: String?, departmentId: Int?, departmentName: String?) {
+        self.collegeId = collegeId
+        self.collegeName = collegeName
+        self.departmentId = departmentId
+        self.departmentName = departmentName
     }
 
     enum AccountType: String {

@@ -251,22 +251,6 @@ extension SetNickNameView: UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard let inputValue = textField.text?.trimmingCharacters(in: .whitespaces) else { return }
-
-        if inputValue.isEmpty {
-            textFieldSettingWhenEmpty(textField)
-            return
-        }
-        checkNicknameValidation(textField)
-    }
-
-    func textFieldShouldClear(_: UITextField) -> Bool {
-        nicknameDoubleCheckButton.isEnabled = false
-        completeSettingNickNameButton.isEnabled = false
-        return true
-    }
 }
 
 // MARK: - Validation User Information

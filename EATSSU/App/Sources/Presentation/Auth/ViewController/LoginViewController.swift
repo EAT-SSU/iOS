@@ -108,7 +108,14 @@ final class LoginViewController: BaseViewController {
         if let nickname = info.nickname {
             // 사용자의 닉네임을 업데이트하고 홈 화면으로 이동
             if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
+                UserInfoManager.shared.updateUserInfo(
+                    for: currentUserInfo,
+                    nickname: nickname,
+                    collegeId: info.collegeId,
+                    collegeName: info.collegeName,
+                    departmentId: info.departmentId,
+                    departmentName: info.departmentName
+                )
             }
             changeIntoHomeViewController()
         } else {
