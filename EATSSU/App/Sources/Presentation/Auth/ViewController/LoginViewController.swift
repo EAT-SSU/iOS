@@ -122,7 +122,7 @@ final class LoginViewController: BaseViewController {
     private func storeTokensAndPrintDebugLogs(accessToken: String, refreshToken: String) {
         RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
         #if DEBUG
-            print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️")
+            print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️", accessToken)
         #endif
     }
     

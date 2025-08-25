@@ -11,7 +11,7 @@ import Moya
 enum UserNicknameRouter {
     case setNickname(nickname: String)
     case checkNickname(nickname: String)
-    case setDepartment(department: String)
+    case setDepartment(departmentId: Int)
 }
 
 extension UserNicknameRouter: TargetType {
@@ -49,8 +49,8 @@ extension UserNicknameRouter: TargetType {
         case let .checkNickname(nickname: nickname):
             let param: [String: String] = ["nickname": nickname]
             return .requestParameters(parameters: param, encoding: URLEncoding.queryString)
-        case let .setDepartment(department: department):
-            let param: [String: String] = ["departmentName": department]
+        case let .setDepartment(departmentId: departmentId):
+            let param: [String: Int] = ["departmentId": departmentId]
             return .requestParameters(parameters: param, encoding: JSONEncoding.default)
         }
     }

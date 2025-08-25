@@ -74,18 +74,20 @@ final class SetNickNameViewController: BaseViewController {
     @objc
     func tappedCompleteNickNameButton() {
         let nickname = setNickNameView.inputNickNameTextField.text ?? ""
-        let department = setNickNameView.departmentDropDownView.getSelectedTitle() ?? ""
-
+        guard let departmentName = setNickNameView.departmentDropDownView.getSelectedTitle(),
+              let departmentId = self.departments.first(where: { $0.name == departmentName })?.id else {
+            print("학과를 선택해주세요 또는 유효하지 않은 학과입니다.")
+            return
+        }
         setUserNickname(nickname) { [weak self] nickOK in
             guard nickOK, let self else { return }
 
-            self.setUserDepartment(department) { deptOK in
+            self.setUserDepartment(departmentId: departmentId) { deptOK in
                 guard deptOK else { return }
                 self.showCompletionAlert()
             }
         }
     }
-
     @objc
     private func tappedCheckButton() {
         checkNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
@@ -196,11 +198,11 @@ extension SetNickNameViewController {
         }
     }
     
-    private func setUserDepartment(_ department: String, completion: @escaping (Bool) -> Void) {
-        nicknameProvider.request(.setDepartment(department: department)) { result in
+    private func setUserDepartment(departmentId: Int, completion: @escaping (Bool) -> Void) {
+        nicknameProvider.request(.setDepartment(departmentId: departmentId)) { result in
             switch result {
             case .success:
-                print("학과 등록 성공: \(department)")
+                print("학과 등록 성공: ID \(departmentId)")
                 completion(true)
             case .failure(let error):
                 print("학과 등록 실패: \(error.localizedDescription)")
