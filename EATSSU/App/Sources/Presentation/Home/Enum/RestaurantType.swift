@@ -16,11 +16,12 @@ enum Restaurant {
     case dodamRestaurant
     case dormitoryRestaurant
     case studentRestaurant
+    case facultyRestaurant
     case snackCorner
 
     var type: RestaurantType {
         switch self {
-        case .dodamRestaurant, .dormitoryRestaurant, .studentRestaurant:
+        case .dodamRestaurant, .dormitoryRestaurant, .studentRestaurant, .facultyRestaurant:
             .change
         case .snackCorner:
             .fix
@@ -37,6 +38,8 @@ enum Restaurant {
             "HAKSIK"
         case .snackCorner:
             "SNACK_CORNER"
+        case .facultyRestaurant:
+            "FACULTY"
         }
     }
 }
