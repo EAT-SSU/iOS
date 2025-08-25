@@ -26,6 +26,9 @@ enum RestaurantOptions: String, AppEnum {
 
     /// 기숙사 식당
     case dormitory = "DORMITORY"
+    
+    /// 교직원 식당
+    case faculty = "FACULTY"
 
     /// 위젯 UI에 렌더링할 텍스트
     var displayName: String {
@@ -36,6 +39,8 @@ enum RestaurantOptions: String, AppEnum {
             "학생식당"
         case .dormitory:
             "기숙사 식당"
+        case .faculty:
+            "FACULTY (교직원 전용)"
         }
     }
 
@@ -54,6 +59,7 @@ enum RestaurantOptions: String, AppEnum {
             .dodam: DisplayRepresentation(title: "도담식당"),
             .haksik: DisplayRepresentation(title: "학생식당"),
             .dormitory: DisplayRepresentation(title: "기숙사 식당"),
+            .faculty: DisplayRepresentation(title: "FACULTY (교직원 전용)")
         ]
     }
 }
@@ -73,7 +79,7 @@ struct SelectRestaurant: WidgetConfigurationIntent, AppIntent {
     ///
     /// - Returns: 사용자가 선택할 수 있는 식당 목록에 대한 설명을 제공
     static var description: IntentDescription {
-        IntentDescription("Choose between Dodam, Haksik, or Dormitory.")
+        IntentDescription("Choose between Dodam, Haksik, Dormitory, or Faculty.")
     }
 
     /// 사용자가 선택할 식당 옵션
