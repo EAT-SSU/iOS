@@ -11,32 +11,26 @@ import Moya
 
 final class SetNickNameViewController: BaseViewController {
     // MARK: - Properties
-
-    var currentKeyboardHeight: CGFloat = 0.0
+    
     private let nicknameProvider = MoyaProvider<UserNicknameRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var originalNickname: String?
     private var originalDepartmentName: String?
     private var isNicknameChecked: Bool = false
-    
-    // MARK: - UI Components
-    
-    private let setNickNameView = SetNickNameView()
     private var colleges: [LookupItemDTO] = []
     private var departments: [LookupItemDTO] = []
 
-    // MARK: - Life Cycles
+    // MARK: - UI Components
+    
+    private let setNickNameView = SetNickNameView()
 
+    // MARK: - Life Cycles
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         dismissKeyboard()
-        bindDropdownCallbacks()
+        bindUI()
         fetchColleges()
-        
-        setNickNameView.inputNickNameTextField.addTarget(self,
-                                                         action: #selector(nicknameTextFieldDidChange),
-                                                         for: .editingChanged)
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -44,11 +38,11 @@ final class SetNickNameViewController: BaseViewController {
         setNickNameView.setAccountInfo()
     }
 
-    override func viewWillDisappear(_: Bool) {
-        removeKeyboardNotifications()
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
 
-    // MARK: - Functions
+    // MARK: - UI Configuration
 
     override func configureUI() {
         view.addSubviews(setNickNameView)
@@ -59,18 +53,18 @@ final class SetNickNameViewController: BaseViewController {
             $0.edges.equalToSuperview()
         }
     }
-
+    
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = TextLiteral.setNickName
     }
-
-    override func setButtonEvent() {
+    
+    private func bindUI() {
         setNickNameView.completeSettingNickNameButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
         setNickNameView.nicknameDoubleCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
-    }
-    
-    private func bindDropdownCallbacks() {
+        setNickNameView.inputNickNameTextField.addTarget(self,
+                                                         action: #selector(nicknameTextFieldDidChange),
+                                                         for: .editingChanged)
         setNickNameView.onSelectCollege = { [weak self] collegeName in
             guard let self,
                   let id = self.colleges.first(where: { $0.name == collegeName })?.id
@@ -78,42 +72,20 @@ final class SetNickNameViewController: BaseViewController {
             self.fetchDepartments(collegeId: id)
             self.updateSaveButtonState()
         }
-        setNickNameView.onSelectDepartment = { [weak self] departmentName in
+        setNickNameView.onSelectDepartment = { [weak self] _ in
             self?.updateSaveButtonState()
         }
     }
-    
-    private func populateUIWithSavedData() {
-            guard let userInfo = UserInfoManager.shared.getCurrentUserInfo() else { return }
-            
-            self.originalNickname = userInfo.nickname
-            self.originalDepartmentName = userInfo.departmentName
-                
-            setNickNameView.inputNickNameTextField.text = userInfo.nickname
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-            setNickNameView.completeSettingNickNameButton.isEnabled = false
-                
-            if let collegeName = userInfo.collegeName,
-            let collegeId = self.colleges.first(where: { $0.name == collegeName })?.id {
-            setNickNameView.collegeDropDownView.setTitle(collegeName)
-            
-            fetchDepartments(collegeId: collegeId) { [weak self] in
-                if let departmentName = userInfo.departmentName {
-                    self?.setNickNameView.departmentDropDownView.setTitle(departmentName)
-                }
-            }
-        }
-    }
 
-    @objc
-    func tappedCompleteNickNameButton() {
+    // MARK: - @objc Methods
+    
+    @objc private func tappedCompleteNickNameButton() {
         let newNickname = setNickNameView.inputNickNameTextField.text ?? ""
         let selectedDepartmentName = setNickNameView.departmentDropDownView.getSelectedTitle()
         
         let hasNicknameChanged = newNickname != self.originalNickname
         let hasDepartmentChanged = selectedDepartmentName != self.originalDepartmentName && selectedDepartmentName != nil
         
-        // 변경 사항이 없으면 함수를 종료합니다. (버튼 비활성화 로직으로 인해 호출될 일은 없지만, 안전장치)
         guard hasNicknameChanged || hasDepartmentChanged else {
             print("변경된 정보가 없습니다.")
             return
@@ -123,7 +95,6 @@ final class SetNickNameViewController: BaseViewController {
         var isNicknameUpdateSuccess = true
         var isDepartmentUpdateSuccess = true
 
-        // 1. 닉네임이 변경되었을 경우에만 닉네임 설정 API 호출
         if hasNicknameChanged {
             dispatchGroup.enter()
             setUserNickname(newNickname) { success in
@@ -132,64 +103,87 @@ final class SetNickNameViewController: BaseViewController {
             }
         }
 
-        // 2. 소속 학과가 변경되었을 경우에만 학과 설정 API 호출
         if hasDepartmentChanged {
             guard let departmentName = selectedDepartmentName,
                   let departmentId = self.departments.first(where: { $0.name == departmentName })?.id else {
                 print("유효하지 않은 학과 정보입니다.")
                 return
             }
+            let collegeName = setNickNameView.collegeDropDownView.getSelectedTitle()
+            let collegeId = self.colleges.first(where: { $0.name == collegeName })?.id
+           
             dispatchGroup.enter()
-            setUserDepartment(departmentId: departmentId) { success in
+            setUserDepartment(departmentInfo: (id: departmentId, name: departmentName),
+                             collegeInfo: (id: collegeId, name: collegeName)) { success in
                 isDepartmentUpdateSuccess = success
                 dispatchGroup.leave()
             }
         }
         
-        // 3. 모든 API 호출이 완료된 후, 결과에 따라 처리
         dispatchGroup.notify(queue: .main) {
             if isNicknameUpdateSuccess && isDepartmentUpdateSuccess {
                 self.showCompletionAlert()
             } else {
-                // 각 API 호출 실패 시 이미 로그인 화면으로 전환하는 로직이 있으므로,
-                // 여기서는 별도 처리가 필요하지 않습니다.
                 print("정보 업데이트 중 오류가 발생했습니다.")
             }
         }
     }
     
-    @objc
-    private func nicknameTextFieldDidChange(_ textField: UITextField) {
+    @objc private func nicknameTextFieldDidChange(_ textField: UITextField) {
         let newNickname = textField.text ?? ""
         let isNicknameChanged = (newNickname != originalNickname)
         
-        // 닉네임이 변경되었다면, 중복 확인 상태를 초기화합니다.
         if isNicknameChanged {
             self.isNicknameChecked = false
         }
         
-        // 닉네임이 비어있는 경우
         if newNickname.isEmpty {
             setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
             setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
             setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-        // 글자 수 유효성 검사 (2~8자)
         } else if !(2...8).contains(newNickname.count) {
             setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
             setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
             setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-        // 닉네임이 변경되었고, 글자 수도 유효한 경우
         } else if isNicknameChanged {
             setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
             setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
             setNickNameView.nicknameDoubleCheckButton.isEnabled = true
-        // 닉네임이 원래대로 돌아온 경우
         } else {
-            setNickNameView.nicknameValidationMessageLabel.text = "" // 안내 문구 없음
+            setNickNameView.nicknameValidationMessageLabel.text = ""
             setNickNameView.nicknameDoubleCheckButton.isEnabled = false
         }
         
         updateSaveButtonState()
+    }
+    
+    @objc
+    private func tappedCheckButton() {
+        checkNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
+    }
+    
+    // MARK: - Private Methods
+    
+    private func populateUIWithSavedData() {
+        guard let userInfo = UserInfoManager.shared.getCurrentUserInfo() else { return }
+            
+        self.originalNickname = userInfo.nickname
+        self.originalDepartmentName = userInfo.departmentName
+                
+        setNickNameView.inputNickNameTextField.text = userInfo.nickname
+        setNickNameView.nicknameDoubleCheckButton.isEnabled = false
+                
+        if let collegeName = userInfo.collegeName,
+           let collegeId = self.colleges.first(where: { $0.name == collegeName })?.id {
+            setNickNameView.collegeDropDownView.setTitle(collegeName)
+            
+            fetchDepartments(collegeId: collegeId) { [weak self] in
+                if let departmentName = userInfo.departmentName {
+                    self?.setNickNameView.departmentDropDownView.setTitle(departmentName)
+                    self?.updateSaveButtonState() // 학과 정보까지 로드 후 버튼 상태 최종 업데이트
+                }
+            }
+        }
     }
     
     private func updateSaveButtonState() {
@@ -201,54 +195,9 @@ final class SetNickNameViewController: BaseViewController {
         
         // 조건 2: 무언가 변경되었는가? (닉네임이 다르거나, 학과가 다르거나)
         let hasNicknameChanged = (nicknameText != originalNickname)
-        let hasDepartmentChanged = (selectedDepartment != originalDepartmentName) && (selectedDepartment != nil)
+        let hasDepartmentChanged = (selectedDepartment != originalDepartmentName) && (selectedDepartment != "학과") && (selectedDepartment != nil)
         
-        // 최종 결정: 닉네임 상태가 유효하고, 무언가 변경되었을 때만 '저장하기' 버튼 활성화
         setNickNameView.completeSettingNickNameButton.isEnabled = isNicknameStateValid && (hasNicknameChanged || hasDepartmentChanged)
-    }
-    
-    @objc
-    private func tappedCheckButton() {
-        checkNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
-    }
-
-    // MARK: - keyboard 감지
-
-    func addKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
-    }
-
-    func removeKeyboardNotifications() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillShowNotification,
-                                                  object: nil)
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillHideNotification,
-                                                  object: nil)
-    }
-
-    @objc
-    func keyboardWillShow(_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            let updateKeyboardHeight = keyboardSize.height
-            let difference = updateKeyboardHeight - currentKeyboardHeight
-
-            setNickNameView.completeSettingNickNameButton.frame.origin.y -= difference
-            currentKeyboardHeight = updateKeyboardHeight
-        }
-    }
-
-    @objc func keyboardWillHide(_ notification: Notification) {
-        if ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue) != nil {
-            setNickNameView.completeSettingNickNameButton.frame.origin.y += currentKeyboardHeight
-            currentKeyboardHeight = 0.0
-        }
     }
     
     private func navigateToLogin() {
@@ -284,29 +233,23 @@ extension SetNickNameViewController {
     }
 
     private func checkNickname(nickname: String) {
-        nicknameProvider.request(.checkNickname(nickname: nickname)) { response in
+        nicknameProvider.request(.checkNickname(nickname: nickname)) { [weak self] response in
+            guard let self = self else { return }
             switch response {
-            case let .success(moyaResponse):
+            case .success(let moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    guard let data = responseData.result else { return }
+                    let isNicknameAvailable = responseData.result ?? false
+                    let resultType: NicknameTextFieldResultType = isNicknameAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
+                    let toastMessage = isNicknameAvailable ? "사용 가능한 닉네임이에요" : "이미 사용 중인 닉네임이에요"
                     
-                    if data {
-                        self.view.showToast(message: "사용 가능한 닉네임이에요")
-                        self.setNickNameView.setNicknameChecked(true)
-                        self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldValid.hintMessage
-                        self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldValid.textColor
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = true
-                        self.isNicknameChecked = true
-                    } else {
-                        self.view.showToast(message: "이미 사용 중인 닉네임이에요")
-                        self.setNickNameView.completeSettingNickNameButton.isEnabled = data
-                        self.setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDuplicated.hintMessage
-                        self.setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDuplicated.textColor
-                        self.isNicknameChecked = false
-                    }
+                    self.isNicknameChecked = isNicknameAvailable
+                    self.view.showToast(message: toastMessage)
+                    self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
+                    self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
+                    self.setNickNameView.setNicknameChecked(isNicknameAvailable)
                     self.updateSaveButtonState()
-                    
+
                 } catch let err {
                     print(err.localizedDescription)
                     
@@ -322,21 +265,17 @@ extension SetNickNameViewController {
         }
     }
     
-    private func setUserDepartment(departmentId: Int, completion: @escaping (Bool) -> Void) {
-        nicknameProvider.request(.setDepartment(departmentId: departmentId)) { result in
+    private func setUserDepartment(departmentInfo: (id: Int, name: String?), collegeInfo: (id: Int?, name: String?), completion: @escaping (Bool) -> Void) {
+        nicknameProvider.request(.setDepartment(departmentId: departmentInfo.id)) { result in
             switch result {
             case .success:
-                print("학과 등록 성공: ID \(departmentId)")
+                print("학과 등록 성공: ID \(departmentInfo.id)")
                 if let user = UserInfoManager.shared.getCurrentUserInfo() {
-                    let collegeName = self.setNickNameView.collegeDropDownView.getSelectedTitle()
-                    let departmentName = self.setNickNameView.departmentDropDownView.getSelectedTitle()
-                    let collegeId = self.colleges.first(where: { $0.name == collegeName })?.id
-                    
                     UserInfoManager.shared.updateDepartment(for: user,
-                                                            collegeId: collegeId,
-                                                            collegeName: collegeName,
-                                                            departmentId: departmentId,
-                                                            departmentName: departmentName)
+                                                            collegeId: collegeInfo.id,
+                                                            collegeName: collegeInfo.name,
+                                                            departmentId: departmentInfo.id,
+                                                            departmentName: departmentInfo.name)
                 }
                 completion(true)
             case .failure(let error):
