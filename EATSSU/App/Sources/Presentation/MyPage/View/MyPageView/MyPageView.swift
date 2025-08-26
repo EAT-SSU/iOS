@@ -129,7 +129,9 @@ final class MyPageView: BaseUIView {
         myPageTableView.snp.makeConstraints {
             $0.top.equalTo(userNicknameLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(420)
+            let cellHeight = 60
+            let totalHeight = MyPageLocalData.myPageTableLabelList.count * cellHeight
+            $0.height.equalTo(totalHeight)
             $0.width.equalToSuperview()
         }
 
