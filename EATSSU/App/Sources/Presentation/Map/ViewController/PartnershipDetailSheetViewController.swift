@@ -36,10 +36,6 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
 
         modalPresentationStyle = .pageSheet
-        if let sheet = sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
-        }
     }
 
     required init?(coder: NSCoder) {
@@ -130,6 +126,15 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - UI Helpers
 
+    /// 제휴 content 갯수에 따라 유동적으로 Height 측정
+    func calculatePreferredHeight() -> CGFloat {
+        view.layoutIfNeeded()
+        let contentHeight = infoListStackView.frame.maxY
+        let bottomPadding: CGFloat = view.safeAreaInsets.bottom + 20
+        
+        return contentHeight + bottomPadding
+    }
+    
     /// 제휴 정보 카드 뷰 생성
     private func makeInfoCard(info: PartnershipInfoDTO, isLast: Bool) -> UIView {
         let labelText = info.collegeName ?? info.departmentName ?? "학과 정보 없음"

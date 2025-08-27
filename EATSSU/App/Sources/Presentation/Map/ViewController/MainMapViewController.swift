@@ -152,15 +152,30 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             marker.height = CGFloat(UInt32(markerImage.size.height))
 
             marker.touchHandler = { [weak self] _ in
-                let vc = PartnershipDetailSheetViewController(
+                let sheetVC = PartnershipDetailSheetViewController(
                     storeName: partnership.storeName,
                     restaurantType: partnership.restaurantType,
                     partnershipInfos: partnership.partnershipInfos
                 )
-                self?.present(vc, animated: true)
+
+                if let sheet = sheetVC.sheetPresentationController {
+                    if #available(iOS 16.0, *) {
+                        sheetVC.loadViewIfNeeded()
+                        let contentHeight = sheetVC.calculatePreferredHeight()
+                        let customDetent = UISheetPresentationController.Detent.custom { _ in
+                            return contentHeight
+                        }
+                        sheet.detents = [customDetent, .large()]
+                    } else {
+                        sheet.detents = [.medium(), .large()]
+                    }
+                    sheet.prefersGrabberVisible = true
+                }
+
+                self?.present(sheetVC, animated: true)
+                
                 return true
             }
-
             marker.mapView = root.mapView.mapView
             markers.append(marker)
 
