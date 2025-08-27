@@ -29,6 +29,7 @@ final class CustomTabBarView: BaseUIView {
             config.imagePlacement = .top
             config.imagePadding = 4
             config.baseForegroundColor = .gray
+            config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0)
 
             let button = UIButton(configuration: config, primaryAction: nil)
             button.tag = index
