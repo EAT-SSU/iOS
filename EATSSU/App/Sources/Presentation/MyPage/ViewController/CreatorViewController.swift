@@ -35,8 +35,8 @@ class CreatorViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.home1,
-                                       AnalyticsParameterScreenClass: "HomeViewController"])
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage5,
+                                       AnalyticsParameterScreenClass: "CreatorViewController"])
     }
 
     // MARK: - Methods

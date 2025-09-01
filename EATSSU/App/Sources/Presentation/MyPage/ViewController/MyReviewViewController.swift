@@ -9,6 +9,7 @@ import UIKit
 
 import Moya
 import SnapKit
+import FirebaseAnalytics
 
 final class MyReviewViewController: BaseViewController {
     // MARK: - Properties
@@ -43,6 +44,14 @@ final class MyReviewViewController: BaseViewController {
 
         setDelegate()
         checkReviewCount()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage3,
+                                       AnalyticsParameterScreenClass: "MyReviewViewController"])
     }
 
     override func viewWillAppear(_ animated: Bool) {

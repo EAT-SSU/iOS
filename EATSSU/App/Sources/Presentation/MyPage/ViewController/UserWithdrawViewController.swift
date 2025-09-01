@@ -10,6 +10,7 @@ import UIKit
 import Moya
 import Realm
 import SnapKit
+import FirebaseAnalytics
 
 final class UserWithdrawViewController: BaseViewController {
     // MARK: - Properties
@@ -36,6 +37,10 @@ final class UserWithdrawViewController: BaseViewController {
 
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage4,
+                                       AnalyticsParameterScreenClass: "UserWithdrawViewController"])
     }
 
     // MARK: - Initializer
