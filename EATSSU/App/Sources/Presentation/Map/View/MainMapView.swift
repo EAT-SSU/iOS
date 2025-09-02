@@ -39,26 +39,56 @@ final class MainMapView: BaseUIView {
         toggleBackgroundView.backgroundColor = .white
         addSubview(toggleBackgroundView)
 
+        let titleFont = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
+
         // 전체 버튼
         wholeButton.setTitle("전체", for: .normal)
-        wholeButton.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
+        wholeButton.titleLabel?.font = titleFont
         wholeButton.layer.cornerRadius = 14
         wholeButton.clipsToBounds = true
         wholeButton.backgroundColor = .clear
         wholeButton.setTitleColor(.label, for: .normal)
+        if #available(iOS 15.0, *) {
+            var cfg = wholeButton.configuration ?? .plain()
+            cfg.title = "전체"
+            cfg.baseForegroundColor = .label
+            cfg.baseBackgroundColor = .clear
+            cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
+            cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
+                var out = inAttrs
+                out.font = titleFont
+                return out
+            }
+            wholeButton.configuration = cfg
+        } else {
+            wholeButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        }
 
         // 내 제휴 버튼
         myOnlyButton.setTitle("내 제휴", for: .normal)
-        myOnlyButton.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
-        myOnlyButton.setTitleColor(.label, for: .normal)
-        myOnlyButton.backgroundColor = .clear
+        myOnlyButton.titleLabel?.font = titleFont
         myOnlyButton.layer.cornerRadius = 14
         myOnlyButton.clipsToBounds = true
-        myOnlyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        myOnlyButton.backgroundColor = .clear
+        myOnlyButton.setTitleColor(.label, for: .normal)
+        if #available(iOS 15.0, *) {
+            var cfg = myOnlyButton.configuration ?? .plain()
+            cfg.title = "내 제휴"
+            cfg.baseForegroundColor = .label
+            cfg.baseBackgroundColor = .clear
+            cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
+            cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
+                var out = inAttrs
+                out.font = titleFont
+                return out
+            }
+            myOnlyButton.configuration = cfg
+        } else {
+            myOnlyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        }
 
-        // 초기 선택 상태 설정
+        // 초기 선택 상태
         selectWhole(true)
-
         toggleBackgroundView.addSubview(wholeButton)
         toggleBackgroundView.addSubview(myOnlyButton)
     }
