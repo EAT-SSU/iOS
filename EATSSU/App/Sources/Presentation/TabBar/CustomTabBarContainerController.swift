@@ -27,8 +27,9 @@ final class CustomTabBarContainerController: BaseViewController {
         tabBarView.buttonTapped = { [weak self] index in
             guard let self = self else { return }
 
-            // 마이페이지는 로그인 필요
-            if index == 2, RealmService.shared.isAccessTokenPresent() == false {
+            // 마이페이지와 지도는 로그인 필요
+            // TODO: 지도는 서버팀과 함께 나중에 둘러보기 상태에서보 "전체" 카테고리는 볼 수 있게 수정
+            if (index == 1 || index == 2), RealmService.shared.isAccessTokenPresent() == false {
                 self.presentLoginAlert()
                 return
             }
