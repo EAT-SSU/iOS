@@ -28,49 +28,12 @@ final class MyPageView: BaseUIView {
     }()
 
     // 닉네임이 들어간 닉네임 변경 버튼
-    var userNicknameButton: UIButton = {
-        let button = UIButton()
-        button.addTitleAttribute(
-            title: "다시 시도해주세요",
-            titleColor: .black,
-            fontName: EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
-        )
-        return button
-    }()
-
-    // "연결된 계정" 레이블
-    let accountTitleLabel: UILabel = {
+    var userNicknameLabel: UILabel = {
         let label = UILabel()
-        label.text = TextLiteral.MyPage.linkedAccount
-        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        label.text = "다시 시도해주세요"
+        label.textColor = .black
+        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 20)
         return label
-    }()
-
-    // 서버에서 계정 정보를 가져오기 전 기본값
-    var accountTypeLabel: UILabel = {
-        let label = UILabel()
-        label.text = "없음"
-        label.font = .bold(size: 14)
-        return label
-    }()
-
-    // 소셜 로그인 공급업체 아이콘
-    var accountTypeImage = UIImageView()
-
-    lazy var accountStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [accountTypeLabel, accountTypeImage])
-        stack.axis = .horizontal
-        stack.alignment = .bottom
-        stack.spacing = 5
-        return stack
-    }()
-
-    lazy var totalAccountStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [accountTitleLabel, accountStackView])
-        stack.axis = .horizontal
-        stack.alignment = .bottom
-        stack.spacing = 20
-        return stack
     }()
 
     let myPageTableView: UITableView = {
@@ -132,8 +95,7 @@ final class MyPageView: BaseUIView {
 
         contentView.addSubviews(
             userImage,
-            userNicknameButton,
-            totalAccountStackView,
+            userNicknameLabel,
             myPageTableView,
             appVersionStringLabel,
             appVersionLabel,
@@ -158,21 +120,18 @@ final class MyPageView: BaseUIView {
             $0.height.width.equalTo(100)
         }
 
-        userNicknameButton.snp.makeConstraints {
+        userNicknameLabel.snp.makeConstraints {
             $0.top.equalTo(userImage.snp.bottom).offset(6)
             $0.centerX.equalTo(userImage)
             $0.height.equalTo(40)
         }
 
-        totalAccountStackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(userNicknameButton.snp.bottom).offset(10)
-        }
-
         myPageTableView.snp.makeConstraints {
-            $0.top.equalTo(accountTitleLabel.snp.bottom).offset(24)
+            $0.top.equalTo(userNicknameLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(420)
+            let cellHeight = 60
+            let totalHeight = MyPageLocalData.myPageTableLabelList.count * cellHeight
+            $0.height.equalTo(totalHeight)
             $0.width.equalToSuperview()
         }
 
@@ -212,20 +171,6 @@ final class MyPageView: BaseUIView {
     }
 
     public func setUserInfo(nickname: String) {
-        userNicknameButton.addTitleAttribute(
-            title: "\(nickname)  >",
-            titleColor: .black,
-            fontName: .semiBold(size: 20)
-        )
-        if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
-            switch accountType {
-            case .apple:
-                accountTypeLabel.text = "APPLE"
-                accountTypeImage.image = EATSSUDesignAsset.Images.signWithApple.image
-            case .kakao:
-                accountTypeLabel.text = "카카오"
-                accountTypeImage.image = EATSSUDesignAsset.Images.signWithKakao.image
-            }
-        }
+        userNicknameLabel.text = nickname
     }
 }
