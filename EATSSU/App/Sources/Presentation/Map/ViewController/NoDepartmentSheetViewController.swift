@@ -101,13 +101,18 @@ final class NoDepartmentSheetViewController: BaseViewController {
         // "내 정보" 탭으로 전환
         tabContainer.setTab(index: 2)
 
-        if let myNav = tabContainer.getNavController(at: 2) {
-            // 닉네임/학과 설정 화면으로 푸시
-            dismiss(animated: true) {
-                myNav.pushViewController(SetNickNameViewController(), animated: true)
-            }
-        } else {
+        guard let myNav = tabContainer.getNavController(at: 2) else {
             dismiss(animated: true)
+            return
+        }
+
+        dismiss(animated: true) {
+            if let existingVC = myNav.viewControllers.first(where: { $0 is SetNickNameViewController }) {
+                myNav.popToViewController(existingVC, animated: true)
+            } else {
+                let setNickNameVC = SetNickNameViewController()
+                myNav.pushViewController(setNickNameVC, animated: true)
+            }
         }
     }
 }
