@@ -81,13 +81,13 @@ final class SetNickNameViewController: BaseViewController {
     
     @objc private func tappedCompleteNickNameButton() {
         let newNickname = setNickNameView.inputNickNameTextField.text ?? ""
-        let selectedDepartmentName = setNickNameView.departmentDropDownView.getSelectedTitle()
         
         let hasNicknameChanged = newNickname != self.originalNickname
-        let hasDepartmentChanged = selectedDepartmentName != self.originalDepartmentName && selectedDepartmentName != nil
+        let departmentChanged = isDepartmentChanged()
         
-        guard hasNicknameChanged || hasDepartmentChanged else {
+        guard hasNicknameChanged || departmentChanged else {
             print("변경된 정보가 없습니다.")
+            view.showToast(message: "변경된 정보가 없습니다.")
             return
         }
 
@@ -103,8 +103,8 @@ final class SetNickNameViewController: BaseViewController {
             }
         }
 
-        if hasDepartmentChanged {
-            guard let departmentName = selectedDepartmentName,
+        if departmentChanged {
+            guard let departmentName = setNickNameView.departmentDropDownView.getSelectedTitle(),
                   let departmentId = self.departments.first(where: { $0.name == departmentName })?.id else {
                 print("유효하지 않은 학과 정보입니다.")
                 return
@@ -124,7 +124,8 @@ final class SetNickNameViewController: BaseViewController {
             if isNicknameUpdateSuccess && isDepartmentUpdateSuccess {
                 self.showCompletionAlert()
             } else {
-                print("정보 업데이트 중 오류가 발생했습니다.")
+                // 실패 시 사용자에게 알림
+                self.showAlertController(title: "오류", message: "정보 업데이트 중 오류가 발생했습니다.", style: .cancel)
             }
         }
     }
@@ -164,6 +165,16 @@ final class SetNickNameViewController: BaseViewController {
     
     // MARK: - Private Methods
     
+    /// 학과 변경 여부를 명확하게 판단하는 헬퍼 메서드
+    private func isDepartmentChanged() -> Bool {
+        guard let selectedDepartment = setNickNameView.departmentDropDownView.getSelectedTitle(),
+              selectedDepartment != "학과"
+        else {
+            return false
+        }
+        return selectedDepartment != originalDepartmentName
+    }
+    
     private func populateUIWithSavedData() {
         guard let userInfo = UserInfoManager.shared.getCurrentUserInfo() else { return }
             
@@ -188,16 +199,15 @@ final class SetNickNameViewController: BaseViewController {
     
     private func updateSaveButtonState() {
         let nicknameText = setNickNameView.inputNickNameTextField.text ?? ""
-        let selectedDepartment = setNickNameView.departmentDropDownView.getSelectedTitle()
 
         // 조건 1: 닉네임 상태가 유효한가? (원래 닉네임이거나, 변경 후 중복 확인을 통과했거나)
         let isNicknameStateValid = (nicknameText == originalNickname) || isNicknameChecked
         
         // 조건 2: 무언가 변경되었는가? (닉네임이 다르거나, 학과가 다르거나)
         let hasNicknameChanged = (nicknameText != originalNickname)
-        let hasDepartmentChanged = (selectedDepartment != originalDepartmentName) && (selectedDepartment != "학과") && (selectedDepartment != nil)
+        let departmentChanged = isDepartmentChanged()
         
-        setNickNameView.completeSettingNickNameButton.isEnabled = isNicknameStateValid && (hasNicknameChanged || hasDepartmentChanged)
+        setNickNameView.completeSettingNickNameButton.isEnabled = isNicknameStateValid && (hasNicknameChanged || departmentChanged)
     }
     
     private func navigateToLogin() {
@@ -213,7 +223,6 @@ final class SetNickNameViewController: BaseViewController {
 }
 
 // MARK: - Network
-
 extension SetNickNameViewController {
     private func setUserNickname(_ nickname: String, completion: @escaping (Bool) -> Void) {
         nicknameProvider.request(.setNickname(nickname: nickname)) { [weak self] result in
