@@ -228,6 +228,11 @@ extension HomeRestaurantViewController: UITableViewDataSource {
     }
 
     private func handleMenuTap(section: Int, menuIndex: Int) {
+        if RealmService.shared.isAccessTokenPresent() == false {
+            presentLoginAlert()
+            return
+        }
+
         let restaurant = getSectionKey(for: section)
         
         // firebase - click_menu 이벤트 호출
@@ -256,6 +261,23 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         delegate = reviewViewController
         navigationController?.pushViewController(reviewViewController, animated: true)
         delegate?.didDelegateReviewMenuTypeInfo(for: reviewMenuTypeInfo)
+    }
+    
+    private func presentLoginAlert() {
+        let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
+                                      message: "로그인 하시겠습니까?",
+                                      preferredStyle: .alert)
+        let confirm = UIAlertAction(title: "확인", style: .default) { _ in
+            let loginVC = LoginViewController()
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let sceneDelegate = windowScene.delegate as? SceneDelegate,
+               let window = sceneDelegate.window {
+                window.replaceRootViewController(loginVC)
+            }
+        }
+        alert.addAction(confirm)
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
     }
 
     // 섹션 헤더 뷰 설정

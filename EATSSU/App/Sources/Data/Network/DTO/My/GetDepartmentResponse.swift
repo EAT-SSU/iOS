@@ -1,0 +1,12 @@
+//
+//  GetDepartmentResponse.swift
+//  EATSSU
+//
+//  Created by 황상환 on 7/7/25.
+//
+
+import Foundation
+
+struct GetDepartmentResponse: Codable {
+    let departmentName: String
+}
