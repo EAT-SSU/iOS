@@ -49,7 +49,6 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // 위치 권한 요청
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
 
@@ -66,7 +65,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         navigationController?.navigationBar.compactAppearance = navBarAppearance
 
-        setInitialCameraPosition()
+        setInitialCameraPosition(animated: false)
 
         // 초기 데이터 로드
         fetchDepartmentAndUpdateButton()
@@ -86,7 +85,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
 
     /// "전체" 버튼 탭 시 호출
     @objc private func didTapWhole() {
-        setInitialCameraPosition() 
+        setInitialCameraPosition(animated: true)
         root.selectWhole(true)
         fetchPartnerships()
     }
@@ -97,7 +96,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             presentNoDepartmentSheet()
             return
         }
-        setInitialCameraPosition()
+        setInitialCameraPosition(animated: true)
         root.selectWhole(false)
         fetchMyPartnerships()
     }
@@ -118,8 +117,8 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         }
     }
     
-    /// 숭실대학교를 기준으로 초기 카메라 위치를 설정
-    private func setInitialCameraPosition() {
+    /// 숭실대학교를 기준으로 카메라 위치를 설정
+    private func setInitialCameraPosition(animated: Bool) {
         let ssuLatitude = 37.49517278813046
         let ssuLongitude = 126.95661313346206
         
@@ -127,9 +126,12 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             scrollTo: NMGLatLng(lat: ssuLatitude, lng: ssuLongitude),
             zoomTo: 17.5
         )
-        // 부드러운 카메라 이동 효과 추가
-        cameraUpdate.animation = .easeIn
-        cameraUpdate.animationDuration = 0.3
+        
+        if animated {
+            cameraUpdate.animation = .easeIn
+            cameraUpdate.animationDuration = 0.3
+        }
+        
         root.mapView.mapView.moveCamera(cameraUpdate)
     }
 
