@@ -39,7 +39,7 @@ final class HomeAnalyticsManager {
         TextLiteral.dodamRestaurant: "dodam",
         TextLiteral.dormitoryRestaurant: "dorm",
         TextLiteral.facultyRestaurant: "faculty",
-        TextLiteral.snackCorner: "snack"
+        TextLiteral.snackCorner: "snack_bar"
     ]
     
     // 식사 유형 탭 이름(한글)을 애널리틱스 파라미터 값(영문 소문자)으로 변환
