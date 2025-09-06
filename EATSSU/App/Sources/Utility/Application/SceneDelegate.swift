@@ -54,6 +54,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // 앱이 완전히 포그라운드에 진입했을 때 실행 경로 로깅 처리
         handleForegroundTransition()
+        // 호출 시점 변경
         checkAndNotifyNewDay()
     }
 
