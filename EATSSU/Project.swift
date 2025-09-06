@@ -16,7 +16,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
         "kakaoplus",
         "kakaotalk",
     ],
-    "NSLocationWhenInUseUsageDescription": "내 위치를 확인하기 위해 권한이 필요합니다.",
+    "NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요.",
     "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
         "UISceneConfigurations": [
@@ -57,8 +57,20 @@ let projectSettings: Settings = .settings(
         "SWIFT_CONCURRENCY": "complete",
     ],
     configurations: [
-        .debug(name: "Debug", xcconfig: "App/Resources/Secrets/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "App/Resources/Secrets/Release.xcconfig"),
+        .debug(
+            name: "Debug",
+            settings: [
+                "DEBUG_INFORMATION_FORMAT": "dwarf",
+            ],
+            xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+        ),
+        .release(
+            name: "Release",
+            settings: [
+                "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+            ],
+            xcconfig: "App/Resources/Secrets/Release.xcconfig"
+        ),
     ],
     defaultSettings: .recommended
 )

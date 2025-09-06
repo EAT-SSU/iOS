@@ -49,7 +49,6 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // 위치 권한 요청
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
 
@@ -65,6 +64,8 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         navigationController?.navigationBar.compactAppearance = navBarAppearance
+
+        setInitialCameraPosition(animated: false)
 
         // 초기 데이터 로드
         fetchDepartmentAndUpdateButton()
@@ -84,6 +85,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
 
     /// "전체" 버튼 탭 시 호출
     @objc private func didTapWhole() {
+        setInitialCameraPosition(animated: true)
         root.selectWhole(true)
         fetchPartnerships()
     }
@@ -94,6 +96,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             presentNoDepartmentSheet()
             return
         }
+        setInitialCameraPosition(animated: true)
         root.selectWhole(false)
         fetchMyPartnerships()
     }
@@ -113,6 +116,24 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             fetchMyPartnerships()
         }
     }
+    
+    /// 숭실대학교를 기준으로 카메라 위치를 설정
+    private func setInitialCameraPosition(animated: Bool) {
+        let ssuLatitude = 37.49517278813046
+        let ssuLongitude = 126.95661313346206
+        
+        let cameraUpdate = NMFCameraUpdate(
+            scrollTo: NMGLatLng(lat: ssuLatitude, lng: ssuLongitude),
+            zoomTo: 17.5
+        )
+        
+        if animated {
+            cameraUpdate.animation = .easeIn
+            cameraUpdate.animationDuration = 0.3
+        }
+        
+        root.mapView.mapView.moveCamera(cameraUpdate)
+    }
 
     // MARK: - Location Delegate
 
@@ -120,13 +141,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
-            if let location = manager.location?.coordinate {
-                let cameraUpdate = NMFCameraUpdate(
-                    scrollTo: NMGLatLng(lat: location.latitude, lng: location.longitude),
-                    zoomTo: 15.5
-                )
-                root.mapView.mapView.moveCamera(cameraUpdate)
-            }
+            break
         default:
             break
         }
@@ -138,9 +153,6 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     private func displayMarkers(_ partnerships: [PartnershipDTO]) {
         markers.forEach { $0.mapView = nil }
         markers.removeAll()
-
-        var latSum = 0.0
-        var lngSum = 0.0
 
         for partnership in partnerships {
             let marker = NMFMarker()
@@ -178,19 +190,6 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             }
             marker.mapView = root.mapView.mapView
             markers.append(marker)
-
-            latSum += partnership.latitude
-            lngSum += partnership.longitude
-        }
-
-        if !partnerships.isEmpty {
-            let centerLat = latSum / Double(partnerships.count)
-            let centerLng = lngSum / Double(partnerships.count)
-            let cameraUpdate = NMFCameraUpdate(
-                scrollTo: NMGLatLng(lat: centerLat, lng: centerLng),
-                zoomTo: 15.5
-            )
-            root.mapView.mapView.moveCamera(cameraUpdate)
         }
     }
 
