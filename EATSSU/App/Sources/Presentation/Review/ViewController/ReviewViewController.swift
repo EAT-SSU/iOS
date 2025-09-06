@@ -187,8 +187,9 @@ final class ReviewViewController: BaseViewController {
 
     // MARK: - Action Method
 
-    //    @objc
     func userTapReviewButton() {
+        //  firebase - write_review_v1 이벤트 호출
+        ReviewAnalyticsManager.shared.logWriteReviewV1()
         if RealmService.shared.isAccessTokenPresent() {
             activityIndicatorView.isHidden = false
             DispatchQueue.global().async { // 백그라운드 스레드에서 작업을 수행
