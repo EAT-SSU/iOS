@@ -46,6 +46,34 @@ final class CustomTimeTabController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        
+        // 이미 등록된 옵저버가 있으면 먼저 제거
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewDayNotification(_:)),
+            name: .didEnterNewDay,
+            object: nil
+        )
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
+    }
+    
+    @objc private func handleNewDayNotification(_ notification: Notification) {
+        // 백그라운드에서 돌아와 새로운 날로 판단될 때, 오늘 날짜로 갱신
+        DispatchQueue.main.async {
+            let today = Date()
+            self.todayDate = today
+            // 당일에 해당하는 데이터 불러오기
+            self.dateFetchData(for: today)
+            
+            // 해당 시간대별로 인덱스 이동 후 시간대 변경
+            let initialIndex = self.getInitialTabIndex()
+            self.pageViewController.setViewControllers([self.viewControllers[initialIndex]], direction: .forward, animated: false)
+            self.selectedIndex = initialIndex
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
