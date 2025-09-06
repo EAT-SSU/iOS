@@ -16,8 +16,7 @@ final class RateNumberView: BaseUIView {
 
     let starImageView = UIImageView()
     lazy var rateNumberLabel = UILabel()
-    private lazy var rateNumberStackView = UIStackView(arrangedSubviews: [starImageView,
-                                                                          rateNumberLabel])
+    private lazy var rateNumberStackView = UIStackView(arrangedSubviews: [starImageView,rateNumberLabel])
 
     // MARK: - init
 

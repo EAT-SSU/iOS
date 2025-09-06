@@ -32,8 +32,8 @@ final class HomeAnalyticsManager {
     }
     
     // MARK: - Mappers
-    
-    // 화면에 표시되는 식당 이름(한글)을 애널리틱스 파라미터 값(영문 소문자)으로 변환
+        
+    // 식당 이름(한글) -> 영문 소문자 파라미터로 변환
     private let restaurantNameMap: [String: String] = [
         TextLiteral.studentRestaurant: "haksik",
         TextLiteral.dodamRestaurant: "dodam",
@@ -42,14 +42,14 @@ final class HomeAnalyticsManager {
         TextLiteral.snackCorner: "snack_bar"
     ]
     
-    // 식사 유형 탭 이름(한글)을 애널리틱스 파라미터 값(영문 소문자)으로 변환
+    // 식사 유형(한글) -> 영문 소문자 파라미터로 변환
     private let mealTypeMap: [String: String] = [
         TextLiteral.morning: "breakfast",
         TextLiteral.lunch: "lunch",
         TextLiteral.dinner: "diner"
     ]
     
-    // 날짜를 요일 파라미터 값(영문 소문자)으로 변환하기 위한 Formatter
+    // Date 객체 -> 요일(영문 소문자) 문자열로 변환
     private let dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "eee"
