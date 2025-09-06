@@ -76,3 +76,6 @@ Tuist/.build
 ### Fastlane ###
 fastlane/screenshots
 fastlane/test_output
+
+### Android Studio / IntelliJ ###
+.idea/
