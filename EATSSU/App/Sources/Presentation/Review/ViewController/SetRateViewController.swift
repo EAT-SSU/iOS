@@ -403,6 +403,13 @@ final class SetRateViewController: BaseViewController {
     private func sendDataIfCurrentPageIsLast() {
         for (index, review) in reviewList.enumerated() {
             let (reviewDTO, image) = review
+            
+            //  firebase - complete_review_v1 이벤트 호출
+            let photoAttached = (image != nil) ? 1 : 0
+            let rating = reviewDTO.mainRating
+            let likes = self.selectedList.count
+            ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, likes: likes)
+            
             if image != nil {
                 postReviewImage(param: reviewDTO,
                                 image: image,
