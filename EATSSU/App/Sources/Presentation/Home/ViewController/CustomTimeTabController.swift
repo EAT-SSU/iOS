@@ -71,7 +71,6 @@ final class CustomTimeTabController: BaseViewController {
             
             // 해당 시간대별로 인덱스 이동 후 시간대 변경
             let initialIndex = self.getInitialTabIndex()
-            self.pageViewController.setViewControllers([self.viewControllers[initialIndex]], direction: .forward, animated: false)
             self.selectedIndex = initialIndex
         }
     }
