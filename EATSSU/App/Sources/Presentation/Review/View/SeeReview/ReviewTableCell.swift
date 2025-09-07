@@ -192,6 +192,10 @@ final class ReviewTableCell: UITableViewCell {
     }
 
     func setLayout() {
+        userProfileImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(30)
+        }
+        
         profileStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(5)
             make.leading.equalToSuperview().offset(16)

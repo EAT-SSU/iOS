@@ -99,14 +99,12 @@ final class LoginViewController: BaseViewController {
     }
 
     private func changeIntoHomeViewController() {
-        let homeVC = HomeViewController()
+        let customTabVC = CustomTabBarContainerController()
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
         else { return }
 
-        keyWindow.replaceRootViewController(
-            UINavigationController(rootViewController: homeVC)
-        )
+        keyWindow.replaceRootViewController(customTabVC)
     }
 
     /// 닉네임 설정이 필요한지 확인 후, 필요하면 닉네임 설정 화면으로, 아니면 홈 화면으로 이동한다.
@@ -114,7 +112,14 @@ final class LoginViewController: BaseViewController {
         if let nickname = info.nickname {
             // 사용자의 닉네임을 업데이트하고 홈 화면으로 이동
             if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                UserInfoManager.shared.updateNickname(for: currentUserInfo, nickname: nickname)
+                UserInfoManager.shared.updateUserInfo(
+                    for: currentUserInfo,
+                    nickname: nickname,
+                    collegeId: info.collegeId,
+                    collegeName: info.collegeName,
+                    departmentId: info.departmentId,
+                    departmentName: info.departmentName
+                )
             }
             changeIntoHomeViewController()
         } else {
@@ -128,7 +133,7 @@ final class LoginViewController: BaseViewController {
     private func storeTokensAndPrintDebugLogs(accessToken: String, refreshToken: String) {
         RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
         #if DEBUG
-            print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️")
+            print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️", accessToken)
         #endif
     }
     
@@ -271,6 +276,10 @@ extension LoginViewController {
                     guard let responseData = responseData.result else {
                         return
                     }
+                    // 디버그 모드일 때만 받아온 유저 정보를 출력합니다.
+//                    #if DEBUG
+                    print("현재 로그인 정보: \(responseData)")
+//                    #endif
                     handleNicknameCheck(info: responseData)
                 } catch {
                     print(error.localizedDescription)

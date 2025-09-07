@@ -69,9 +69,6 @@ final class MyPageViewController: BaseViewController {
     }
 
     override func setButtonEvent() {
-        mypageView.userNicknameButton
-            .addTarget(self, action: #selector(didTappedChangeNicknameButton), for: .touchUpInside)
-
         mypageView.userWithdrawButton
             .addTarget(self, action: #selector(userWithdrawButtonTapped), for: .touchUpInside)
     }
@@ -84,13 +81,7 @@ final class MyPageViewController: BaseViewController {
             Analytics.logEvent("MypageViewControllerLoad", parameters: nil)
         #endif
     }
-
-    @objc
-    private func didTappedChangeNicknameButton() {
-        let setNickNameVC = SetNickNameViewController()
-        navigationController?.pushViewController(setNickNameVC, animated: true)
-    }
-
+    
     @objc
     private func userWithdrawButtonTapped() {
         let userWithdrawViewController = UserWithdrawViewController(nickName: nickName)
@@ -239,8 +230,13 @@ extension MyPageViewController: UITableViewDelegate {
                     }
                 }
             }
+            
+        // "내 정보" 스크린으로 이동
+        case MyPageLabels.MyInfo.rawValue:
+            let setNickNameVC = SetNickNameViewController()
+            navigationController?.pushViewController(setNickNameVC, animated: true)
 
-        // "내가 쓴 리뷰" 스크린으로 이동
+        // "내 리뷰" 스크린으로 이동
         case MyPageLabels.MyReview.rawValue:
             let myReviewViewController = MyReviewViewController(nickname: nickName)
             navigationController?.pushViewController(myReviewViewController, animated: true)

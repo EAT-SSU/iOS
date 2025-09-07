@@ -10,4 +10,8 @@ import Foundation
 struct MyInfoResponse: Codable {
     let nickname: String?
     let provider: String
+    let departmentId: Int?
+    let departmentName: String?
+    let collegeId: Int?
+    let collegeName: String?
 }

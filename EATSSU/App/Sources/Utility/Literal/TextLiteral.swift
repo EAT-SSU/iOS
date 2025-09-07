@@ -36,7 +36,7 @@ enum TextLiteral {
     static let signInWithApple: String = "Apple로 로그인"
     static let signInWithKakao: String = "카카오 로그인"
     static let lookingWithNoSignIn: String = "둘러보기"
-    static let setNickName: String = "닉네임 설정"
+    static let setNickName: String = "내 정보"
     static let nickNameLabel: String = "닉네임"
     static let inputNickName: String = "닉네임을 입력해주세요"
     static let inputNickNameLabel: String = "닉네임을 설정해 주세요."
@@ -95,12 +95,15 @@ enum TextLiteral {
 
         /// "마이페이지
         static let myPage: String = "마이페이지"
+        
+        /// "내 정보"
+        static let MyInfo: String = "내 정보"
 
         /// "연결된 계정"
         static let linkedAccount: String = "연결된 계정"
 
         /// "내가 쓴 리뷰"
-        static let myReview: String = "내가 쓴 리뷰"
+        static let myReview: String = "내 리뷰"
 
         /// "로그아웃"
         static let logout: String = "로그아웃"
