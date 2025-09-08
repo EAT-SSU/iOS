@@ -96,11 +96,6 @@ final class ReviewViewController: BaseViewController {
 
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
-
-        #if DEBUG
-        #else
-            Analytics.logEvent("ReviewViewControllerLoad", parameters: nil)
-        #endif
     }
 
     func setTableView() {

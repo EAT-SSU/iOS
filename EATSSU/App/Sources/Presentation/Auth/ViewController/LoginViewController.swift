@@ -75,10 +75,6 @@ final class LoginViewController: BaseViewController {
 
     private func configureFirebaseRemoteConfig() {
         FirebaseRemoteConfig.shared.fetchIsVacationPeriod()
-
-        #if !DEBUG
-            Analytics.logEvent("LoginViewControllerLoad", parameters: nil)
-        #endif
     }
 
     /// Realm에 저장된 토큰이 있는지 확인 후, 있으면 홈 화면으로 이동한다.

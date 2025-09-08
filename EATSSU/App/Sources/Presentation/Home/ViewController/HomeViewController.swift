@@ -109,9 +109,6 @@ final class HomeViewController: BaseViewController {
 
     private func logFirebaseEvent() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
-        #if !DEBUG
-            Analytics.logEvent("HomeViewControllerLoad", parameters: nil)
-        #endif
     }
 
     // MARK: - Delegates
