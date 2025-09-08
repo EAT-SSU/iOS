@@ -407,8 +407,8 @@ final class SetRateViewController: BaseViewController {
             //  firebase - complete_review_v1 이벤트 호출
             let photoAttached = (image != nil) ? 1 : 0
             let rating = reviewDTO.mainRating
-            let likes = self.selectedList.count
-            ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, likes: likes)
+            let selection = self.selectedList.count
+            ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
             
             if image != nil {
                 postReviewImage(param: reviewDTO,

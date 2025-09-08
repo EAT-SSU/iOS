@@ -25,7 +25,7 @@ final class ReviewAnalyticsManager {
     private enum Parameter {
         static let photoAttached = "photo_attached"
         static let rating = "rating"
-        static let likes = "likes"
+        static let selection = "selection"
     }
     
     // MARK: - Logging Methods
@@ -41,13 +41,13 @@ final class ReviewAnalyticsManager {
      #2 리뷰 작성을 마치고 '완료하기' 버튼을 클릭했을 때 호출
      - Parameter photoAttached: 사진 첨부 여부 (0: 없음, 1: 있음)
      - Parameter rating: 사용자가 부여한 메인 별점 (1~5)
-     - Parameter likes: 사용자가 한 번에 리뷰를 작성하는 메뉴의 총 개수
+     - Parameter selection: 사용자가 한 번에 리뷰를 작성하는 메뉴의 총 개수
      */
-    func logCompleteReviewV1(photoAttached: Int, rating: Int, likes: Int) {
+    func logCompleteReviewV1(photoAttached: Int, rating: Int, selection: Int) {
         let parameters: [String: Any] = [
             Parameter.photoAttached: photoAttached,
             Parameter.rating: rating,
-            Parameter.likes: likes
+            Parameter.selection: selection
         ]
         
         Analytics.logEvent(Event.completeReview, parameters: parameters)
