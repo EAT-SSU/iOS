@@ -19,8 +19,8 @@ final class HomeAnalyticsManager {
     // MARK: - Event & Parameter Keys
     
     private enum Event {
-        static let clickCafeteriaInfo = "click_cafeteria_info"
-        static let selectMealType = "select_mealtype"
+        static let clickRestaurantInfo = "click_restaurant_info"
+        static let selectMealTime = "select_mealtime"
         static let selectDay = "select_day"
         static let clickMenu = "click_menu"
     }
@@ -63,13 +63,13 @@ final class HomeAnalyticsManager {
      #1 식당 정보 아이콘(ⓘ)을 클릭했을 때 호출
      - Parameter restaurantName: 사용자가 클릭한 식당의 이름 (예: "학생 식당")
      */
-    func logClickCafeteriaInfo(restaurantName: String) {
+    func logClickRestaurantInfo(restaurantName: String) {
         guard let parameterValue = restaurantNameMap[restaurantName] else {
-            print("Analytics Error: Invalid restaurant name for click_cafeteria_info - \(restaurantName)")
+            print("Analytics Error: Invalid restaurant name for click_restaurant_info - \(restaurantName)")
             return
         }
         
-        Analytics.logEvent(Event.clickCafeteriaInfo, parameters: [
+        Analytics.logEvent(Event.clickRestaurantInfo, parameters: [
             Parameter.restaurants: parameterValue
         ])
     }
@@ -84,7 +84,7 @@ final class HomeAnalyticsManager {
             return
         }
         
-        Analytics.logEvent(Event.selectMealType, parameters: [
+        Analytics.logEvent(Event.selectMealTime, parameters: [
             Parameter.mealType: parameterValue
         ])
     }

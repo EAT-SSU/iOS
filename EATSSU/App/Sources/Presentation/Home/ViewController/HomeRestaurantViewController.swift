@@ -304,8 +304,8 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         header.infoButton.addAction(
             UIAction(title: "", image: nil, identifier: Self.infoActionID, handler: { [weak self] _ in
                 guard let self else { return }
-                // firebase - click_cafeteria_info 이벤트 호출
-                HomeAnalyticsManager.shared.logClickCafeteriaInfo(restaurantName: restaurantName)
+                // firebase - click_restaurant_info 이벤트 호출
+                HomeAnalyticsManager.shared.logClickRestaurantInfo(restaurantName: restaurantName)
                 let vc = RestaurantInfoViewController()
                 vc.modalPresentationStyle = .pageSheet
                 vc.sheetPresentationController?.prefersGrabberVisible = true
