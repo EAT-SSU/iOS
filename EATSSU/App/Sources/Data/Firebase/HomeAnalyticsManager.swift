@@ -27,7 +27,7 @@ final class HomeAnalyticsManager {
     
     private enum Parameter {
         static let restaurants = "restaurants"
-        static let mealType = "mealtype"
+        static let mealTime = "mealtime"
         static let day = "day"
     }
     
@@ -43,7 +43,7 @@ final class HomeAnalyticsManager {
     ]
     
     // 식사 유형(한글) -> 영문 소문자 파라미터로 변환
-    private let mealTypeMap: [String: String] = [
+    private let mealTimeMap: [String: String] = [
         TextLiteral.morning: "breakfast",
         TextLiteral.lunch: "lunch",
         TextLiteral.dinner: "diner"
@@ -76,16 +76,16 @@ final class HomeAnalyticsManager {
     
     /**
      #2 식사 유형(아침, 점심, 저녁) 탭을 변경했을 때 호출
-     - Parameter mealType: 사용자가 선택한 식사 유형 (예: "아침")
+     - Parameter mealTime: 사용자가 선택한 식사 유형 (예: "아침")
      */
-    func logSelectMealType(mealType: String) {
-        guard let parameterValue = mealTypeMap[mealType] else {
-            print("Analytics Error: Invalid meal type for select_mealtype - \(mealType)")
+    func logSelectMealTime(mealTime: String) {
+        guard let parameterValue = mealTimeMap[mealTime] else {
+            print("Analytics Error: Invalid meal time for select_mealtime - \(mealTime)")
             return
         }
         
         Analytics.logEvent(Event.selectMealTime, parameters: [
-            Parameter.mealType: parameterValue
+            Parameter.mealTime: parameterValue
         ])
     }
     
