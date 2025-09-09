@@ -21,7 +21,8 @@ struct MenuDataList: Codable {
     let writerID: Int?
     let isWriter: Bool
     let writerNickname: String
-    let mainRating, amountRating, tasteRating: Int
+    let mainRating: Int
+    let amountRating, tasteRating: Int?
     let writedAt, content: String
     let imgURLList: [String?]
 

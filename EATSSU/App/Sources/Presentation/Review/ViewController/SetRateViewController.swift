@@ -335,14 +335,14 @@ final class SetRateViewController: BaseViewController {
         selectedList = list
         selectedIDList = idList
         if let reviewList {
-            self.reviewList = reviewList
-        } else {
-            self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
-                                                                       amountRating: 0,
-                                                                       tasteRating: 0,
-                                                                       content: ""),
-                                                nil), count: idList.count)
-        }
+                self.reviewList = reviewList
+            } else {
+                self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
+                                                                           amountRating: nil,
+                                                                           tasteRating: nil,
+                                                                           content: ""),
+                                                    nil), count: idList.count)
+            }
         self.currentPage = currentPage
     }
 
@@ -447,11 +447,11 @@ final class SetRateViewController: BaseViewController {
         rateView.currentStar = data.mainRating
         rateView.settingStarForFix(currentStar: data.mainRating)
 
-        quantityRateView.currentStar = data.amountRating
-        quantityRateView.settingStarForFix(currentStar: data.amountRating)
+        quantityRateView.currentStar = data.amountRating ?? 0
+        quantityRateView.settingStarForFix(currentStar: data.amountRating ?? 0)
 
-        tasteRateView.currentStar = data.tasteRating
-        tasteRateView.settingStarForFix(currentStar: data.tasteRating)
+        tasteRateView.currentStar = data.tasteRating ?? 0
+        tasteRateView.settingStarForFix(currentStar: data.tasteRating ?? 0)
 
         userReviewTextView.text = data.content
         userReviewTextView.textColor = .black

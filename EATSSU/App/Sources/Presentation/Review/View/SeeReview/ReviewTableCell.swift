@@ -237,8 +237,19 @@ extension ReviewTableCell {
         menuName = response.menu
         userNameLabel.text = response.writerNickname
         totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        quantityRateView.rateNumberLabel.text = "\(response.amountRating)"
-        tasteRateView.rateNumberLabel.text = "\(response.tasteRating)"
+        if response.tasteRating == nil {
+            tasteStackView.isHidden = true
+        } else {
+            tasteStackView.isHidden = false
+            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
+        }
+        
+        if response.amountRating == nil {
+            quantityStackView.isHidden = true
+        } else {
+            quantityStackView.isHidden = false
+            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
+        }
         dateLabel.text = response.writedAt
         reviewTextView.text = response.content
         reviewId = response.reviewID
@@ -256,8 +267,19 @@ extension ReviewTableCell {
         userNameLabel.text = "\(nickname)"
         menuNameLabel.text = response.menuName
         totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        quantityRateView.rateNumberLabel.text = "\(response.amountRating)"
-        tasteRateView.rateNumberLabel.text = "\(response.tasteRating)"
+        if response.tasteRating == nil {
+            tasteStackView.isHidden = true
+        } else {
+            tasteStackView.isHidden = false
+            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
+        }
+        
+        if response.amountRating == nil {
+            quantityStackView.isHidden = true
+        } else {
+            quantityStackView.isHidden = false
+            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
+        }
         dateLabel.text = response.writeDate
         reviewTextView.text = response.content
         if response.imgURLList.count != 0 {
