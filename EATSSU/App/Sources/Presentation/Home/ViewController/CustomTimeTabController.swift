@@ -46,19 +46,6 @@ final class CustomTimeTabController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
-        
-        // 이미 등록된 옵저버가 있으면 먼저 제거
-        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleNewDayNotification(_:)),
-            name: .didEnterNewDay,
-            object: nil
-        )
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
     }
     
     @objc private func handleNewDayNotification(_ notification: Notification) {
@@ -79,6 +66,25 @@ final class CustomTimeTabController: BaseViewController {
         super.viewWillAppear(animated)
 
         dateFetchData(for: todayDate)
+        addNewDayObserver()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeNewDayObserver()
+    }
+    
+    private func addNewDayObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewDayNotification(_:)),
+            name: .didEnterNewDay,
+            object: nil
+        )
+    }
+    
+    private func removeNewDayObserver() {
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
     }
 
     override func configureUI() {
