@@ -52,8 +52,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        UserDefaults.standard.set(Date().addingTimeInterval(-86400), forKey: "lastActiveDate")
-        
         // 앱이 완전히 포그라운드에 진입했을 때 실행 경로 로깅 처리
         handleForegroundTransition()
         checkAndNotifyNewDay()
