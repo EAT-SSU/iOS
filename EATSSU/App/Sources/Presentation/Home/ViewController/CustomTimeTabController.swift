@@ -48,10 +48,43 @@ final class CustomTimeTabController: BaseViewController {
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
     }
     
+    @objc private func handleNewDayNotification(_ notification: Notification) {
+        // 백그라운드에서 돌아와 새로운 날로 판단될 때, 오늘 날짜로 갱신
+        DispatchQueue.main.async {
+            let today = Date()
+            self.todayDate = today
+            // 당일에 해당하는 데이터 불러오기
+            self.dateFetchData(for: today)
+            
+            // 해당 시간대별로 인덱스 이동 후 시간대 변경
+            let initialIndex = self.getInitialTabIndex()
+            self.selectedIndex = initialIndex
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         dateFetchData(for: todayDate)
+        addNewDayObserver()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeNewDayObserver()
+    }
+    
+    private func addNewDayObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewDayNotification(_:)),
+            name: .didEnterNewDay,
+            object: nil
+        )
+    }
+    
+    private func removeNewDayObserver() {
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
     }
 
     override func configureUI() {
