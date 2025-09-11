@@ -51,9 +51,9 @@ final class SetNickNameViewController: BaseViewController {
         let screenName: String
         switch source {
         case .signup:
-            screenName = FirebaseScreenID.log4
+            screenName = FirebaseScreenID.Login.log4
         case .mypage:
-            screenName = FirebaseScreenID.mypage3
+            screenName = FirebaseScreenID.MyPage.mypage3
         }
         
         Analytics.logEvent(AnalyticsEventScreenView,

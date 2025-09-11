@@ -43,7 +43,7 @@ final class UserWithdrawViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage4,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.MyPage.mypage4,
                                        AnalyticsParameterScreenClass: "UserWithdrawViewController"])
     }
 

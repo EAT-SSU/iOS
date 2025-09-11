@@ -62,7 +62,7 @@ final class HomeViewController: BaseViewController {
         logFirebaseEvent()
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                                   parameters: [AnalyticsParameterScreenName: FirebaseScreenID.home1,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Home.home1,
                                                     AnalyticsParameterScreenClass: "HomeViewController"])
     }
     

@@ -43,7 +43,7 @@ final class LoginViewController: BaseViewController {
         showToastMessageIfNeeded()
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.log3,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Login.log3,
                                        AnalyticsParameterScreenClass: "LoginViewController"])
     }
 

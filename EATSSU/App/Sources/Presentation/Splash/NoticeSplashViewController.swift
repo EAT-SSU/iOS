@@ -72,7 +72,7 @@ class NoticeSplashViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.log2,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Login.log2,
                                        AnalyticsParameterScreenClass: "NoticeSplashViewController"])
     }
 

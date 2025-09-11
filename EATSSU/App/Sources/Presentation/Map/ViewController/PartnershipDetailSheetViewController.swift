@@ -103,7 +103,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                                   parameters: [AnalyticsParameterScreenName: FirebaseScreenID.map2,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Map.map2,
                                                     AnalyticsParameterScreenClass: "PartnershipDetailSheetViewController"])
     }
 

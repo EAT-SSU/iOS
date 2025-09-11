@@ -76,7 +76,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                                   parameters: [AnalyticsParameterScreenName: FirebaseScreenID.map1,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Map.map1,
                                                     AnalyticsParameterScreenClass: "MainMapViewController"])
     }
 

@@ -52,7 +52,7 @@ final class ChoiceMenuViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.review_v1_2,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Review.V1.review_v1_2,
                                        AnalyticsParameterScreenClass: "ChoiceMenuViewController"])
     }
 

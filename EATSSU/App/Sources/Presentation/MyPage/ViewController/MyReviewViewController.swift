@@ -50,7 +50,7 @@ final class MyReviewViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage3,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.MyPage.mypage3,
                                        AnalyticsParameterScreenClass: "MyReviewViewController"])
     }
 

@@ -88,7 +88,7 @@ final class NoDepartmentSheetViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                                   parameters: [AnalyticsParameterScreenName: FirebaseScreenID.map3,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Map.map3,
                                                     AnalyticsParameterScreenClass: "NoDepartmentSheetViewController"])
     }
 

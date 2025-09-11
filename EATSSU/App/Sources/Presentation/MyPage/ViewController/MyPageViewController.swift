@@ -40,7 +40,7 @@ final class MyPageViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage1,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.MyPage.mypage1,
                                        AnalyticsParameterScreenClass: "MyPageViewController"])
     }
 

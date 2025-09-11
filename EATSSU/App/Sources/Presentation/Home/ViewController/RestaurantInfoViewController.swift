@@ -25,7 +25,7 @@ final class RestaurantInfoViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.home2,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Home.home2,
                                        AnalyticsParameterScreenClass: "RestaurantInfoViewController"])
     }
 
