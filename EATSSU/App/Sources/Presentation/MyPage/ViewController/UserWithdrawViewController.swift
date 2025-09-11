@@ -37,6 +37,10 @@ final class UserWithdrawViewController: BaseViewController {
 
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         Analytics.logEvent(AnalyticsEventScreenView,
                            parameters: [AnalyticsParameterScreenName: FirebaseScreenID.mypage4,
