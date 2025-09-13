@@ -134,11 +134,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func handleForegroundTransition() {
         LaunchSourceManager.shared.forceBackgroundIfNeeded()
         LaunchSourceManager.shared.logIfNeeded()
-
-        // ✅ [추가] 아래 두 줄을 추가하여 공유 데이터를 직접 출력해봅니다.
-        print("--- 📲 메인 앱 활성화, 위젯 데이터 확인 ---")
-        print(UserDefaults(suiteName: "group.com.jiwoo.EatSSU.EatSSUwidget")?.dictionaryRepresentation() ?? "데이터 없음")
-
         WidgetAnalyticsManager.shared.sendPendingEvents()
     }
 

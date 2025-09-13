@@ -102,22 +102,14 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
     
     private func checkForWidgetEvents(configuration: SelectRestaurant) {
         let newRestaurant = configuration.selectedRestaurant.displayName
-        let lastRestaurantKey = "lastSelectedRestaurantForAnalytics" // 비교를 위한 키
-
-        // 이전에 저장된 식당이 있는지 확인합니다.
+        let lastRestaurantKey = "lastSelectedRestaurantForAnalytics"
         if let oldRestaurant = userDefaults?.string(forKey: lastRestaurantKey) {
-            // 이전 식당과 다르다면 '변경' 이벤트를 기록합니다.
             if oldRestaurant != newRestaurant {
-                print("✍️ '위젯 변경' 이벤트를 기록합니다: \(oldRestaurant) -> \(newRestaurant)")
                 WidgetAnalyticsManager.shared.recordWidgetChanged(before: oldRestaurant, after: newRestaurant)
             }
         } else {
-            // 이전에 저장된 식당이 없다면, 이것이 '최초 추가'입니다.
-            print("✍️ '위젯 추가' 이벤트를 기록합니다.")
             WidgetAnalyticsManager.shared.recordWidgetAdded()
         }
-
-        // 다음 비교를 위해 현재 식당을 저장합니다.
         userDefaults?.set(newRestaurant, forKey: lastRestaurantKey)
     }
 
