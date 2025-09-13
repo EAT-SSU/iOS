@@ -10,6 +10,6 @@ import Foundation
 struct GetDepartmentResponse: Codable {
     let departmentId: Int
     let departmentName: String
-    let collgeId: Int
+    let collegeId: Int
     let collegeName: String
 }

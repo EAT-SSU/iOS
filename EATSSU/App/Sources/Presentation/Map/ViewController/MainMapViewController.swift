@@ -19,6 +19,9 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     private let root = MainMapView()
     private let locationManager = CLLocationManager()
     private var currentDepartmentName: String?
+    
+    private var currentDepartmentId: Int?
+    private var currentCollegeId: Int?
 
     private let partnershipProvider = MoyaProvider<PartnershipRouter>(
         session: Session(interceptor: AuthInterceptor.shared)
@@ -96,6 +99,9 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             presentNoDepartmentSheet()
             return
         }
+        if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
+            MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
+        }
         setInitialCameraPosition(animated: true)
         root.selectWhole(false)
         fetchMyPartnerships()
@@ -164,6 +170,20 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             marker.height = CGFloat(UInt32(markerImage.size.height))
 
             marker.touchHandler = { [weak self] _ in
+                guard let self = self else { return true }
+
+                let isMyPartnershipSelected = self.root.wholeButton.backgroundColor != EATSSUDesignAsset.Color.Main.primary.color
+
+                if isMyPartnershipSelected {
+                    if let partnerId = partnership.partnershipInfos.first?.id {
+                        MapAnalyticsManager.shared.logClickPartnerRestaurant(
+                            collegeId: self.currentCollegeId,
+                            majorId: self.currentDepartmentId,
+                            partnerId: partnerId
+                        )
+                    }
+                }
+
                 let sheetVC = PartnershipDetailSheetViewController(
                     storeName: partnership.storeName,
                     restaurantType: partnership.restaurantType,
@@ -184,7 +204,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
                     sheet.prefersGrabberVisible = true
                 }
 
-                self?.present(sheetVC, animated: true)
+                self.present(sheetVC, animated: true)
                 
                 return true
             }
@@ -192,7 +212,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             markers.append(marker)
         }
     }
-
+    
     /// 마커에 들어갈 커스텀 이미지 생성
     private func makeMarkerImage(type: String, title: String) -> UIImage {
         let icon: UIImage? = {
@@ -237,18 +257,24 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             case .success(let response):
                 do {
                     let decoded = try response.map(BaseResponse<GetDepartmentResponse>.self)
-                    let department = decoded.result?.departmentName ?? ""
-                    self?.currentDepartmentName = department
-                    let buttonTitle = department.isEmpty ? "내 제휴" : department
+                    let departmentName = decoded.result?.departmentName ?? ""
+                    self?.currentDepartmentName = departmentName
+                    self?.currentDepartmentId = decoded.result?.departmentId
+                    self?.currentCollegeId = decoded.result?.collegeId
+                    let buttonTitle = departmentName.isEmpty ? "내 제휴" : departmentName
                     self?.root.myOnlyButton.setTitle(buttonTitle, for: .normal)
                 } catch {
                     print("학과 디코딩 실패: \(error)")
                     self?.currentDepartmentName = nil
+                    self?.currentDepartmentId = nil
+                    self?.currentCollegeId = nil
                     self?.root.myOnlyButton.setTitle("내 제휴", for: .normal)
                 }
             case .failure(let error):
                 print("학과 API 실패: \(error)")
                 self?.currentDepartmentName = nil
+                self?.currentDepartmentId = nil
+                self?.currentCollegeId = nil
                 self?.root.myOnlyButton.setTitle("내 제휴", for: .normal)
             }
         }
