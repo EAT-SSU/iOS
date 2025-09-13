@@ -16,6 +16,12 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
     typealias Entry = ESEntry // 위젯에 표시될 데이터 구조체
 
     private let disposeBag = DisposeBag() // RxSwift의 메모리 관리를 위한 DisposeBag
+    private let userDefaults = UserDefaults(suiteName: "group.com.jiwoo.EatSSU")
+
+    private enum UserDefaultsKey {
+        static let widgetHasBeenAdded = "widgetHasBeenAdded"
+        static let lastSelectedRestaurant = "lastSelectedRestaurant"
+    }
 
     // 위젯이 처음 로드될 때 보여줄 기본 데이터
     func placeholder(in _: Context) -> ESEntry {
@@ -42,9 +48,13 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
             isError: false
         )
     }
+    
 
     // 위젯의 타임라인 데이터를 제공하는 함수
-    func timeline(for configuration: SelectRestaurant, in _: Context) async -> Timeline<ESEntry> {
+    func timeline(for configuration: SelectRestaurant, in context: Context) async -> Timeline<ESEntry> {
+        if !context.isPreview {
+            checkForWidgetEvents(configuration: configuration)
+        }
         let updateInterval: TimeInterval = 60 * 60 // 1시간마다 업데이트
         let currentDate = Date()
         let formattedDate = formatDate(currentDate) // 현재 날짜를 문자열로 변환
@@ -93,6 +103,25 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         }
 
         return timeline
+    }
+    
+    private func checkForWidgetEvents(configuration: SelectRestaurant) {
+        // 1. 위젯 추가 이벤트 확인 (최초 1회만 실행)
+        if userDefaults?.bool(forKey: UserDefaultsKey.widgetHasBeenAdded) == false {
+            WidgetAnalyticsManager.shared.recordWidgetAdded()
+            userDefaults?.set(true, forKey: UserDefaultsKey.widgetHasBeenAdded)
+        }
+        
+        // 2. 위젯 식당 변경 이벤트 확인
+        let newRestaurant = configuration.selectedRestaurant.displayName
+        if let oldRestaurant = userDefaults?.string(forKey: UserDefaultsKey.lastSelectedRestaurant) {
+            if oldRestaurant != newRestaurant {
+                WidgetAnalyticsManager.shared.recordWidgetChanged(before: oldRestaurant, after: newRestaurant)
+            }
+        }
+        
+        // 3. 다음 비교를 위해 현재 선택된 식당을 UserDefaults에 저장
+        userDefaults?.set(newRestaurant, forKey: UserDefaultsKey.lastSelectedRestaurant)
     }
 
     // 서버에서 특정 날짜, 식당, 시간대의 메뉴 정보를 가져오는 함수

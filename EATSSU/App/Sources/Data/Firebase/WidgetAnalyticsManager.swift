@@ -16,7 +16,7 @@ final class WidgetAnalyticsManager {
     // MARK: - App Group UserDefaults
     
     /// 위젯과 메인 앱이 데이터를 공유하기 위한 공간
-    private let userDefaults = UserDefaults(suiteName: "com.jiwoo.EatSSU")
+    private let userDefaults = UserDefaults(suiteName: "group.com.jiwoo.EatSSU")
 
     // MARK: - Event & Parameter Keys
     
