@@ -16,12 +16,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
     typealias Entry = ESEntry // 위젯에 표시될 데이터 구조체
 
     private let disposeBag = DisposeBag() // RxSwift의 메모리 관리를 위한 DisposeBag
-    private let userDefaults = UserDefaults(suiteName: "group.com.jiwoo.EatSSU")
-
-    private enum UserDefaultsKey {
-        static let widgetHasBeenAdded = "widgetHasBeenAdded"
-        static let lastSelectedRestaurant = "lastSelectedRestaurant"
-    }
+    private let userDefaults = UserDefaults(suiteName: "group.com.jiwoo.EatSSU.EatSSUwidget")
 
     // 위젯이 처음 로드될 때 보여줄 기본 데이터
     func placeholder(in _: Context) -> ESEntry {
@@ -106,23 +101,26 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
     }
     
     private func checkForWidgetEvents(configuration: SelectRestaurant) {
-        // 1. 위젯 추가 이벤트 확인 (최초 1회만 실행)
-        if userDefaults?.bool(forKey: UserDefaultsKey.widgetHasBeenAdded) == false {
-            WidgetAnalyticsManager.shared.recordWidgetAdded()
-            userDefaults?.set(true, forKey: UserDefaultsKey.widgetHasBeenAdded)
-        }
-        
-        // 2. 위젯 식당 변경 이벤트 확인
         let newRestaurant = configuration.selectedRestaurant.displayName
-        if let oldRestaurant = userDefaults?.string(forKey: UserDefaultsKey.lastSelectedRestaurant) {
+        let lastRestaurantKey = "lastSelectedRestaurantForAnalytics" // 비교를 위한 키
+
+        // 이전에 저장된 식당이 있는지 확인합니다.
+        if let oldRestaurant = userDefaults?.string(forKey: lastRestaurantKey) {
+            // 이전 식당과 다르다면 '변경' 이벤트를 기록합니다.
             if oldRestaurant != newRestaurant {
+                print("✍️ '위젯 변경' 이벤트를 기록합니다: \(oldRestaurant) -> \(newRestaurant)")
                 WidgetAnalyticsManager.shared.recordWidgetChanged(before: oldRestaurant, after: newRestaurant)
             }
+        } else {
+            // 이전에 저장된 식당이 없다면, 이것이 '최초 추가'입니다.
+            print("✍️ '위젯 추가' 이벤트를 기록합니다.")
+            WidgetAnalyticsManager.shared.recordWidgetAdded()
         }
-        
-        // 3. 다음 비교를 위해 현재 선택된 식당을 UserDefaults에 저장
-        userDefaults?.set(newRestaurant, forKey: UserDefaultsKey.lastSelectedRestaurant)
+
+        // 다음 비교를 위해 현재 식당을 저장합니다.
+        userDefaults?.set(newRestaurant, forKey: lastRestaurantKey)
     }
+
 
     // 서버에서 특정 날짜, 식당, 시간대의 메뉴 정보를 가져오는 함수
     private func fetchMenu(provider: MoyaProvider<HomeRouter>, date: String, restaurant: String, time: String) async throws -> [String] {
