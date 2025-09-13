@@ -49,12 +49,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {
         // 백그라운드에서 포그라운드로 전환 시 필요한 작업 수행
         TokenManager.refreshIfNeededAsync()
-        checkAndNotifyNewDay()
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
         // 앱이 완전히 포그라운드에 진입했을 때 실행 경로 로깅 처리
         handleForegroundTransition()
+        checkAndNotifyNewDay()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {

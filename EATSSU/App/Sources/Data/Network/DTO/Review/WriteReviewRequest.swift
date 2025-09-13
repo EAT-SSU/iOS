@@ -9,8 +9,8 @@ import UIKit
 
 struct WriteReviewRequest: Codable {
     let mainRating: Int
-    let amountRating: Int
-    let tasteRating: Int
+    let amountRating: Int?
+    let tasteRating: Int?
     let content: String
     let imageUrl: String
 
