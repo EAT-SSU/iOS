@@ -132,6 +132,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func handleForegroundTransition() {
         LaunchSourceManager.shared.forceBackgroundIfNeeded()
         LaunchSourceManager.shared.logIfNeeded()
+        WidgetAnalyticsManager.shared.sendPendingEvents()
     }
 
     // MARK: - RootViewController & Update
