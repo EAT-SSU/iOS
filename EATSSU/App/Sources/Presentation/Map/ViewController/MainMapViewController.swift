@@ -100,6 +100,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             return
         }
         if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
+            //  firebase - click_map_mine 이벤트 호출
             MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
         }
         setInitialCameraPosition(animated: true)
@@ -176,6 +177,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
 
                 if isMyPartnershipSelected {
                     if let partnerId = partnership.partnershipInfos.first?.id {
+                        //  firebase - click_partner_restaurant 이벤트 호출
                         MapAnalyticsManager.shared.logClickPartnerRestaurant(
                             collegeId: self.currentCollegeId,
                             majorId: self.currentDepartmentId,

@@ -28,6 +28,7 @@ final class CustomTabBarContainerController: BaseViewController {
             guard let self = self else { return }
 
             if index == 1 {
+                //  firebase - click_map 이벤트 호출
                 MapAnalyticsManager.shared.logClickMap()
             }
             
