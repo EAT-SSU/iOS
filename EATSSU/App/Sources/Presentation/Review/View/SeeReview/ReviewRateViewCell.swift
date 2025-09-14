@@ -412,8 +412,21 @@ extension ReviewRateViewCell {
         totalReviewCount.text = "\(data.totalReviewCount)"
         rateNumLabel.text = "\(total)"
         totalRate = data.mainRating ?? 0
-        tasteRateLabel.text = "\(taste)"
-        quantityRateLabel.text = "\(amount)"
+        if data.tasteRating == nil || data.tasteRating == 0.0 {
+            tasteStackView.isHidden = true
+        } else {
+            tasteStackView.isHidden = false
+            let taste = String(format: "%.1f", data.tasteRating ?? 0)
+            tasteRateLabel.text = "\(taste)"
+        }
+
+        if data.amountRating == nil || data.amountRating == 0.0 {
+            quantityStackView.isHidden = true
+        } else {
+            quantityStackView.isHidden = false
+            let amount = String(format: "%.1f", data.amountRating ?? 0)
+            quantityRateLabel.text = "\(amount)"
+        }
         fiveChartBar.snp.updateConstraints {
             if data.reviewRatingCount.fiveStarCount == 0 {
                 $0.width.equalTo(0)
@@ -459,8 +472,21 @@ extension ReviewRateViewCell {
         totalReviewCount.text = "\(data.totalReviewCount)"
         rateNumLabel.text = "\(total)"
         totalRate = data.mainRating ?? 0
-        tasteRateLabel.text = "\(taste)"
-        quantityRateLabel.text = "\(amount)"
+        if data.tasteRating == nil || data.tasteRating == 0.0 {
+            tasteStackView.isHidden = true
+        } else {
+            tasteStackView.isHidden = false
+            let taste = String(format: "%.1f", data.tasteRating ?? 0)
+            tasteRateLabel.text = "\(taste)"
+        }
+
+        if data.amountRating == nil || data.amountRating == 0.0 {
+            quantityStackView.isHidden = true
+        } else {
+            quantityStackView.isHidden = false
+            let amount = String(format: "%.1f", data.amountRating ?? 0)
+            quantityRateLabel.text = "\(amount)"
+        }
         fiveChartBar.snp.updateConstraints {
             if data.reviewRatingCount.fiveStarCount == 0 {
                 $0.width.equalTo(0)

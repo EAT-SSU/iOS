@@ -42,19 +42,6 @@ final class HomeViewController: BaseViewController {
         configureUI()
         setLayout()
         registerTabman()
-        
-        // 이미 등록된 옵저버가 있으면 먼저 제거
-        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleNewDayNotification(_:)),
-            name: .didEnterNewDay,
-            object: nil
-        )
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -67,11 +54,28 @@ final class HomeViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        
+        addNewDayObserver()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        
+        removeNewDayObserver()
+    }
+    
+    private func addNewDayObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewDayNotification(_:)),
+            name: .didEnterNewDay,
+            object: nil
+        )
+    }
+    
+    private func removeNewDayObserver() {
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
     }
 
     // MARK: - UI Configuration

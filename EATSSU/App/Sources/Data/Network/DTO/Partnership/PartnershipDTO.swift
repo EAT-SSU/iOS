@@ -17,7 +17,6 @@ struct PartnershipDTO: Codable {
 
 struct PartnershipInfoDTO: Codable {
     let id: Int
-    let partnershipType: String
     let collegeName: String?
     let departmentName: String?
     let likeCount: Int
