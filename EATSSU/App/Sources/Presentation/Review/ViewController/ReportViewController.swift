@@ -38,9 +38,7 @@ final class ReportViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Review.V1.review_v1_5,
-                                       AnalyticsParameterScreenClass: "ReportViewController"])
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_5)
     }
 
     override func viewDidLoad() {

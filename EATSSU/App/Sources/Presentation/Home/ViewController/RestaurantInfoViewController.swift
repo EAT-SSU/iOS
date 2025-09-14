@@ -24,9 +24,7 @@ final class RestaurantInfoViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Home.home2,
-                                       AnalyticsParameterScreenClass: "RestaurantInfoViewController"])
+        logScreenView(screenID: FirebaseScreenID.Home.home2)
     }
 
 

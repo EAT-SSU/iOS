@@ -42,9 +42,7 @@ final class UserWithdrawViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.MyPage.mypage4,
-                                       AnalyticsParameterScreenClass: "UserWithdrawViewController"])
+        logScreenView(screenID: FirebaseScreenID.MyPage.mypage4)
     }
 
     // MARK: - Initializer

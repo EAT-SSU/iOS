@@ -8,6 +8,7 @@
 import UIKit
 
 import Moya
+
 import FirebaseAnalytics
 
 enum SetNickNameSource {
@@ -48,19 +49,15 @@ final class SetNickNameViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let screenName: String
+        let screenId: String
         switch source {
         case .signup:
-            screenName = FirebaseScreenID.Login.log4
+            screenId = FirebaseScreenID.Login.log4
         case .mypage:
-            screenName = FirebaseScreenID.MyPage.mypage3
+            screenId = FirebaseScreenID.MyPage.mypage3
         }
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [
-                            AnalyticsParameterScreenName: screenName,
-                            AnalyticsParameterScreenClass: "SetNickNameViewController"
-                           ])
+        logScreenView(screenID: screenId)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

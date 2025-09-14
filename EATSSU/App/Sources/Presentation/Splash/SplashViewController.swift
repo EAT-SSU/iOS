@@ -7,9 +7,10 @@
 
 import UIKit
 
-import EATSSUDesign
-import FirebaseAnalytics
 import SnapKit
+import FirebaseAnalytics
+
+import EATSSUDesign
 
 /// 기본 스플래시 뷰
 class SplashViewController: BaseViewController {
@@ -30,9 +31,7 @@ class SplashViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Login.log1,
-                                       AnalyticsParameterScreenClass: "SplashViewController"])
+        logScreenView(screenID: FirebaseScreenID.Login.log1)
     }
 
     // MARK: - UI Setup

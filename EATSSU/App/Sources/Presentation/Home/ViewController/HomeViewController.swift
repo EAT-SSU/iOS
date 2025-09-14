@@ -61,9 +61,7 @@ final class HomeViewController: BaseViewController {
         super.viewDidAppear(animated)
         logFirebaseEvent()
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Home.home1,
-                                                    AnalyticsParameterScreenClass: "HomeViewController"])
+        logScreenView(screenID: FirebaseScreenID.Home.home1)
     }
     
     override func viewWillAppear(_ animated: Bool) {

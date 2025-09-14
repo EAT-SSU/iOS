@@ -67,9 +67,7 @@ final class ReviewViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Review.V1.review_v1_1,
-                                       AnalyticsParameterScreenClass: "ReviewViewController"])
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_1)
     }
 
     // MARK: - Functions

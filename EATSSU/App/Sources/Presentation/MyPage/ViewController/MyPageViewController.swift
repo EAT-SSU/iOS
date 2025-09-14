@@ -39,9 +39,7 @@ final class MyPageViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.MyPage.mypage1,
-                                       AnalyticsParameterScreenClass: "MyPageViewController"])
+        logScreenView(screenID: FirebaseScreenID.MyPage.mypage1)
     }
 
     override func viewWillAppear(_ animated: Bool) {

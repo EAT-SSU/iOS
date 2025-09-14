@@ -9,6 +9,7 @@ import UIKit
 
 import SnapKit
 import FirebaseAnalytics
+
 import EATSSUDesign
 
 final class ChoiceMenuViewController: BaseViewController {
@@ -51,9 +52,7 @@ final class ChoiceMenuViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Review.V1.review_v1_2,
-                                       AnalyticsParameterScreenClass: "ChoiceMenuViewController"])
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_2)
     }
 
     // MARK: - Functions

@@ -75,9 +75,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Map.map1,
-                                                    AnalyticsParameterScreenClass: "MainMapViewController"])
+        logScreenView(screenID: FirebaseScreenID.Map.map1)
     }
 
     override func viewWillAppear(_ animated: Bool) {

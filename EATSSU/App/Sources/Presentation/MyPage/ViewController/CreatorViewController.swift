@@ -11,6 +11,7 @@ import UIKit
 // External Module
 import SnapKit
 import FirebaseAnalytics
+
 import EATSSUDesign
 
 class CreatorViewController: BaseViewController {
@@ -34,9 +35,7 @@ class CreatorViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.MyPage.mypage5,
-                                       AnalyticsParameterScreenClass: "CreatorViewController"])
+        logScreenView(screenID: FirebaseScreenID.MyPage.mypage5)
     }
 
     // MARK: - Methods

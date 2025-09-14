@@ -8,9 +8,9 @@
 import UIKit
 
 import SnapKit
+import FirebaseAnalytics
 
 import EATSSUDesign
-import FirebaseAnalytics
 
 final class PartnershipDetailSheetViewController: BaseViewController {
 
@@ -102,9 +102,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Map.map2,
-                                                    AnalyticsParameterScreenClass: "PartnershipDetailSheetViewController"])
+        logScreenView(screenID: FirebaseScreenID.Map.map2)
     }
 
     /// 매장 정보와 제휴 내용을 화면에 반영

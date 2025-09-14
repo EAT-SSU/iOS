@@ -9,6 +9,7 @@ import UIKit
 
 import SnapKit
 import FirebaseAnalytics
+
 import EATSSUDesign
 
 /// 점검 혹은 공지가 필요할 때 사용하는 스플래시 뷰
@@ -71,9 +72,7 @@ class NoticeSplashViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Login.log2,
-                                       AnalyticsParameterScreenClass: "NoticeSplashViewController"])
+        logScreenView(screenID: FirebaseScreenID.Login.log2)
     }
 
     // MARK: - UI Setup
