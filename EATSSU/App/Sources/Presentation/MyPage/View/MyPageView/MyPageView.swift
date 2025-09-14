@@ -7,10 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 final class MyPageView: BaseUIView {
     // MARK: - UI Components
@@ -22,67 +21,45 @@ final class MyPageView: BaseUIView {
     private let contentView = UIView()
 
     // 사용자 이미지
-    var userImage = UIImageView().then {
-        $0.image = EATSSUDesignAsset.Images.profile.image
-    }
+    var userImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.profile.image
+        return imageView
+    }()
 
     // 닉네임이 들어간 닉네임 변경 버튼
-    var userNicknameButton = UIButton().then {
-        $0.addTitleAttribute(
-            title: "다시 시도해주세요",
-            titleColor: .black,
-            fontName: EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
-        )
-    }
+    var userNicknameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "다시 시도해주세요"
+        label.textColor = .black
+        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 20)
+        return label
+    }()
 
-    // "연결된 계정" 레이블
-    let accountTitleLabel = UILabel().then {
-        $0.text = TextLiteral.MyPage.linkedAccount
-        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-    }
-
-    // 서버에서 계정 정보를 가져오기 전 기본값
-    var accountTypeLabel = UILabel().then {
-        $0.text = "없음"
-        $0.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
-        $0.font = .bold(size: 14)
-    }
-
-    // 소셜 로그인 공급업체 아이콘
-    var accountTypeImage = UIImageView()
-
-    lazy var totalAccountStackView = UIStackView(
-        arrangedSubviews: [accountTitleLabel, accountStackView]).then {
-        $0.alignment = .bottom
-        $0.axis = .horizontal
-        $0.spacing = 20
-    }
-
-    lazy var accountStackView = UIStackView(
-        arrangedSubviews: [accountTypeLabel, accountTypeImage]).then {
-        $0.alignment = .bottom
-        $0.axis = .horizontal
-        $0.spacing = 5
-    }
-
-    let myPageTableView = UITableView().then {
-        $0.separatorStyle = .none
-        $0.isScrollEnabled = false
-    }
+    let myPageTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.isScrollEnabled = false
+        return tableView
+    }()
 
     // "앱 버전" 레이블
-    private let appVersionStringLabel = UILabel().then { label in
+    private let appVersionStringLabel: UILabel = {
+        let label = UILabel()
         label.text = TextLiteral.MyPage.appVersion
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
-    }
+        return label
+    }()
 
     // 현재 배포된 앱의 버전
-    private let appVersionLabel = UILabel().then { label in
+    private let appVersionLabel: UILabel = {
+        let label = UILabel()
         label.text = MyPageRightItemData.version
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
-    }
+        return label
+    }()
 
     /// "탈퇴하기" 레이블과 탈퇴하기 아이콘
     let userWithdrawButton: UIButton = {
@@ -118,8 +95,7 @@ final class MyPageView: BaseUIView {
 
         contentView.addSubviews(
             userImage,
-            userNicknameButton,
-            totalAccountStackView,
+            userNicknameLabel,
             myPageTableView,
             appVersionStringLabel,
             appVersionLabel,
@@ -144,21 +120,18 @@ final class MyPageView: BaseUIView {
             $0.height.width.equalTo(100)
         }
 
-        userNicknameButton.snp.makeConstraints {
+        userNicknameLabel.snp.makeConstraints {
             $0.top.equalTo(userImage.snp.bottom).offset(6)
             $0.centerX.equalTo(userImage)
             $0.height.equalTo(40)
         }
 
-        totalAccountStackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(userNicknameButton.snp.bottom).offset(10)
-        }
-
         myPageTableView.snp.makeConstraints {
-            $0.top.equalTo(accountTitleLabel.snp.bottom).offset(24)
+            $0.top.equalTo(userNicknameLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(420)
+            let cellHeight = 60
+            let totalHeight = MyPageLocalData.myPageTableLabelList.count * cellHeight
+            $0.height.equalTo(totalHeight)
             $0.width.equalToSuperview()
         }
 
@@ -198,20 +171,6 @@ final class MyPageView: BaseUIView {
     }
 
     public func setUserInfo(nickname: String) {
-        userNicknameButton.addTitleAttribute(
-            title: "\(nickname)  >",
-            titleColor: .black,
-            fontName: .semiBold(size: 20)
-        )
-        if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
-            switch accountType {
-            case .apple:
-                accountTypeLabel.text = "APPLE"
-                accountTypeImage.image = EATSSUDesignAsset.Images.signWithApple.image
-            case .kakao:
-                accountTypeLabel.text = "카카오"
-                accountTypeImage.image = EATSSUDesignAsset.Images.signWithKakao.image
-            }
-        }
+        userNicknameLabel.text = nickname
     }
 }

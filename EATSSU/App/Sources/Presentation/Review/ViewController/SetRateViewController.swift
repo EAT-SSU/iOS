@@ -7,17 +7,16 @@
 
 import UIKit
 
-import EATSSUDesign
-
-import Moya
 import SnapKit
-import Then
+import Moya
+
+import EATSSUDesign
 
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
 
-    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var currentPage: Int = 0 {
         didSet {
             menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
@@ -31,9 +30,6 @@ final class SetRateViewController: BaseViewController {
     private var reviewList: [(BeforeSelectedImageDTO, UIImage?)] = []
     private var selectedIDList: [Int] = []
     private var selectedList: [String] = []
-
-    /// [리뷰 수정하기]에 필요한 reviewID
-    /// 해당 값이 존재하지 않으면, 리뷰 작성하기 기능을 수행 중인 것이다
     private var reviewId: Int?
 
     // MARK: - UI Components
@@ -52,7 +48,6 @@ final class SetRateViewController: BaseViewController {
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-
         return scrollView
     }()
 
@@ -94,17 +89,21 @@ final class SetRateViewController: BaseViewController {
         return label
     }()
 
-    lazy var tasteStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 16.adjusted
-        $0.alignment = .center
-    }
+    private lazy var tasteStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 16.adjusted
+        stackView.alignment = .center
+        return stackView
+    }()
 
-    lazy var quantityStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 16.adjusted
-        $0.alignment = .center
-    }
+    private lazy var quantityStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 16.adjusted
+        stackView.alignment = .center
+        return stackView
+    }()
 
     private let userReviewTextView: UITextView = {
         let textView = UITextView()
@@ -113,34 +112,61 @@ final class SetRateViewController: BaseViewController {
         textView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
         textView.layer.borderWidth = 1.adjusted
         textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-        textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted,
-                                                   left: 16.0.adjusted,
-                                                   bottom: 16.0.adjusted,
-                                                   right: 16.0.adjusted)
+        textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted, left: 16.0.adjusted, bottom: 16.0.adjusted, right: 16.0.adjusted)
         textView.text = "3글자 이상 작성해주세요!"
         textView.textColor = .gray500
         return textView
     }()
 
-    private lazy var userReviewImageView = UIImageView().then {
-        $0.layer.cornerRadius = 10 // 원하는 둥근 모서리의 크기
-        $0.clipsToBounds = true // 이 속성을 true로 설정해야 둥근 모서리가 보입니다.
-
+    private lazy var userReviewImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
+        imageView.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTappedimageView))
-        $0.isUserInteractionEnabled = true // 사용자 상호작용을 가능하게 설정
-        $0.addGestureRecognizer(tapGesture)
-    }
+        imageView.addGestureRecognizer(tapGesture)
+        return imageView
+    }()
 
-    private lazy var selectImageButton = UIButton().then {
-        $0.setImage(UIImage(named: "AddImageButton"), for: .normal)
-        $0.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
-    }
+    private lazy var imageContainer: UIView = {
+        let view = UIView()
+        view.addSubview(selectImageButton)
+        view.addSubview(imageCountLabel)
+        return view
+    }()
 
-    private let deleteMethodLabel = UILabel().then {
-        $0.text = "이미지 클릭 시, 삭제됩니다"
-        $0.font = .caption3
-        $0.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
-    }
+    private lazy var selectImageButton: UIButton = {
+        let button = UIButton()
+        var config = UIButton.Configuration.plain()
+        config.image = EATSSUDesignAsset.Images.addImageButton.image
+        config.contentInsets = NSDirectionalEdgeInsets(top: -5, leading: 0, bottom: 5, trailing: 0)
+        button.configuration = config
+        button.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
+        button.layer.cornerRadius = 8
+        button.clipsToBounds = true
+        button.contentVerticalAlignment = .center
+        button.contentHorizontalAlignment = .center
+        return button
+    }()
+
+    private let imageCountLabel: UILabel = {
+        let label = UILabel()
+        label.text = "사진 0/1"
+        label.font = .caption3
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        label.textAlignment = .center
+        return label
+    }()
+
+    private let deleteMethodLabel: UILabel = {
+        let label = UILabel()
+        label.text = "사진 클릭 시, 삭제됩니다"
+        label.font = .caption3
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        return label
+    }()
 
     private let maximumWordLabel: UILabel = {
         let label = UILabel()
@@ -150,9 +176,13 @@ final class SetRateViewController: BaseViewController {
         return label
     }()
 
-    private var nextButton = MainButton().then {
-        $0.title = "다음 단계로"
-    }
+    private var nextButton: MainButton = {
+        let button = MainButton()
+        button.title = "다음 단계로"
+        return button
+    }()
+
+    // MARK: - Life Cycles
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -166,6 +196,7 @@ final class SetRateViewController: BaseViewController {
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
     }
+
 
     // MARK: - Functions
 
@@ -183,6 +214,7 @@ final class SetRateViewController: BaseViewController {
                                 userReviewTextView,
                                 maximumWordLabel,
                                 selectImageButton,
+                                imageCountLabel,
                                 userReviewImageView,
                                 deleteMethodLabel,
                                 nextButton)
@@ -267,6 +299,12 @@ final class SetRateViewController: BaseViewController {
             $0.height.equalTo(60)
         }
 
+        imageCountLabel.snp.makeConstraints {
+            $0.top.equalTo(selectImageButton.snp.bottom).offset(-19)
+            $0.centerX.equalTo(selectImageButton)
+            $0.width.equalTo(selectImageButton)
+        }
+
         userReviewImageView.snp.makeConstraints {
             $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
             $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
@@ -297,14 +335,14 @@ final class SetRateViewController: BaseViewController {
         selectedList = list
         selectedIDList = idList
         if let reviewList {
-            self.reviewList = reviewList
-        } else {
-            self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
-                                                                       amountRating: 0,
-                                                                       tasteRating: 0,
-                                                                       content: ""),
-                                                nil), count: idList.count)
-        }
+                self.reviewList = reviewList
+            } else {
+                self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
+                                                                           amountRating: nil,
+                                                                           tasteRating: nil,
+                                                                           content: ""),
+                                                    nil), count: idList.count)
+            }
         self.currentPage = currentPage
     }
 
@@ -386,6 +424,7 @@ final class SetRateViewController: BaseViewController {
     func didTappedimageView() {
         userReviewImageView.image = nil // 이미지 삭제
         userPickedImage = nil
+        imageCountLabel.text = "사진 0/1"
     }
 
     private func prepareForNextReview() {
@@ -408,11 +447,11 @@ final class SetRateViewController: BaseViewController {
         rateView.currentStar = data.mainRating
         rateView.settingStarForFix(currentStar: data.mainRating)
 
-        quantityRateView.currentStar = data.amountRating
-        quantityRateView.settingStarForFix(currentStar: data.amountRating)
+        quantityRateView.currentStar = data.amountRating ?? 0
+        quantityRateView.settingStarForFix(currentStar: data.amountRating ?? 0)
 
-        tasteRateView.currentStar = data.tasteRating
-        tasteRateView.settingStarForFix(currentStar: data.tasteRating)
+        tasteRateView.currentStar = data.tasteRating ?? 0
+        tasteRateView.settingStarForFix(currentStar: data.tasteRating ?? 0)
 
         userReviewTextView.text = data.content
         userReviewTextView.textColor = .black
@@ -431,7 +470,8 @@ extension SetRateViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<UploadImageResponse>.self)
-                    let reviewDTO = WriteReviewRequest(content: param, imageURL: responseData.result.url)
+                    guard let data = responseData.result else { return }
+                    let reviewDTO = WriteReviewRequest(content: param, imageURL: data.url)
                     self.postNewWriteReview(param: reviewDTO, menuID: menuId)
                 } catch let err {
                     print(err.localizedDescription)
@@ -446,59 +486,48 @@ extension SetRateViewController {
             }
         }
     }
-
+    
     private func postNewWriteReview(param: WriteReviewRequest,
-                                    menuID: Int)
-    {
+                                    menuID: Int) {
         writeReviewProvider.request(.writeNewReview(param: param,
-                                                    menuID: menuID))
-        { response in
-            switch response {
-            case .success:
-                do {
-                    if self.currentPage == self.reviewList.count - 1 {
-                        self.moveToReviewVC()
-                    }
+                                                    menuID: menuID)) { result in
+            switch result {
+            case let .success(response):
+                if self.currentPage == self.reviewList.count - 1 {
+                    self.moveToReviewVC()
                 }
-
             case let .failure(err):
-                print(err.localizedDescription)
-                self.view.showToast(message: "리뷰 작성에 실패했어요. 다시 시도해주세요!")
+                debugPrint(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
             }
         }
     }
-
-    private func postWriteReview(param: WriteReviewRequest,
-                                 image: [UIImage?],
-                                 menuId: Int)
-    {
-        writeReviewProvider.request(.writeReview(param: param, image: image, menuId: menuId)) { response in
-            switch response {
-            case .success:
-                do {
-                    if self.selectedList.count == 1 {
-                        self.moveToReviewVC()
-                    } else {
-                        self.prepareForNextReview()
-                    }
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
-            }
-        }
-    }
-
+    
     // 이거 제대로 작동 되는지 확인하기
     private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
         reviewProvider.request(.fixReview(reviewId, param)) { response in
             switch response {
             case let .success(moyaResponse):
-                do {
-                    print(moyaResponse)
                     self.navigationController?.popViewController(animated: true)
-                }
+                
             case let .failure(err):
                 print(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
+            }
+        }
+    }
+    
+    private func navigateToLogin() {
+        let loginVC = LoginViewController()
+        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
             }
         }
     }
@@ -511,6 +540,7 @@ extension SetRateViewController: UIImagePickerControllerDelegate {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             userReviewImageView.image = image
             userPickedImage = image
+            imageCountLabel.text = "사진 1/1"
         }
         picker.dismiss(animated: true, completion: nil)
     }

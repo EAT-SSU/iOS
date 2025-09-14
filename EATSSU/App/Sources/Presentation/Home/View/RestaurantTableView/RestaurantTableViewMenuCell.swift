@@ -9,6 +9,8 @@ import UIKit
 
 import SnapKit
 
+import EATSSUDesign
+
 class RestaurantTableViewMenuCell: BaseTableViewCell {
     // MARK: - Properties
 
@@ -64,37 +66,32 @@ class RestaurantTableViewMenuCell: BaseTableViewCell {
             $0.bottom.equalToSuperview().inset(5)
         }
         nameLabel.snp.makeConstraints {
-            $0.width.equalTo(210)
+            $0.width.equalTo(210).priority(.high)
         }
         priceLabel.snp.makeConstraints {
-            $0.width.equalTo(47)
+            $0.width.equalTo(47).priority(.high)
         }
         ratingLabel.snp.makeConstraints {
-            $0.width.equalTo(25)
+            $0.width.equalTo(25).priority(.high)
         }
     }
 }
 
 extension RestaurantTableViewMenuCell {
     private func setViewProperties() {
-        contentStackView.do {
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.spacing = 24
-        }
-        nameLabel.do {
-            $0.font = .body3
-            $0.numberOfLines = 0
-            $0.lineBreakMode = .byWordWrapping
-        }
-        priceLabel.do {
-            $0.font = .body3
-            $0.textAlignment = .center
-        }
-        ratingLabel.do {
-            $0.font = .body3
-            $0.textAlignment = .center
-        }
+        contentStackView.axis = .horizontal
+        contentStackView.alignment = .center
+        contentStackView.spacing = 24
+
+        nameLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        nameLabel.numberOfLines = 0
+        nameLabel.lineBreakMode = .byWordWrapping
+
+        priceLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        priceLabel.textAlignment = .center
+
+        ratingLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        ratingLabel.textAlignment = .center
     }
 
     public func bind(_ model: MenuTypeInfo) {

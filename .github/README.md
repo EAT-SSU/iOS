@@ -5,12 +5,18 @@
 - `학생식당`, `도담식당`, `푸드코트`, `스낵코너`, `기숙사 식당`의 모든 메뉴를 비교할 수 있어요.
 - 학식에 대한 리뷰를 통해 숭실대 학우들과 정보를 공유할 수 있어요.
 - 식당의 운영시간과 위치를 확인할 수 있어요!
-- [More & Contact](https://hi-jin-1514.notion.site/EAT-SSU-b04aaec9b7814a628c6ef6b3e08c74a3)
+- [More & Contact](https://eat-ssu.notion.site/EAT-SSU-1d2eeef75a1681198583e5282eaae6ba)
 
 ## 다운로드 
 2023.11.27~ 서비스 중
 - [App Store](https://apps.apple.com/kr/app/eat-ssu-%EC%88%AD%EC%8B%A4%EB%8C%80-%ED%95%99%EC%8B%9D-%EB%A6%AC%EB%B7%B0-%EC%95%B1/id6472618331)
 - [Play Store](https://play.google.com/store/apps/details?id=com.eatssu.android)
+
+## 보안규정
+
+- `xcconfig` 파일을 사용해서 민감한 정보를 관리합니다.
+- 해당 파일들은 팀 내부에서만 공유됩니다.
+- 해당 파일들은 `App/Resources/Secrets` 경로에 위치해야 합니다.
 
 ## Tuist 개발환경
 
@@ -24,10 +30,6 @@
 - 이 때 `Homebrew`로도 `mise`를 설치할 수 있는데, 정상동작하지 않기 때문에 꼭 위의 링크로 진행해야 합니다.
 - 아래의 명령어를 진행해서 사용하면 됩니다.
 - mise를 사용하면 프로젝트 별로 tuist 버전을 다르게 사용할 수 있어서, 이 방법을 채택하는 것을 권장합니다.
-```zsh
-tuist install
-tuist generate
-```
 
 ### Homebrew 사용 시
 
@@ -36,7 +38,24 @@ tuist generate
 
 ```zsh
 brew tap tuist/tuist
-brew install --formula tuist@4.24.0
+brew install --formula tuist@latest
+```
+
+## 프로젝트 실행방법
+
+- Xcode에서 해당 프로젝트를 열지 않습니다.
+- `tuist generate` 명령어를 사용해서 프로젝트를 실행합니다.
+
+### 의존성 설치
+
+```zsh
+tuist install
+```
+
+### 프로젝트 실행
+
+```zsh
+tuist generate
 ```
 
 ## Issue Title

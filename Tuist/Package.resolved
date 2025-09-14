@@ -1,5 +1,5 @@
 {
-  "originHash" : "927f3970054f96b698bb1f4d42eec10f20bdcf37978d07047fc3af226ed8ed97",
+  "originHash" : "9d69386e6ea6495a44e2469f723c08a7f59b16773d9d210eb24af5de456a00e4",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -209,21 +209,21 @@
       }
     },
     {
-      "identity" : "swift-package-manager-google-mobile-ads",
+      "identity" : "spm-nmapsgeometry",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
+      "location" : "https://github.com/navermaps/SPM-NMapsGeometry.git",
       "state" : {
-        "revision" : "7778cc1ab037c10dbbe026959e51e616bd961be9",
-        "version" : "11.13.0"
+        "revision" : "436d5e2e684f557faf5ef5862fd6633a42d7af11",
+        "version" : "1.0.2"
       }
     },
     {
-      "identity" : "swift-package-manager-google-user-messaging-platform",
+      "identity" : "spm-nmapsmap",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git",
+      "location" : "https://github.com/navermaps/SPM-NMapsMap",
       "state" : {
-        "revision" : "708a282840c2171ee63bd93b87afa49fe507d70e",
-        "version" : "2.7.0"
+        "revision" : "13a6d280a57c4ebab8320e2d5bf3ce89adacf95e",
+        "version" : "3.22.0"
       }
     },
     {
@@ -242,15 +242,6 @@
       "state" : {
         "revision" : "3b2213290eb93e55bb50b49d1a179033005c11ab",
         "version" : "3.2.0"
-      }
-    },
-    {
-      "identity" : "then",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/devxoul/Then",
-      "state" : {
-        "revision" : "d41ef523faef0f911369f79c0b96815d9dbb6d7a",
-        "version" : "3.0.0"
       }
     }
   ],

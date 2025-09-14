@@ -10,14 +10,13 @@ import UIKit
 import Moya
 import Realm
 import SnapKit
-import Then
 
 final class UserWithdrawViewController: BaseViewController {
     // MARK: - Properties
 
     private var nickName = String()
     var currentKeyboardHeight: CGFloat = 0.0
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     // MARK: - UI Components
 
@@ -129,14 +128,15 @@ extension UserWithdrawViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    if responseData.result {
-                        RealmService.shared.resetDB()
-                        let loginViewController = LoginViewController()
-                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                           let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                        {
-                            keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
-                        }
+                    guard let data = responseData.result, data else { return }
+                    
+                    RealmService.shared.resetDB()
+                    let loginViewController = LoginViewController()
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                    {
+                        loginViewController.toastMessage = "탈퇴 처리가 완료되었습니다."
+                        keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
                     }
                 } catch let err {
                     print(err.localizedDescription)

@@ -9,13 +9,12 @@ import UIKit
 
 import Moya
 import SnapKit
-import Then
 
 final class MyReviewViewController: BaseViewController {
     // MARK: - Properties
 
-    private let myProvider = MoyaProvider<MyRouter>(plugins: [ESMoyaLoggingPlugin()])
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
+    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     private var reviewList = [MyDataList]()
     var nickname: String = .init()
@@ -24,6 +23,11 @@ final class MyReviewViewController: BaseViewController {
     // MARK: - UI Components
 
     let myReviewView = MyReviewView()
+    
+    init(nickname: String) {
+        self.nickname = nickname
+        super.init(nibName: nil, bundle: nil)
+    }
 
     private lazy var noMyReviewImageView: UIImageView = {
         let imageView = UIImageView()
@@ -74,8 +78,8 @@ final class MyReviewViewController: BaseViewController {
         myReviewView.myReviewTableView.dataSource = self
     }
 
-    func dataBind(nikcname: String) {
-        nickname = nikcname
+    func dataBind(nickname: String) {
+        self.nickname = nickname
     }
 
     private func showFixOrDeleteAlert(reviewID: Int, menuName: String) {
@@ -116,6 +120,17 @@ final class MyReviewViewController: BaseViewController {
             noMyReviewImageView.isHidden = true
         }
     }
+    
+    private func navigateToLogin() {
+        let loginVC = LoginViewController()
+        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
+            }
+        }
+    }
 }
 
 extension MyReviewViewController: UITableViewDelegate {}
@@ -148,27 +163,42 @@ extension MyReviewViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<MyReviewResponse>.self)
-                    self.reviewList = responseData.result.dataList
+                    guard let data = responseData.result else { return }
+                    self.reviewList = data.dataList
                     self.checkReviewCount()
                     self.myReviewView.myReviewTableView.reloadData()
                 } catch let err {
                     print(err.localizedDescription)
+                    
+                    RealmService.shared.resetDB()
+                    self.navigateToLogin()
                 }
             case let .failure(err):
                 print(err.localizedDescription)
+                
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
             }
         }
     }
-
+    
+    // 리뷰 삭제 알람 추가
     func deleteReview(reviewID: Int) {
-        reviewProvider.request(.deleteReview(reviewID)) { response in
-            switch response {
-            case .success:
-                self.getMyReview()
-                self.view.showToast(message: "삭제되었어요 !")
-            case let .failure(err):
-                print(err.localizedDescription)
+        let alert = UIAlertController(title: "리뷰 삭제", message: "리뷰를 삭제하시겠습니까?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
+            self.reviewProvider.request(.deleteReview(reviewID)) { response in
+                switch response {
+                case .success:
+                    self.getMyReview()
+                case let .failure(err):
+                    print(err.localizedDescription)
+                    
+                    RealmService.shared.resetDB()
+                    self.navigateToLogin()
+                }
             }
-        }
+        })
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
     }
 }

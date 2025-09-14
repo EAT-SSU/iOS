@@ -7,12 +7,11 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import FirebaseAnalytics
-//import GoogleMobileAds
 import Moya
 import SnapKit
+
+import EATSSUDesign
 
 final class HomeViewController: BaseViewController {
     // MARK: - Properties
@@ -24,35 +23,75 @@ final class HomeViewController: BaseViewController {
             #endif
         }
     }
+    
+    private let logoImageView: UIImageView = {
+        let imageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
 
-    private let tabmanController = HomeTimeTabmanController()
+    private let tabmanController = CustomTimeTabController()
     private let homeCalendarView = HomeCalendarView()
 
     // MARK: - Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
         setupDelegates()
         configureUI()
         setLayout()
         registerTabman()
-        setupNavigationBar()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         logFirebaseEvent()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        
+        addNewDayObserver()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+        
+        removeNewDayObserver()
+    }
+    
+    private func addNewDayObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewDayNotification(_:)),
+            name: .didEnterNewDay,
+            object: nil
+        )
+    }
+    
+    private func removeNewDayObserver() {
+        NotificationCenter.default.removeObserver(self, name: .didEnterNewDay, object: nil)
+    }
 
     // MARK: - UI Configuration
 
     override func configureUI() {
+        view.addSubview(logoImageView)
         view.addSubview(homeCalendarView)
     }
 
     override func setLayout() {
+        logoImageView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide) 
+            make.centerX.equalToSuperview()
+            make.height.equalTo(28)
+        }
+
         homeCalendarView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(logoImageView.snp.bottom).offset(13)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(80)
         }
@@ -70,60 +109,6 @@ final class HomeViewController: BaseViewController {
         tabmanController.didMove(toParent: self)
     }
 
-    // MARK: - Navigation
-
-    private func setupNavigationBar() {
-        let logoImageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
-        navigationItem.titleView = logoImageView
-
-        let rightButton = UIBarButtonItem(
-            image: EATSSUDesignAsset.Images.myPageIcon.image,
-            style: .plain,
-            target: self,
-            action: #selector(didTapRightBarButton)
-        )
-        rightButton.tintColor = EATSSUDesignAsset.Color.Main.primary.color
-        navigationItem.rightBarButtonItem = rightButton
-        navigationController?.isNavigationBarHidden = false
-    }
-
-    @objc
-    private func didTapRightBarButton() {
-        if RealmService.shared.isAccessTokenPresent() {
-            navigateToMyPage()
-        } else {
-            presentLoginAlert()
-        }
-    }
-
-    private func navigateToMyPage() {
-        let myPageVC = MyPageViewController()
-        navigationController?.pushViewController(myPageVC, animated: true)
-    }
-
-    private func presentLoginAlert() {
-        let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
-                                      message: "로그인 하시겠습니까?",
-                                      preferredStyle: .alert)
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            self?.navigateToLogin()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        alert.addAction(confirmAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
-    }
-
-    private func navigateToLogin() {
-        let loginVC = LoginViewController()
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let sceneDelegate = windowScene.delegate as? SceneDelegate,
-           let window = sceneDelegate.window
-        {
-            window.replaceRootViewController(loginVC)
-        }
-    }
-
     // MARK: - Firebase
 
     private func logFirebaseEvent() {
@@ -137,6 +122,16 @@ final class HomeViewController: BaseViewController {
 
     private func setupDelegates() {
         homeCalendarView.delegate = tabmanController
+    }
+    
+    @objc private func handleNewDayNotification(_ notification: Notification) {
+        // 백그라운드에서 돌아와 새로운 날로 판단될 때, 오늘 날짜로 갱신
+        DispatchQueue.main.async {
+            let today = Date()
+            self.currentDate = today
+            // 달력뷰에 오늘 날짜가 선택되도록 호출
+            self.homeCalendarView.setSelected(date: today)
+        }
     }
 }
 

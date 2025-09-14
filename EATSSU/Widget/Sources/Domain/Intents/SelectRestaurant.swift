@@ -26,6 +26,9 @@ enum RestaurantOptions: String, AppEnum {
 
     /// 기숙사 식당
     case dormitory = "DORMITORY"
+    
+    /// 교직원 식당
+    case faculty = "FACULTY"
 
     /// 위젯 UI에 렌더링할 텍스트
     var displayName: String {
@@ -36,6 +39,8 @@ enum RestaurantOptions: String, AppEnum {
             "학생식당"
         case .dormitory:
             "기숙사 식당"
+        case .faculty:
+            "FACULTY (교직원 전용)"
         }
     }
 
@@ -54,6 +59,7 @@ enum RestaurantOptions: String, AppEnum {
             .dodam: DisplayRepresentation(title: "도담식당"),
             .haksik: DisplayRepresentation(title: "학생식당"),
             .dormitory: DisplayRepresentation(title: "기숙사 식당"),
+            .faculty: DisplayRepresentation(title: "FACULTY (교직원 전용)")
         ]
     }
 }
@@ -61,7 +67,7 @@ enum RestaurantOptions: String, AppEnum {
 /// 위젯 구성 인텐트를 정의하는 구조체
 ///
 /// 이 구조체는 위젯이 특정 식당을 선택하도록 하는 역할을 수행합니다.
-struct SelectRestaurant: WidgetConfigurationIntent {
+struct SelectRestaurant: WidgetConfigurationIntent, AppIntent {
     /// 위젯의 제목
     ///
     /// - Returns: "Select Restaurant" 문자열을 반환합니다.
@@ -73,7 +79,7 @@ struct SelectRestaurant: WidgetConfigurationIntent {
     ///
     /// - Returns: 사용자가 선택할 수 있는 식당 목록에 대한 설명을 제공
     static var description: IntentDescription {
-        IntentDescription("Choose between Dodam, Haksik, or Dormitory.")
+        IntentDescription("Choose between Dodam, Haksik, Dormitory, or Faculty.")
     }
 
     /// 사용자가 선택할 식당 옵션
@@ -90,13 +96,28 @@ struct SelectRestaurant: WidgetConfigurationIntent {
     )
     var selectedRestaurant: RestaurantOptions
 
+    // 앱을 실행하도록 설정
+    static var openAppWhenRun: Bool { true }
+
     /// 사용자가 식당을 선택했을 때 수행되는 함수
     ///
-    /// 선택된 식당의 값을 출력하고, 결과를 반환합니다.
-    ///
-    /// - Returns: 성공적인 수행 결과
+    /// 선택된 식당 정보를 앱 그룹에 저장하고 앱 실행을 트리거합니다.
+    @MainActor
     func perform() async throws -> some IntentResult {
-        print("Selected restaurant: \(selectedRestaurant.rawValue)")
-        return .result()
+        let sharedDefaults = UserDefaults(suiteName: "EATSSU_WidgetGroup")
+        sharedDefaults?.set(true, forKey: "launchedFromWidget")
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "widgetLaunchTime")
+        sharedDefaults?.synchronize()
+
+        return .result(dialog: "앱이 실행됩니다.")
+    }
+
+    /// 앱 전환 시 사용할 userActivity 객체 설정
+    var userActivity: NSUserActivity {
+        let activity = NSUserActivity(activityType: "com.eatssu.widgetIntent")
+        activity.title = "Widget launched"
+        activity.addUserInfoEntries(from: ["source": "widget"])
+        activity.webpageURL = URL(string: "eatssu://from_widget")
+        return activity
     }
 }

@@ -7,11 +7,10 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import FSCalendar
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 protocol CalendarSeletionDelegate: AnyObject {
     func didSelectCalendar(date: Date)
@@ -51,6 +50,15 @@ final class HomeCalendarView: BaseUIView {
     private func setDelegate() {
         calendar.dataSource = self
         calendar.delegate = self
+    }
+    
+    
+    /// 특정 날짜로 선택하고 해당 월로 스크롤합니다.
+    func setSelected(date: Date) {
+        // 날짜를 선택
+        calendar.select(date)
+        // 달력을 해당 날짜가 포함된 페이지로 이동
+        calendar.setCurrentPage(date, animated: true)
     }
 }
 

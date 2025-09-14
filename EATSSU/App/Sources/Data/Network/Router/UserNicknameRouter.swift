@@ -11,9 +11,10 @@ import Moya
 enum UserNicknameRouter {
     case setNickname(nickname: String)
     case checkNickname(nickname: String)
+    case setDepartment(departmentId: Int)
 }
 
-extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
+extension UserNicknameRouter: TargetType {
     var baseURL: URL {
         URL(string: Config.baseURL)!
     }
@@ -24,6 +25,8 @@ extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
             "/users/nickname"
         case .checkNickname:
             "/users/validate/nickname"
+        case .setDepartment:
+            "/users/department"
         }
     }
 
@@ -33,6 +36,8 @@ extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
             .patch
         case .checkNickname:
             .get
+        case .setDepartment:
+            .post
         }
     }
 
@@ -44,23 +49,20 @@ extension UserNicknameRouter: TargetType, AccessTokenAuthorizable {
         case let .checkNickname(nickname: nickname):
             let param: [String: String] = ["nickname": nickname]
             return .requestParameters(parameters: param, encoding: URLEncoding.queryString)
+        case let .setDepartment(departmentId: departmentId):
+            let param: [String: Int] = ["departmentId": departmentId]
+            return .requestParameters(parameters: param, encoding: JSONEncoding.default)
         }
     }
-
+    
     var headers: [String: String]? {
-        switch self {
-        default:
-            let realm = RealmService()
-            let token = realm.getToken()
-            return ["Content-Type": "application/json",
-                    "Authorization": "Bearer \(token)"]
-        }
+        return ["Content-Type": "application/json"]
     }
 
-    var authorizationType: Moya.AuthorizationType? {
-        switch self {
-        default:
-            .bearer
-        }
+}
+
+extension UserNicknameRouter {
+    var validationType: ValidationType {
+       return .successCodes
     }
 }

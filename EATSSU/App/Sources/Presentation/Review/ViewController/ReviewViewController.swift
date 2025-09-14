@@ -166,7 +166,8 @@ final class ReviewViewController: BaseViewController {
     private func showReportAlert(reviewID: Int) {
         let alert = UIAlertController(title: "리뷰 신고하기",
                                       message: "해당 리뷰를 신고하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.alert)
+                                      preferredStyle: UIAlertController.Style.actionSheet)
+//                                      preferredStyle: UIAlertController.Style.alert)
 
         let cancelAction = UIAlertAction(title: "취소",
                                          style: .cancel,
@@ -179,9 +180,8 @@ final class ReviewViewController: BaseViewController {
                                              reportViewController.bindData(reviewID: reviewID)
                                              self.navigationController?.pushViewController(reportViewController, animated: true)
                                          })
-
-        alert.addAction(cancelAction)
         alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
     }
 
@@ -366,14 +366,16 @@ extension ReviewViewController {
                 do {
                     if self.type == "FIXED" {
                         let responseData = try moyaResponse.map(BaseResponse<FixedReviewRateResponse>.self)
-                        self.fixedResponseData = responseData.result
+                        guard let data = responseData.result else { return }
+                        self.fixedResponseData = data
                         self.reviewTableView.reloadData()
-                        self.menuNameList = [responseData.result.menuName]
+                        self.menuNameList = [data.menuName]
                     } else {
                         let responseData = try moyaResponse.map(BaseResponse<ReviewRateResponse>.self)
-                        self.responseData = responseData.result
+                        guard let data = responseData.result else { return }
+                        self.responseData = data
                         self.reviewTableView.reloadData()
-                        self.menuNameList = responseData.result.menuNames
+                        self.menuNameList = data.menuNames
                     }
                     self.makeDictionary()
                 } catch let err {
@@ -392,8 +394,10 @@ extension ReviewViewController {
             case let .success(moyaResponse):
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<ReviewListResponse>.self)
-                    self.reviewList = responseData.result.dataList
+                    guard let data = responseData.result else { return }
+                    self.reviewList = data.dataList
                     self.reviewTableView.reloadData()
+                    
                 } catch let err {
                     print(err.localizedDescription)
                 }

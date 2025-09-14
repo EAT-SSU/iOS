@@ -7,35 +7,42 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
 
 import EATSSUDesign
 
 final class LoginView: BaseUIView {
     // MARK: - UI Components
 
-    private let logoImage = UIImageView().then {
-        $0.image = EATSSUDesignAsset.Images.authLogo.image
-    }
+    private let logoImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.authLogo.image
+        return imageView
+    }()
 
-    private let logoSubTitle = UIImageView().then { imageView in
+    private let logoSubTitle: UIImageView = {
+        let imageView = UIImageView()
         imageView.image = EATSSUDesignAsset.Images.authSubTitle.image
-    }
+        return imageView
+    }()
 
-    let appleLoginButton = UIButton().then { button in
+    let appleLoginButton: UIButton = {
+        let button = UIButton()
         button.setImage(EATSSUDesignAsset.Images.appleLoginButton.image, for: .normal)
-    }
+        return button
+    }()
 
-    let kakaoLoginButton = UIButton().then { button in
+    let kakaoLoginButton: UIButton = {
+        let button = UIButton()
         button.setImage(EATSSUDesignAsset.Images.kakaoLoginButton.image, for: .normal)
-    }
+        return button
+    }()
 
-    let lookingWithNoSignInButton = UIButton().then { button in
+    let lookingWithNoSignInButton: UIButton = {
+        let button = UIButton()
         button.setImage(EATSSUDesignAsset.Images.lookAroundButton.image, for: .normal)
-    }
+        return button
+    }()
 
     override func configureUI() {
         addSubviews(
@@ -48,29 +55,29 @@ final class LoginView: BaseUIView {
     }
 
     override func setLayout() {
-        logoImage.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(223)
+        logoImage.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(223)
         }
 
-        logoSubTitle.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(logoImage.snp.bottom)
+        logoSubTitle.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(logoImage.snp.bottom)
         }
 
-        appleLoginButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.safeAreaLayoutGuide).inset(151)
+        appleLoginButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(151)
         }
 
-        kakaoLoginButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.safeAreaLayoutGuide).inset(90)
+        kakaoLoginButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(90)
         }
 
-        lookingWithNoSignInButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.safeAreaLayoutGuide).inset(30)
+        lookingWithNoSignInButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(30)
         }
     }
 }

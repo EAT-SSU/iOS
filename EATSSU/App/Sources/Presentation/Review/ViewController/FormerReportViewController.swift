@@ -7,9 +7,10 @@
 
 import UIKit
 
-import Moya
 import SnapKit
-import Then
+import Moya
+
+import EATSSUDesign
 
 /// ReportViewController로 대체되었습니다.
 ///
@@ -27,50 +28,29 @@ final class FormerReportViewController: BaseViewController {
 
     // MARK: - UI Components
 
-    private let alertDeclarationLabel = UILabel().then {
-        $0.text = "리뷰를 신고하는 이유를 선택해주세요."
-        $0.font = .bold(size: 16)
-    }
+    private let alertDeclarationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "리뷰를 신고하는 이유를 선택해주세요."
+        label.font = .bold(size: 16)
+        return label
+    }()
 
-    private let report1Label = UILabel().then {
-        $0.text = "메뉴와 관련없는 내용"
-    }
-
-    private let report2Label = UILabel().then {
-        $0.text = "음란성, 욕설 등 부적절한 내용"
-    }
-
-    private let report3Label = UILabel().then {
-        $0.text = "부적절한 홍보 또는 광고"
-    }
-
-    private let report4Label = UILabel().then {
-        $0.text = "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)"
-    }
-
-    private let report5Label = UILabel().then {
-        $0.text = "저작권 도용 의심 (사진 등)"
-    }
-
-    private let report6Label = UILabel().then {
-        $0.text = "기타 (하단 내용 작성)"
-    }
+    private let report1Label = UILabel()
+    private let report2Label = UILabel()
+    private let report3Label = UILabel()
+    private let report4Label = UILabel()
+    private let report5Label = UILabel()
+    private let report6Label = UILabel()
 
     private var report1Button = UIButton()
-
     private var report2Button = UIButton()
-
     private var report3Button = UIButton()
-
     private var report4Button = UIButton()
-
     private var report5Button = UIButton()
-
     private var report6Button = UIButton()
 
     lazy var report1StackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [report1Button,
-                                                       report1Label])
+        let stackView = UIStackView(arrangedSubviews: [report1Button, report1Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
@@ -78,8 +58,7 @@ final class FormerReportViewController: BaseViewController {
     }()
 
     lazy var report2StackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [report2Button,
-                                                       report2Label])
+        let stackView = UIStackView(arrangedSubviews: [report2Button, report2Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
@@ -87,8 +66,7 @@ final class FormerReportViewController: BaseViewController {
     }()
 
     lazy var report3StackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [report3Button,
-                                                       report3Label])
+        let stackView = UIStackView(arrangedSubviews: [report3Button, report3Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
@@ -96,8 +74,7 @@ final class FormerReportViewController: BaseViewController {
     }()
 
     lazy var report4StackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [report4Button,
-                                                       report4Label])
+        let stackView = UIStackView(arrangedSubviews: [report4Button, report4Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
@@ -105,8 +82,7 @@ final class FormerReportViewController: BaseViewController {
     }()
 
     lazy var report5StackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [report5Button,
-                                                       report5Label])
+        let stackView = UIStackView(arrangedSubviews: [report5Button, report5Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
@@ -114,8 +90,7 @@ final class FormerReportViewController: BaseViewController {
     }()
 
     lazy var report6StackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [report6Button,
-                                                       report6Label])
+        let stackView = UIStackView(arrangedSubviews: [report6Button, report6Label])
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .center
@@ -123,12 +98,7 @@ final class FormerReportViewController: BaseViewController {
     }()
 
     lazy var reportStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [report1StackView,
-                                                       report2StackView,
-                                                       report3StackView,
-                                                       report4StackView,
-                                                       report5StackView,
-                                                       report6StackView])
+        let stackView = UIStackView(arrangedSubviews: [report1StackView, report2StackView, report3StackView, report4StackView, report5StackView, report6StackView])
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.alignment = .leading
@@ -147,15 +117,20 @@ final class FormerReportViewController: BaseViewController {
         return textView
     }()
 
-    private let textLimitLabel = UILabel().then {
-        $0.text = "0 / 150"
-        $0.font = .medium(size: 12)
-        $0.textColor = .gray700
-    }
+    private let textLimitLabel: UILabel = {
+        let label = UILabel()
+        label.text = "0 / 150"
+        label.font = .medium(size: 12)
+        label.textColor = .gray700
+        return label
+    }()
 
-    private let sendButton = MainButton().then {
-        $0.title = "EAT SSU에게 보내기"
-    }
+    private let sendButton: MainButton = {
+        let button = MainButton()
+        button.title = "EAT SSU에게 보내기"
+        return button
+    }()
+
 
     // MARK: - Life Cycles
 

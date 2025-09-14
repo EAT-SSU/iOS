@@ -4,7 +4,6 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
-//    "GADApplicationIdentifier": "$(GADApplicationIdentifier)",
     "CFBundleURLTypes": [
         [
             "CFBundleTypeRole": "Editor",
@@ -17,6 +16,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
         "kakaoplus",
         "kakaotalk",
     ],
+    "NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요.",
     "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
         "UISceneConfigurations": [
@@ -38,6 +38,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     ],
     // 사용 국가 지정
     "CFBundleDevelopmentRegion": "ko",
+    "NAVER_CLIENT_ID": "$(NAVER_CLIENT_ID)",
 ])
 
 let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
@@ -53,10 +54,23 @@ let projectSettings: Settings = .settings(
         "OTHER_LDFLAGS": ["-all_load -Objc"],
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "HZ8WU7PA4J",
+        "SWIFT_CONCURRENCY": "complete",
     ],
     configurations: [
-        .debug(name: "Debug", xcconfig: "App/Resources/Secrets/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "App/Resources/Secrets/Release.xcconfig"),
+        .debug(
+            name: "Debug",
+            settings: [
+                "DEBUG_INFORMATION_FORMAT": "dwarf",
+            ],
+            xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+        ),
+        .release(
+            name: "Release",
+            settings: [
+                "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+            ],
+            xcconfig: "App/Resources/Secrets/Release.xcconfig"
+        ),
     ],
     defaultSettings: .recommended
 )
@@ -88,7 +102,6 @@ let project = Project(
                 .external(name: "SnapKit"),
                 .external(name: "Tabman"),
                 .external(name: "Moya"),
-                .external(name: "Then"),
                 .external(name: "FSCalendar"),
                 .external(name: "Kingfisher"),
                 .external(name: "GoogleAppMeasurement"),
@@ -101,8 +114,8 @@ let project = Project(
                 .external(name: "KakaoSDKUser"),
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
-//                .external(name: "GoogleMobileAds"),
-
+                .external(name: "NMapsMap"),
+                
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
@@ -125,7 +138,6 @@ let project = Project(
                 .external(name: "SnapKit"),
                 .external(name: "Tabman"),
                 .external(name: "Moya"),
-                .external(name: "Then"),
                 .external(name: "FSCalendar"),
                 .external(name: "Kingfisher"),
                 .external(name: "GoogleAppMeasurement"),
@@ -138,8 +150,8 @@ let project = Project(
                 .external(name: "KakaoSDKUser"),
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
-                .external(name: "GoogleMobileAds"),
-
+                .external(name: "NMapsMap"),
+                
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
@@ -149,7 +161,7 @@ let project = Project(
             name: "EATSSUWidget-DEV",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.WidgetExtension",
+            bundleId: "com.jiwoo.EatSSU.EatSSUwidget",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
@@ -168,7 +180,7 @@ let project = Project(
             name: "EATSSUWidget-PROD",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.WidgetExtension",
+            bundleId: "com.jiwoo.EatSSU.EatSSUwidget",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],

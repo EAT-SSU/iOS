@@ -9,17 +9,21 @@ import UIKit
 
 import Moya
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 final class HomeRestaurantView: BaseUIView {
     // MARK: - UI Components
 
     let refreshControl = UIRefreshControl()
 
-    lazy var restaurantTableView = UITableView(frame: .zero, style: .insetGrouped).then {
-        $0.separatorStyle = .none
-        $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-    }
+    lazy var restaurantTableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.separatorStyle = .none
+        tableView.contentInset = .zero
+        tableView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        return tableView
+    }()
 
     // MARK: - init
 
@@ -37,8 +41,7 @@ final class HomeRestaurantView: BaseUIView {
 
     override func setLayout() {
         restaurantTableView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(45)
-            $0.leading.bottom.trailing.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
     }
 

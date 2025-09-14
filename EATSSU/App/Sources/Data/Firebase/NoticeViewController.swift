@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 /// FirebaseRemoteConfig 관련 ViewController
 class NoticeViewController: BaseViewController {

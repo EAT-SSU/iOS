@@ -7,10 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
-import Then
+
+import EATSSUDesign
 
 // TODO: - 추후 제거(StarRatingView으로 리팩됨)
 
@@ -41,21 +40,16 @@ final class RateNumberView: BaseUIView {
 
     override func configureUI() {
         addSubviews(rateNumberStackView)
-        starImageView.do {
-            $0.image = EATSSUDesignAsset.Images.icStarYellow.image
-        }
 
-        rateNumberLabel.do {
-            $0.text = "5"
-            $0.font = .body2
-            $0.textColor = EATSSUDesignAsset.Color.Main.primary.color
-        }
+        starImageView.image = EATSSUDesignAsset.Images.icStarYellow.image
 
-        rateNumberStackView.do {
-            $0.axis = .horizontal
-            $0.spacing = 3
-            $0.alignment = .top
-        }
+        rateNumberLabel.text = "5"
+        rateNumberLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
+        rateNumberLabel.textColor = EATSSUDesignAsset.Color.Main.primary.color
+
+        rateNumberStackView.axis = .horizontal
+        rateNumberStackView.spacing = 3
+        rateNumberStackView.alignment = .center
     }
 
     override func setLayout() {

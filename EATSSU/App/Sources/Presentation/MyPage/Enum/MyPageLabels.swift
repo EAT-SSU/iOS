@@ -12,7 +12,10 @@ enum MyPageLabels: Int {
     /// 푸시 알림 설정
     case NotificationSetting = 0
 
-    /// 내가 쓴 리뷰
+    /// 내 정보
+    case MyInfo
+    
+    /// 내 리뷰
     case MyReview
 
     /// 문의하기

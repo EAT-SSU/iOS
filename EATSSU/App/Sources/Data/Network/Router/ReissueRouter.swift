@@ -41,8 +41,7 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
     var headers: [String: String]? {
         switch self {
         default:
-            let realm = RealmService()
-            let refreshToken = realm.getRefreshToken()
+            let refreshToken = RealmService.shared.getRefreshToken()
             return ["Content-Type": "application/json",
                     "Authorization": "Bearer \(refreshToken)"]
         }
@@ -50,8 +49,8 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
 
     var authorizationType: Moya.AuthorizationType? {
         switch self {
-        default:
-            .bearer
+        case .reissuance:
+            return nil
         }
     }
 }

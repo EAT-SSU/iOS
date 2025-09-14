@@ -7,9 +7,9 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+
+import EATSSUDesign
 
 final class ReviewTableCell: UITableViewCell {
     // MARK: - Properties
@@ -67,7 +67,7 @@ final class ReviewTableCell: UITableViewCell {
 
     private let userProfileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "userProfile.svg")
+        imageView.image = EATSSUDesignAsset.Images.profile.image
         return imageView
     }()
 
@@ -147,7 +147,7 @@ final class ReviewTableCell: UITableViewCell {
         let stackView = UIStackView(arrangedSubviews: [userProfileImageView, infoStackView])
         stackView.axis = .horizontal
         stackView.spacing = 8.adjusted
-        stackView.alignment = .leading
+        stackView.alignment = .center
         return stackView
     }()
 
@@ -192,6 +192,10 @@ final class ReviewTableCell: UITableViewCell {
     }
 
     func setLayout() {
+        userProfileImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(30)
+        }
+        
         profileStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(5)
             make.leading.equalToSuperview().offset(16)
@@ -199,7 +203,7 @@ final class ReviewTableCell: UITableViewCell {
         }
 
         dateReportStackView.snp.makeConstraints { make in
-            make.top.equalTo(profileStackView)
+            make.centerY.equalTo(profileStackView)
             make.trailing.equalToSuperview().inset(16)
         }
 
@@ -233,21 +237,29 @@ extension ReviewTableCell {
         menuName = response.menu
         userNameLabel.text = response.writerNickname
         totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        quantityRateView.rateNumberLabel.text = "\(response.amountRating)"
-        tasteRateView.rateNumberLabel.text = "\(response.tasteRating)"
+        if response.tasteRating == nil {
+            tasteStackView.isHidden = true
+        } else {
+            tasteStackView.isHidden = false
+            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
+        }
+        
+        if response.amountRating == nil {
+            quantityStackView.isHidden = true
+        } else {
+            quantityStackView.isHidden = false
+            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
+        }
         dateLabel.text = response.writedAt
         reviewTextView.text = response.content
         reviewId = response.reviewID
-        if response.imgURLList.count != 0 {
-            if response.imgURLList[0] != "" {
-                foodImageView.isHidden = false
-                foodImageView.kfSetImage(url: response.imgURLList[0])
-            }
+        if let firstImageUrl = response.imgURLList.compactMap({ $0 }).first(where: { !$0.isEmpty }) {
+            foodImageView.isHidden = false
+            foodImageView.kfSetImage(url: firstImageUrl)
         } else {
             foodImageView.isHidden = true
         }
-
-        response.isWriter ? sideButton.setImage(ImageLiteral.greySideButton, for: .normal) : sideButton.setTitle("신고", for: .normal)
+        sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
     }
 
@@ -255,8 +267,19 @@ extension ReviewTableCell {
         userNameLabel.text = "\(nickname)"
         menuNameLabel.text = response.menuName
         totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        quantityRateView.rateNumberLabel.text = "\(response.amountRating)"
-        tasteRateView.rateNumberLabel.text = "\(response.tasteRating)"
+        if response.tasteRating == nil {
+            tasteStackView.isHidden = true
+        } else {
+            tasteStackView.isHidden = false
+            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
+        }
+        
+        if response.amountRating == nil {
+            quantityStackView.isHidden = true
+        } else {
+            quantityStackView.isHidden = false
+            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
+        }
         dateLabel.text = response.writeDate
         reviewTextView.text = response.content
         if response.imgURLList.count != 0 {
@@ -268,7 +291,7 @@ extension ReviewTableCell {
             foodImageView.isHidden = true
         }
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
-        sideButton.setImage(ImageLiteral.greySideButton, for: .normal)
+        sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.setTitle("", for: .normal)
         reviewId = response.reviewID
     }

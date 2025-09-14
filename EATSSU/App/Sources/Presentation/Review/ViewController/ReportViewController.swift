@@ -7,10 +7,10 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import Moya
 import SnapKit
+
+import EATSSUDesign
 
 final class ReportViewController: BaseViewController {
     // MARK: - Properties
@@ -234,18 +234,11 @@ final class ReportViewController: BaseViewController {
     }
 
     private func showSuccessAlert() {
-        let alert = UIAlertController(title: "리뷰 신고 성공",
-                                      message: "신고가 성공적으로 접수되었어요!",
-                                      preferredStyle: UIAlertController.Style.alert)
-
-        let okAction = UIAlertAction(title: "리뷰 화면으로 돌아가기",
-                                     style: .default,
-                                     handler: { [weak self] _ in
-                                         self?.navigationController?.popViewController(animated: true)
-                                     })
-
-        alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
+        // 신고 토스트로 변경
+        self.navigationController?.popViewController(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            self.view.window?.showToast(message: "신고가 성공적으로 접수되었어요!")
+        }
     }
 }
 
