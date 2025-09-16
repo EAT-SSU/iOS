@@ -37,9 +37,9 @@ final class HomeAnalyticsManager {
     private let restaurantNameMap: [String: String] = [
         TextLiteral.studentRestaurant: "haksik",
         TextLiteral.dodamRestaurant: "dodam",
-        TextLiteral.dormitoryRestaurant: "dorm",
+        TextLiteral.dormitoryRestaurant: "domitory",
         TextLiteral.facultyRestaurant: "faculty",
-        TextLiteral.snackCorner: "snack_bar"
+        TextLiteral.snackCorner: "snack_corner"
     ]
     
     // 식사 유형(한글) -> 영문 소문자 파라미터로 변환

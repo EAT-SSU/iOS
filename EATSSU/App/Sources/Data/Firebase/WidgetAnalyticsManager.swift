@@ -16,8 +16,8 @@ final class WidgetAnalyticsManager {
     // MARK: - App Group UserDefaults
     
     /// 위젯과 메인 앱이 데이터를 공유하기 위한 공간
-    private let userDefaults = UserDefaults(suiteName: "group.com.jiwoo.EatSSU.EatSSUwidget")
-
+    private let userDefaults = UserDefaults(suiteName: Bundle.main.infoDictionary?["AppGroupID"] as? String)
+    
     // MARK: - Event & Parameter Keys
     
     private enum Event {
@@ -40,7 +40,6 @@ final class WidgetAnalyticsManager {
         "학생식당": "haksik",
         "도담식당": "dodam",
         "기숙사 식당": "dormitory",
-        "FACULTY (교직원 전용)": "faculty",
         "교직원식당": "faculty"        
     ]
     

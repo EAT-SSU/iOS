@@ -4,6 +4,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
+    "AppGroupID": "$(APP_GROUP_ID)",
     "CFBundleURLTypes": [
         [
             "CFBundleTypeRole": "Editor",
@@ -47,6 +48,7 @@ let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
         "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
     ],
     "BASE_URL": "https://$(BASE_URL)",
+    "AppGroupID": "$(APP_GROUP_ID)",
 ])
 
 let projectSettings: Settings = .settings(

@@ -16,8 +16,8 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
     typealias Entry = ESEntry // 위젯에 표시될 데이터 구조체
 
     private let disposeBag = DisposeBag() // RxSwift의 메모리 관리를 위한 DisposeBag
-    private let userDefaults = UserDefaults(suiteName: "group.com.jiwoo.EatSSU.EatSSUwidget")
-
+    private let userDefaults = UserDefaults(suiteName: Bundle.main.infoDictionary?["AppGroupID"] as? String)
+    
     // 위젯이 처음 로드될 때 보여줄 기본 데이터
     func placeholder(in _: Context) -> ESEntry {
         let currentDate = Date()
