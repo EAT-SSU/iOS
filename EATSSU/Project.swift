@@ -4,6 +4,9 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
+    "UIBackgroundModes": [
+        "remote-notification"
+    ],
     "CFBundleURLTypes": [
         [
             "CFBundleTypeRole": "Editor",
