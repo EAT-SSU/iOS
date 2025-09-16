@@ -63,6 +63,12 @@ final class ReviewViewController: BaseViewController {
         getReviewRate()
         getReviewList(type: type, menuId: menuID)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_1)
+    }
 
     // MARK: - Functions
 

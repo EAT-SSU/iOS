@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -46,6 +47,12 @@ final class ChoiceMenuViewController: BaseViewController {
         /// pop한 후, 다시 메뉴를 선택할 경우를 방지하기 위하여 선택한 리스트를 초기화합니다
         selectedList = []
         selectedIDList = []
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_2)
     }
 
     // MARK: - Functions

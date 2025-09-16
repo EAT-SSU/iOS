@@ -9,7 +9,15 @@ import UIKit
 
 import Moya
 
+import FirebaseAnalytics
+
+enum SetNickNameSource {
+    case signup   // 첫 로그인/회원가입 시
+    case mypage   // 마이페이지-내 정보 시
+}
+
 final class SetNickNameViewController: BaseViewController {
+    var source: SetNickNameSource = .signup
     // MARK: - Properties
     
     private let nicknameProvider = MoyaProvider<UserNicknameRouter>(session: Session(interceptor: AuthInterceptor.shared))
@@ -36,6 +44,20 @@ final class SetNickNameViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNickNameView.setAccountInfo()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let screenId: String
+        switch source {
+        case .signup:
+            screenId = FirebaseScreenID.Login.log4
+        case .mypage:
+            screenId = FirebaseScreenID.MyPage.mypage3
+        }
+        
+        logScreenView(screenID: screenId)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

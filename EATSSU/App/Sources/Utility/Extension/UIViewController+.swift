@@ -8,6 +8,8 @@
 import SwiftUI
 import UIKit.UIViewController
 
+import FirebaseAnalytics
+
 #if DEBUG
     extension UIViewController {
         private struct Preview: UIViewControllerRepresentable {
@@ -128,4 +130,10 @@ extension UIViewController {
 
         present(alert, animated: true)
     }
+    
+    func logScreenView(screenID: String) {
+            Analytics.logEvent(AnalyticsEventScreenView,
+                               parameters: [AnalyticsParameterScreenName: screenID,
+                                           AnalyticsParameterScreenClass: String(describing: type(of: self))])
+        }
 }

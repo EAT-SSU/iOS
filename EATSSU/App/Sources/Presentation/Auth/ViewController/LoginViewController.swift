@@ -41,6 +41,8 @@ final class LoginViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         showToastMessageIfNeeded()
+        
+        logScreenView(screenID: FirebaseScreenID.Login.log3)
     }
 
     // MARK: - Functions
@@ -117,6 +119,7 @@ final class LoginViewController: BaseViewController {
         } else {
             // 닉네임 설정이 필요한 경우
             let setNicknameVC = SetNickNameViewController()
+            setNicknameVC.source = .signup
             navigationController?.pushViewController(setNicknameVC, animated: true)
         }
     }
