@@ -9,6 +9,7 @@ import AuthenticationServices
 import UIKit
 
 import Firebase
+import FirebaseMessaging
 import KakaoSDKCommon
 import NMapsMap
 import RealmSwift
@@ -22,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         setupNotificationPermissions()
         startNetworkMonitoring()
         configureFirebase()
+        setupFCM(application)
         handleAppleSignIn()
         initializeKakaoSDK()
         setupDebugConfigurations()
@@ -47,6 +49,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         completionHandler()
     }
     
+    // FCM: APNS 토큰 등록 성공
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("APNS token: \(deviceToken)")
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    // FCM: APNS 토큰 등록 실패
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications: \(error)")
+    }
+    
     // 네이버 맵 키 설정
     private func configureNaverMapAuth() {
         if let key = Bundle.main.infoDictionary?["NAVER_CLIENT_ID"] as? String {
@@ -56,7 +69,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             print("NAVER_CLIENT_ID 못 찾음")
         }
     }
-
 
     // MARK: - Private Methods
 
@@ -113,6 +125,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             print("Firebase Analytics: 릴리즈 환경에서 활성화됨")
         #endif
     }
+    
+    /// FCM(Firebase Cloud Messaging)을 설정합니다.
+    private func setupFCM(_ application: UIApplication) {
+        // FCM 메시징 델리게이트 설정
+        Messaging.messaging().delegate = self
+        
+        // 원격 알림 등록
+        application.registerForRemoteNotifications()
+    }
 
     /// Apple ID 인증 상태를 처리합니다.
     private func handleAppleSignIn() {
@@ -160,5 +181,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         // 앱 실행을 잠시 지연시킵니다. (필요한 경우)
         sleep(1)
+    }
+}
+
+// MARK: - UNUserNotificationCenterDelegate Extension
+extension AppDelegate {
+    // Foreground에서도 알림이 보이도록 설정
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound, .badge])
+    }
+}
+
+// MARK: - MessagingDelegate Extension
+extension AppDelegate: MessagingDelegate {
+    // FCM 토큰이 갱신될 때 호출
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("Firebase registration token: \(String(describing: fcmToken))")
+        
+        let dataDict: [String: String] = ["token": fcmToken ?? ""]
+        NotificationCenter.default.post(
+            name: Notification.Name("FCMToken"),
+            object: nil,
+            userInfo: dataDict
+        )
+        
+        // TODO: 필요시 서버에 토큰 전송
+        // 앱 시작시와 토큰이 새로 생성될 때마다 호출됩니다.
     }
 }
