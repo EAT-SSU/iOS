@@ -178,13 +178,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 extension AppDelegate {
     // Foreground에서도 알림이 보이도록 설정
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // iOS 14+ 에서는 .list, .banner 사용
-        if #available(iOS 14.0, *) {
-            completionHandler([.list, .banner, .sound])
-        } else {
-            // iOS 13 이하에서는 .alert 사용
-            completionHandler([.alert, .sound])
-        }
+        completionHandler([.banner, .sound, .badge])
     }
 }
 
