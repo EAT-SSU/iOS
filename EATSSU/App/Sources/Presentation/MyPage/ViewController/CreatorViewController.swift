@@ -10,6 +10,7 @@ import UIKit
 
 // External Module
 import SnapKit
+import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -29,6 +30,12 @@ class CreatorViewController: BaseViewController {
         super.viewDidLoad()
         
         setUpAction()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.MyPage.mypage5)
     }
 
     // MARK: - Methods

@@ -35,6 +35,12 @@ final class MyPageViewController: BaseViewController {
         setTableViewDelegate()
         loadSwitchStateFromUserDefaults()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.MyPage.mypage1)
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -226,6 +232,7 @@ extension MyPageViewController: UITableViewDelegate {
         // "내 정보" 스크린으로 이동
         case MyPageLabels.MyInfo.rawValue:
             let setNickNameVC = SetNickNameViewController()
+            setNickNameVC.source = .signup
             navigationController?.pushViewController(setNickNameVC, animated: true)
 
         // "내 리뷰" 스크린으로 이동

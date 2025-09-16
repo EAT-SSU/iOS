@@ -7,9 +7,10 @@
 
 import UIKit
 
-import EATSSUDesign
-
 import SnapKit
+import FirebaseAnalytics
+
+import EATSSUDesign
 
 /// 기본 스플래시 뷰
 class SplashViewController: BaseViewController {
@@ -25,6 +26,12 @@ class SplashViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.Login.log1)
     }
 
     // MARK: - UI Setup

@@ -9,6 +9,7 @@ import UIKit
 
 import Moya
 import SnapKit
+import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -32,6 +33,12 @@ final class ReportViewController: BaseViewController {
 
     override func viewWillAppear(_: Bool) {
         addKeyboardNotifications()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_5)
     }
 
     override func viewDidLoad() {

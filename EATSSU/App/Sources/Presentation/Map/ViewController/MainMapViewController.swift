@@ -9,6 +9,7 @@ import UIKit
 
 import NMapsMap
 import Moya
+import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -70,6 +71,12 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         // 초기 데이터 로드
         fetchDepartmentAndUpdateButton()
         fetchPartnerships()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.Map.map1)
     }
 
     override func viewWillAppear(_ animated: Bool) {

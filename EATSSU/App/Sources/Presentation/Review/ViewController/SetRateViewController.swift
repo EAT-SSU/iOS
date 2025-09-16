@@ -9,6 +9,7 @@ import UIKit
 
 import SnapKit
 import Moya
+import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -192,6 +193,15 @@ final class SetRateViewController: BaseViewController {
     override func viewWillAppear(_: Bool) {
         addKeyboardNotifications()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Review.V1.review_v1_3,
+                                       AnalyticsParameterScreenClass: "SetRateViewController"])
+    }
+
 
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()

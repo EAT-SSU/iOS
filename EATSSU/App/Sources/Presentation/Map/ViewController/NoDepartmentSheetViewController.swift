@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -81,6 +82,12 @@ final class NoDepartmentSheetViewController: BaseViewController {
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(5)
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        logScreenView(screenID: FirebaseScreenID.Map.map3)
     }
 
     override func setButtonEvent() {
