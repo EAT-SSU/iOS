@@ -46,7 +46,7 @@ final class HomeAnalyticsManager {
     private let mealTimeMap: [String: String] = [
         TextLiteral.morning: "breakfast",
         TextLiteral.lunch: "lunch",
-        TextLiteral.dinner: "diner"
+        TextLiteral.dinner: "dinner"
     ]
     
     // Date 객체 -> 요일(영문 소문자) 문자열로 변환
