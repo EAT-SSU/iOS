@@ -37,7 +37,7 @@ final class HomeAnalyticsManager {
     private let restaurantNameMap: [String: String] = [
         TextLiteral.studentRestaurant: "haksik",
         TextLiteral.dodamRestaurant: "dodam",
-        TextLiteral.dormitoryRestaurant: "domitory",
+        TextLiteral.dormitoryRestaurant: "dormitory",
         TextLiteral.facultyRestaurant: "faculty",
         TextLiteral.snackCorner: "snack_corner"
     ]

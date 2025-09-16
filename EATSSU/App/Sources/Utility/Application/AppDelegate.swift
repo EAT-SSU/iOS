@@ -102,10 +102,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     /// Firebase를 구성합니다.
     private func configureFirebase() {
         FirebaseApp.configure()
-#if DEBUG
-        Analytics.setAnalyticsCollectionEnabled(false)
-        print("🔥 Firebase Analytics collection is DISABLED for DEBUG builds.")
-#endif
     }
 
     /// Apple ID 인증 상태를 처리합니다.
@@ -148,7 +144,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     private func setupDebugConfigurations() {
         #if DEBUG
             var newArguments = ProcessInfo.processInfo.arguments
-            newArguments.append("-FIRDebugEnabled")
+            newArguments.append("-FIRAnalyticsDebugEnabled")
             ProcessInfo.processInfo.setValue(newArguments, forKey: "arguments")
         #endif
 
