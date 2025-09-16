@@ -121,31 +121,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // FCM 메시징 델리게이트 설정
         Messaging.messaging().delegate = self
         
-        // 푸시 알림 권한 요청
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-            options: authOptions,
-            completionHandler: { granted, error in
-                if let error = error {
-                    print("FCM 알림 권한 요청 실패: \(error)")
-                } else {
-                    print("FCM 알림 권한 허용됨: \(granted)")
-                }
-            }
-        )
-        
         // 원격 알림 등록
         application.registerForRemoteNotifications()
-        
-        // 현재 FCM 토큰 가져오기
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                print("FCM 토큰 가져오기 실패: \(error)")
-            } else if let token = token {
-                print("FCM registration token: \(token)")
-                // TODO: 필요시 서버에 토큰 전송
-            }
-        }
     }
 
     /// Apple ID 인증 상태를 처리합니다.
