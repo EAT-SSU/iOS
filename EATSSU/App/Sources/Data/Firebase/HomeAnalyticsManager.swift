@@ -38,8 +38,7 @@ final class HomeAnalyticsManager {
         TextLiteral.studentRestaurant: "haksik",
         TextLiteral.dodamRestaurant: "dodam",
         TextLiteral.dormitoryRestaurant: "dormitory",
-        TextLiteral.facultyRestaurant: "faculty",
-        TextLiteral.snackCorner: "snack_corner"
+        TextLiteral.facultyRestaurant: "faculty"
     ]
     
     // 식사 유형(한글) -> 영문 소문자 파라미터로 변환

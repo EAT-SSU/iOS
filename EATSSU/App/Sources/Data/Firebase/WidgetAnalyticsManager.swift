@@ -40,7 +40,7 @@ final class WidgetAnalyticsManager {
         "학생식당": "haksik",
         "도담식당": "dodam",
         "기숙사 식당": "dormitory",
-        "교직원식당": "faculty"        
+        "FACULTY (교직원 전용)": "faculty",
     ]
     
     private init() {}
