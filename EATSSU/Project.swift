@@ -64,6 +64,7 @@ let projectSettings: Settings = .settings(
             name: "Debug",
             settings: [
                 "DEBUG_INFORMATION_FORMAT": "dwarf",
+                "APS_ENVIRONMENT": "development",
             ],
             xcconfig: "App/Resources/Secrets/Debug.xcconfig"
         ),
@@ -71,6 +72,7 @@ let projectSettings: Settings = .settings(
             name: "Release",
             settings: [
                 "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+                "APS_ENVIRONMENT": "production",
             ],
             xcconfig: "App/Resources/Secrets/Release.xcconfig"
         ),
