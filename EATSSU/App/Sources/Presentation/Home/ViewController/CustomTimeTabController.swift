@@ -256,8 +256,8 @@ extension CustomTimeTabController: UIPageViewControllerDataSource, UIPageViewCon
               let index = viewControllers.firstIndex(of: visibleVC)
         else { return }
         // firebase - select_mealtime 이벤트 호출
-        let selectedmealTime = tabTitles[index]
-        HomeAnalyticsManager.shared.logSelectMealTime(mealTime: selectedmealTime)
+        let selectedMealTime = tabTitles[index]
+        HomeAnalyticsManager.shared.logSelectMealTime(mealTime: selectedMealTime)
         selectedIndex = index
     }
 }

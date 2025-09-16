@@ -32,6 +32,15 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     )
 
     private var markers: [NMFMarker] = []
+    
+    // MARK: - Map Mode Management
+    
+    private enum MapMode {
+        case all      // 전체 제휴
+        case myOnly   // 내 제휴만
+    }
+    
+    private var currentMapMode: MapMode = .all
 
     // MARK: - View Setup
     
@@ -86,6 +95,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         super.viewWillAppear(animated)
 
         // 항상 '전체' 버튼이 선택된 상태로 초기화
+        currentMapMode = .all
         root.selectWhole(true)
         fetchDepartmentAndUpdateButton()
         fetchPartnerships()
@@ -95,6 +105,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
 
     /// "전체" 버튼 탭 시 호출
     @objc private func didTapWhole() {
+        currentMapMode = .all
         setInitialCameraPosition(animated: true)
         root.selectWhole(true)
         fetchPartnerships()
@@ -106,8 +117,11 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             presentNoDepartmentSheet()
             return
         }
+        
+        currentMapMode = .myOnly
+        
         if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
-            //  firebase - click_map_mine 이벤트 호출
+            // firebase - click_map_mine 이벤트 호출
             MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
         }
         setInitialCameraPosition(animated: true)
@@ -124,9 +138,10 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     /// 외부에서 콘텐츠 새로고침 요청할 때 사용
     func reloadContent() {
         fetchDepartmentAndUpdateButton()
-        if root.wholeButton.backgroundColor == EATSSUDesignAsset.Color.Main.primary.color {
+        switch currentMapMode {
+        case .all:
             fetchPartnerships()
-        } else {
+        case .myOnly:
             fetchMyPartnerships()
         }
     }
@@ -180,11 +195,9 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             marker.touchHandler = { [weak self] _ in
                 guard let self = self else { return true }
 
-                let isMyPartnershipSelected = self.root.wholeButton.backgroundColor != EATSSUDesignAsset.Color.Main.primary.color
-
-                if isMyPartnershipSelected {
+                if self.currentMapMode == .myOnly {
                     if let partnerId = partnership.partnershipInfos.first?.id {
-                        //  firebase - click_partner_restaurant 이벤트 호출
+                        // firebase - click_partner_restaurant 이벤트 호출
                         MapAnalyticsManager.shared.logClickPartnerRestaurant(
                             collegeId: self.currentCollegeId,
                             majorId: self.currentDepartmentId,
