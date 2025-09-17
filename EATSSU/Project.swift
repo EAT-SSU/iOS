@@ -58,7 +58,7 @@ let projectSettings: Settings = .settings(
     base: [
         "OTHER_LDFLAGS": ["-all_load -Objc"],
         "DEVELOPMENT_LANGUAGE": "ko",
-        "DEVELOPMENT_TEAM": "HZ8WU7PA4J",
+        "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
     ],
     configurations: [
