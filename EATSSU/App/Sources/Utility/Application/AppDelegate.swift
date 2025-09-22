@@ -45,7 +45,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        LaunchSourceManager.shared.setSource(.localNotification)
+        let notification = response.notification
+        let userInfo = notification.request.content.userInfo
+        
+        // FCM 알림인지 확인
+        if isFCMNotification(userInfo) {
+            LaunchSourceManager.shared.setSource(.remoteNotification)
+        } else {
+            LaunchSourceManager.shared.setSource(.localNotification)
+        }
+        
         completionHandler()
     }
     
@@ -71,6 +80,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
     // MARK: - Private Methods
+    
+    /// FCM 알림인지 확인하는 메서드
+    private func isFCMNotification(_ userInfo: [AnyHashable: Any]) -> Bool {
+        // FCM 알림의 특징적인 키들을 확인
+        return userInfo["gcm.message_id"] != nil ||
+               userInfo["google.c.a.e"] != nil ||
+               userInfo["fcm_options"] != nil
+    }
 
     private func configureRealm() {
         let config = Realm.Configuration(

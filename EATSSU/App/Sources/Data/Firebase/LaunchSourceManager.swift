@@ -14,7 +14,6 @@ enum LaunchSource: String {
     case localNotification = "local_notification"
     case remoteNotification = "remote_notification"
     case widget
-    case background
 }
 
 final class LaunchSourceManager {
@@ -43,12 +42,8 @@ final class LaunchSourceManager {
             }
             return
         case .icon:
-            if self.source == .icon {
-                return
-            }
-            fallthrough
-        default:
-            break
+            self.source = source
+            return
         }
     }
     
@@ -87,15 +82,5 @@ final class LaunchSourceManager {
         }
         
         backgroundEntryTime = nil
-    }
-    
-    /// 백그라운드 복귀 시, 새로운 세션이 아니라면 launch_source를 background로 설정
-    func forceBackgroundIfNeeded() {
-        let isNewSession = checkNewSession()
-        // background 진입 감지
-        if !isNewSession {
-            self.source = .background
-            hasLogged = false
-        }
     }
 }

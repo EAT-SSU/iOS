@@ -81,14 +81,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         if isFromWidget {
             LaunchSourceManager.shared.setSource(.widget)
+            return
         }
 
         // 알림 응답으로 인해 실행된 경우
-        if connectionOptions.notificationResponse != nil {
-            LaunchSourceManager.shared.setSource(.localNotification)
+        if let notificationResponse = connectionOptions.notificationResponse {
+            let userInfo = notificationResponse.notification.request.content.userInfo
+            
+            // FCM 알림인지 확인
+            if isFCMNotification(userInfo) {
+                LaunchSourceManager.shared.setSource(.remoteNotification)
+            } else {
+                LaunchSourceManager.shared.setSource(.localNotification)
+            }
+            return
         }
+        
+        // 기본값은 icon
+        LaunchSourceManager.shared.setSource(.icon)
     }
 
+    /// FCM 알림인지 확인하는 메서드
+    private func isFCMNotification(_ userInfo: [AnyHashable: Any]) -> Bool {
+        // FCM 알림의 특징적인 키들을 확인
+        return userInfo["gcm.message_id"] != nil ||
+               userInfo["google.c.a.e"] != nil ||
+               userInfo["fcm_options"] != nil
+    }
+    
     /// userActivity의 activityType이 위젯 관련 타입인지 판별
     private func isWidgetActivityType(_ activityType: String) -> Bool {
         return activityType.contains("Intent") ||
@@ -103,12 +123,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let url = options.urlContexts.first?.url else { return false }
         return url.absoluteString.contains("from_widget")
     }
+    
     /// userActivity 기반 위젯 실행 여부 확인
     private func wasLaunchedFromWidgetActivity(_ options: UIScene.ConnectionOptions) -> Bool {
         return options.userActivities.contains { activity in
             isWidgetActivityType(activity.activityType)
         }
     }
+    
     /// 앱 그룹 UserDefaults를 통해 위젯 실행 여부 확인
     private func wasLaunchedFromWidgetDefaults() -> Bool {
         let sharedDefaults = UserDefaults(suiteName: "EATSSU_WidgetGroup")
@@ -129,10 +151,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     /// 앱이 포그라운드로 진입했을 때 실행 경로 확인
-    // SceneDelegate.swift
-
     private func handleForegroundTransition() {
-        LaunchSourceManager.shared.forceBackgroundIfNeeded()
         LaunchSourceManager.shared.logIfNeeded()
         WidgetAnalyticsManager.shared.sendPendingEvents()
     }
@@ -200,7 +219,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController?.present(alert, animated: true, completion: nil)
     }
     
-    /// 마지막 활성화 날짜와 비교해 “새로운 날”이면 알림을 보내고, 마지막 활성화 시간을 갱신
+    /// 마지막 활성화 날짜와 비교해 "새로운 날"이면 알림을 보내고, 마지막 활성화 시간을 갱신
     private func checkAndNotifyNewDay() {
         let defaults = UserDefaults.standard
         let calendar = Calendar.current
