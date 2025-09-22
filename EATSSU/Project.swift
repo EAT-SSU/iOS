@@ -4,6 +4,8 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
+    "AppGroupID": "$(APP_GROUP_ID)",
+    "FirebaseAutomaticScreenReportingEnabled": false,
     "UIBackgroundModes": [
         "remote-notification"
     ],
@@ -50,13 +52,14 @@ let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
         "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
     ],
     "BASE_URL": "https://$(BASE_URL)",
+    "AppGroupID": "$(APP_GROUP_ID)",
 ])
 
 let projectSettings: Settings = .settings(
     base: [
         "OTHER_LDFLAGS": ["-all_load -Objc"],
         "DEVELOPMENT_LANGUAGE": "ko",
-        "DEVELOPMENT_TEAM": "HZ8WU7PA4J",
+        "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
     ],
     configurations: [
@@ -168,14 +171,19 @@ let project = Project(
             name: "EATSSUWidget-DEV",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.EatSSUwidget",
+            bundleId: "com.jiwoo.EatSSU.EatSSUwidget2025",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
-            sources: ["Widget/Sources/**"],
+            sources: ["Widget/Sources/**",
+                      "App/Sources/Data/Firebase/WidgetAnalyticsManager.swift"
+                     ],
+            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "RxSwift"),
                 .external(name: "RxMoya"),
+                .external(name: "FirebaseAnalytics"),
+                .external(name: "GoogleAppMeasurement"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -187,14 +195,19 @@ let project = Project(
             name: "EATSSUWidget-PROD",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.EatSSUwidget",
+            bundleId: "com.jiwoo.EatSSU.EatSSUwidget2025",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
-            sources: ["Widget/Sources/**"],
+            sources: ["Widget/Sources/**",
+                      "App/Sources/Data/Firebase/WidgetAnalyticsManager.swift"
+                     ],
+            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "RxSwift"),
                 .external(name: "RxMoya"),
+                .external(name: "FirebaseAnalytics"),
+                .external(name: "GoogleAppMeasurement"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),

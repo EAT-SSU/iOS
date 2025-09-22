@@ -45,7 +45,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        LaunchSourceManager.shared.setSource(.localNotification)
+        let notification = response.notification
+        let userInfo = notification.request.content.userInfo
+        
+        // FCM 알림인지 확인
+        if isFCMNotification(userInfo) {
+            LaunchSourceManager.shared.setSource(.remoteNotification)
+        } else {
+            LaunchSourceManager.shared.setSource(.localNotification)
+        }
+        
         completionHandler()
     }
     
@@ -71,6 +80,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
     // MARK: - Private Methods
+    
+    /// FCM 알림인지 확인하는 메서드
+    private func isFCMNotification(_ userInfo: [AnyHashable: Any]) -> Bool {
+        // FCM 알림의 특징적인 키들을 확인
+        return userInfo["gcm.message_id"] != nil ||
+               userInfo["google.c.a.e"] != nil ||
+               userInfo["fcm_options"] != nil
+    }
 
     private func configureRealm() {
         let config = Realm.Configuration(
@@ -114,6 +131,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     /// Firebase를 구성합니다.
     private func configureFirebase() {
         FirebaseApp.configure()
+        
+        #if DEBUG
+            // 개발 환경에서는 Analytics 비활성화
+            Analytics.setAnalyticsCollectionEnabled(false)
+            print("Firebase Analytics: 개발 환경에서 비활성화됨")
+        #else
+            // 릴리즈 환경에서는 Analytics 활성화
+            Analytics.setAnalyticsCollectionEnabled(true)
+            print("Firebase Analytics: 릴리즈 환경에서 활성화됨")
+        #endif
     }
     
     /// FCM(Firebase Cloud Messaging)을 설정합니다.
@@ -165,7 +192,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     private func setupDebugConfigurations() {
         #if DEBUG
             var newArguments = ProcessInfo.processInfo.arguments
-            newArguments.append("-FIRDebugEnabled")
+            newArguments.append("-FIRAnalyticsDebugEnabled")
             ProcessInfo.processInfo.setValue(newArguments, forKey: "arguments")
         #endif
 

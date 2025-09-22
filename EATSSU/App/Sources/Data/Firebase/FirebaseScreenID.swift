@@ -26,16 +26,16 @@ enum FirebaseScreenID {
     enum Review {
 
         enum V1 {
-                static let review_v1_1 = "REV_001000_v1"
-                static let review_v1_2 = "REV_001001_v1"
-                static let review_v1_3 = "REV_001002_v1"
-                static let review_v1_4 = "REV_001003_v1"
+                static let review_v1_1 = "REV_001000_V1"
+                static let review_v1_2 = "REV_001001_V1"
+                static let review_v1_3 = "REV_001002_V1"
+                static let review_v1_4 = "REV_001003_V1"
                 static let review_v1_5 = "REV_002000"
         }
         
         enum V2 {
-                static let review_v2_1 = "REV_001000_v2"
-                static let review_v3_1 = "REV_001000_v3"
+                static let review_v2_1 = "REV_001000_V2"
+                static let review_v3_1 = "REV_001000_V3"
                 static let review_v2_3 = "REV_001001"
                 static let review_v2_4 = "REV_003001"
                 static let review_v2_5 = "REV_001003"

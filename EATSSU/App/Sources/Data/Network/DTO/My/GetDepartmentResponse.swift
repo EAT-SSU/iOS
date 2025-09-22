@@ -8,5 +8,8 @@
 import Foundation
 
 struct GetDepartmentResponse: Codable {
+    let departmentId: Int
     let departmentName: String
+    let collegeId: Int
+    let collegeName: String
 }

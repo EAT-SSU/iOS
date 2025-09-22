@@ -76,6 +76,12 @@ enum TextLiteral {
     static let snackCornerRawValue: String = "SNACK_CORNER"
     static let facultyRestaurantRawValue: String = "FACULTY"
     static let lunchRawValue: String = "LUNCH"
+    
+    // MARK: - Time
+
+    static let morning: String = "아침"
+    static let lunch: String = "점심"
+    static let dinner: String = "저녁"
 
     // MARK: - MyPage
 
