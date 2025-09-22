@@ -12,6 +12,7 @@ import FirebaseAnalytics
 enum LaunchSource: String {
     case icon
     case localNotification = "local_notification"
+    case remoteNotification = "remote_notification"
     case widget
     case background
 }
@@ -31,10 +32,10 @@ final class LaunchSourceManager {
     func setSource(_ source: LaunchSource) {
         print("소스 설정 시도: \(source.rawValue) (현재 소스: \(self.source.rawValue), 로깅 상태: \(hasLogged))")
         
-        // 알림 또는 위젯을 통해 실행된 경우, 항상 우선적으로 해당 소스로 설정
+        // 알림, 위젯을 통해 실행된 경우, 항상 우선적으로 해당 소스로 설정
         // 명시적으로 설정된 실행 경로가 없을 경우 기본값은 .icon
         switch source {
-        case .localNotification, .widget:
+        case .localNotification, .remoteNotification, .widget:
             let changed = self.source != source
             self.source = source
             if changed {
@@ -90,7 +91,7 @@ final class LaunchSourceManager {
     
     /// 백그라운드 복귀 시, 새로운 세션이 아니라면 launch_source를 background로 설정
     func forceBackgroundIfNeeded() {
-        let isNewSession = checkNewSession()        
+        let isNewSession = checkNewSession()
         // background 진입 감지
         if !isNewSession {
             self.source = .background
