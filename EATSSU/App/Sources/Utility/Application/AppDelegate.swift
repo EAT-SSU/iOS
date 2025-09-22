@@ -114,6 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     /// Firebase를 구성합니다.
     private func configureFirebase() {
         FirebaseApp.configure()
+        Analytics.setAnalyticsCollectionEnabled(true)
     }
     
     /// FCM(Firebase Cloud Messaging)을 설정합니다.
@@ -166,6 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         #if DEBUG
             var newArguments = ProcessInfo.processInfo.arguments
             newArguments.append("-FIRDebugEnabled")
+            newArguments.append("-FIRAnalyticsDebugEnabled")
             ProcessInfo.processInfo.setValue(newArguments, forKey: "arguments")
         #endif
 

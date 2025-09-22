@@ -56,7 +56,7 @@ let projectSettings: Settings = .settings(
     base: [
         "OTHER_LDFLAGS": ["-all_load -Objc"],
         "DEVELOPMENT_LANGUAGE": "ko",
-        "DEVELOPMENT_TEAM": "HZ8WU7PA4J",
+        "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
     ],
     configurations: [
@@ -168,7 +168,7 @@ let project = Project(
             name: "EATSSUWidget-DEV",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.EatSSUwidget",
+            bundleId: "com.jiwoo.EatSSU.EatSSUwidget2025",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
@@ -187,7 +187,7 @@ let project = Project(
             name: "EATSSUWidget-PROD",
             destinations: [.iPhone],
             product: .appExtension,
-            bundleId: "com.jiwoo.EatSSU.EatSSUwidget",
+            bundleId: "com.jiwoo.EatSSU.EatSSUwidget2025",
             deploymentTargets: widgetDeploymentTarget,
             infoPlist: widgetInfoPlist,
             sources: ["Widget/Sources/**"],
