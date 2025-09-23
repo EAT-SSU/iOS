@@ -73,11 +73,6 @@ final class MyPageViewController: BaseViewController {
 
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
-
-        #if DEBUG
-        #else
-            Analytics.logEvent("MypageViewControllerLoad", parameters: nil)
-        #endif
     }
     
     @objc

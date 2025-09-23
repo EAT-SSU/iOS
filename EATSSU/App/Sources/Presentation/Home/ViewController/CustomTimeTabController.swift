@@ -190,6 +190,9 @@ final class CustomTimeTabController: BaseViewController {
 
     @objc private func tabButtonTapped(_ sender: UIButton) {
         guard selectedIndex != sender.tag else { return }
+        //  firebase - select_mealtime 이벤트 호출
+        let selectedMealTime = tabTitles[sender.tag]
+        HomeAnalyticsManager.shared.logSelectMealTime(mealTime: selectedMealTime)
         isProgrammaticScroll = true
         selectedIndex = sender.tag
     }
@@ -252,6 +255,9 @@ extension CustomTimeTabController: UIPageViewControllerDataSource, UIPageViewCon
               let visibleVC = pageViewController.viewControllers?.first,
               let index = viewControllers.firstIndex(of: visibleVC)
         else { return }
+        // firebase - select_mealtime 이벤트 호출
+        let selectedMealTime = tabTitles[index]
+        HomeAnalyticsManager.shared.logSelectMealTime(mealTime: selectedMealTime)
         selectedIndex = index
     }
 }
@@ -276,6 +282,11 @@ extension CustomTimeTabController: UIScrollViewDelegate {
 
 extension CustomTimeTabController: CalendarSeletionDelegate {
     func didSelectCalendar(date: Date) {
+        // firebase - select_day 이벤트 호출
+        HomeAnalyticsManager.shared.logSelectDay(date: date)
+        let currentMealTime = self.tabTitles[self.selectedIndex]
+        // firebase - select_mealtime 이벤트 호출
+        HomeAnalyticsManager.shared.logSelectMealTime(mealTime: currentMealTime)
         updateDate(to: date)
     }
 }

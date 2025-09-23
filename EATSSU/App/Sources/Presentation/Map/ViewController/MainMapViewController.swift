@@ -20,6 +20,9 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     private let root = MainMapView()
     private let locationManager = CLLocationManager()
     private var currentDepartmentName: String?
+    
+    private var currentDepartmentId: Int?
+    private var currentCollegeId: Int?
 
     private let partnershipProvider = MoyaProvider<PartnershipRouter>(
         session: Session(interceptor: AuthInterceptor.shared)
@@ -29,6 +32,15 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     )
 
     private var markers: [NMFMarker] = []
+    
+    // MARK: - Map Mode Management
+    
+    private enum MapMode {
+        case all      // 전체 제휴
+        case myOnly   // 내 제휴만
+    }
+    
+    private var currentMapMode: MapMode = .all
 
     // MARK: - View Setup
     
@@ -83,6 +95,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         super.viewWillAppear(animated)
 
         // 항상 '전체' 버튼이 선택된 상태로 초기화
+        currentMapMode = .all
         root.selectWhole(true)
         fetchDepartmentAndUpdateButton()
         fetchPartnerships()
@@ -92,6 +105,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
 
     /// "전체" 버튼 탭 시 호출
     @objc private func didTapWhole() {
+        currentMapMode = .all
         setInitialCameraPosition(animated: true)
         root.selectWhole(true)
         fetchPartnerships()
@@ -102,6 +116,13 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         guard !(currentDepartmentName?.isEmpty ?? true) else {
             presentNoDepartmentSheet()
             return
+        }
+        
+        currentMapMode = .myOnly
+        
+        if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
+            // firebase - click_map_mine 이벤트 호출
+            MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
         }
         setInitialCameraPosition(animated: true)
         root.selectWhole(false)
@@ -117,9 +138,10 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     /// 외부에서 콘텐츠 새로고침 요청할 때 사용
     func reloadContent() {
         fetchDepartmentAndUpdateButton()
-        if root.wholeButton.backgroundColor == EATSSUDesignAsset.Color.Main.primary.color {
+        switch currentMapMode {
+        case .all:
             fetchPartnerships()
-        } else {
+        case .myOnly:
             fetchMyPartnerships()
         }
     }
@@ -171,6 +193,19 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             marker.height = CGFloat(UInt32(markerImage.size.height))
 
             marker.touchHandler = { [weak self] _ in
+                guard let self = self else { return true }
+
+                if self.currentMapMode == .myOnly {
+                    if let partnerId = partnership.partnershipInfos.first?.id {
+                        // firebase - click_partner_restaurant 이벤트 호출
+                        MapAnalyticsManager.shared.logClickPartnerRestaurant(
+                            collegeId: self.currentCollegeId,
+                            majorId: self.currentDepartmentId,
+                            partnerId: partnerId
+                        )
+                    }
+                }
+
                 let sheetVC = PartnershipDetailSheetViewController(
                     storeName: partnership.storeName,
                     restaurantType: partnership.restaurantType,
@@ -191,7 +226,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
                     sheet.prefersGrabberVisible = true
                 }
 
-                self?.present(sheetVC, animated: true)
+                self.present(sheetVC, animated: true)
                 
                 return true
             }
@@ -199,7 +234,7 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             markers.append(marker)
         }
     }
-
+    
     /// 마커에 들어갈 커스텀 이미지 생성
     private func makeMarkerImage(type: String, title: String) -> UIImage {
         let icon: UIImage? = {
@@ -244,18 +279,24 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
             case .success(let response):
                 do {
                     let decoded = try response.map(BaseResponse<GetDepartmentResponse>.self)
-                    let department = decoded.result?.departmentName ?? ""
-                    self?.currentDepartmentName = department
-                    let buttonTitle = department.isEmpty ? "내 제휴" : department
+                    let departmentName = decoded.result?.departmentName ?? ""
+                    self?.currentDepartmentName = departmentName
+                    self?.currentDepartmentId = decoded.result?.departmentId
+                    self?.currentCollegeId = decoded.result?.collegeId
+                    let buttonTitle = departmentName.isEmpty ? "내 제휴" : departmentName
                     self?.root.myOnlyButton.setTitle(buttonTitle, for: .normal)
                 } catch {
                     print("학과 디코딩 실패: \(error)")
                     self?.currentDepartmentName = nil
+                    self?.currentDepartmentId = nil
+                    self?.currentCollegeId = nil
                     self?.root.myOnlyButton.setTitle("내 제휴", for: .normal)
                 }
             case .failure(let error):
                 print("학과 API 실패: \(error)")
                 self?.currentDepartmentName = nil
+                self?.currentDepartmentId = nil
+                self?.currentCollegeId = nil
                 self?.root.myOnlyButton.setTitle("내 제휴", for: .normal)
             }
         }

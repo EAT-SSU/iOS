@@ -207,7 +207,6 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         return 1
     }
 
-
     // 셀 구성
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
@@ -235,6 +234,13 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         }
 
         let restaurant = getSectionKey(for: section)
+        
+        // firebase - click_menu 이벤트 호출
+        if section < sectionHeaderRestaurant.count {
+            let restaurantName = sectionHeaderRestaurant[section]
+            HomeAnalyticsManager.shared.logClickMenu(restaurantName: restaurantName)
+        }
+        
         let isSnackCorner = (restaurant == Restaurant.snackCorner.identifier)
 
         var reviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
@@ -298,6 +304,8 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         header.infoButton.addAction(
             UIAction(title: "", image: nil, identifier: Self.infoActionID, handler: { [weak self] _ in
                 guard let self else { return }
+                // firebase - click_restaurant_info 이벤트 호출
+                HomeAnalyticsManager.shared.logClickRestaurantInfo(restaurantName: restaurantName)
                 let vc = RestaurantInfoViewController()
                 vc.modalPresentationStyle = .pageSheet
                 vc.sheetPresentationController?.prefersGrabberVisible = true
