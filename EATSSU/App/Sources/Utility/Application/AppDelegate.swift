@@ -192,6 +192,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     private func setupDebugConfigurations() {
         #if DEBUG
             var newArguments = ProcessInfo.processInfo.arguments
+            newArguments.append("-FIRDebugEnabled")
             newArguments.append("-FIRAnalyticsDebugEnabled")
             ProcessInfo.processInfo.setValue(newArguments, forKey: "arguments")
         #endif
