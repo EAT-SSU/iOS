@@ -106,15 +106,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     private func setupNotificationPermissions() {
         NotificationManager.shared.requestNotificationPermission { granted in
             let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
+            
+            let hasExistingSetting = UserDefaults.standard.object(forKey: userSettingKey) != nil
             let isAppPermissionGranted = UserDefaults.standard.bool(forKey: userSettingKey)
 
             if granted {
-                if isAppPermissionGranted {
+                if !hasExistingSetting || isAppPermissionGranted {
                     NotificationManager.shared.scheduleWeekday11AMNotification()
                     UserDefaults.standard.set(true, forKey: userSettingKey)
                 } else {
                     NotificationManager.shared.cancelWeekday11AMNotification()
-                    UserDefaults.standard.set(false, forKey: userSettingKey)
                 }
             } else {
                 NotificationManager.shared.cancelWeekday11AMNotification()
