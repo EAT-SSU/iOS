@@ -104,22 +104,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     /// 푸시 알림 권한을 요청하고 설정을 처리합니다.
     private func setupNotificationPermissions() {
-        NotificationManager.shared.requestNotificationPermission { granted in
-            let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
-            
-            let hasExistingSetting = UserDefaults.standard.object(forKey: userSettingKey) != nil
-            let isAppPermissionGranted = UserDefaults.standard.bool(forKey: userSettingKey)
+        _Concurrency.Task {
+            do {
+                let granted = try await NotificationManager.shared.requestNotificationPermission()
+                
+                let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
+                
+                let hasExistingSetting = UserDefaults.standard.object(forKey: userSettingKey) != nil
+                let isAppPermissionGranted = UserDefaults.standard.bool(forKey: userSettingKey)
 
-            if granted {
-                if !hasExistingSetting || isAppPermissionGranted {
-                    NotificationManager.shared.scheduleWeekday11AMNotification()
-                    UserDefaults.standard.set(true, forKey: userSettingKey)
+                if granted {
+                    if !hasExistingSetting || isAppPermissionGranted {
+                        NotificationManager.shared.scheduleWeekday11AMNotification()
+                        UserDefaults.standard.set(true, forKey: userSettingKey)
+                    } else {
+                        NotificationManager.shared.cancelWeekday11AMNotification()
+                    }
                 } else {
                     NotificationManager.shared.cancelWeekday11AMNotification()
+                    UserDefaults.standard.set(false, forKey: userSettingKey)
                 }
-            } else {
+            } catch {
+                // 권한 요청 실패 시 처리
+                print("알림 권한 요청 실패: \(error)")
                 NotificationManager.shared.cancelWeekday11AMNotification()
-                UserDefaults.standard.set(false, forKey: userSettingKey)
+                UserDefaults.standard.set(false, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
             }
         }
     }

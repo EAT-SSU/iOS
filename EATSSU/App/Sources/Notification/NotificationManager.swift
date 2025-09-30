@@ -7,6 +7,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 class NotificationManager {
     // MARK: - Properties
@@ -67,21 +68,84 @@ class NotificationManager {
     }
 
     /// 앱 실행 시 알림 발송 권한을 요청하는 팝업 호출 메소드
-    func requestNotificationPermission(completion: @escaping (_ granted: Bool) -> Void) {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            granted, _ in
-            completion(granted)
-        }
+    func requestNotificationPermission() async throws -> Bool {
+        return try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
     }
 
     /// OS 단계에서 알림 수신 설정을 확인하는 메소드
-    func checkNotificationSetting(completion: @escaping (_ setting: UNNotificationSettings) -> Void) {
-        // 현재 UNUserNotificationCenter 인스턴스 가져오기
-        let notificationCenter = UNUserNotificationCenter.current()
+    func checkNotificationSetting() async -> UNNotificationSettings {
+        return await UNUserNotificationCenter.current().notificationSettings()
+    }
+    
+    /// OS 알림 권한이 거부되었을 때 설정 앱으로 이동
+    func openAppSettings() {
+        if let appSettings = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(appSettings)
+        }
+    }
 
-        // 알림 설정을 비동기적으로 확인
-        notificationCenter.getNotificationSettings { settings in
-            completion(settings)
+    /// 알림 권한 상태에 따라 적절한 액션을 수행하고 결과를 반환
+    func handleNotificationToggle(currentState: Bool) async throws -> Bool {
+        let settings = await checkNotificationSetting()
+        
+        switch settings.authorizationStatus {
+        case .denied:
+            throw NotificationError.permissionDenied
+            
+        case .authorized, .provisional, .ephemeral:
+            let newState = !currentState
+            
+            if newState {
+                scheduleWeekday11AMNotification()
+            } else {
+                cancelWeekday11AMNotification()
+            }
+            
+            return newState
+            
+        case .notDetermined:
+            let granted = try await requestNotificationPermission()
+            
+            if granted {
+                scheduleWeekday11AMNotification()
+                return true
+            } else {
+                throw NotificationError.permissionDenied
+            }
+            
+        @unknown default:
+            throw NotificationError.unknown
+        }
+    }
+    
+    /// OS 알림 설정 화면으로 이동
+    func openNotificationSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    // MARK: - Error Types
+    enum NotificationError: Error {
+        case permissionDenied
+        case unknown
+        
+        var message: String {
+            switch self {
+            case .permissionDenied:
+                return "알림 권한 필요"
+            case .unknown:
+                return "알 수 없는 오류"
+            }
+        }
+        
+        var description: String {
+            switch self {
+            case .permissionDenied:
+                return "알림을 받으려면 설정에서 알림 권한을 허용해주세요."
+            case .unknown:
+                return "다시 시도해주세요."
+            }
         }
     }
 }
