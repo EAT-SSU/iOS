@@ -130,6 +130,7 @@ let project = Project(
             ],
             settings: .settings(
                 base: [
+                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
                     "DEVELOPMENT_TEAM": "BBVZV8T99P",
                     "CODE_SIGN_STYLE": "Manual"
                 ],
@@ -182,6 +183,7 @@ let project = Project(
             ],
             settings: .settings(
                 base: [
+                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
                     "DEVELOPMENT_TEAM": "BBVZV8T99P",
                     "CODE_SIGN_STYLE": "Manual"
                 ],
@@ -221,6 +223,7 @@ let project = Project(
             ],
             settings: .settings(
                 base: [
+                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
                     "DEVELOPMENT_TEAM": "BBVZV8T99P",
                     "CODE_SIGN_STYLE": "Manual"
                 ],
@@ -260,6 +263,7 @@ let project = Project(
             ],
             settings: .settings(
                 base: [
+                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
                     "DEVELOPMENT_TEAM": "BBVZV8T99P",
                     "CODE_SIGN_STYLE": "Manual"
                 ],
