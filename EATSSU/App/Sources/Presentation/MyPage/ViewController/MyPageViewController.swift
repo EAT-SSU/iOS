@@ -274,13 +274,12 @@ extension MyPageViewController: UITableViewDelegate {
                 
             } catch let error as NotificationManager.NotificationError {
                 await MainActor.run {
-                    if case .permissionDenied = error {
+                    switch error {
+                    case .permissionDenied:
                         self.showNotificationPermissionAlert()
+                    case .unknown:
+                        self.view.showToast(message: "알림 설정 중 오류가 발생했습니다.")
                     }
-                }
-            } catch {
-                await MainActor.run {
-                    self.showNotificationPermissionAlert()
                 }
             }
         }
