@@ -61,6 +61,7 @@ let projectSettings: Settings = .settings(
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
+        "CODE_SIGN_STYLE": "Manual"
     ],
     configurations: [
         .debug(
@@ -68,6 +69,8 @@ let projectSettings: Settings = .settings(
             settings: [
                 "DEBUG_INFORMATION_FORMAT": "dwarf",
                 "APS_ENVIRONMENT": "development",
+                "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                "CODE_SIGN_IDENTITY": "Apple Development"
             ],
             xcconfig: "App/Resources/Secrets/Debug.xcconfig"
         ),
@@ -76,6 +79,8 @@ let projectSettings: Settings = .settings(
             settings: [
                 "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
                 "APS_ENVIRONMENT": "production",
+                "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                "CODE_SIGN_IDENTITY": "Apple Distribution"
             ],
             xcconfig: "App/Resources/Secrets/Release.xcconfig"
         ),
@@ -128,7 +133,22 @@ let project = Project(
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
-            settings: projectSettings
+            settings: .settings(
+                base: [
+                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
+                    "CODE_SIGN_STYLE": "Manual"
+                ],
+                configurations: [
+                    .debug(name: "Debug", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                        "CODE_SIGN_IDENTITY": "Apple Development"
+                    ]),
+                    .release(name: "Release", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                        "CODE_SIGN_IDENTITY": "Apple Distribution"
+                    ])
+                ]
+            )
         ),
         .target(
             name: "EATSSU-PROD",
@@ -165,7 +185,22 @@ let project = Project(
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
-            settings: projectSettings
+            settings: .settings(
+                base: [
+                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
+                    "CODE_SIGN_STYLE": "Manual"
+                ],
+                configurations: [
+                    .debug(name: "Debug", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                        "CODE_SIGN_IDENTITY": "Apple Development"
+                    ]),
+                    .release(name: "Release", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                        "CODE_SIGN_IDENTITY": "Apple Distribution"
+                    ])
+                ]
+            )
         ),
         .target(
             name: "EATSSUWidget-DEV",
@@ -189,7 +224,22 @@ let project = Project(
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
 
             ],
-            settings: projectSettings
+            settings: .settings(
+                base: [
+                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
+                    "CODE_SIGN_STYLE": "Manual"
+                ],
+                configurations: [
+                    .debug(name: "Debug", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
+                        "CODE_SIGN_IDENTITY": "Apple Development"
+                    ]),
+                    .release(name: "Release", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
+                        "CODE_SIGN_IDENTITY": "Apple Distribution"
+                    ])
+                ]
+            )
         ),
         .target(
             name: "EATSSUWidget-PROD",
@@ -213,7 +263,22 @@ let project = Project(
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
 
             ],
-            settings: projectSettings
+            settings: .settings(
+                base: [
+                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
+                    "CODE_SIGN_STYLE": "Manual"
+                ],
+                configurations: [
+                    .debug(name: "Debug", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
+                        "CODE_SIGN_IDENTITY": "Apple Development"
+                    ]),
+                    .release(name: "Release", settings: [
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
+                        "CODE_SIGN_IDENTITY": "Apple Distribution"
+                    ])
+                ]
+            )
         ),
 
         .target(
