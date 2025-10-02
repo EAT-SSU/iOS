@@ -105,10 +105,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     /// 푸시 알림 권한을 요청하고 설정을 처리합니다.
     private func setupNotificationPermissions() {
         _Concurrency.Task {
+            let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
             do {
                 let granted = try await NotificationManager.shared.requestNotificationPermission()
-                
-                let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
                 
                 let hasExistingSetting = UserDefaults.standard.object(forKey: userSettingKey) != nil
                 let isAppPermissionGranted = UserDefaults.standard.bool(forKey: userSettingKey)
@@ -125,10 +124,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                     UserDefaults.standard.set(false, forKey: userSettingKey)
                 }
             } catch {
-                // 권한 요청 실패 시 처리
                 print("알림 권한 요청 실패: \(error)")
                 NotificationManager.shared.cancelWeekday11AMNotification()
-                UserDefaults.standard.set(false, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+                UserDefaults.standard.set(false, forKey: userSettingKey) 
             }
         }
     }
