@@ -135,7 +135,6 @@ extension MyPageViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         myPageTableLabelList.count
     }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == MyPageLabels.NotificationSetting.rawValue {
             let cell = tableView
@@ -143,22 +142,22 @@ extension MyPageViewController: UITableViewDataSource {
                     withIdentifier: NotificationSettingTableViewCell.identifier,
                     for: indexPath
                 ) as! NotificationSettingTableViewCell
-
-            NotificationManager.shared.checkNotificationSetting { setting in
-                switch setting.authorizationStatus {
-                case .authorized, .notDetermined, .provisional, .ephemeral:
-                    DispatchQueue.main.async {
+            
+            // Task로 비동기 작업 처리
+            _Concurrency.Task {
+                let settings = await NotificationManager.shared.checkNotificationSetting()
+                
+                await MainActor.run {
+                    switch settings.authorizationStatus {
+                    case .authorized, .notDetermined, .provisional, .ephemeral:
                         cell.toggleSwitch.setOn(self.switchState, animated: true)
-                    }
-                case .denied:
-                    DispatchQueue.main.async {
+                    case .denied:
                         cell.toggleSwitch.setOn(false, animated: true)
+                    @unknown default:
+                        fatalError()
                     }
-                @unknown default:
-                    fatalError()
                 }
             }
-
             return cell
         } else {
             let cell = tableView
@@ -166,7 +165,7 @@ extension MyPageViewController: UITableViewDataSource {
                     withIdentifier: MyPageTableDefaultCell.identifier,
                     for: indexPath
                 ) as! MyPageTableDefaultCell
-
+            
             let title = myPageTableLabelList[indexPath.row].titleLabel
             cell.serviceLabel.text = title
             return cell
@@ -187,42 +186,7 @@ extension MyPageViewController: UITableViewDelegate {
         switch indexPath.row {
         // "푸시 알림 설정" 스위치 토글
         case MyPageLabels.NotificationSetting.rawValue:
-            NotificationManager.shared.checkNotificationSetting { setting in
-                switch setting.authorizationStatus {
-                case .denied:
-                    DispatchQueue.main.async {
-                        self.view.showToast(message: TextLiteral.MyPage.authorizeNotificationSettingMessage)
-                    }
-                default:
-                    DispatchQueue.main.async {
-                        guard let cell = tableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell else { return }
-                        // 현재 스위치 상태를 반전
-                        let newSwitchState = !self.switchState
-                        cell.toggleSwitch.setOn(newSwitchState, animated: true)
-
-                        // 스위치 상태를 업데이트
-                        self.switchState = newSwitchState
-
-                        let currentDate = Date()
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-                        let formattedDate = dateFormatter.string(from: currentDate)
-
-                        if self.switchState {
-                            print("푸시 알림을 발송합니다.")
-                            NotificationManager.shared.scheduleWeekday11AMNotification()
-                            self.view.showToast(message: "EAT-SSU 알림 수신을 동의하였습니다.\n(\(formattedDate))")
-                        } else {
-                            print("푸시 알림을 발송하지 않습니다.")
-                            NotificationManager.shared.cancelWeekday11AMNotification()
-                            self.view.showToast(message: "EAT-SSU 알림 수신을 거절하였습니다.\n(\(formattedDate))")
-                        }
-
-                        // UserDefaults에 상태 저장
-                        self.saveSwitchStateToUserDefaults()
-                    }
-                }
-            }
+            handleNotificationSettingToggle(at: indexPath)
             
         // "내 정보" 스크린으로 이동
         case MyPageLabels.MyInfo.rawValue:
@@ -277,5 +241,69 @@ extension MyPageViewController: UITableViewDelegate {
         default:
             return
         }
+    }
+    
+    /// 알림 설정 토글 처리
+    private func handleNotificationSettingToggle(at indexPath: IndexPath) {
+        _Concurrency.Task {
+            do {
+                let newState = try await NotificationManager.shared.handleNotificationToggle(currentState: switchState)
+                
+                // 메인 스레드에서 UI 업데이트
+                await MainActor.run {
+                    // 스위치 상태 업데이트
+                    self.switchState = newState
+                    self.saveSwitchStateToUserDefaults()
+                    
+                    // UI 업데이트
+                    if let cell = self.mypageView.myPageTableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell {
+                        cell.toggleSwitch.setOn(newState, animated: true)
+                    }
+                    
+                    // 토스트 메시지
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+                    let formattedDate = dateFormatter.string(from: Date())
+                    
+                    let message = newState
+                        ? "EAT-SSU 알림 수신을 동의하였습니다.\n(\(formattedDate))"
+                        : "EAT-SSU 알림 수신을 거절하였습니다.\n(\(formattedDate))"
+                    
+                    self.view.showToast(message: message)
+                }
+                
+            } catch let error as NotificationManager.NotificationError {
+                await MainActor.run {
+                    switch error {
+                    case .permissionDenied:
+                        self.showNotificationPermissionAlert()
+                    case .unknown:
+                        self.view.showToast(message: "알림 설정 중 오류가 발생했습니다.")
+                    }
+                }
+            }
+        }
+    }
+    
+    /// 알림 권한 설정 Alert 표시
+    private func showNotificationPermissionAlert() {
+        let error = NotificationManager.NotificationError.permissionDenied
+        
+        let alert = UIAlertController(
+            title: error.message,
+            message: error.description,
+            preferredStyle: .alert
+        )
+        
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            NotificationManager.shared.openNotificationSettings() 
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        
+        alert.addAction(settingsAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
     }
 }
