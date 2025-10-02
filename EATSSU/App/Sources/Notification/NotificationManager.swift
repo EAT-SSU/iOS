@@ -76,13 +76,6 @@ class NotificationManager {
     func checkNotificationSetting() async -> UNNotificationSettings {
         return await UNUserNotificationCenter.current().notificationSettings()
     }
-    
-    /// OS 알림 권한이 거부되었을 때 설정 앱으로 이동
-    func openAppSettings() {
-        if let appSettings = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(appSettings)
-        }
-    }
 
     /// 알림 권한 상태에 따라 적절한 액션을 수행하고 결과를 반환
     func handleNotificationToggle(currentState: Bool) async throws -> Bool {
