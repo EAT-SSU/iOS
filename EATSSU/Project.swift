@@ -61,7 +61,6 @@ let projectSettings: Settings = .settings(
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
-        "CODE_SIGN_STYLE": "Manual"
     ],
     configurations: [
         .debug(
@@ -69,8 +68,6 @@ let projectSettings: Settings = .settings(
             settings: [
                 "DEBUG_INFORMATION_FORMAT": "dwarf",
                 "APS_ENVIRONMENT": "development",
-                "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
-                "CODE_SIGN_IDENTITY": "Apple Development"
             ],
             xcconfig: "App/Resources/Secrets/Debug.xcconfig"
         ),
@@ -79,8 +76,6 @@ let projectSettings: Settings = .settings(
             settings: [
                 "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
                 "APS_ENVIRONMENT": "production",
-                "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
-                "CODE_SIGN_IDENTITY": "Apple Distribution"
             ],
             xcconfig: "App/Resources/Secrets/Release.xcconfig"
         ),
@@ -107,7 +102,7 @@ let project = Project(
             infoPlist: appInfoPlist,
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Dev.entitlements",
             dependencies: [
                 .target(name: "EATSSUWidget-DEV"),
 
@@ -159,7 +154,7 @@ let project = Project(
             infoPlist: appInfoPlist,
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Prod.entitlements",
             dependencies: [
                 .target(name: "EATSSUWidget-PROD"),
 
@@ -212,7 +207,7 @@ let project = Project(
             sources: ["Widget/Sources/**",
                       "App/Sources/Data/Firebase/WidgetAnalyticsManager.swift"
                      ],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Dev.entitlements",
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "RxSwift"),
@@ -251,7 +246,7 @@ let project = Project(
             sources: ["Widget/Sources/**",
                       "App/Sources/Data/Firebase/WidgetAnalyticsManager.swift"
                      ],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Prod.entitlements",
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "RxSwift"),
