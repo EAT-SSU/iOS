@@ -135,14 +135,20 @@ let project = Project(
                     "CODE_SIGN_STYLE": "Manual"
                 ],
                 configurations: [
-                    .debug(name: "Debug", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
-                        "CODE_SIGN_IDENTITY": "Apple Development"
-                    ]),
-                    .release(name: "Release", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
-                        "CODE_SIGN_IDENTITY": "Apple Distribution"
-                    ])
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
                 ]
             )
         ),
@@ -188,14 +194,20 @@ let project = Project(
                     "CODE_SIGN_STYLE": "Manual"
                 ],
                 configurations: [
-                    .debug(name: "Debug", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
-                        "CODE_SIGN_IDENTITY": "Apple Development"
-                    ]),
-                    .release(name: "Release", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
-                        "CODE_SIGN_IDENTITY": "Apple Distribution"
-                    ])
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
                 ]
             )
         ),
@@ -228,14 +240,20 @@ let project = Project(
                     "CODE_SIGN_STYLE": "Manual"
                 ],
                 configurations: [
-                    .debug(name: "Debug", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
-                        "CODE_SIGN_IDENTITY": "Apple Development"
-                    ]),
-                    .release(name: "Release", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
-                        "CODE_SIGN_IDENTITY": "Apple Distribution"
-                    ])
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
                 ]
             )
         ),
@@ -268,14 +286,20 @@ let project = Project(
                     "CODE_SIGN_STYLE": "Manual"
                 ],
                 configurations: [
-                    .debug(name: "Debug", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
-                        "CODE_SIGN_IDENTITY": "Apple Development"
-                    ]),
-                    .release(name: "Release", settings: [
-                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
-                        "CODE_SIGN_IDENTITY": "Apple Distribution"
-                    ])
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
                 ]
             )
         ),
