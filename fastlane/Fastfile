@@ -4,7 +4,6 @@ platform :ios do
   desc "개발 환경 세팅"
   lane :setup_development do
     match(type: "development", readonly: true)
-    sh "tuist generate"
     UI.success("🎉 개발 환경 설정 완료! .xcworkspace 파일을 열어주세요.")
   end
 
