@@ -15,21 +15,21 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios screenshots
+### ios setup_development
 
 ```sh
-[bundle exec] fastlane ios screenshots
+[bundle exec] fastlane ios setup_development
 ```
 
-Generate new localized screenshots
+개발 환경 세팅
 
-### ios tests
+### ios setup_appstore
 
 ```sh
-[bundle exec] fastlane ios tests
+[bundle exec] fastlane ios setup_appstore
 ```
 
-Run tests
+App Store 배포 환경 세팅
 
 ----
 

@@ -1,6 +1,8 @@
-app_identifier("io.tuist.EATSSUComponents") # The bundle identifier of your app
-# apple_id("[[APPLE_ID]]") # Your Apple Developer Portal username
+# 앱의 Bundle Identifier
+app_identifier("com.jiwoo.EatSSU")
 
+# Apple Developer 계정 이메일
+apple_id("dbrdldh11@naver.com")
 
-# For more information about the Appfile, see:
-#     https://docs.fastlane.tools/advanced/#appfile
+# 본인의 개인 개발팀 ID
+team_id("BBVZV8T99P")
