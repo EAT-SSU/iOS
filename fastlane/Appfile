@@ -2,7 +2,7 @@
 app_identifier("com.jiwoo.EatSSU")
 
 # Apple Developer 계정 이메일
-apple_id("dbrdldh11@naver.com")
+apple_id(ENV["APPLE_ID"])
 
 # 본인의 개인 개발팀 ID
-team_id("BBVZV8T99P")
+team_id(ENV["TEAM_ID"])
