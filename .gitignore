@@ -79,3 +79,9 @@ fastlane/test_output
 
 ### Android Studio / IntelliJ ###
 .idea/
+
+### fastlane
+fastlane/.env
+.env
+
+

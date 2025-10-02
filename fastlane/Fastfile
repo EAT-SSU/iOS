@@ -1,32 +1,16 @@
-# This file contains the fastlane.tools configuration
-# You can find the documentation at https://docs.fastlane.tools
-#
-# For a list of all available actions, check out
-#
-#     https://docs.fastlane.tools/actions
-#
-# For a list of all available plugins, check out
-#
-#     https://docs.fastlane.tools/plugins/available-plugins
-#
-
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 default_platform(:ios)
 
 platform :ios do
-  desc "Generate new localized screenshots"
-  lane :screenshots do
-    capture_screenshots(scheme: "EATSSU")
+  desc "개발 환경 세팅"
+  lane :setup_development do
+    match(type: "development", readonly: true)
+    sh "tuist generate"
+    UI.success("🎉 개발 환경 설정 완료! .xcworkspace 파일을 열어주세요.")
   end
 
-  desc "Run tests"
-  lane :tests do
-    run_tests(
-      devices: ["iPhone 15 Pro"],
-      scheme: "EATSSU",
-      only_testing: ["EATSSUTests"]
-    )
+  desc "App Store 배포 환경 세팅"
+  lane :setup_appstore do
+    match(type: "appstore", readonly: true)
+    UI.success("🚀 App Store 배포 환경 설정 완료!")
   end
 end

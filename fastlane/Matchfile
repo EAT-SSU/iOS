@@ -1,0 +1,10 @@
+# fastlane/Matchfile
+
+# 인증서를 저장할 Private Git Repository 주소
+git_url(ENV["MATCH_GIT_URL"])
+
+# 개발용 프로파일을 기본으로 사용
+type("development")
+
+# 관리할 앱의 Bundle Identifier
+# app_identifier(["com.jiwoo.EatSSU"])

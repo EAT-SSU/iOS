@@ -57,10 +57,11 @@ let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
 
 let projectSettings: Settings = .settings(
     base: [
-        "OTHER_LDFLAGS": ["-all_load -Objc"],
+        "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
+        "CODE_SIGN_STYLE": "Manual"
     ],
     configurations: [
         .debug(
@@ -92,6 +93,7 @@ let project = Project(
         defaultKnownRegions: ["ko"],
         developmentRegion: "ko"
     ),
+    settings: projectSettings,
     targets: [
         .target(
             name: "EATSSU-DEV",
@@ -102,7 +104,7 @@ let project = Project(
             infoPlist: appInfoPlist,
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Dev.entitlements",
             dependencies: [
                 .target(name: "EATSSUWidget-DEV"),
 
@@ -128,7 +130,24 @@ let project = Project(
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
-            settings: projectSettings
+            settings: .settings(
+                configurations: [
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
+                ]
+            )
         ),
         .target(
             name: "EATSSU-PROD",
@@ -139,7 +158,7 @@ let project = Project(
             infoPlist: appInfoPlist,
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Prod.entitlements",
             dependencies: [
                 .target(name: "EATSSUWidget-PROD"),
 
@@ -165,7 +184,24 @@ let project = Project(
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
-            settings: projectSettings
+            settings: .settings(
+                configurations: [
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
+                ]
+            )
         ),
         .target(
             name: "EATSSUWidget-DEV",
@@ -177,7 +213,7 @@ let project = Project(
             sources: ["Widget/Sources/**",
                       "App/Sources/Data/Firebase/WidgetAnalyticsManager.swift"
                      ],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Dev.entitlements",
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "RxSwift"),
@@ -189,7 +225,24 @@ let project = Project(
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
 
             ],
-            settings: projectSettings
+            settings: .settings(
+                configurations: [
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
+                ]
+            )
         ),
         .target(
             name: "EATSSUWidget-PROD",
@@ -201,7 +254,7 @@ let project = Project(
             sources: ["Widget/Sources/**",
                       "App/Sources/Data/Firebase/WidgetAnalyticsManager.swift"
                      ],
-            entitlements: "App/Entitlements/EatSSU-iOS.entitlements",
+            entitlements: "App/Entitlements/EatSSU-iOS-Prod.entitlements",
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "RxSwift"),
@@ -213,7 +266,24 @@ let project = Project(
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
 
             ],
-            settings: projectSettings
+            settings: .settings(
+                configurations: [
+                    .debug(name: "Debug",
+                           settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Development"
+                           ],
+                           xcconfig: "App/Resources/Secrets/Debug.xcconfig"
+                    ),
+                    .release(name: "Release",
+                             settings: [
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                             ],
+                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                    )
+                ]
+            )
         ),
 
         .target(
@@ -224,8 +294,7 @@ let project = Project(
             sources: ["Tests/UITests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
-            ],
-            settings: projectSettings
+            ]
         ),
         .target(
             name: "EATSSUUnitTests",
@@ -235,8 +304,7 @@ let project = Project(
             sources: ["Tests/UnitTests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
-            ],
-            settings: projectSettings
+            ]
         ),
     ],
     schemes: [
