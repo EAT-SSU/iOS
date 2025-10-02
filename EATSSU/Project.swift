@@ -57,10 +57,11 @@ let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
 
 let projectSettings: Settings = .settings(
     base: [
-        "OTHER_LDFLAGS": ["-all_load -Objc"],
+        "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
+        "CODE_SIGN_STYLE": "Manual"
     ],
     configurations: [
         .debug(
@@ -92,6 +93,7 @@ let project = Project(
         defaultKnownRegions: ["ko"],
         developmentRegion: "ko"
     ),
+    settings: projectSettings,
     targets: [
         .target(
             name: "EATSSU-DEV",
@@ -129,11 +131,6 @@ let project = Project(
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
             settings: .settings(
-                base: [
-                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
-                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
-                    "CODE_SIGN_STYLE": "Manual"
-                ],
                 configurations: [
                     .debug(name: "Debug",
                            settings: [
@@ -188,11 +185,6 @@ let project = Project(
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
             settings: .settings(
-                base: [
-                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
-                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
-                    "CODE_SIGN_STYLE": "Manual"
-                ],
                 configurations: [
                     .debug(name: "Debug",
                            settings: [
@@ -234,11 +226,6 @@ let project = Project(
 
             ],
             settings: .settings(
-                base: [
-                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
-                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
-                    "CODE_SIGN_STYLE": "Manual"
-                ],
                 configurations: [
                     .debug(name: "Debug",
                            settings: [
@@ -280,11 +267,6 @@ let project = Project(
 
             ],
             settings: .settings(
-                base: [
-                    "OTHER_LDFLAGS": ["-all_load", "-ObjC"],
-                    "DEVELOPMENT_TEAM": "BBVZV8T99P",
-                    "CODE_SIGN_STYLE": "Manual"
-                ],
                 configurations: [
                     .debug(name: "Debug",
                            settings: [
@@ -312,8 +294,7 @@ let project = Project(
             sources: ["Tests/UITests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
-            ],
-            settings: projectSettings
+            ]
         ),
         .target(
             name: "EATSSUUnitTests",
@@ -323,8 +304,7 @@ let project = Project(
             sources: ["Tests/UnitTests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
-            ],
-            settings: projectSettings
+            ]
         ),
     ],
     schemes: [
