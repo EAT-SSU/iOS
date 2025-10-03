@@ -257,10 +257,29 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             reviewMenuTypeInfo.menuID = fixMenuTableViewData[restaurant]?[menuIndex].menuId ?? 100
         }
 
+//        let reviewViewController = ReviewViewController()
+//        delegate = reviewViewController
+//        navigationController?.pushViewController(reviewViewController, animated: true)
+//        delegate?.didDelegateReviewMenuTypeInfo(for: reviewMenuTypeInfo)
+        
         let reviewViewController = ReviewViewController()
+
+        // 상위 부모에서 CustomTabBarContainerController 찾기
+        var parentVC = self.parent
+        while parentVC != nil {
+            if let customTabBar = parentVC as? CustomTabBarContainerController {
+                customTabBar.setTabBarHidden(true, animated: false)
+                break
+            }
+            parentVC = parentVC?.parent
+        }
+
+        // delegate 연결
         delegate = reviewViewController
-        navigationController?.pushViewController(reviewViewController, animated: true)
         delegate?.didDelegateReviewMenuTypeInfo(for: reviewMenuTypeInfo)
+
+        // push로 띄우기
+        navigationController?.pushViewController(reviewViewController, animated: true)
     }
     
     private func presentLoginAlert() {

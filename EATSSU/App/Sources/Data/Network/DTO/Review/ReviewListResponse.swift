@@ -25,12 +25,19 @@ struct MenuDataList: Codable {
     let amountRating, tasteRating: Int?
     let writedAt, content: String
     let imgURLList: [String?]
-
+    let tags: [Tag]?
+    
     enum CodingKeys: String, CodingKey {
         case reviewID = "reviewId"
         case menu
         case writerID = "writerId"
         case isWriter, writerNickname, mainRating, amountRating, tasteRating, writedAt, content
         case imgURLList = "imageUrls"
+        case tags
     }
+}
+
+struct Tag: Codable {
+    let name: String
+    let isLiked: Bool
 }

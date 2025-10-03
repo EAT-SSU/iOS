@@ -65,7 +65,6 @@ final class CustomTabBarContainerController: BaseViewController {
         super.viewDidLoad()
         switchToViewController(at: currentIndex)
     }
-
     // MARK: - Navigation Control
 
     /// 탭 전환 처리
@@ -134,5 +133,19 @@ final class CustomTabBarContainerController: BaseViewController {
     public func getNavController(at index: Int) -> UINavigationController? {
         guard index < viewControllers.count else { return nil }
         return viewControllers[index] as? UINavigationController
+    }
+    
+    public func setTabBarHidden(_ hidden: Bool, animated: Bool) {
+        tabBarView.snp.updateConstraints {
+            $0.height.equalTo(hidden ? 0 : 80)
+        }
+        if animated {
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        } else {
+            view.layoutIfNeeded()
+        }
+        tabBarView.isHidden = hidden
     }
 }

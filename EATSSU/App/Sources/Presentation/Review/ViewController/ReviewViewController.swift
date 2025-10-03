@@ -47,6 +47,21 @@ final class ReviewViewController: BaseViewController {
         imageView.isHidden = true
         return imageView
     }()
+    
+    private let reviewTabBarContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 0
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    
+    private let reviewTabBarView: MainButton = {
+            let button = MainButton()
+            button.title = "리뷰 작성하기"
+            return button
+        }()
 
     // MARK: - Life Cycles
 
@@ -66,11 +81,18 @@ final class ReviewViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-//        if self.isMovingFromParent {
-//            if let tabContainer = navigationController?.parent as? CustomTabBarContainerController {
-//                tabContainer.setTabBarHidden(false)
-//            }
-//        }
+
+        // 뒤로 가기(pop) 할 때만 실행되도록
+        if self.isMovingFromParent {
+            var parentVC = self.parent
+            while parentVC != nil {
+                if let customTabBar = parentVC as? CustomTabBarContainerController {
+                    customTabBar.setTabBarHidden(false, animated: false)
+                    break
+                }
+                parentVC = parentVC?.parent
+            }
+        }
     }
 
     // MARK: - Functions
@@ -79,28 +101,50 @@ final class ReviewViewController: BaseViewController {
         reviewTableView.backgroundColor = .white
         view.addSubviews(reviewTableView,
                          activityIndicatorView,
-                         noReviewImageView)
+                         noReviewImageView,
+                         reviewTabBarContainer)
+        reviewTabBarContainer.addSubview(reviewTabBarView)
     }
 
     override func setLayout() {
         reviewTableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(reviewTabBarContainer.snp.top)
         }
-
+        
         activityIndicatorView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         noReviewImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
+        }
+        
+        reviewTabBarContainer.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(80) // 탭바 높이
+        }
+        
+        reviewTabBarView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(12) // 안쪽 여백
         }
     }
 
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = "리뷰"
+    }
+    
+    override func setButtonEvent() {
+        reviewTabBarView.addTarget(self, action: #selector(handleAddReviewButtonTap), for: .touchUpInside)
+    }
+    
+    @objc private func handleAddReviewButtonTap() {
+        let reviewVC = SetRateViewController()
+        
+        navigationController?.pushViewController(reviewVC, animated: true)
     }
 
     private func setFirebaseTask() {

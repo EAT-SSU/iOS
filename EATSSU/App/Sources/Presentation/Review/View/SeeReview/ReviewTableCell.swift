@@ -320,9 +320,9 @@ extension ReviewTableCell {
         
         
 //        tags = (response.tags ?? []).map { ($0.name, $0.isLiked) }
-//        tags = (response.tags ?? [Tag(name: "기본태그", isLiked: true),
-//                                      Tag(name: "추천", isLiked: false)])
-//                    .map { ($0.name, $0.isLiked) }
+        tags = (response.tags ?? [Tag(name: "기본태그", isLiked: true),
+                                      Tag(name: "추천", isLiked: false)])
+                    .map { ($0.name, $0.isLiked) }
         tagCollectionView.reloadData()
         
     }
