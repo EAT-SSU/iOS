@@ -9,7 +9,6 @@ import UIKit
 
 import SnapKit
 import Moya
-import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -20,7 +19,7 @@ final class SetRateViewController: BaseViewController {
     private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var currentPage: Int = 0 {
         didSet {
-            menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
+//            menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
             if currentPage == selectedList.count - 1 {
                 nextButton.setTitle("리뷰 남기기", for: .normal)
             }
@@ -32,6 +31,10 @@ final class SetRateViewController: BaseViewController {
     private var selectedIDList: [Int] = []
     private var selectedList: [String] = []
     private var reviewId: Int?
+    
+    // 좋아요 상태를 보관 (selectedList와 같은 인덱스)
+        private var likedStates: [Bool] = []
+    private var menuTableViewHeightConstraint: Constraint?
 
     // MARK: - UI Components
 
@@ -60,7 +63,8 @@ final class SetRateViewController: BaseViewController {
 
     private var menuLabel: UILabel = {
         let label = UILabel()
-        label.text = "김치볶음밥 & 계란국을 추천하시겠어요?"
+//        label.text = "김치볶음밥 & 계란국을 추천하시겠어요?"
+        label.text = "오늘의 식사는 어떠셨나요?"
         label.font = .subtitle1
         label.textColor = .black
         return label
@@ -68,43 +72,51 @@ final class SetRateViewController: BaseViewController {
 
     private var detailLabel: UILabel = {
         let label = UILabel()
-        label.text = "해당 메뉴에 대한 상세한 평가를 남겨주세요."
-        label.font = .body3
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
-        return label
-    }()
-
-    private var tasteLabel: UILabel = {
-        let label = UILabel()
-        label.text = "맛"
+        label.text = "추천하고 싶은 메뉴가 있나요?"
         label.font = .subtitle1
         label.textColor = .black
         return label
     }()
-
-    private var quantityLabel: UILabel = {
-        let label = UILabel()
-        label.text = "양"
-        label.font = .subtitle1
-        label.textColor = .black
-        return label
+    
+    private let menuTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        tableView.isScrollEnabled = false
+        return tableView
     }()
 
-    private lazy var tasteStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 16.adjusted
-        stackView.alignment = .center
-        return stackView
-    }()
+//    private var tasteLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = "맛"
+//        label.font = .subtitle1
+//        label.textColor = .black
+//        return label
+//    }()
+//
+//    private var quantityLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = "양"
+//        label.font = .subtitle1
+//        label.textColor = .black
+//        return label
+//    }()
 
-    private lazy var quantityStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 16.adjusted
-        stackView.alignment = .center
-        return stackView
-    }()
+//    private lazy var tasteStackView: UIStackView = {
+//        let stackView = UIStackView()
+//        stackView.axis = .horizontal
+//        stackView.spacing = 16.adjusted
+//        stackView.alignment = .center
+//        return stackView
+//    }()
+//
+//    private lazy var quantityStackView: UIStackView = {
+//        let stackView = UIStackView()
+//        stackView.axis = .horizontal
+//        stackView.spacing = 16.adjusted
+//        stackView.alignment = .center
+//        return stackView
+//    }()
 
     private let userReviewTextView: UITextView = {
         let textView = UITextView()
@@ -114,7 +126,8 @@ final class SetRateViewController: BaseViewController {
         textView.layer.borderWidth = 1.adjusted
         textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted, left: 16.0.adjusted, bottom: 16.0.adjusted, right: 16.0.adjusted)
-        textView.text = "3글자 이상 작성해주세요!"
+//        textView.text = "3글자 이상 작성해주세요!"
+        textView.text = "메뉴에 대한 상세한 리뷰를 작성해주세요"
         textView.textColor = .gray500
         return textView
     }()
@@ -128,6 +141,22 @@ final class SetRateViewController: BaseViewController {
         imageView.addGestureRecognizer(tapGesture)
         return imageView
     }()
+    
+    private lazy var closeButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        button.tintColor = .lightGray
+        button.addTarget(self, action: #selector(didTappedimageView), for: .touchUpInside)
+        button.isHidden = true // Hide close button initially
+        return button
+    }()
+    
+//    private lazy var imageContainerView: UIView = {
+//        let view = UIView()
+//        view.layer.cornerRadius = 10
+//        view.clipsToBounds = true
+//        return view
+//    }()
 
     private lazy var imageContainer: UIView = {
         let view = UIView()
@@ -188,23 +217,28 @@ final class SetRateViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setDelegate()
+        
+        // 더미데이터 지정
+            selectedList = ["김치볶음밥", "돈까스", "된장찌개", "샐러드", "라면"]
+
+            // 좋아요 상태 배열도 맞춰서 초기화
+            likedStates = Array(repeating: false, count: selectedList.count)
+
+            // 테이블 갱신
+            menuTableView.reloadData()
     }
 
     override func viewWillAppear(_: Bool) {
         addKeyboardNotifications()
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: FirebaseScreenID.Review.V1.review_v1_3,
-                                       AnalyticsParameterScreenClass: "SetRateViewController"])
-    }
-
 
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        menuTableViewHeightConstraint?.update(offset: menuTableView.contentSize.height)
     }
 
 
@@ -216,24 +250,30 @@ final class SetRateViewController: BaseViewController {
         scrollView.addSubview(contentView)
         contentView.addSubviews(rateView,
                                 menuLabel,
-                                tasteLabel,
-                                quantityLabel,
+//                                tasteLabel,
+//                                quantityLabel,
                                 detailLabel,
-                                tasteStackView,
-                                quantityStackView,
+                                
+                                menuTableView,
+//                                tasteStackView,
+//                                quantityStackView,
                                 userReviewTextView,
                                 maximumWordLabel,
                                 selectImageButton,
                                 imageCountLabel,
                                 userReviewImageView,
+                                closeButton,
+//                                imageContainerView,
                                 deleteMethodLabel,
                                 nextButton)
 
-        tasteStackView.addArrangedSubviews([tasteLabel,
-                                            tasteRateView])
+//        tasteStackView.addArrangedSubviews([tasteLabel,
+//                                            tasteRateView])
 
-        quantityStackView.addArrangedSubviews([quantityLabel,
-                                               quantityRateView])
+//        quantityStackView.addArrangedSubviews([quantityLabel,
+//                                               quantityRateView])
+//        imageContainerView.addSubview(userReviewImageView)
+//        imageContainerView.addSubview(closeButton)
     }
 
     override func setLayout() {
@@ -261,16 +301,25 @@ final class SetRateViewController: BaseViewController {
             make.top.equalTo(rateView.snp.bottom).offset(35)
             make.centerX.equalToSuperview()
         }
+        
+        menuTableView.snp.makeConstraints {
+                $0.top.equalTo(detailLabel.snp.bottom).offset(20)
+            $0.leading.equalToSuperview().offset(32)
+            $0.trailing.equalToSuperview().offset(-32)
+//                $0.bottom.equalToSuperview()
+//            $0.height.equalTo(200)
+            menuTableViewHeightConstraint = $0.height.equalTo(0).constraint // 처음엔 0으로
+            }
 
-        tasteStackView.snp.makeConstraints { make in
-            make.top.equalTo(detailLabel.snp.bottom).offset(30)
-            make.centerX.equalToSuperview()
-        }
-
-        quantityStackView.snp.makeConstraints { make in
-            make.top.equalTo(tasteStackView.snp.bottom).offset(30)
-            make.centerX.equalToSuperview()
-        }
+//        tasteStackView.snp.makeConstraints { make in
+//            make.top.equalTo(detailLabel.snp.bottom).offset(30)
+//            make.centerX.equalToSuperview()
+//        }
+//
+//        quantityStackView.snp.makeConstraints { make in
+//            make.top.equalTo(tasteStackView.snp.bottom).offset(30)
+//            make.centerX.equalToSuperview()
+//        }
 
         nextButton.snp.makeConstraints { make in
             make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
@@ -291,7 +340,8 @@ final class SetRateViewController: BaseViewController {
         }
 
         userReviewTextView.snp.makeConstraints { make in
-            make.top.equalTo(quantityStackView.snp.bottom).offset(40)
+//            make.top.equalTo(quantityStackView.snp.bottom).offset(40)
+            make.top.equalTo(menuTableView.snp.bottom).offset(40)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(181)
@@ -320,6 +370,24 @@ final class SetRateViewController: BaseViewController {
             $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
             $0.width.equalTo(60)
             $0.height.equalTo(60)
+        }
+//        imageContainerView.snp.makeConstraints {
+//            $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
+//            $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
+//            $0.width.height.equalTo(70)   // 원하는 크기로 조절
+//        }
+        
+//        userReviewImageView.snp.makeConstraints {
+////            $0.edges.equalToSuperview()
+//            $0.size.equalTo(60)
+//
+//        }
+
+        
+        closeButton.snp.makeConstraints {
+            $0.top.equalTo(userReviewImageView.snp.top).offset(-6)
+            $0.trailing.equalTo(userReviewImageView.snp.trailing).offset(6)
+            $0.size.equalTo(24)
         }
 
         deleteMethodLabel.snp.makeConstraints {
@@ -355,6 +423,18 @@ final class SetRateViewController: BaseViewController {
             }
         self.currentPage = currentPage
     }
+    
+    // 좋아요 토글 메서드 (여기가 없으면 'Cannot find toggleLike' 에러)
+    private func toggleLike(for index: Int) {
+        likedStates[index].toggle()
+        let idx = IndexPath(row: index, section: 0)
+
+        if let cell = menuTableView.cellForRow(at: idx) as? MenuLikeCell {
+            cell.dataBind(menu: selectedList[index], isLiked: likedStates[index])
+        } else {
+            menuTableView.reloadRows(at: [idx], with: .none)
+        }
+    }
 
     func dataBindForFix(list: [String], reivewId: Int) {
         selectedList = list
@@ -366,6 +446,10 @@ final class SetRateViewController: BaseViewController {
     }
 
     func setDelegate() {
+        menuTableView.register(MenuLikeCell.self, forCellReuseIdentifier: MenuLikeCell.identifier)
+        menuTableView.dataSource = self
+        menuTableView.delegate = self
+        
         imagePickerController.delegate = self
         imagePickerController.sourceType = .photoLibrary
         imagePickerController.allowsEditing = false
@@ -413,13 +497,6 @@ final class SetRateViewController: BaseViewController {
     private func sendDataIfCurrentPageIsLast() {
         for (index, review) in reviewList.enumerated() {
             let (reviewDTO, image) = review
-            
-            //  firebase - complete_review_v1 이벤트 호출
-            let photoAttached = (image != nil) ? 1 : 0
-            let rating = reviewDTO.mainRating
-            let selection = self.selectedList.count
-            ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
-            
             if image != nil {
                 postReviewImage(param: reviewDTO,
                                 image: image,
@@ -442,6 +519,7 @@ final class SetRateViewController: BaseViewController {
         userReviewImageView.image = nil // 이미지 삭제
         userPickedImage = nil
         imageCountLabel.text = "사진 0/1"
+        closeButton.isHidden = true // Hide close button when image is cleared
     }
 
     private func prepareForNextReview() {
@@ -473,6 +551,8 @@ final class SetRateViewController: BaseViewController {
         userReviewTextView.text = data.content
         userReviewTextView.textColor = .black
     }
+    
+    
 }
 
 // MARK: - Server
@@ -558,6 +638,7 @@ extension SetRateViewController: UIImagePickerControllerDelegate {
             userReviewImageView.image = image
             userPickedImage = image
             imageCountLabel.text = "사진 1/1"
+            closeButton.isHidden = false // Show close button when image is selected
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -646,5 +727,44 @@ extension SetRateViewController: UINavigationControllerDelegate {
         NotificationCenter.default.removeObserver(self,
                                                   name: UIResponder.keyboardWillHideNotification,
                                                   object: nil)
+    }
+}
+
+extension SetRateViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return selectedList.count   // 리뷰 대상 메뉴 리스트
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: MenuLikeCell.identifier, for: indexPath) as? MenuLikeCell else {
+            return UITableViewCell()
+        }
+        
+        let menuName = selectedList[indexPath.row]
+        let isLiked = likedStates[indexPath.row]
+        cell.dataBind(menu: menuName, isLiked: isLiked)
+        
+        // 인덱스 캡처 대신, 셀로부터 현재 indexPath를 찾아서 토글 (재사용 안전)
+                cell.onLikeTapped = { [weak self, weak cell, weak tableView] in
+                    guard
+                        let self = self,
+                        let tableView = tableView,
+                        let cell = cell,
+                        let tappedIndexPath = tableView.indexPath(for: cell)
+                    else { return }
+                    self.toggleLike(for: tappedIndexPath.row)
+                }
+        
+        return cell
+    }
+    
+    // 선택 이벤트 (좋아요 버튼 눌렀을 때 등)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("\(selectedList[indexPath.row]) 선택됨")
+        // 선택 효과 제거 (회색 하이라이트 방지)
+            tableView.deselectRow(at: indexPath, animated: false)
+
+            // 행을 눌렀을 때도 토글 실행
+            toggleLike(for: indexPath.row)
     }
 }

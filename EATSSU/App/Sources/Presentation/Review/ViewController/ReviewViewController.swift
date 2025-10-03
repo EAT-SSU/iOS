@@ -64,10 +64,13 @@ final class ReviewViewController: BaseViewController {
         getReviewList(type: type, menuId: menuID)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_1)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+//        if self.isMovingFromParent {
+//            if let tabContainer = navigationController?.parent as? CustomTabBarContainerController {
+//                tabContainer.setTabBarHidden(false)
+//            }
+//        }
     }
 
     // MARK: - Functions
@@ -102,6 +105,11 @@ final class ReviewViewController: BaseViewController {
 
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
+
+        #if DEBUG
+        #else
+            Analytics.logEvent("ReviewViewControllerLoad", parameters: nil)
+        #endif
     }
 
     func setTableView() {
@@ -188,9 +196,8 @@ final class ReviewViewController: BaseViewController {
 
     // MARK: - Action Method
 
+    //    @objc
     func userTapReviewButton() {
-        //  firebase - write_review_v1 이벤트 호출
-        ReviewAnalyticsManager.shared.logWriteReviewV1()
         if RealmService.shared.isAccessTokenPresent() {
             activityIndicatorView.isHidden = false
             DispatchQueue.global().async { // 백그라운드 스레드에서 작업을 수행
@@ -217,10 +224,16 @@ final class ReviewViewController: BaseViewController {
                             activityIndicatorView.stopAnimating()
                             navigationController?.pushViewController(setRateViewController, animated: true)
                         } else {
-                            let choiceMenuViewController = ChoiceMenuViewController()
-                            choiceMenuViewController.menuDataBind(menuList: menuNameList, idList: menuIDList ?? [])
+//                            let choiceMenuViewController = ChoiceMenuViewController()
+                            let setRateViewController = SetRateViewController()
+//                            choiceMenuViewController.menuDataBind(menuList: menuNameList, idList: menuIDList ?? [])
+                            setRateViewController.dataBind(list: menuNameList,
+                                                           idList: menuIDList ?? [],
+                                                           reviewList: nil,
+                                                           currentPage: 0)
                             activityIndicatorView.stopAnimating()
-                            navigationController?.pushViewController(choiceMenuViewController, animated: true)
+//                            navigationController?.pushViewController(choiceMenuViewController, animated: true)
+                            navigationController?.pushViewController(setRateViewController, animated: true)
                         }
                     }
                 }
@@ -246,6 +259,12 @@ final class ReviewViewController: BaseViewController {
         }
     }
 }
+
+//extension ReviewViewController: AddReviewButtonDelegate {
+//    func didTapAddReviewButton() {
+//        userTapReviewButton()
+//    }
+//}
 
 // MARK: - UITableView Delegate, DataSource
 

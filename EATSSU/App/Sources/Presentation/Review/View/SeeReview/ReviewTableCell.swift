@@ -12,6 +12,7 @@ import SnapKit
 import EATSSUDesign
 
 final class ReviewTableCell: UITableViewCell {
+    
     // MARK: - Properties
 
     static let identifier = "ReviewTableCell"
@@ -22,24 +23,50 @@ final class ReviewTableCell: UITableViewCell {
     // MARK: - UI Components
 
     lazy var totalRateView = RateNumberView()
-    lazy var tasteRateView = RateNumberView()
-    lazy var quantityRateView = RateNumberView()
+//    lazy var tasteRateView = RateNumberView()
+//    lazy var quantityRateView = RateNumberView()
 
-    private let tasteLabel: UILabel = {
-        let label = UILabel()
-        label.text = "맛"
-        label.font = .body3
-        label.textColor = .black
-        return label
-    }()
+//    private let tasteLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = "맛"
+//        label.font = .body3
+//        label.textColor = .black
+//        return label
+//    }()
 
-    private let quantityLabel: UILabel = {
-        let label = UILabel()
-        label.text = "양"
-        label.font = .body3
-        label.textColor = .black
-        return label
-    }()
+//    private let quantityLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = "양"
+//        label.font = .body3
+//        label.textColor = .black
+//        return label
+//    }()
+    
+    // 태그 표시용 컬렉션 뷰
+        private lazy var tagCollectionView: UICollectionView = {
+            let layout = UICollectionViewFlowLayout()
+            layout.scrollDirection = .vertical
+            layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+            layout.minimumInteritemSpacing = 8
+            layout.minimumLineSpacing = 8
+
+            let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+            cv.backgroundColor = .clear
+            cv.isScrollEnabled = false
+            cv.register(ReviewTagCollectionViewCell.self, forCellWithReuseIdentifier: ReviewTagCollectionViewCell.identifier)
+            cv.dataSource = self
+            return cv
+        }()
+    
+    private var tags: [(name: String, isLiked: Bool)] = []
+    
+    lazy var contentStackView: UIStackView = {
+            let stackView = UIStackView(arrangedSubviews: [tagCollectionView, reviewTextView, foodImageView])
+            stackView.axis = .vertical
+            stackView.spacing = 8.adjusted
+            stackView.alignment = .leading
+            return stackView
+        }()
 
     private var dateLabel: UILabel = {
         let label = UILabel()
@@ -52,15 +79,16 @@ final class ReviewTableCell: UITableViewCell {
     private var userNameLabel: UILabel = {
         let label = UILabel()
         label.text = "hellosoongsil1234"
-        label.font = .caption3
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.font = .caption1
+//        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.textColor = .black
         return label
     }()
 
     private var menuNameLabel: UILabel = {
         let label = UILabel()
         label.text = "계란국"
-        label.font = .caption1
+        label.font = .caption3
         label.textColor = .black
         return label
     }()
@@ -98,26 +126,26 @@ final class ReviewTableCell: UITableViewCell {
     }()
 
     /// 맛 별점
-    lazy var tasteStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [tasteLabel, tasteRateView])
-        stackView.axis = .horizontal
-        stackView.spacing = 4.adjusted
-        stackView.alignment = .center
-        return stackView
-    }()
+//    lazy var tasteStackView: UIStackView = {
+//        let stackView = UIStackView(arrangedSubviews: [tasteLabel, tasteRateView])
+//        stackView.axis = .horizontal
+//        stackView.spacing = 4.adjusted
+//        stackView.alignment = .center
+//        return stackView
+//    }()
 
     /// 양 별점
-    lazy var quantityStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [quantityLabel, quantityRateView])
-        stackView.axis = .horizontal
-        stackView.spacing = 4.adjusted
-        stackView.alignment = .center
-        return stackView
-    }()
+//    lazy var quantityStackView: UIStackView = {
+//        let stackView = UIStackView(arrangedSubviews: [quantityLabel, quantityRateView])
+//        stackView.axis = .horizontal
+//        stackView.spacing = 4.adjusted
+//        stackView.alignment = .center
+//        return stackView
+//    }()
 
     /// 별점
     lazy var rateStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [totalRateView, tasteStackView, quantityStackView])
+        let stackView = UIStackView(arrangedSubviews: [totalRateView/*, tasteStackView, quantityStackView*/])
         stackView.axis = .horizontal
         stackView.spacing = 8.adjusted
         stackView.alignment = .center
@@ -159,13 +187,13 @@ final class ReviewTableCell: UITableViewCell {
         return stackView
     }()
 
-    lazy var contentStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [reviewTextView, foodImageView])
-        stackView.axis = .vertical
-        stackView.spacing = 8.adjusted
-        stackView.alignment = .leading
-        return stackView
-    }()
+//    lazy var contentStackView: UIStackView = {
+//        let stackView = UIStackView(arrangedSubviews: [reviewTextView, foodImageView])
+//        stackView.axis = .vertical
+//        stackView.spacing = 8.adjusted
+//        stackView.alignment = .leading
+//        return stackView
+//    }()
 
     // MARK: - Functions
 
@@ -185,6 +213,8 @@ final class ReviewTableCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
+        tags = []
+        tagCollectionView.reloadData()
         sideButton.setTitle("", for: .normal)
         sideButton.setImage(UIImage(), for: .normal)
         foodImageView.image = UIImage()
@@ -221,11 +251,35 @@ final class ReviewTableCell: UITableViewCell {
         sideButton.snp.makeConstraints {
             $0.height.equalTo(12.adjusted)
         }
+        
+        tagCollectionView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.greaterThanOrEqualTo(30)
+        }
     }
 
     @objc
     func touchedSideButtonEvent() {
         handler?()
+    }
+}
+
+// MARK: - CollectionView DataSource
+extension ReviewTableCell: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return tags.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ReviewTagCollectionViewCell.identifier,
+            for: indexPath
+        ) as? ReviewTagCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        let tag = tags[indexPath.item]
+        cell.configure(tagName: tag.name, isLiked: tag.isLiked)
+        return cell
     }
 }
 
@@ -236,20 +290,22 @@ extension ReviewTableCell {
         menuNameLabel.text = response.menu
         menuName = response.menu
         userNameLabel.text = response.writerNickname
-        totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        if response.tasteRating == nil {
-            tasteStackView.isHidden = true
-        } else {
-            tasteStackView.isHidden = false
-            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
-        }
+        totalRateView.setRating(response.mainRating)
+//        totalRateView.rateNumberLabel.text = "\(response.mainRating)"
         
-        if response.amountRating == nil {
-            quantityStackView.isHidden = true
-        } else {
-            quantityStackView.isHidden = false
-            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
-        }
+//        if response.tasteRating == nil {
+//            tasteStackView.isHidden = true
+//        } else {
+//            tasteStackView.isHidden = false
+//            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
+//        }
+        
+//        if response.amountRating == nil {
+//            quantityStackView.isHidden = true
+//        } else {
+//            quantityStackView.isHidden = false
+//            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
+//        }
         dateLabel.text = response.writedAt
         reviewTextView.text = response.content
         reviewId = response.reviewID
@@ -261,25 +317,33 @@ extension ReviewTableCell {
         }
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
+        
+        
+//        tags = (response.tags ?? []).map { ($0.name, $0.isLiked) }
+//        tags = (response.tags ?? [Tag(name: "기본태그", isLiked: true),
+//                                      Tag(name: "추천", isLiked: false)])
+//                    .map { ($0.name, $0.isLiked) }
+        tagCollectionView.reloadData()
+        
     }
 
     func myPageDataBind(response: MyDataList, nickname: String) {
         userNameLabel.text = "\(nickname)"
         menuNameLabel.text = response.menuName
         totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        if response.tasteRating == nil {
-            tasteStackView.isHidden = true
-        } else {
-            tasteStackView.isHidden = false
-            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
-        }
+//        if response.tasteRating == nil {
+//            tasteStackView.isHidden = true
+//        } else {
+//            tasteStackView.isHidden = false
+//            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
+//        }
         
-        if response.amountRating == nil {
-            quantityStackView.isHidden = true
-        } else {
-            quantityStackView.isHidden = false
-            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
-        }
+//        if response.amountRating == nil {
+//            quantityStackView.isHidden = true
+//        } else {
+//            quantityStackView.isHidden = false
+//            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
+//        }
         dateLabel.text = response.writeDate
         reviewTextView.text = response.content
         if response.imgURLList.count != 0 {
