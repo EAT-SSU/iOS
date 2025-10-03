@@ -79,6 +79,9 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         navigationController?.navigationBar.compactAppearance = navBarAppearance
 
         setInitialCameraPosition(animated: false)
+        
+        // Realm에서 학과명 먼저 로드하여 버튼 설정
+        loadDepartmentFromRealm()
 
         // 초기 데이터 로드
         fetchDepartmentAndUpdateButton()
@@ -97,6 +100,10 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         // 항상 '전체' 버튼이 선택된 상태로 초기화
         currentMapMode = .all
         root.selectWhole(true)
+        
+        // Realm에서 학과명 먼저 로드
+        loadDepartmentFromRealm()
+        
         fetchDepartmentAndUpdateButton()
         fetchPartnerships()
     }
@@ -162,6 +169,25 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
         }
         
         root.mapView.mapView.moveCamera(cameraUpdate)
+    }
+    
+    /// Realm에 저장된 UserInfo에서 학과명을 읽어와 버튼 텍스트 즉시 설정
+    private func loadDepartmentFromRealm() {
+        guard let userInfo = UserInfoManager.shared.getCurrentUserInfo() else {
+            currentDepartmentName = nil
+            currentDepartmentId = nil
+            currentCollegeId = nil
+            root.myOnlyButton.setTitle("내 제휴", for: .normal)
+            return
+        }
+        
+        let departmentName = userInfo.departmentName ?? ""
+        currentDepartmentName = departmentName
+        currentDepartmentId = userInfo.departmentId
+        currentCollegeId = userInfo.collegeId
+        
+        let buttonTitle = departmentName.isEmpty ? "내 제휴" : departmentName
+        root.myOnlyButton.setTitle(buttonTitle, for: .normal)
     }
 
     // MARK: - Location Delegate
