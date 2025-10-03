@@ -97,15 +97,22 @@ final class MainMapViewController: BaseViewController, CLLocationManagerDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // 항상 '전체' 버튼이 선택된 상태로 초기화
-        currentMapMode = .all
-        root.selectWhole(true)
-        
         // Realm에서 학과명 먼저 로드
         loadDepartmentFromRealm()
         
+        // 학과가 설정되어 있으면 myOnly 모드, 없으면 all 모드
+        if let departmentName = currentDepartmentName, !departmentName.isEmpty {
+            currentMapMode = .myOnly
+            root.selectWhole(false)
+            fetchMyPartnerships()
+        } else {
+            currentMapMode = .all
+            root.selectWhole(true)
+            fetchPartnerships()
+        }
+        
+        // 서버와 동기화 (백그라운드)
         fetchDepartmentAndUpdateButton()
-        fetchPartnerships()
     }
 
     // MARK: - Action
