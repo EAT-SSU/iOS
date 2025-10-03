@@ -17,27 +17,42 @@ final class CustomTabBarView: BaseUIView {
 
     private let buttons: [UIButton] = {
         let titles = ["학식", "지도", "마이"]
-        let images = ["fork.knife", "map.fill", "person.fill"]
+        let normalImages = [
+            EATSSUDesignAsset.Images.tabMeal.image,
+            EATSSUDesignAsset.Images.tabMap.image,
+            EATSSUDesignAsset.Images.tabMypage.image
+        ]
+        let selectedImages = [
+            EATSSUDesignAsset.Images.tabMealSelected.image,
+            EATSSUDesignAsset.Images.tabMapSelected.image,
+            EATSSUDesignAsset.Images.tabMypageSelected.image
+        ]
+        let imageSizes = [
+            CGSize(width: 23, height: 23),  // 학식
+            CGSize(width: 23, height: 23),  // 지도
+            CGSize(width: 44, height: 23)   // 마이
+        ]
 
-        return zip(titles, images).enumerated().map { index, pair in
+        return zip(titles, zip(zip(normalImages, selectedImages), imageSizes)).enumerated().map { index, pair in
+            let (title, imageData) = pair
+            let ((normalImage, _), imageSize) = imageData
+            
+            let resizedImage = normalImage.resized(to: imageSize)
+            
             var config = UIButton.Configuration.plain()
-            config.title = pair.0
-            config.image = UIImage(
-                systemName: pair.1,
-                withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .regular)
-            )
+            config.title = title
+            config.image = resizedImage
             config.imagePlacement = .top
             config.imagePadding = 4
-            config.baseForegroundColor = .gray
             config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0)
 
             let button = UIButton(configuration: config, primaryAction: nil)
             button.tag = index
 
             let font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
-            var attrTitle = AttributedString(pair.0)
+            var attrTitle = AttributedString(title)
             attrTitle.font = font
-            attrTitle.foregroundColor = .gray
+            attrTitle.foregroundColor = .gray500
             config.attributedTitle = attrTitle
             button.configuration = config
 
@@ -61,7 +76,7 @@ final class CustomTabBarView: BaseUIView {
 
         // 각 버튼 액션 연결
         buttons.forEach { button in
-            button.setTitleColor(.gray, for: .normal)
+            button.setTitleColor(.gray500, for: .normal)
             button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         }
     }
@@ -83,9 +98,27 @@ final class CustomTabBarView: BaseUIView {
 
     /// 선택된 인덱스의 버튼 스타일 업데이트
     func setSelectedIndex(_ index: Int) {
+        let normalImages = [
+            EATSSUDesignAsset.Images.tabMeal.image,
+            EATSSUDesignAsset.Images.tabMap.image,
+            EATSSUDesignAsset.Images.tabMypage.image
+        ]
+        let selectedImages = [
+            EATSSUDesignAsset.Images.tabMealSelected.image,
+            EATSSUDesignAsset.Images.tabMapSelected.image,
+            EATSSUDesignAsset.Images.tabMypageSelected.image
+        ]
+        let imageSizes = [
+            CGSize(width: 23, height: 23),  // 학식
+            CGSize(width: 23, height: 23),  // 지도
+            CGSize(width: 44, height: 23)   // 마이
+        ]
+        
         for (i, button) in buttons.enumerated() {
             let isSelected = i == index
-            let color: UIColor = isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray
+            let color: UIColor = isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray500
+            let image = isSelected ? selectedImages[i] : normalImages[i]
+            let resizedImage = image.resized(to: imageSizes[i])
 
             if var config = button.configuration,
                let title = config.title {
@@ -93,7 +126,7 @@ final class CustomTabBarView: BaseUIView {
                 attrTitle.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 11)
                 attrTitle.foregroundColor = color
                 config.attributedTitle = attrTitle
-                config.baseForegroundColor = color
+                config.image = resizedImage
                 button.configuration = config
             }
         }
@@ -105,5 +138,16 @@ final class CustomTabBarView: BaseUIView {
     @objc private func buttonTapped(_ sender: UIButton) {
         setSelectedIndex(sender.tag)
         buttonTapped?(sender.tag)
+    }
+}
+
+// MARK: - UIImage Extension
+
+extension UIImage {
+    func resized(to size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }
