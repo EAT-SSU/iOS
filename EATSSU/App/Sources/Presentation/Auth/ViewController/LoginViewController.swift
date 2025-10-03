@@ -82,10 +82,21 @@ final class LoginViewController: BaseViewController {
     /// Realm에 저장된 토큰이 있는지 확인 후, 있으면 홈 화면으로 이동한다.
     private func handleAutoLogin() {
         guard hasStoredToken() else { return }
-        #if DEBUG
-            print("저장된 AccessToken: ", RealmService.shared.getToken())
-        #endif
-        changeIntoHomeViewController()
+        
+        _Concurrency.Task {
+            do {
+                try await TokenManager.shared.refreshIfNeededWithThrow()
+                
+                await MainActor.run {
+                    changeIntoHomeViewController()
+                }
+            } catch {
+                await MainActor.run {
+                    RealmService.shared.deleteAll(Token.self)
+                    self.view.showToast(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
+                }
+            }
+        }
     }
 
     private func hasStoredToken() -> Bool {
