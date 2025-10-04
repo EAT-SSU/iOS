@@ -66,11 +66,9 @@ final class MainMapViewController: BaseViewController {
         
         configureNavigationBar()
         setInitialCameraPosition(animated: false)
-        loadDepartmentFromRealm()
         setupLocationButtonObserver()
         
         fetchDepartmentAndUpdateButton()
-        fetchPartnerships()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -81,8 +79,10 @@ final class MainMapViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        // 학과 정보 다시 로드
         loadDepartmentFromRealm()
         
+        // 학과가 있으면 학과별 제휴로 시작, 없으면 전체로 시작
         if let departmentName = currentDepartmentName, !departmentName.isEmpty {
             currentMapMode = .myOnly
             root.selectWhole(false)
@@ -93,7 +93,8 @@ final class MainMapViewController: BaseViewController {
             fetchPartnerships()
         }
         
-        fetchDepartmentAndUpdateButton()
+        // 버튼 텍스트 업데이트
+        updateMyOnlyButtonTitle()
     }
 
     // MARK: - Configuration
@@ -115,6 +116,8 @@ final class MainMapViewController: BaseViewController {
     // MARK: - Action Methods
 
     @objc private func didTapWhole() {
+        guard currentMapMode != .all else { return }
+        
         currentMapMode = .all
         setInitialCameraPosition(animated: true)
         root.selectWhole(true)
@@ -126,6 +129,9 @@ final class MainMapViewController: BaseViewController {
             presentNoDepartmentSheet()
             return
         }
+        
+        // 이미 학과별 모드면 return
+        guard currentMapMode != .myOnly else { return }
         
         currentMapMode = .myOnly
         
@@ -145,12 +151,20 @@ final class MainMapViewController: BaseViewController {
     // MARK: - Helper Methods
     
     func reloadContent() {
-        fetchDepartmentAndUpdateButton()
-        switch currentMapMode {
-        case .all:
-            fetchPartnerships()
-        case .myOnly:
-            fetchMyPartnerships()
+        // 학과 정보를 다시 불러온 후, 현재 모드에 맞게 API 호출
+        fetchDepartmentAndUpdateButton { [weak self] in
+            guard let self = self else { return }
+            switch self.currentMapMode {
+            case .all:
+                self.fetchPartnerships()
+            case .myOnly:
+                // 학과가 없어졌다면 전체로 전환
+                if self.currentDepartmentName?.isEmpty ?? true {
+                    self.didTapWhole()
+                } else {
+                    self.fetchMyPartnerships()
+                }
+            }
         }
     }
     
@@ -176,7 +190,7 @@ final class MainMapViewController: BaseViewController {
             currentDepartmentName = nil
             currentDepartmentId = nil
             currentCollegeId = nil
-            root.myOnlyButton.setTitle("내 제휴", for: .normal)
+            updateMyOnlyButtonTitle()
             return
         }
         
@@ -185,7 +199,11 @@ final class MainMapViewController: BaseViewController {
         currentDepartmentId = userInfo.departmentId
         currentCollegeId = userInfo.collegeId
         
-        let buttonTitle = departmentName.isEmpty ? "내 제휴" : departmentName
+        updateMyOnlyButtonTitle()
+    }
+    
+    private func updateMyOnlyButtonTitle() {
+        let buttonTitle = (currentDepartmentName?.isEmpty ?? true) ? "내 제휴" : currentDepartmentName!
         root.myOnlyButton.setTitle(buttonTitle, for: .normal)
     }
 }

@@ -28,7 +28,7 @@ extension MainMapViewController {
         }
     }
     
-    func fetchDepartmentAndUpdateButton() {
+    func fetchDepartmentAndUpdateButton(completion: (() -> Void)? = nil) {
         myProvider.request(.getDepartment) { [weak self] result in
             switch result {
             case .success(let response):
@@ -54,6 +54,7 @@ extension MainMapViewController {
                 self?.currentCollegeId = nil
                 self?.root.myOnlyButton.setTitle("내 제휴", for: .normal)
             }
+            completion?()
         }
     }
     
