@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 import NMapsMap
 import Moya
@@ -31,7 +32,7 @@ final class MainMapViewController: BaseViewController {
         session: Session(interceptor: AuthInterceptor.shared)
     )
 
-    var markers: [NMFMarker] = []
+    var clusterer: NMCClusterer<ItemKey>?
     
     // MARK: - Map Mode Management
     
