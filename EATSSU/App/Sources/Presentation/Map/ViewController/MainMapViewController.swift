@@ -32,7 +32,7 @@ final class MainMapViewController: BaseViewController {
         session: Session(interceptor: AuthInterceptor.shared)
     )
 
-    var clusterer: NMCClusterer<ItemKey>?
+    var clusterer: NMCClusterer<PartnershipMarkerKey>?
     
     // MARK: - Map Mode Management
     
