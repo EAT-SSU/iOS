@@ -108,7 +108,7 @@ final class ReviewViewController: BaseViewController {
 
     override func setLayout() {
         reviewTableView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalToSuperview().offset(24)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(reviewTabBarContainer.snp.top)
         }
@@ -160,6 +160,7 @@ final class ReviewViewController: BaseViewController {
         reviewTableView.register(ReviewTableCell.self, forCellReuseIdentifier: ReviewTableCell.identifier)
         reviewTableView.register(ReviewRateViewCell.self, forCellReuseIdentifier: ReviewRateViewCell.identifier)
         reviewTableView.register(ReviewEmptyViewCell.self, forCellReuseIdentifier: ReviewEmptyViewCell.identifier)
+        reviewTableView.register(ReviewDividerCell.self, forCellReuseIdentifier: ReviewDividerCell.identifier)
 
         reviewTableView.delegate = self
         reviewTableView.dataSource = self
@@ -320,7 +321,8 @@ extension ReviewViewController: UITableViewDelegate {
 
 extension ReviewViewController: UITableViewDataSource {
     func numberOfSections(in _: UITableView) -> Int {
-        2
+//        2
+        3
     }
 
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -328,6 +330,8 @@ extension ReviewViewController: UITableViewDataSource {
         case 0:
             1
         case 1:
+            1
+        case 2:
             // 두 번째 섹션에서 리뷰 개수가 하나도 없을 때 셀 변경
             if reviewList.count == 0 {
                 1
@@ -375,6 +379,12 @@ extension ReviewViewController: UITableViewDataSource {
             return cell
 
         case 1:
+            // Divider cell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ReviewDividerCell.identifier, for: indexPath) as? ReviewDividerCell ?? ReviewDividerCell()
+            cell.configure(reviewCount: reviewList.count)
+            cell.selectionStyle = .none
+            return cell
+        case 2:
             if reviewList.count == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: ReviewEmptyViewCell.identifier, for: indexPath) as? ReviewEmptyViewCell ?? ReviewEmptyViewCell()
                 if RealmService.shared.getToken() == "" {
@@ -409,6 +419,9 @@ extension ReviewViewController: UITableViewDataSource {
         case 0:
             251.adjusted
         case 1:
+            // Divider cell
+            UITableView.automaticDimension
+        case 2:
             if reviewList.count == 0 {
                 300.adjusted
             } else {

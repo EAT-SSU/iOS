@@ -283,10 +283,18 @@ final class ReviewRateViewCell: UITableViewCell {
 
 extension ReviewRateViewCell {
     func fixMenuDataBind(data: FixedReviewRateResponse) {
-        let total = String(format: "%.1f", data.mainRating ?? 0)
+//        let total = String(format: "%.1f", data.mainRating ?? 0)
+        let ratingValue = data.mainRating ?? 0
+        if ratingValue == 0.0 {
+            rateNumLabel.text = "-"
+        } else {
+            let total = String(format: "%.1f", ratingValue)
+            rateNumLabel.text = "\(total)"
+        }
         menuLabel.text = data.menuName
-        rateNumLabel.text = "\(total)"
-        totalRate = data.mainRating ?? 0
+//        rateNumLabel.text = "\(total)"
+//        totalRate = data.mainRating ?? 0
+        totalRate = ratingValue
 
         fiveForeground.snp.updateConstraints {
             $0.width.equalTo(126 * data.reviewRatingCount.fiveStarCount / max(data.totalReviewCount, 1))
@@ -306,10 +314,18 @@ extension ReviewRateViewCell {
     }
 
     func dataBind(data: ReviewRateResponse) {
-        let total = String(format: "%.1f", data.mainRating ?? 0)
+//        let total = String(format: "%.1f", data.mainRating ?? 0)
+        let ratingValue = data.mainRating ?? 0
+        if ratingValue == 0.0 {
+            rateNumLabel.text = "-"
+        } else {
+            let total = String(format: "%.1f", ratingValue)
+            rateNumLabel.text = "\(total)"
+        }
         menuLabel.text = data.menuNames.joined(separator: " + ")
-        rateNumLabel.text = "\(total)"
-        totalRate = data.mainRating ?? 0
+//        rateNumLabel.text = "\(total)"
+//        totalRate = data.mainRating ?? 0
+        totalRate = ratingValue
 
         fiveForeground.snp.updateConstraints {
             $0.width.equalTo(126 * data.reviewRatingCount.fiveStarCount / max(data.totalReviewCount, 1))
