@@ -17,10 +17,10 @@ final class RateNumberView: BaseUIView {
 //    let starImageView = UIImageView()
     private var starImageViews: [UIImageView] = []
     private lazy var starsStackView = UIStackView()
-    lazy var rateNumberLabel = UILabel()
+//    lazy var rateNumberLabel = UILabel()
 //    private lazy var rateNumberStackView = UIStackView(arrangedSubviews: [starImageView,
     private lazy var rateNumberStackView = UIStackView(arrangedSubviews: [starsStackView,
-                                                                          rateNumberLabel])
+                                                                          /*rateNumberLabel*/])
 
     var filledStarImage: UIImage? = EATSSUDesignAsset.Images.icStarYellow.image
     var emptyStarImage: UIImage? = EATSSUDesignAsset.Images.icStarGray.image
@@ -60,9 +60,9 @@ final class RateNumberView: BaseUIView {
         starImageViews.forEach { starsStackView.addArrangedSubview($0) }
 
 
-        rateNumberLabel.text = "5"
-        rateNumberLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
-        rateNumberLabel.textColor = EATSSUDesignAsset.Color.Main.primary.color
+//        rateNumberLabel.text = "5"
+//        rateNumberLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
+//        rateNumberLabel.textColor = EATSSUDesignAsset.Color.Main.primary.color
 
         rateNumberStackView.axis = .horizontal
 //        rateNumberStackView.spacing = 3
@@ -95,6 +95,6 @@ final class RateNumberView: BaseUIView {
                 star.image = emptyStarImage
             }
         }
-        rateNumberLabel.text = "\(rating)"
+//        rateNumberLabel.text = "\(rating)"
     }
 }
