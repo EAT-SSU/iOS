@@ -33,7 +33,6 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
         guard let partnership = findPartnership(for: key) else { return }
         
         configureMarkerIcon(marker, with: partnership)
-        configureMarkerCaption(marker, with: partnership)
         
         // 마커 탭 핸들러 설정
         marker.touchHandler = { [weak self] _ -> Bool in
@@ -62,12 +61,7 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
         marker.height = iconImage.size.height
     }
     
-    /// 마커 캡션 설정
-    private func configureMarkerCaption(_ marker: NMFMarker, with partnership: PartnershipDTO) {
-        marker.captionText = partnership.storeName
-        marker.captionColor = .black
-        marker.captionHaloColor = .white
-    }
+    // configureMarkerCaption 메서드는 이제 사용하지 않으므로 제거해도 됨
     
     /// 제휴점 타입에 따른 마커 이미지 생성
     private func makeMarkerImage(type: String, title: String) -> UIImage {

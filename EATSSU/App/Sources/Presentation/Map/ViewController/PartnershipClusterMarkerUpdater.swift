@@ -23,6 +23,7 @@ final class PartnershipClusterMarkerUpdater: NMCDefaultClusterMarkerUpdater {
     
     /// 클러스터 마커가 지도에 표시될 때 호출되어 원형 이미지로 스타일 설정
     override func updateClusterMarker(_ info: NMCClusterMarkerInfo, _ marker: NMFMarker) {
+        super.updateClusterMarker(info, marker)
         
         guard let image = viewController?.makeClusterImage(count: info.size) else { return }
         
