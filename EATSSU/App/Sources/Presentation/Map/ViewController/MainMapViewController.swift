@@ -68,6 +68,7 @@ final class MainMapViewController: BaseViewController {
         configureNavigationBar()
         setInitialCameraPosition(animated: false)
         setupLocationButtonObserver()
+        setupMarkerTapHandler()
         
         fetchDepartmentAndUpdateButton()
     }

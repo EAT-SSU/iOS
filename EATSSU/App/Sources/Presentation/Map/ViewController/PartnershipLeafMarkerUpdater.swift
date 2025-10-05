@@ -19,6 +19,9 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     /// 지도에 표시할 제휴점 데이터 목록
     var partnerships: [PartnershipDTO] = []
     
+    /// 마커 탭 시 호출될 클로저
+    var onMarkerTap: ((PartnershipDTO) -> Void)?
+    
     // MARK: - Override Methods
     
     /// 개별 마커가 지도에 표시될 때 호출되어 마커의 아이콘과 캡션을 설정
@@ -31,6 +34,12 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
         
         configureMarkerIcon(marker, with: partnership)
         configureMarkerCaption(marker, with: partnership)
+        
+        // 마커 탭 핸들러 설정
+        marker.touchHandler = { [weak self] _ -> Bool in
+            self?.onMarkerTap?(partnership)
+            return true
+        }
     }
     
     // MARK: - Private Methods

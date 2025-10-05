@@ -49,6 +49,11 @@ extension MainMapViewController {
     private func createLeafMarkerUpdater(with partnerships: [PartnershipDTO]) -> PartnershipLeafMarkerUpdater {
         let leafMarkerUpdater = PartnershipLeafMarkerUpdater()
         leafMarkerUpdater.partnerships = partnerships
+        
+        leafMarkerUpdater.onMarkerTap = { [weak self] partnership in
+            self?.showPartnershipDetail(for: partnership)
+        }
+        
         return leafMarkerUpdater
     }
     
@@ -124,5 +129,58 @@ extension MainMapViewController {
         )
         
         attributedString.draw(in: textRect)
+    }
+}
+
+// MARK: - Marker Tap Handler
+
+extension MainMapViewController {
+    
+    /// 마커 탭 델리게이트 설정
+    func setupMarkerTapHandler() {
+        root.mapView.mapView.touchDelegate = self
+    }
+    
+    /// 제휴점 상세 바텀시트 표시
+    func showPartnershipDetail(for partnership: PartnershipDTO) {
+        let detailVC = PartnershipDetailSheetViewController(
+            storeName: partnership.storeName,
+            restaurantType: partnership.restaurantType,
+            partnershipInfos: partnership.partnershipInfos
+        )
+        
+        // 뷰가 로드된 후 높이 계산
+        detailVC.loadViewIfNeeded()
+        
+        if let sheet = detailVC.sheetPresentationController {
+            let contentHeight = detailVC.calculatePreferredHeight()
+            
+            // iOS 16.0 이상에서만 custom detent 사용
+            if #available(iOS 16.0, *) {
+                let customDetent = UISheetPresentationController.Detent.custom { _ in
+                    return contentHeight
+                }
+                sheet.detents = [customDetent]
+            } else {
+                // iOS 16.0 미만에서는 medium detent 사용
+                sheet.detents = [.medium()]
+            }
+            
+            sheet.prefersGrabberVisible = true
+        }
+        
+        present(detailVC, animated: true)
+    }
+}
+
+// MARK: - NMFMapViewTouchDelegate
+
+extension MainMapViewController: NMFMapViewTouchDelegate {
+    
+    func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
+    }
+    
+    func mapView(_ mapView: NMFMapView, didTap symbol: NMFSymbol) -> Bool {
+        return false
     }
 }
