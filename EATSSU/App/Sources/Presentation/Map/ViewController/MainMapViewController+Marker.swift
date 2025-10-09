@@ -37,7 +37,11 @@ extension MainMapViewController {
     
     /// 새로운 클러스터러 생성 및 설정
     private func buildClusterer(with partnerships: [PartnershipDTO]) -> NMCClusterer<PartnershipMarkerKey> {
-        let builder = NMCBuilder<PartnershipMarkerKey>()
+        let builder = NMCComplexBuilder<PartnershipMarkerKey>()
+        
+        builder.maxScreenDistance = 25
+        builder.distanceStrategy = NMCDefaultDistanceStrategy()
+        builder.thresholdStrategy = NMCDefaultThresholdStrategy(threshold: 25)
         
         builder.leafMarkerUpdater = createLeafMarkerUpdater(with: partnerships)
         builder.clusterMarkerUpdater = createClusterMarkerUpdater()
