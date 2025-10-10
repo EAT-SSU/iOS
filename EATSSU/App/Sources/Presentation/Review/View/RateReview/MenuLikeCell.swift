@@ -41,7 +41,7 @@ final class MenuLikeCell: UITableViewCell {
         let view = UIView()
         view.layer.cornerRadius = 14
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         return view
     }()
     
