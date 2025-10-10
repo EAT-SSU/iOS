@@ -4,13 +4,13 @@ default_platform(:ios)
 platform :ios do
   desc "개발 환경 세팅"
   lane :setup_development do
-    match(type: "development")  # readonly 제거!
+    match(type: "development")
     UI.success("🎉 개발 환경 설정 완료!")
   end
 
   desc "App Store 배포 환경 세팅"
   lane :setup_appstore do
-    match(type: "appstore")  # readonly 제거!
+    match(type: "appstore")
     UI.success("🚀 App Store 배포 환경 설정 완료!")
   end
 end
