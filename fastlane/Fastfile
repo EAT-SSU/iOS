@@ -1,15 +1,16 @@
+# fastlane/Fastfile
 default_platform(:ios)
 
 platform :ios do
   desc "개발 환경 세팅"
   lane :setup_development do
-    match(type: "development", readonly: true)
-    UI.success("🎉 개발 환경 설정 완료! .xcworkspace 파일을 열어주세요.")
+    match(type: "development")  # readonly 제거!
+    UI.success("🎉 개발 환경 설정 완료!")
   end
 
   desc "App Store 배포 환경 세팅"
   lane :setup_appstore do
-    match(type: "appstore", readonly: true)
+    match(type: "appstore")  # readonly 제거!
     UI.success("🚀 App Store 배포 환경 설정 완료!")
   end
 end

@@ -7,4 +7,6 @@ git_url(ENV["MATCH_GIT_URL"])
 type("development")
 
 # 관리할 앱의 Bundle Identifier
-# app_identifier(["com.jiwoo.EatSSU"])
+app_identifier(["com.jiwoo.EatSSU", "com.jiwoo.EatSSU.EatSSUwidget2025"])
+
+api_key_path("api_key.json")
