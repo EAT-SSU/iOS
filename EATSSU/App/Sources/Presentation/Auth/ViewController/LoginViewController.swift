@@ -30,7 +30,6 @@ final class LoginViewController: BaseViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        handleAutoLogin()
     }
 
     override func viewDidLoad() {
@@ -77,26 +76,6 @@ final class LoginViewController: BaseViewController {
 
     private func configureFirebaseRemoteConfig() {
         FirebaseRemoteConfig.shared.fetchIsVacationPeriod()
-    }
-
-    /// Realm에 저장된 토큰이 있는지 확인 후, 있으면 홈 화면으로 이동한다.
-    private func handleAutoLogin() {
-        guard hasStoredToken() else { return }
-        
-        _Concurrency.Task {
-            do {
-                try await TokenManager.shared.refreshIfNeededWithThrow()
-                
-                await MainActor.run {
-                    changeIntoHomeViewController()
-                }
-            } catch {
-                await MainActor.run {
-                    RealmService.shared.deleteAll(Token.self)
-                    self.view.showToast(message: "세션이 만료되었습니다. 다시 로그인해주세요.")
-                }
-            }
-        }
     }
 
     private func hasStoredToken() -> Bool {
