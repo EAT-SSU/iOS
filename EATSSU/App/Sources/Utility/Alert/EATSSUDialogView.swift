@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import EATSSUDesign
+import SwiftUI
 
 class EATSSUDialogView: BaseUIView {
     
@@ -35,7 +36,7 @@ class EATSSUDialogView: BaseUIView {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.text = "본문을 입력해주세요"
-        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
+        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -54,7 +55,7 @@ class EATSSUDialogView: BaseUIView {
         let button = UIButton()
         button.setTitle("취소", for: .normal)
         button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray700.color, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
         button.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray200.color
         button.layer.cornerRadius = 12
         return button
@@ -64,7 +65,7 @@ class EATSSUDialogView: BaseUIView {
         let button = UIButton()
         button.setTitle("확인", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
         button.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
         button.layer.cornerRadius = 12
         return button
@@ -102,24 +103,24 @@ class EATSSUDialogView: BaseUIView {
         
         containerView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.leading.trailing.equalToSuperview().inset(24)
-            make.height.greaterThanOrEqualTo(180)
+            make.width.equalTo(321)
+            make.height.equalTo(170)
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(24)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalToSuperview().inset(18)
+            make.leading.trailing.equalToSuperview().inset(18)
         }
         
         messageLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(titleLabel.snp.bottom)
+            make.leading.trailing.equalToSuperview().inset(18)
         }
         
         buttonStackView.snp.makeConstraints { make in
-            make.top.equalTo(messageLabel.snp.bottom).offset(24)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().inset(16)
+            make.top.equalTo(messageLabel.snp.bottom).offset(18)
+            make.leading.trailing.equalToSuperview().inset(18)
+            make.bottom.equalToSuperview().inset(18)
             make.height.equalTo(48)
         }
     }
@@ -153,9 +154,9 @@ class EATSSUDialogView: BaseUIView {
         if isSingleButton {
             cancelButton.removeFromSuperview()
             buttonStackView.snp.remakeConstraints { make in
-                make.top.equalTo(messageLabel.snp.bottom).offset(24)
-                make.leading.trailing.equalToSuperview().inset(16)
-                make.bottom.equalToSuperview().inset(16)
+                make.top.equalTo(messageLabel.snp.bottom).offset(18)
+                make.leading.trailing.equalToSuperview().inset(18)
+                make.bottom.equalToSuperview().inset(18)
                 make.height.equalTo(48)
             }
         } else {
@@ -165,6 +166,3 @@ class EATSSUDialogView: BaseUIView {
         }
     }
 }
-
-
-
