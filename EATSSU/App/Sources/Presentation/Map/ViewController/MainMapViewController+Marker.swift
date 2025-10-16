@@ -23,7 +23,8 @@ extension MainMapViewController {
         let newClusterer = buildClusterer(with: partnerships)
         
         let markerData = createMarkerData(from: partnerships)
-        newClusterer.addAll(markerData as! [AnyHashable: NSObject])
+        
+        newClusterer.addAll(markerData)
         
         attachClustererToMap(newClusterer)
     }
@@ -68,8 +69,8 @@ extension MainMapViewController {
     }
     
     /// 제휴점 데이터를 마커 키-값 딕셔너리로 변환
-    private func createMarkerData(from partnerships: [PartnershipDTO]) -> [AnyHashable: Any] {
-        var markerData: [AnyHashable: Any] = [:]
+    private func createMarkerData(from partnerships: [PartnershipDTO]) -> [AnyHashable: NSObject] {
+        var markerData: [AnyHashable: NSObject] = [:]
         
         for (index, partnership) in partnerships.enumerated() {
             let key = PartnershipMarkerKey(
