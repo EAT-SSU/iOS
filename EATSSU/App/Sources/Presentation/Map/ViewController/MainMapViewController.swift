@@ -205,7 +205,10 @@ final class MainMapViewController: BaseViewController {
     }
     
     private func updateMyOnlyButtonTitle() {
-        let buttonTitle = (currentDepartmentName?.isEmpty ?? true) ? "내 제휴" : currentDepartmentName!
-        root.myOnlyButton.setTitle(buttonTitle, for: .normal)
+        if let departmentName = currentDepartmentName, !departmentName.isEmpty {
+            root.myOnlyButton.setTitle(departmentName, for: .normal)
+        } else {
+            root.myOnlyButton.setTitle("내 제휴", for: .normal)
+        }
     }
 }
