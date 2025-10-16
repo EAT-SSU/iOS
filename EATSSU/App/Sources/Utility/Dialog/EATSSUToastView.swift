@@ -41,6 +41,19 @@ enum ToastType {
         }
     }
     
+    var MianColor: UIColor {
+        switch self {
+        case .danger:
+            return EATSSUDesignAsset.Color.danger.color
+        case .info:
+            return EATSSUDesignAsset.Color.info.color
+        case .success:
+            return EATSSUDesignAsset.Color.success.color
+        case .warning:
+            return EATSSUDesignAsset.Color.warning.color
+        }
+    }
+    
     var iconImage: UIImage? {
         switch self {
         case .danger:
