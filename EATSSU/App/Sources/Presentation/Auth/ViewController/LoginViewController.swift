@@ -134,11 +134,6 @@ final class LoginViewController: BaseViewController {
             print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️", accessToken)
         #endif
     }
-    
-    private func showToastMessageIfNeeded() {
-        guard let toastMessage = self.toastMessage else { return }
-        view.showToast(message: toastMessage)
-    }
 
     // MARK: - 액션 메서드
 

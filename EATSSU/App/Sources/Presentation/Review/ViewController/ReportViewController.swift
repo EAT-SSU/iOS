@@ -157,7 +157,7 @@ final class ReportViewController: BaseViewController {
         if isReasonSelected {
             postReport(reviewID: reviewID, content: contentArray[status] ?? "")
         } else {
-            view.showToast(message: "사유를 선택해주세요!")
+            showToast(message: "사유를 선택해주세요!", type: .info)
         }
     }
     
