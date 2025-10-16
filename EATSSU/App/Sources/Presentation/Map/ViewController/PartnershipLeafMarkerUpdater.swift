@@ -45,9 +45,10 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     
     /// 마커 키에 해당하는 제휴점 데이터 검색
     private func findPartnership(for key: PartnershipMarkerKey) -> PartnershipDTO? {
-        return partnerships.first { partnership in
-            NMGLatLng(lat: partnership.latitude, lng: partnership.longitude) == key.position
+        guard partnerships.indices.contains(key.identifier) else {
+            return nil
         }
+        return partnerships[key.identifier]
     }
     
     /// 마커 아이콘 설정
@@ -60,8 +61,6 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
         marker.width = iconImage.size.width
         marker.height = iconImage.size.height
     }
-    
-    // configureMarkerCaption 메서드는 이제 사용하지 않으므로 제거해도 됨
     
     /// 제휴점 타입에 따른 마커 이미지 생성
     private func makeMarkerImage(type: String, title: String) -> UIImage {
