@@ -6,9 +6,10 @@
 //
 
 import UIKit
+
 import SnapKit
+
 import EATSSUDesign
-import SwiftUI
 
 class EATSSUDialogView: BaseUIView {
     
@@ -104,21 +105,20 @@ class EATSSUDialogView: BaseUIView {
         containerView.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.width.equalTo(321)
-            make.height.equalTo(170)
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(18)
+            make.top.equalToSuperview().inset(28)
             make.leading.trailing.equalToSuperview().inset(18)
         }
         
         messageLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom)
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(18)
         }
         
         buttonStackView.snp.makeConstraints { make in
-            make.top.equalTo(messageLabel.snp.bottom).offset(18)
+            make.top.equalTo(messageLabel.snp.bottom).offset(28)
             make.leading.trailing.equalToSuperview().inset(18)
             make.bottom.equalToSuperview().inset(18)
             make.height.equalTo(48)
