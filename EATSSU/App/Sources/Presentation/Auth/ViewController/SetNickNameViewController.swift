@@ -111,7 +111,6 @@ final class SetNickNameViewController: BaseViewController {
         
         guard hasNicknameChanged || departmentChanged else {
             print("변경된 정보가 없습니다.")
-            view.showToast(message: "변경된 정보가 없습니다.")
             return
         }
 

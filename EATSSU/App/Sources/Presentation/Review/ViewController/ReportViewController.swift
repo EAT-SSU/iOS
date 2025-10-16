@@ -51,6 +51,8 @@ final class ReportViewController: BaseViewController {
         addArray()
         setButtonEvent()
         setCustomNavigationBar()
+        
+        reportView.sendToEATSSUButton.isEnabled = false
     }
     
     override func viewWillDisappear(_: Bool) {
@@ -169,6 +171,8 @@ final class ReportViewController: BaseViewController {
         isChecked = true
         status = sender.tag
         canTextViewUsed(status: status)
+        
+        reportView.sendToEATSSUButton.isEnabled = true
     }
     
     private func canTextViewUsed(status: Int) {
