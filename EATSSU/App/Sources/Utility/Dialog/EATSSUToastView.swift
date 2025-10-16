@@ -183,42 +183,30 @@ class EATSSUToastView: BaseUIView {
     }
     
     // MARK: - Animation Methods
-    
-    func show(in view: UIView, duration: TimeInterval = 3.0) {
+
+    func show(in view: UIView, duration: TimeInterval = 2.0) {
         view.addSubview(self)
         
+        let superviewHeight = view.bounds.height
+        
+        let bottomOffset = superviewHeight * 0.03
+        
         self.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(-60)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-bottomOffset)
             make.leading.trailing.equalToSuperview().inset(16)
         }
         
-        view.layoutIfNeeded()
-        
-        self.snp.updateConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-        }
-        
-        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0) {
-            view.layoutIfNeeded()
-        } completion: { _ in
-            if duration > 0 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-                    self.hide()
-                }
+        if duration > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+                self.hide()
             }
         }
     }
     
     func hide() {
-        guard let superview = self.superview else { return }
-        
-        self.snp.updateConstraints { make in
-            make.top.equalTo(superview.safeAreaLayoutGuide).offset(-60)
-        }
-        
-        UIView.animate(withDuration: 0.3) {
-            superview.layoutIfNeeded()
-        } completion: { _ in
+        UIView.animate(withDuration: 0.3, animations: {
+            self.alpha = 0.0
+        }) { _ in
             self.removeFromSuperview()
         }
     }

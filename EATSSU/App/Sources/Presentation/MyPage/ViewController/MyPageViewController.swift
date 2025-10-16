@@ -266,10 +266,10 @@ extension MyPageViewController: UITableViewDelegate {
                     let formattedDate = dateFormatter.string(from: Date())
                     
                     let message = newState
-                        ? "EAT-SSU 알림 수신을 동의하였습니다.\n(\(formattedDate))"
-                        : "EAT-SSU 알림 수신을 거절하였습니다.\n(\(formattedDate))"
+                        ? "EAT-SSU 수신 동의 (\(formattedDate))"
+                        : "EAT-SSU 수신 거절 (\(formattedDate))"
                     
-                    self.view.showToast(message: message)
+                    self.showToast(message: message, type: .info)
                 }
                 
             } catch let error as NotificationManager.NotificationError {
@@ -278,7 +278,7 @@ extension MyPageViewController: UITableViewDelegate {
                     case .permissionDenied:
                         self.showNotificationPermissionAlert()
                     case .unknown:
-                        self.view.showToast(message: "알림 설정 중 오류가 발생했습니다.")
+                        self.showToast(message: "알림 설정 중 오류가 발생했습니다.", type: .danger)
                     }
                 }
             }
