@@ -165,35 +165,22 @@ final class ReviewViewController: BaseViewController {
     }
 
     private func showReportAlert(reviewID: Int) {
-        let dialogView = EATSSUDialogView()
-        
-        // 다이얼로그 내용 설정
-        dialogView.configure(title: "리뷰 신고하기",
-                             message: "해당 리뷰를 신고하시겠습니까?",
-                             isSingleButton: false)
-        
-        dialogView.setButtonTitles(cancel: "취소하기", confirm: "신고하기")
-        
-        // '취소하기' 버튼 액션
-        dialogView.cancelButton.addAction(UIAction { _ in
-            dialogView.removeFromSuperview()
-        }, for: .touchUpInside)
-        
-        // '신고하기' 버튼 액션
-        dialogView.confirmButton.addAction(UIAction { [weak self] _ in
-            let reportViewController = ReportViewController()
-            reportViewController.bindData(reviewID: reviewID)
-            self?.navigationController?.pushViewController(reportViewController, animated: true)
-            dialogView.removeFromSuperview()
-        }, for: .touchUpInside)
-        
-        // 화면에 다이얼로그 추가
-        view.addSubview(dialogView)
-        dialogView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let tabBarController = windowScene.windows.first?.rootViewController as? CustomTabBarContainerController {
+            
+            tabBarController.showDialog(
+                title: "리뷰 신고하기",
+                message: "해당 리뷰를 신고하시겠습니까?",
+                cancelButtonTitle: "취소하기",
+                confirmButtonTitle: "신고하기"
+            ) { [weak self] in
+                let reportViewController = ReportViewController()
+                reportViewController.bindData(reviewID: reviewID)
+                self?.navigationController?.pushViewController(reportViewController, animated: true)
+            }
         }
     }
-
+    
     // MARK: - Action Method
 
     func userTapReviewButton() {
