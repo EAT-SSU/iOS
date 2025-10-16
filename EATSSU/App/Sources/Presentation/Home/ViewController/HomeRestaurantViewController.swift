@@ -75,12 +75,6 @@ final class HomeRestaurantViewController: BaseViewController {
     // 변경 메뉴 데이터 (식당명: 메뉴 배열)
     var changeMenuTableViewData: [String: [ChangeMenuTableResponse]] = [:] {
         didSet {
-            changeMenuTableViewData = changeMenuTableViewData.mapValues { menuTableResponses in
-                menuTableResponses.filter { response in
-                    !(response.briefMenus.first?.name.isEmpty ?? true)
-                }
-            }
-
             DispatchQueue.main.async { [weak self] in
                 guard let self = self,
                       let sectionIndex = self.getSectionIndex(for: self.currentRestaurant) else { return }
@@ -378,7 +372,13 @@ extension HomeRestaurantViewController {
                 do {
                     self.currentRestaurant = restaurant
                     let responseDetailDto = try responseData.map(BaseResponse<[ChangeMenuTableResponse]>.self)
-                    self.changeMenuTableViewData[restaurant] = responseDetailDto.result
+                    
+                    let filteredMenus = responseDetailDto.result?.filter {
+                        !($0.briefMenus.first?.name.isEmpty ?? true)
+                    }
+                    
+                    self.changeMenuTableViewData[restaurant] = filteredMenus
+
                 } catch let err {
                     print(err.localizedDescription)
                 }
