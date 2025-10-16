@@ -30,12 +30,11 @@ extension MainMapViewController {
     
     // MARK: - Private Methods
     
-    /// 기존 클러스터러 제거
     private func removeExistingClusterer() {
         clusterer?.mapView = nil
     }
     
-    /// 새로운 클러스터러 생성 및 설정
+    /// 클러스터러 생성 및 설정
     private func buildClusterer(with partnerships: [PartnershipDTO]) -> NMCClusterer<PartnershipMarkerKey> {
         let builder = NMCComplexBuilder<PartnershipMarkerKey>()
         
