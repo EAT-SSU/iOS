@@ -21,6 +21,7 @@ final class LoginViewController: BaseViewController {
     public var toastMessage: String?
     private let authProvider = MoyaProvider<AuthRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    var toastType: ToastType = .info
 
     // MARK: - UI Components
 
@@ -40,9 +41,11 @@ final class LoginViewController: BaseViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        showToastMessageIfNeeded()
-        
-        logScreenView(screenID: FirebaseScreenID.Login.log3)
+
+        if let message = toastMessage {
+            showToast(message: message, type: toastType)
+            self.toastMessage = nil
+        }
     }
 
     // MARK: - Functions
