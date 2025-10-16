@@ -19,15 +19,15 @@ enum NicknameTextFieldResultType {
     var hintMessage: String {
         switch self {
         case .textFieldEmpty:
-            "필수 입력 사항입니다"
+            "필수 입력 사항입니다."
         case .nicknameTextFieldOver:
-            "2~8자내로 입력해주세요"
+            "2~8자내로 입력해주세요."
         case .nicknameTextFieldDoubleCheck:
-            "중복 확인을 진행해주세요"
+            "중복 확인을 진행해주세요."
         case .nicknameTextFieldDuplicated:
-            "이미 사용 중인 닉네임이에요"
+            "이미 사용 중인 닉네임이에요."
         case .nicknameTextFieldValid:
-            "사용가능한 닉네임이에요"
+            "사용가능한 닉네임이에요."
         }
     }
 
