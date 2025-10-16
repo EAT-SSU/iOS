@@ -41,7 +41,7 @@ enum ToastType {
         }
     }
     
-    var MianColor: UIColor {
+    var mainColor: UIColor {
         switch self {
         case .danger:
             return EATSSUDesignAsset.Color.danger.color
@@ -97,7 +97,6 @@ class EATSSUToastView: BaseUIView {
     private let actionButton: UIButton = {
         let button = UIButton()
         button.setTitle("보러가기", for: .normal)
-        button.setTitleColor(EATSSUDesignAsset.Color.Main.primary.color, for: .normal)
         button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
         button.isHidden = true
         return button
@@ -117,12 +116,6 @@ class EATSSUToastView: BaseUIView {
         containerView.addSubview(iconImageView)
         containerView.addSubview(messageLabel)
         containerView.addSubview(actionButton)
-        
-        // Add shadow
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.1
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 8
         
         actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
     }
@@ -160,6 +153,7 @@ class EATSSUToastView: BaseUIView {
         containerView.layer.borderColor = type.borderColor.cgColor
         iconImageView.image = type.iconImage
         messageLabel.text = message
+        actionButton.setTitleColor(type.mainColor, for: .normal)
         
         actionButton.isHidden = !showAction
         
