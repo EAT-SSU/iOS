@@ -25,6 +25,8 @@ final class PartnershipClusterMarkerUpdater: NMCDefaultClusterMarkerUpdater {
     override func updateClusterMarker(_ info: NMCClusterMarkerInfo, _ marker: NMFMarker) {
         super.updateClusterMarker(info, marker)
         
+        marker.captionText = ""
+        
         guard let image = viewController?.makeClusterImage(count: info.size) else { return }
         
         marker.iconImage = NMFOverlayImage(image: image)
