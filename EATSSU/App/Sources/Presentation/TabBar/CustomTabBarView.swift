@@ -34,7 +34,7 @@ final class CustomTabBarView: BaseUIView {
 
     var buttonTapped: ((Int) -> Void)?
 
-    private let buttons: [UIButton] = {
+    private lazy var buttons: [UIButton] = {
         return Self.titles.indices.map { index in
             let title = Self.titles[index]
             let normalImage = Self.normalImages[index]
