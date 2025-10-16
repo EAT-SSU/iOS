@@ -191,21 +191,24 @@ extension MyReviewViewController {
     
     // 리뷰 삭제 알람 추가
     func deleteReview(reviewID: Int) {
-        let alert = UIAlertController(title: "리뷰 삭제", message: "리뷰를 삭제하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
+        showCustomDialog(
+            title: "리뷰 삭제하기",
+            message: "해당 리뷰를 삭제할까요?",
+            cancelButtonTitle: "취소하기",
+            confirmButtonTitle: "삭제하기"
+        ) { [weak self] in
+            // '삭제하기' 버튼을 눌렀을 때 실행될 네트워크 요청
+            guard let self = self else { return }
             self.reviewProvider.request(.deleteReview(reviewID)) { response in
                 switch response {
                 case .success:
                     self.getMyReview()
                 case let .failure(err):
                     print(err.localizedDescription)
-                    
                     RealmService.shared.resetDB()
                     self.navigateToLogin()
                 }
             }
-        })
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        present(alert, animated: true)
+        }
     }
 }

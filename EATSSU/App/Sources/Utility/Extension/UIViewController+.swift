@@ -132,8 +132,37 @@ extension UIViewController {
     }
     
     func logScreenView(screenID: String) {
-            Analytics.logEvent(AnalyticsEventScreenView,
-                               parameters: [AnalyticsParameterScreenName: screenID,
-                                           AnalyticsParameterScreenClass: String(describing: type(of: self))])
+        Analytics.logEvent(AnalyticsEventScreenView,
+                           parameters: [AnalyticsParameterScreenName: screenID,
+                                       AnalyticsParameterScreenClass: String(describing: type(of: self))])
+    }
+    
+    // MARK: - Custom Dialog
+        
+    /// 앱의 최상위 뷰 컨트롤러인 CustomTabBarContainerController를 찾아 반환합니다.
+    var tabBarContainer: CustomTabBarContainerController? {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let controller = windowScene.windows.first?.rootViewController as? CustomTabBarContainerController {
+            return controller
         }
+        return nil
+    }
+
+    /// 공용 다이얼로그를 표시합니다. (EATSSUDialogView 사용)
+    func showCustomDialog(
+        title: String,
+        message: String,
+        cancelButtonTitle: String = "취소하기",
+        confirmButtonTitle: String = "확인",
+        confirmAction: @escaping () -> Void
+    ) {
+        // tabBarContainer를 통해 최상위 뷰에 다이얼로그를 띄우도록 요청합니다.
+        tabBarContainer?.showDialog(
+            title: title,
+            message: message,
+            cancelButtonTitle: cancelButtonTitle,
+            confirmButtonTitle: confirmButtonTitle,
+            confirmAction: confirmAction
+        )
+    }
 }
