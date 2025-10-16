@@ -35,11 +35,11 @@ extension UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
-
+    
     @objc private func dismissKeyboardTouchOutside() {
         view.endEditing(true)
     }
-
+    
     func presentBottomAlert(_ message: String) {
         let alertSuperview: UIView = {
             let view = UIView()
@@ -48,7 +48,7 @@ extension UIViewController {
             view.isHidden = true
             return view
         }()
-
+        
         let alertLabel: UILabel = {
             let label = UILabel()
             label.font = .systemFont(ofSize: 15)
@@ -56,7 +56,7 @@ extension UIViewController {
             label.text = message
             return label
         }()
-
+        
         view.addSubview(alertSuperview)
         alertSuperview.addSubview(alertLabel)
         alertSuperview.snp.makeConstraints {
@@ -65,15 +65,15 @@ extension UIViewController {
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(40)
         }
-
+        
         alertLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-
+        
         alertLabel.text = message
         alertSuperview.alpha = 1.0
         alertSuperview.isHidden = false
-
+        
         UIView.animate(
             withDuration: 2.0,
             delay: 1.0,
@@ -84,7 +84,7 @@ extension UIViewController {
             }
         )
     }
-
+    
     /// UIAlertController를 생성하는 모듈 메소드입니다.
     ///
     ///  - Parameters:
@@ -94,15 +94,15 @@ extension UIViewController {
     ///   - action: 컨트롤러 액션
     func showAlertController(title: String, message: String, style: UIAlertAction.Style, action: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
+        
         let confirmAction = UIAlertAction(title: "확인", style: style) { _ in
             action?()
         }
         alert.addAction(confirmAction)
-
+        
         present(alert, animated: true)
     }
-
+    
     /// 취소항목이 있는 UIAlertController를 생성하는 모듈 메소드입니다.
     ///
     /// - Parameters:
@@ -118,16 +118,16 @@ extension UIViewController {
                                        action: (() -> Void)? = nil)
     {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
+        
         let confirmButton = UIAlertAction(title: "네", style: confirmStyle) { _ in
             action?()
         }
         let cancelButton = UIAlertAction(title: "아니오", style: cancelStyle) { _ in
         }
-
+        
         alert.addAction(confirmButton)
         alert.addAction(cancelButton)
-
+        
         present(alert, animated: true)
     }
     
@@ -138,7 +138,7 @@ extension UIViewController {
     }
     
     // MARK: - Custom Dialog
-        
+    
     /// 앱의 최상위 뷰 컨트롤러인 CustomTabBarContainerController를 찾아 반환합니다.
     var tabBarContainer: CustomTabBarContainerController? {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -147,7 +147,7 @@ extension UIViewController {
         }
         return nil
     }
-
+    
     /// 공용 다이얼로그를 표시합니다. (EATSSUDialogView 사용)
     func showCustomDialog(
         title: String,
@@ -164,5 +164,40 @@ extension UIViewController {
             confirmButtonTitle: confirmButtonTitle,
             confirmAction: confirmAction
         )
+    }
+    
+    // MARK: - Custom Toast
+    
+    /// 공용 토스트 메시지를 표시합니다. (EATSSUToastView 사용)
+    ///
+    /// - Parameters:
+    ///   - message: 토스트에 표시될 메시지
+    ///   - type: 토스트의 종류 (.success, .danger, .info, .warning)
+    ///   - duration: 토스트가 화면에 표시될 시간 (초)
+    ///   - actionTitle: (선택) 액션 버튼에 표시될 텍스트
+    ///   - actionHandler: (선택) 액션 버튼을 눌렀을 때 실행될 클로저
+    func showToast(
+        message: String,
+        type: ToastType = .info,
+        duration: TimeInterval = 2.0,
+        actionTitle: String? = nil,
+        actionHandler: (() -> Void)? = nil
+    ) {
+        let toastView = EATSSUToastView()
+        
+        // 액션 버튼 표시 여부 결정
+        let showAction = (actionTitle != nil)
+        
+        // 토스트 뷰 설정
+        toastView.configure(type: type, message: message, showAction: showAction)
+        
+        // 액션 버튼이 필요한 경우, 타이틀과 핸들러 설정
+        if let title = actionTitle {
+            toastView.setActionButtonTitle(title)
+            toastView.actionHandler = actionHandler
+        }
+        
+        // 현재 뷰 컨트롤러의 view에 토스트를 띄움
+        toastView.show(in: self.view, duration: duration)
     }
 }
