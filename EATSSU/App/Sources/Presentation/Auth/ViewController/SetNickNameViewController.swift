@@ -11,6 +11,8 @@ import Moya
 
 import FirebaseAnalytics
 
+import EATSSUDesign
+
 enum SetNickNameSource {
     case signup   // 첫 로그인/회원가입 시
     case mypage   // 마이페이지-내 정보 시
@@ -271,13 +273,18 @@ extension SetNickNameViewController {
                 do {
                     let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
                     let isNicknameAvailable = responseData.result ?? false
-                    let resultType: NicknameTextFieldResultType = isNicknameAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
-                    let toastMessage = isNicknameAvailable ? "사용 가능한 닉네임이에요" : "이미 사용 중인 닉네임이에요"
                     
                     self.isNicknameChecked = isNicknameAvailable
-                    self.view.showToast(message: toastMessage)
-                    self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
-                    self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
+                    
+                    if isNicknameAvailable {
+                        self.setNickNameView.nicknameValidationMessageLabel.text = "사용 가능한 닉네임이에요."
+                        self.setNickNameView.nicknameValidationMessageLabel.textColor = EATSSUDesignAsset.Color.info.color
+                    } else {
+                        let resultType: NicknameTextFieldResultType = .nicknameTextFieldDuplicated
+                        self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
+                        self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
+                    }
+                    
                     self.setNickNameView.setNicknameChecked(isNicknameAvailable)
                     self.updateSaveButtonState()
 
