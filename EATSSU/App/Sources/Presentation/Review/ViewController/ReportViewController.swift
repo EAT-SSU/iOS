@@ -15,11 +15,11 @@ import EATSSUDesign
 
 final class ReportViewController: BaseViewController {
     // MARK: - Properties
-
+    
     // View Properties
     private let reportView = ReportView()
     private let scrollView = UIScrollView()
-
+    
     // Variable Properties
     private var isChecked = false
     private var isReasonSelected = false
@@ -28,9 +28,9 @@ final class ReportViewController: BaseViewController {
     private var contentArray: [String?] = []
     private var reviewID: Int = .init()
     private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
-
+    
     // MARK: - View Life Cycle
-
+    
     override func viewWillAppear(_: Bool) {
         addKeyboardNotifications()
     }
@@ -40,10 +40,10 @@ final class ReportViewController: BaseViewController {
         
         logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_5)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         configureUI()
         setLayout()
         setScrollViewSetting()
@@ -52,43 +52,43 @@ final class ReportViewController: BaseViewController {
         setButtonEvent()
         setCustomNavigationBar()
     }
-
+    
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
     }
-
+    
     // MARK: - Methods
-
+    
     override func configureUI() {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
         }
-
+        
         scrollView.addSubview(reportView)
         reportView.snp.makeConstraints { make in
             make.edges.equalTo(scrollView.contentLayoutGuide)
             make.width.equalTo(scrollView.frameLayoutGuide)
-
+            
             make.height.equalTo(800)
         }
     }
-
+    
     override func setLayout() {
         super.setLayout()
     }
-
+    
     private func setScrollViewSetting() {
         scrollView.frame = view.bounds
         scrollView.contentSize = reportView.intrinsicContentSize
-
+        
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = false
-
+        
         scrollView.showsVerticalScrollIndicator = true
         scrollView.alwaysBounceVertical = true
     }
-
+    
     override func setButtonEvent() {
         [reportView.unrelatedToMenuButton,
          reportView.inappropriateContentButton,
@@ -100,29 +100,29 @@ final class ReportViewController: BaseViewController {
         }
         reportView.sendToEATSSUButton.addTarget(self, action: #selector(sendButtonIsTapped), for: .touchUpInside)
     }
-
+    
     func bindData(reviewID: Int) {
         self.reviewID = reviewID
     }
-
+    
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         title = "신고하기"
-
+        
         let navBarApperance = UINavigationBarAppearance()
         navBarApperance.configureWithOpaqueBackground()
-
+        
         navBarApperance.titleTextAttributes = [
             .foregroundColor: EATSSUDesignAsset.Color.GrayScale.gray700.color,
             .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 18),
         ]
         navBarApperance.backgroundColor = .white
         navBarApperance.shadowColor = nil
-
+        
         navigationController?.navigationBar.standardAppearance = navBarApperance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarApperance
     }
-
+    
     private func addArray() {
         reportView.unrelatedToMenuButton.tag = 0
         reportView.inappropriateContentButton.tag = 1
@@ -130,7 +130,7 @@ final class ReportViewController: BaseViewController {
         reportView.offTopicContentButton.tag = 3
         reportView.copyrightInfringementButton.tag = 4
         reportView.otherReasonButton.tag = 5
-
+        
         [reportView.unrelatedToMenuButton,
          reportView.inappropriateContentButton,
          reportView.inappropriatePromotionButton,
@@ -139,7 +139,7 @@ final class ReportViewController: BaseViewController {
          reportView.otherReasonButton].forEach {
             buttonArray.append($0)
         }
-
+        
         [reportView.unrelatedToMenuButton.titleLabel?.text,
          reportView.inappropriateContentButton.titleLabel?.text,
          reportView.inappropriatePromotionButton.titleLabel?.text,
@@ -149,7 +149,7 @@ final class ReportViewController: BaseViewController {
             contentArray.append($0)
         }
     }
-
+    
     @objc
     private func sendButtonIsTapped() {
         if isReasonSelected {
@@ -158,7 +158,7 @@ final class ReportViewController: BaseViewController {
             view.showToast(message: "사유를 선택해주세요!")
         }
     }
-
+    
     @objc
     private func checkButtonIsTapped(_ sender: UIButton) {
         isReasonSelected = true
@@ -170,7 +170,7 @@ final class ReportViewController: BaseViewController {
         status = sender.tag
         canTextViewUsed(status: status)
     }
-
+    
     private func canTextViewUsed(status: Int) {
         if status == 5 {
             reportView.reviewReportReasonTextView.isEditable = true
@@ -178,11 +178,11 @@ final class ReportViewController: BaseViewController {
             reportView.reviewReportReasonTextView.isEditable = false
         }
     }
-
+    
     private func setDelegate() {
         reportView.reviewReportReasonTextView.delegate = self
     }
-
+    
     @objc
     private func keyboardWillShow(_ noti: NSNotification) {
         if let keyboardFrame: NSValue = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
@@ -196,12 +196,12 @@ final class ReportViewController: BaseViewController {
             )
         }
     }
-
+    
     @objc
     private func keyboardWillHide(_: NSNotification) {
         view.transform = .identity
     }
-
+    
     /// 노티피케이션을 추가하는 메서드
     private func addKeyboardNotifications() {
         // 키보드가 나타날 때 앱에게 알리는 메서드 추가
@@ -219,7 +219,7 @@ final class ReportViewController: BaseViewController {
                          name: UIResponder.keyboardWillHideNotification,
                          object: nil)
     }
-
+    
     /// 노티피케이션을 제거하는 메서드
     private func removeKeyboardNotifications() {
         // 키보드가 나타날 때 앱에게 알리는 메서드 제거
@@ -235,13 +235,22 @@ final class ReportViewController: BaseViewController {
                             name: UIResponder.keyboardWillHideNotification,
                             object: nil)
     }
-
+    
     private func showSuccessAlert() {
-        // 신고 토스트로 변경
-        self.navigationController?.popViewController(animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.view.window?.showToast(message: "신고가 성공적으로 접수되었어요!")
+        guard let navigationController = self.navigationController,
+              navigationController.viewControllers.count > 1 else {
+            self.navigationController?.popViewController(animated: true)
+            return
         }
+        
+        let viewControllers = navigationController.viewControllers
+        let previousVC = viewControllers[viewControllers.count - 2]
+        
+        self.navigationController?.popViewController(animated: true)
+        
+        navigationController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
+            previousVC.showToast(message: "신고가 성공적으로 접수되었어요!", type: .success)
+        })
     }
 }
 
@@ -300,7 +309,7 @@ extension ReportViewController {
                 }
             case let .failure(err):
                 print(err.localizedDescription)
-                self.view.showToast(message: "잠시후 다시 시도해주세요.")
+                self.showToast(message: "잠시 후 다시 시도해주세요.", type: .danger)
             }
         }
     }
