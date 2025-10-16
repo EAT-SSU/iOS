@@ -509,7 +509,7 @@ extension SetRateViewController {
         writeReviewProvider.request(.writeNewReview(param: param,
                                                     menuID: menuID)) { result in
             switch result {
-            case let .success(response):
+            case .success(_):
                 if self.currentPage == self.reviewList.count - 1 {
                     self.moveToReviewVC()
                 }
@@ -526,7 +526,7 @@ extension SetRateViewController {
     private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
         reviewProvider.request(.fixReview(reviewId, param)) { response in
             switch response {
-            case let .success(moyaResponse):
+            case .success(_):
                     self.navigationController?.popViewController(animated: true)
                 
             case let .failure(err):

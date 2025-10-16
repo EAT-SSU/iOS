@@ -43,8 +43,17 @@ class PostUIButton: UIButton {
         setTitleColor(.white, for: .normal)
         titleLabel?.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)
         layer.cornerRadius = 10
-        // TODO: UIEdgeInsets은 iOS 15.0에서 deprecated 되었기에, 수정 필요
-        contentEdgeInsets = UIEdgeInsets(top: 9, left: 0, bottom: 9, right: 0)
+        
+        var config = UIButton.Configuration.filled()
+        config.contentInsets = NSDirectionalEdgeInsets(top: 9, leading: 0, bottom: 9, trailing: 0)
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)
+            return outgoing
+        }
+        config.baseBackgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+        configuration = config
+        
         contentHorizontalAlignment = .center
         isEnabled = false
     }
