@@ -165,25 +165,33 @@ final class ReviewViewController: BaseViewController {
     }
 
     private func showReportAlert(reviewID: Int) {
-        let alert = UIAlertController(title: "리뷰 신고하기",
-                                      message: "해당 리뷰를 신고하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.actionSheet)
-//                                      preferredStyle: UIAlertController.Style.alert)
-
-        let cancelAction = UIAlertAction(title: "취소",
-                                         style: .cancel,
-                                         handler: nil)
-
-        let deleteAction = UIAlertAction(title: "신고",
-                                         style: .default,
-                                         handler: { _ in
-                                             let reportViewController = ReportViewController()
-                                             reportViewController.bindData(reviewID: reviewID)
-                                             self.navigationController?.pushViewController(reportViewController, animated: true)
-                                         })
-        alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
+        let dialogView = EATSSUDialogView()
+        
+        // 다이얼로그 내용 설정
+        dialogView.configure(title: "리뷰 신고하기",
+                             message: "해당 리뷰를 신고하시겠습니까?",
+                             isSingleButton: false)
+        
+        dialogView.setButtonTitles(cancel: "취소하기", confirm: "신고하기")
+        
+        // '취소하기' 버튼 액션
+        dialogView.cancelButton.addAction(UIAction { _ in
+            dialogView.removeFromSuperview()
+        }, for: .touchUpInside)
+        
+        // '신고하기' 버튼 액션
+        dialogView.confirmButton.addAction(UIAction { [weak self] _ in
+            let reportViewController = ReportViewController()
+            reportViewController.bindData(reviewID: reviewID)
+            self?.navigationController?.pushViewController(reportViewController, animated: true)
+            dialogView.removeFromSuperview()
+        }, for: .touchUpInside)
+        
+        // 화면에 다이얼로그 추가
+        view.addSubview(dialogView)
+        dialogView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
 
     // MARK: - Action Method
