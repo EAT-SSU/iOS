@@ -11,31 +11,34 @@ import EATSSUDesign
 
 final class CustomTabBarView: BaseUIView {
 
+    // MARK: - Constants
+    
+    private static let titles = ["학식", "지도", "마이"]
+    private static let normalImages = [
+        EATSSUDesignAsset.Images.tabMeal.image,
+        EATSSUDesignAsset.Images.tabMap.image,
+        EATSSUDesignAsset.Images.tabMypage.image
+    ]
+    private static let selectedImages = [
+        EATSSUDesignAsset.Images.tabMealSelected.image,
+        EATSSUDesignAsset.Images.tabMapSelected.image,
+        EATSSUDesignAsset.Images.tabMypageSelected.image
+    ]
+    private static let imageSizes = [
+        CGSize(width: 23, height: 23),
+        CGSize(width: 23, height: 23),
+        CGSize(width: 44, height: 23)
+    ]
+
     // MARK: - Properties
 
     var buttonTapped: ((Int) -> Void)?
 
     private let buttons: [UIButton] = {
-        let titles = ["학식", "지도", "마이"]
-        let normalImages = [
-            EATSSUDesignAsset.Images.tabMeal.image,
-            EATSSUDesignAsset.Images.tabMap.image,
-            EATSSUDesignAsset.Images.tabMypage.image
-        ]
-        let selectedImages = [
-            EATSSUDesignAsset.Images.tabMealSelected.image,
-            EATSSUDesignAsset.Images.tabMapSelected.image,
-            EATSSUDesignAsset.Images.tabMypageSelected.image
-        ]
-        let imageSizes = [
-            CGSize(width: 23, height: 23),  // 학식
-            CGSize(width: 23, height: 23),  // 지도
-            CGSize(width: 44, height: 23)   // 마이
-        ]
-
-        return zip(titles, zip(zip(normalImages, selectedImages), imageSizes)).enumerated().map { index, pair in
-            let (title, imageData) = pair
-            let ((normalImage, _), imageSize) = imageData
+        return Self.titles.indices.map { index in
+            let title = Self.titles[index]
+            let normalImage = Self.normalImages[index]
+            let imageSize = Self.imageSizes[index]
             
             let resizedImage = normalImage.resized(to: imageSize)
             
@@ -98,32 +101,17 @@ final class CustomTabBarView: BaseUIView {
 
     /// 선택된 인덱스의 버튼 스타일 업데이트
     func setSelectedIndex(_ index: Int) {
-        let normalImages = [
-            EATSSUDesignAsset.Images.tabMeal.image,
-            EATSSUDesignAsset.Images.tabMap.image,
-            EATSSUDesignAsset.Images.tabMypage.image
-        ]
-        let selectedImages = [
-            EATSSUDesignAsset.Images.tabMealSelected.image,
-            EATSSUDesignAsset.Images.tabMapSelected.image,
-            EATSSUDesignAsset.Images.tabMypageSelected.image
-        ]
-        let imageSizes = [
-            CGSize(width: 23, height: 23),  // 학식
-            CGSize(width: 23, height: 23),  // 지도
-            CGSize(width: 44, height: 23)   // 마이
-        ]
-        
         for (i, button) in buttons.enumerated() {
             let isSelected = i == index
             let color: UIColor = isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray500
-            let image = isSelected ? selectedImages[i] : normalImages[i]
-            let resizedImage = image.resized(to: imageSizes[i])
+            
+            let image = isSelected ? Self.selectedImages[i] : Self.normalImages[i]
+            let resizedImage = image.resized(to: Self.imageSizes[i])
 
             if var config = button.configuration,
                let title = config.title {
                 var attrTitle = AttributedString(title)
-                attrTitle.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 11)
+                attrTitle.font = isSelected ? EATSSUDesignFontFamily.Pretendard.bold.font(size: 11) : EATSSUDesignFontFamily.Pretendard.regular.font(size: 11)
                 attrTitle.foregroundColor = color
                 config.attributedTitle = attrTitle
                 config.image = resizedImage
