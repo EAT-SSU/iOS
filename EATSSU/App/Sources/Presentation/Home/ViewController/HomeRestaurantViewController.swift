@@ -350,7 +350,9 @@ extension HomeRestaurantViewController {
                 print("\(restaurant) 변경 메뉴 조회 실패: \(error.localizedDescription)")
                 self?.changeMenuTableViewData[restaurant] = []
                 if let sectionIndex = self?.getSectionIndex(for: restaurant) {
-                    self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                    DispatchQueue.main.async {
+                        self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                    }
                 }
             }
         }, receiveValue: { [weak self] menus in
@@ -384,7 +386,9 @@ extension HomeRestaurantViewController {
                 print("\(restaurant) 고정 메뉴 조회 실패: \(error.localizedDescription)")
                 self?.fixMenuTableViewData[restaurant] = []
                 if let sectionIndex = self?.getSectionIndex(for: restaurant) {
-                    self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                    DispatchQueue.main.async {
+                        self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                    }
                 }
             }
         }, receiveValue: { [weak self] response in
