@@ -27,7 +27,6 @@ final class ReportViewController: BaseViewController {
     private var buttonArray: [UIButton] = []
     private var contentArray: [String?] = []
     private var reviewID: Int = .init()
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
 
     // MARK: - View Life Cycle
 
@@ -292,15 +291,17 @@ extension ReportViewController {
                                   reportType: reportType,
                                   content: reportContent)
 
-        reviewProvider.request(.report(param: param)) { response in
-            switch response {
+        NetworkService.shared.request(
+            ReviewRouter.report(param: param),
+            responseType: Bool.self
+        ) { [weak self] result in
+            switch result {
             case .success:
-                do {
-                    self.showSuccessAlert()
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
-                self.view.showToast(message: "잠시후 다시 시도해주세요.")
+                self?.showSuccessAlert()
+                
+            case .failure(let error):
+                print("신고 실패: \(error.localizedDescription)")
+                self?.view.showToast(message: "잠시후 다시 시도해주세요.")
             }
         }
     }
