@@ -55,7 +55,12 @@ final class NetworkService {
                             completion(.success(data))
                         } else {
                             if R.self == Bool.self {
-                                completion(.success(true as! R))
+                                guard let successValue = true as? R else {
+                                    let error = NSError(domain: "NetworkService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Bool 타입 변환에 실패했습니다."])
+                                    completion(.failure(error))
+                                    return
+                                }
+                                completion(.success(successValue))
                             } else {
                                 let error = NSError(
                                     domain: "NetworkService",
