@@ -24,8 +24,6 @@ final class ReviewViewController: BaseViewController {
 
     // MARK: - UI Component
 
-    let refreshControl = UIRefreshControl()
-
     let reviewTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -53,7 +51,6 @@ final class ReviewViewController: BaseViewController {
         super.viewDidLoad()
 
         setTableView()
-        initRefresh()
         setFirebaseTask()
     }
 
@@ -110,23 +107,6 @@ final class ReviewViewController: BaseViewController {
 
         reviewTableView.delegate = self
         reviewTableView.dataSource = self
-    }
-
-    func initRefresh() {
-        refreshControl.addTarget(self,
-                                 action: #selector(refreshTable(refresh:)),
-                                 for: .valueChanged)
-
-        reviewTableView.refreshControl = refreshControl
-    }
-
-    @objc
-    func refreshTable(refresh: UIRefreshControl) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.getReviewRate()
-            self.getReviewList(type: self.type, menuId: self.menuID)
-            refresh.endRefreshing()
-        }
     }
 
     func bindMenuID(id: Int) {
