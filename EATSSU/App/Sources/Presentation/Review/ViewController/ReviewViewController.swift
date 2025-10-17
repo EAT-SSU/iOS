@@ -13,7 +13,6 @@ import Moya
 final class ReviewViewController: BaseViewController {
     // MARK: - Properties
 
-    let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
     var menuID: Int = .init()
     var type = "VARIABLE"
     private var menuNameList: [String] = []
@@ -362,63 +361,81 @@ extension ReviewViewController: UITableViewDataSource {
 extension ReviewViewController {
     // 상단 메뉴 별점 불러오는 API
     func getReviewRate() {
-        reviewProvider.request(.reviewRate(type, menuID)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    if self.type == "FIXED" {
-                        let responseData = try moyaResponse.map(BaseResponse<FixedReviewRateResponse>.self)
-                        guard let data = responseData.result else { return }
-                        self.fixedResponseData = data
-                        self.reviewTableView.reloadData()
-                        self.menuNameList = [data.menuName]
-                    } else {
-                        let responseData = try moyaResponse.map(BaseResponse<ReviewRateResponse>.self)
-                        guard let data = responseData.result else { return }
-                        self.responseData = data
-                        self.reviewTableView.reloadData()
-                        self.menuNameList = data.menuNames
-                    }
+        if type == "FIXED" {
+            NetworkService.shared.request(
+                ReviewRouter.reviewRate(type, menuID),
+                responseType: FixedReviewRateResponse.self
+            ) { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let data):
+                    self.fixedResponseData = data
+                    self.menuNameList = [data.menuName]
+                    self.reviewTableView.reloadData()
                     self.makeDictionary()
-                } catch let err {
-                    print(err.localizedDescription)
+                    
+                case .failure(let error):
+                    print("고정 메뉴 평점 조회 실패: \(error.localizedDescription)")
                 }
-            case let .failure(err):
-                print(err.localizedDescription)
+            }
+        } else {
+            NetworkService.shared.request(
+                ReviewRouter.reviewRate(type, menuID),
+                responseType: ReviewRateResponse.self
+            ) { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let data):
+                    self.responseData = data
+                    self.menuNameList = data.menuNames
+                    self.reviewTableView.reloadData()
+                    self.makeDictionary()
+                    
+                case .failure(let error):
+                    print("변동 메뉴 평점 조회 실패: \(error.localizedDescription)")
+                }
             }
         }
     }
 
     // 하단 리뷰 리스트 불러오는 API
     func getReviewList(type: String, menuId _: Int) {
-        reviewProvider.request(.reviewList(type, menuID)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<ReviewListResponse>.self)
-                    guard let data = responseData.result else { return }
-                    self.reviewList = data.dataList
-                    self.reviewTableView.reloadData()
-                    
-                } catch let err {
-                    print(err.localizedDescription)
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
+        NetworkService.shared.request(
+            ReviewRouter.reviewList(type, menuID),
+            responseType: ReviewListResponse.self
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let data):
+                self.reviewList = data.dataList
+                self.reviewTableView.reloadData()
+                
+            case .failure(let error):
+                print("리뷰 리스트 조회 실패: \(error.localizedDescription)")
             }
         }
     }
-
+    
     func deleteReview(reviewID: Int) {
-        reviewProvider.request(.deleteReview(reviewID)) { response in
-            switch response {
+        NetworkService.shared.request(
+            ReviewRouter.deleteReview(reviewID),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
             case .success:
                 self.getReviewRate()
                 self.updateViewConstraints()
                 self.getReviewList(type: self.type, menuId: self.menuID)
                 self.reviewTableView.showToast(message: "삭제되었어요 !")
-            case let .failure(err):
-                print(err.localizedDescription)
+                
+            case .failure(let error):
+                print("리뷰 삭제 실패: \(error.localizedDescription)")
             }
         }
     }
