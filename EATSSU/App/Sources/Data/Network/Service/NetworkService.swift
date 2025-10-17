@@ -56,34 +56,23 @@ final class NetworkService {
                         } else {
                             if R.self == Bool.self {
                                 guard let successValue = true as? R else {
-                                    let error = NSError(domain: "NetworkService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Bool 타입 변환에 실패했습니다."])
-                                    completion(.failure(error))
+                                    completion(.failure(NetworkError.decodingError(NSError(domain: "NetworkService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Bool 타입 변환에 실패했습니다."]))))
                                     return
                                 }
                                 completion(.success(successValue))
                             } else {
-                                let error = NSError(
-                                    domain: "NetworkService",
-                                    code: baseResponse.code,
-                                    userInfo: [NSLocalizedDescriptionKey: "응답 데이터가 없습니다."]
-                                )
-                                completion(.failure(error))
+                                completion(.failure(NetworkError.noData(code: baseResponse.code)))
                             }
                         }
                     } else {
-                        let error = NSError(
-                            domain: "NetworkService",
-                            code: baseResponse.code,
-                            userInfo: [NSLocalizedDescriptionKey: baseResponse.message]
-                        )
-                        completion(.failure(error))
+                        completion(.failure(NetworkError.serverError(code: baseResponse.code, message: baseResponse.message)))
                     }
                 } catch {
-                    completion(.failure(error))
+                    completion(.failure(NetworkError.decodingError(error)))
                 }
                 
             case .failure(let error):
-                completion(.failure(error))
+                completion(.failure(NetworkError.underlying(error)))
             }
         }
     }
