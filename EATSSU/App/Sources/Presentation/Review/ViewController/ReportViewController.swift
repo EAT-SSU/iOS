@@ -27,8 +27,7 @@ final class ReportViewController: BaseViewController {
     private var buttonArray: [UIButton] = []
     private var contentArray: [String?] = []
     private var reviewID: Int = .init()
-    private let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
-    
+
     // MARK: - View Life Cycle
     
     override func viewWillAppear(_: Bool) {
@@ -275,46 +274,48 @@ extension ReportViewController: UITextViewDelegate {
 
 extension ReportViewController {
     private func postReport(reviewID: Int, content: String) {
-        var reportType = String()
-        var reportContent = String()
-        switch content {
-        case "메뉴와 관련없는 내용":
-            reportType = "NO_ASSOCIATE_CONTENT"
-            reportContent = content
-        case "음란성, 욕설 등 부적절한 내용":
-            reportType = "IMPROPER_CONTENT"
-            reportContent = content
-        case "부적절한 홍보 또는 광고":
-            reportType = "IMPROPER_ADVERTISEMENT"
-            reportContent = content
-        case "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)":
-            reportType = "COPY"
-            reportContent = content
-        case "저작권 도용 의심 (사진 등)":
-            reportType = "COPYRIGHT"
-            reportContent = content
-        case "기타 (하단 내용 작성)":
-            reportType = "EXTRA"
-            reportContent = reportView.reviewReportReasonTextView.text
-        default:
-            reportType = ""
-            reportContent = ""
-        }
-
-        let param = ReportRequest(reviewId: reviewID,
-                                  reportType: reportType,
-                                  content: reportContent)
-
-        reviewProvider.request(.report(param: param)) { response in
-            switch response {
-            case .success:
-                do {
-                    self.showSuccessAlert()
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
-                self.showToast(message: "잠시 후 다시 시도해주세요.", type: .danger)
-            }
+    var reportType = String()
+    var reportContent = String()
+    
+    switch content {
+    case "메뉴와 관련없는 내용":
+        reportType = "NO_ASSOCIATE_CONTENT"
+        reportContent = content
+    case "음란성, 욕설 등 부적절한 내용":
+        reportType = "IMPROPER_CONTENT"
+        reportContent = content
+    case "부적절한 홍보 또는 광고":
+        reportType = "IMPROPER_ADVERTISEMENT"
+        reportContent = content
+    case "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)":
+        reportType = "COPY"
+        reportContent = content
+    case "저작권 도용 의심 (사진 등)":
+        reportType = "COPYRIGHT"
+        reportContent = content
+    case "기타 (하단 내용 작성)":
+        reportType = "EXTRA"
+        reportContent = reportView.reviewReportReasonTextView.text
+    default:
+        reportType = ""
+        reportContent = ""
+    }
+    
+    let param = ReportRequest(reviewId: reviewID,
+                              reportType: reportType,
+                              content: reportContent)
+    
+    NetworkService.shared.request(
+        ReviewRouter.report(param: param),
+        responseType: Bool.self
+    ) { [weak self] result in
+        switch result {
+        case .success:
+            self?.showSuccessAlert()
+            
+        case .failure(let error):
+            print("신고 실패: \(error.localizedDescription)")
+            self?.showToast(message: "잠시 후 다시 시도해주세요.", type: .danger)
         }
     }
 }

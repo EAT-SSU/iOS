@@ -160,19 +160,61 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private func fetchNoticeAndConfigureRootViewController() {
         FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
+            guard let self = self else { return }
+            
             DispatchQueue.main.async {
-                self?.configureRootViewController(with: result)
+                if let notice = result, !notice.isEmpty {
+                    // 공지사항이 있으면 공지 화면으로
+                    self.transitionToNotice(notice)
+                } else {
+                    // 공지사항 없으면 인증 체크 시작
+                    self.startAuthenticationFlow()
+                }
             }
         }
     }
 
-    private func configureRootViewController(with noticeMessage: String?) {
-        let rootViewController: UIViewController = if let notice = noticeMessage, !notice.isEmpty {
-            UINavigationController(rootViewController: NoticeViewController(noticeMessage: notice))
-        } else {
-            UINavigationController(rootViewController: LoginViewController())
+    // 새로 추가할 메서드들
+    private func startAuthenticationFlow() {
+        _Concurrency.Task {
+            let result = await AuthenticationManager.shared.checkAuthentication()
+            
+            await MainActor.run {
+                switch result {
+                case .authenticated:
+                    transitionToHome()
+                case .notAuthenticated, .sessionExpired:
+                    transitionToLogin(withMessage: result.errorMessage)
+                }
+            }
         }
-        window?.rootViewController = rootViewController
+    }
+
+    private func transitionToNotice(_ message: String) {
+        let noticeVC = NoticeViewController(noticeMessage: message)
+        let navigationController = UINavigationController(rootViewController: noticeVC)
+        
+        UIView.transition(with: window!, duration: 0.3, options: .transitionCrossDissolve) {
+            self.window?.rootViewController = navigationController
+        }
+    }
+
+    private func transitionToHome() {
+        let customTabVC = CustomTabBarContainerController()
+        
+        UIView.transition(with: window!, duration: 0.3, options: .transitionCrossDissolve) {
+            self.window?.rootViewController = customTabVC
+        }
+    }
+
+    private func transitionToLogin(withMessage message: String?) {
+        let loginVC = LoginViewController()
+        loginVC.toastMessage = message
+        let navigationController = UINavigationController(rootViewController: loginVC)
+        
+        UIView.transition(with: window!, duration: 0.3, options: .transitionCrossDissolve) {
+            self.window?.rootViewController = navigationController
+        }
     }
 
     private func checkForAppUpdate() {

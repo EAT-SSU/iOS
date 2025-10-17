@@ -17,7 +17,6 @@ final class UserWithdrawViewController: BaseViewController {
 
     private var nickName = String()
     var currentKeyboardHeight: CGFloat = 0.0
-    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     // MARK: - UI Components
 
@@ -130,26 +129,24 @@ final class UserWithdrawViewController: BaseViewController {
 
 extension UserWithdrawViewController {
     private func deleteUser() {
-        myProvider.request(.signOut) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    guard let data = responseData.result, data else { return }
-                    
-                    RealmService.shared.resetDB()
-                    let loginViewController = LoginViewController()
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                    {
-                        loginViewController.toastMessage = "탈퇴 처리가 완료되었습니다."
-                        keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
-                    }
-                } catch let err {
-                    print(err.localizedDescription)
+        NetworkService.shared.request(
+            MyRouter.signOut,
+            responseType: Bool.self,
+            useAuth: true
+        ) { result in
+            switch result {
+            case .success:
+                RealmService.shared.resetDB()
+                let loginViewController = LoginViewController()
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                {
+                    loginViewController.toastMessage = "탈퇴 처리가 완료되었습니다."
+                    keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
                 }
-            case let .failure(err):
-                print(err.localizedDescription)
+                
+            case .failure(let error):
+                print("회원 탈퇴 실패: \(error.localizedDescription)")
             }
         }
     }

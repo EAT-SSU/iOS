@@ -14,9 +14,6 @@ import FirebaseAnalytics
 final class MyReviewViewController: BaseViewController {
     // MARK: - Properties
 
-    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
-    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
-
     private var reviewList = [MyDataList]()
     var nickname: String = .init()
     private var menuName: String = .init()
@@ -167,24 +164,21 @@ extension MyReviewViewController: UITableViewDataSource {
 
 extension MyReviewViewController {
     private func getMyReview() {
-        myProvider.request(.myReview) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<MyReviewResponse>.self)
-                    guard let data = responseData.result else { return }
-                    self.reviewList = data.dataList
-                    self.checkReviewCount()
-                    self.myReviewView.myReviewTableView.reloadData()
-                } catch let err {
-                    print(err.localizedDescription)
-                    
-                    RealmService.shared.resetDB()
-                    self.navigateToLogin()
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
+        NetworkService.shared.request(
+            MyRouter.myReview,
+            responseType: MyReviewResponse.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                self.reviewList = response.dataList
+                self.checkReviewCount()
+                self.myReviewView.myReviewTableView.reloadData()
                 
+            case .failure(let error):
+                print("내 리뷰 조회 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
             }
@@ -192,24 +186,27 @@ extension MyReviewViewController {
     }
     
     // 리뷰 삭제 알람 추가
-    func deleteReview(reviewID: Int) {
-        showCustomDialog(
-            title: "리뷰 삭제하기",
-            message: "해당 리뷰를 삭제할까요?",
-            cancelButtonTitle: "취소하기",
-            confirmButtonTitle: "삭제하기"
-        ) { [weak self] in
-            // '삭제하기' 버튼을 눌렀을 때 실행될 네트워크 요청
-            guard let self = self else { return }
-            self.reviewProvider.request(.deleteReview(reviewID)) { response in
-                switch response {
-                case .success:
-                    self.getMyReview()
-                case let .failure(err):
-                    print(err.localizedDescription)
-                    RealmService.shared.resetDB()
-                    self.navigateToLogin()
-                }
+func deleteReview(reviewID: Int) {
+    showCustomDialog(
+        title: "리뷰 삭제하기",
+        message: "해당 리뷰를 삭제할까요?",
+        cancelButtonTitle: "취소하기",
+        confirmButtonTitle: "삭제하기"
+    ) { [weak self] in
+        guard let self = self else { return }
+        
+        NetworkService.shared.request(
+            ReviewRouter.deleteReview(reviewID),
+            responseType: Bool.self,
+            useAuth: true
+        ) { result in
+            switch result {
+            case .success:
+                self.getMyReview()
+            case .failure(let error):
+                print("리뷰 삭제 실패: \(error.localizedDescription)")
+                RealmService.shared.resetDB()
+                self.navigateToLogin()
             }
         }
     }

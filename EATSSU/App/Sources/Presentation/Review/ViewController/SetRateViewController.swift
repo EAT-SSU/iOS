@@ -16,8 +16,6 @@ import EATSSUDesign
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
 
-    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
-    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var currentPage: Int = 0 {
         didSet {
             menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
@@ -482,56 +480,62 @@ extension SetRateViewController {
     /// 이미지 X -> URL 없이 리뷰 작성 요청
     /// 이미지가 아예 없을 때 어떤 경우로 빠지는지 보고, 거기에서 호출하도록 하기
     private func postReviewImage(param: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) {
-        writeReviewProvider.request(.uploadImage(image: image)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<UploadImageResponse>.self)
-                    guard let data = responseData.result else { return }
-                    let reviewDTO = WriteReviewRequest(content: param, imageURL: data.url)
-                    self.postNewWriteReview(param: reviewDTO, menuID: menuId)
-                } catch let err {
-                    print(err.localizedDescription)
-                    let reviewDTO = WriteReviewRequest(content: param, imageURL: nil)
-                    self.postNewWriteReview(param: reviewDTO, menuID: menuId)
-                }
-
-            case let .failure(err):
-                print(err.localizedDescription)
+        NetworkService.shared.request(
+            WriteReviewRouter.uploadImage(image: image),
+            responseType: UploadImageResponse.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let data):
+                let reviewDTO = WriteReviewRequest(content: param, imageURL: data.url)
+                self.postNewWriteReview(param: reviewDTO, menuID: menuId)
+                
+            case .failure(let error):
+                print("이미지 업로드 실패: \(error.localizedDescription)")
                 let reviewDTO = WriteReviewRequest(content: param, imageURL: nil)
                 self.postNewWriteReview(param: reviewDTO, menuID: menuId)
             }
         }
     }
     
-    private func postNewWriteReview(param: WriteReviewRequest,
-                                    menuID: Int) {
-        writeReviewProvider.request(.writeNewReview(param: param,
-                                                    menuID: menuID)) { result in
+    private func postNewWriteReview(param: WriteReviewRequest, menuID: Int) {
+        NetworkService.shared.request(
+            WriteReviewRouter.writeNewReview(param: param, menuID: menuID),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
-            case .success(_):
+            case .success:
                 if self.currentPage == self.reviewList.count - 1 {
                     self.moveToReviewVC()
                 }
-            case let .failure(err):
-                debugPrint(err.localizedDescription)
                 
+            case .failure(let error):
+                print("리뷰 작성 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
             }
         }
     }
     
-    // 이거 제대로 작동 되는지 확인하기
     private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
-        reviewProvider.request(.fixReview(reviewId, param)) { response in
-            switch response {
-            case .success(_):
-                    self.navigationController?.popViewController(animated: true)
+        NetworkService.shared.request(
+            ReviewRouter.fixReview(reviewId, param),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success:
+                self.navigationController?.popViewController(animated: true)
                 
-            case let .failure(err):
-                print(err.localizedDescription)
-                
+            case .failure(let error):
+                print("리뷰 수정 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
             }
