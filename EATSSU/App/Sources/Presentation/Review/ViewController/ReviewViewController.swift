@@ -410,7 +410,7 @@ extension ReviewViewController {
                 self.getReviewRate()
                 self.updateViewConstraints()
                 self.getReviewList(type: self.type, menuId: self.menuID)
-                self.reviewTableView.showToast(message: "삭제되었어요 !")
+                self.showToast(message: "삭제되었어요 !", type: .success)
             
             case .failure(let error):
                 print("리뷰 삭제 실패: \(error.localizedDescription)")

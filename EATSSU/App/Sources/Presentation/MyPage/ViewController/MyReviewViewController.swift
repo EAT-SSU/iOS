@@ -186,27 +186,28 @@ extension MyReviewViewController {
     }
     
     // 리뷰 삭제 알람 추가
-func deleteReview(reviewID: Int) {
-    showCustomDialog(
-        title: "리뷰 삭제하기",
-        message: "해당 리뷰를 삭제할까요?",
-        cancelButtonTitle: "취소하기",
-        confirmButtonTitle: "삭제하기"
-    ) { [weak self] in
-        guard let self = self else { return }
-        
-        NetworkService.shared.request(
-            ReviewRouter.deleteReview(reviewID),
-            responseType: Bool.self,
-            useAuth: true
-        ) { result in
-            switch result {
-            case .success:
-                self.getMyReview()
-            case .failure(let error):
-                print("리뷰 삭제 실패: \(error.localizedDescription)")
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
+    func deleteReview(reviewID: Int) {
+        showCustomDialog(
+            title: "리뷰 삭제하기",
+            message: "해당 리뷰를 삭제할까요?",
+            cancelButtonTitle: "취소하기",
+            confirmButtonTitle: "삭제하기"
+        ) { [weak self] in
+            guard let self = self else { return }
+            
+            NetworkService.shared.request(
+                ReviewRouter.deleteReview(reviewID),
+                responseType: Bool.self,
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success:
+                    self.getMyReview()
+                case .failure(let error):
+                    print("리뷰 삭제 실패: \(error.localizedDescription)")
+                    RealmService.shared.resetDB()
+                    self.navigateToLogin()
+                }
             }
         }
     }

@@ -284,7 +284,7 @@ extension SetNickNameViewController {
                 let toastMessage = isNicknameAvailable ? "사용 가능한 닉네임이에요" : "이미 사용 중인 닉네임이에요"
                 
                 self.isNicknameChecked = isNicknameAvailable
-                self.view.showToast(message: toastMessage)
+                self.showToast(message: toastMessage)
                 self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
                 self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
                 self.setNickNameView.setNicknameChecked(isNicknameAvailable)
