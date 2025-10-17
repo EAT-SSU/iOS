@@ -93,9 +93,7 @@ final class HomeRestaurantViewController: BaseViewController {
             }
         }
     }
-    // 메뉴 API 요청을 위한 Moya Provider
-    let menuProvider = MoyaProvider<HomeRouter>(plugins: [ESMoyaLoggingPlugin()])
-
+    
     // MARK: - UI Components
 
     // 뷰 전반을 구성하는 restaurantView
@@ -366,50 +364,51 @@ extension HomeRestaurantViewController: UITableViewDelegate {
 extension HomeRestaurantViewController {
     // 변경 메뉴 요청 API 호출
     func getChageMenuData(date: String, restaurant: String, time: String, completion: @escaping () -> Void) {
-        menuProvider.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time)) { response in
-            switch response {
-            case let .success(responseData):
-                do {
-                    self.currentRestaurant = restaurant
-                    let responseDetailDto = try responseData.map(BaseResponse<[ChangeMenuTableResponse]>.self)
-                    
-                    let filteredMenus = responseDetailDto.result?.filter {
-                        !($0.briefMenus.first?.name.isEmpty ?? true)
-                    }
-                    
-                    self.changeMenuTableViewData[restaurant] = filteredMenus
-
-                } catch let err {
-                    print(err.localizedDescription)
+        NetworkService.shared.request(
+            HomeRouter.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time),
+            responseType: [ChangeMenuTableResponse].self
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            self.currentRestaurant = restaurant
+            
+            switch result {
+            case .success(let menus):
+                let filteredMenus = menus.filter {
+                    !($0.briefMenus.first?.name.isEmpty ?? true)
                 }
-            case let .failure(err):
-                print(err.localizedDescription)
+                self.changeMenuTableViewData[restaurant] = filteredMenus
+                
+            case .failure(let error):
+                print("변경 메뉴 조회 실패: \(error.localizedDescription)")
             }
+            
             completion()
         }
     }
 
     // 고정 메뉴 요청 API 호출
     func getFixMenuData(restaurant: String, completion: @escaping () -> Void) {
-        menuProvider.request(.getFixedMenuTableResponse(restaurant: restaurant)) { response in
-            switch response {
-            case let .success(responseData):
-                do {
-                    self.currentRestaurant = restaurant
-                    let responseDetailDto = try responseData.map(BaseResponse<FixedMenuTableResponse>.self)
-                    guard let responseResult = responseDetailDto.result else { return }
-
-                    var allMenuInformations = [Menus]()
-                    for categoryMenu in responseResult.categoryMenuListCollection {
-                        allMenuInformations += categoryMenu.menus
-                    }
-                    self.fixMenuTableViewData[restaurant] = allMenuInformations
-                } catch let err {
-                    print(err.localizedDescription)
+        NetworkService.shared.request(
+            HomeRouter.getFixedMenuTableResponse(restaurant: restaurant),
+            responseType: FixedMenuTableResponse.self
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            self.currentRestaurant = restaurant
+            
+            switch result {
+            case .success(let response):
+                var allMenuInformations = [Menus]()
+                for categoryMenu in response.categoryMenuListCollection {
+                    allMenuInformations += categoryMenu.menus
                 }
-            case let .failure(err):
-                print(err.localizedDescription)
+                self.fixMenuTableViewData[restaurant] = allMenuInformations
+                
+            case .failure(let error):
+                print("고정 메뉴 조회 실패: \(error.localizedDescription)")
             }
+            
             completion()
         }
     }
