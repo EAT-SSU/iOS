@@ -49,8 +49,21 @@ final class NetworkService {
                 do {
                     let baseResponse = try response.map(BaseResponse<R>.self)
                     
-                    if let data = baseResponse.result {
-                        completion(.success(data))
+                    if baseResponse.isSuccess {
+                        if let data = baseResponse.result {
+                            completion(.success(data))
+                        } else {
+                            if R.self == Bool.self {
+                                completion(.success(true as! R))
+                            } else {
+                                let error = NSError(
+                                    domain: "NetworkService",
+                                    code: baseResponse.code,
+                                    userInfo: [NSLocalizedDescriptionKey: "응답 데이터가 없습니다."]
+                                )
+                                completion(.failure(error))
+                            }
+                        }
                     } else {
                         let error = NSError(
                             domain: "NetworkService",
