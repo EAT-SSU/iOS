@@ -16,7 +16,7 @@ final class UserWithdrawViewController: BaseViewController {
     // MARK: - Properties
 
     private var nickName = String()
-    var currentKeyboardHeight: CGFloat = 0.0
+    private var buttonBottomConstraint: Constraint?
 
     // MARK: - UI Components
 
@@ -67,6 +67,12 @@ final class UserWithdrawViewController: BaseViewController {
         userWithdrawView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        
+        userWithdrawView.completeSignOutButton.snp.remakeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(52)
+            buttonBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(26).constraint
+        }
     }
 
     override func setCustomNavigationBar() {
@@ -107,20 +113,20 @@ final class UserWithdrawViewController: BaseViewController {
     @objc
     private func keyboardWillShow(_ notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            let updateKeyboardHeight = keyboardSize.height
-            let difference = updateKeyboardHeight - currentKeyboardHeight
-
-            userWithdrawView.completeSignOutButton.frame.origin.y -= difference
-            currentKeyboardHeight = updateKeyboardHeight
+            let keyboardHeight = keyboardSize.height
+            
+            UIView.animate(withDuration: 0.3) {
+                self.buttonBottomConstraint?.update(inset: keyboardHeight + 16)
+                self.view.layoutIfNeeded()
+            }
         }
     }
 
     @objc
     private func keyboardWillHide(_ notification: Notification) {
-        // TODO: keyboardSize 변수는 사용하지 않아서 _ 로 대체했지만, 해당 로직이 왜 필요한 지 연구
-        if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            userWithdrawView.completeSignOutButton.frame.origin.y += currentKeyboardHeight
-            currentKeyboardHeight = 0.0
+        UIView.animate(withDuration: 0.3) {
+            self.buttonBottomConstraint?.update(inset: 26)
+            self.view.layoutIfNeeded()
         }
     }
 }

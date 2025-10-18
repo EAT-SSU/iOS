@@ -14,7 +14,7 @@ import EATSSUDesign
 class PostUIButton: UIButton {
     override var isEnabled: Bool {
         didSet {
-            isEnabled ? setEnableButton() : setDisableButton()
+            setButtonState(as: isEnabled)
         }
     }
 
@@ -28,20 +28,15 @@ class PostUIButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setEnableButton() {
-        isUserInteractionEnabled = true
-        backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
-    }
-
-    private func setDisableButton() {
-        isUserInteractionEnabled = false
-        backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+    private func setButtonState(as isEnabled: Bool) {
+        if isEnabled {
+            alpha = 1.0
+        } else {
+            alpha = 0.5
+        }
     }
 
     func setupButton() {
-        backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
-        setTitleColor(.white, for: .normal)
-        titleLabel?.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)
         layer.cornerRadius = 10
         
         var config = UIButton.Configuration.filled()
@@ -49,9 +44,11 @@ class PostUIButton: UIButton {
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)
+            outgoing.foregroundColor = .white
             return outgoing
         }
-        config.baseBackgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+        config.baseBackgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        config.baseForegroundColor = .white
         configuration = config
         
         contentHorizontalAlignment = .center
