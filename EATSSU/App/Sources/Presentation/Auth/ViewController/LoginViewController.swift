@@ -194,9 +194,9 @@ extension LoginViewController {
         } catch {
             switch accountType {
             case .apple:
-                presentBottomAlert("카카오톡으로 생성된 계정입니다.")
+                showToast(message: "카카오톡으로 생성된 계정입니다.", type: .warning)
             case .kakao:
-                presentBottomAlert("Apple로 생성된 계정입니다.")
+                showToast(message: "Apple로 생성된 계정입니다.", type: .warning)
             }
 
             #if DEBUG
@@ -226,7 +226,7 @@ extension LoginViewController {
                 getMyInfo()
                 
             case .failure(let error):
-                presentBottomAlert("카카오톡으로 생성된 계정입니다.")
+                showToast(message: "카카오톡으로 생성된 계정입니다.", type: .warning)
                 #if DEBUG
                     print(error.localizedDescription)
                 #endif
@@ -254,7 +254,7 @@ extension LoginViewController {
                 getMyInfo()
                 
             case .failure(let error):
-                presentBottomAlert("Apple로 생성된 계정입니다.")
+                showToast(message: "Apple로 생성된 계정입니다.", type: .warning)
                 #if DEBUG
                     print(error.localizedDescription)
                 #endif
