@@ -259,6 +259,7 @@ private extension SetNickNameView {
     func textFieldSettingWhenEmpty(_: UITextField) {
         nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
         nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
+        updateTextFieldBorder(type: .textFieldEmpty)
     }
 
     func checkNicknameValidation(_ textField: UITextField) {
@@ -266,9 +267,11 @@ private extension SetNickNameView {
             if nicknameInputChanged(nickname: userNickname) {
                 nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
                 nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
+                updateTextFieldBorder(type: .nicknameTextFieldDoubleCheck)
             } else {
                 nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
                 nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
+                updateTextFieldBorder(type: .nicknameTextFieldOver)
             }
         }
     }
@@ -284,5 +287,10 @@ private extension SetNickNameView {
             nicknameDoubleCheckButton.isEnabled = false
             return false
         }
+    }
+    
+    func updateTextFieldBorder(type: NicknameTextFieldResultType) {
+        inputNickNameTextField.layer.borderWidth = 1.0
+        inputNickNameTextField.layer.borderColor = type.textColor.cgColor
     }
 }

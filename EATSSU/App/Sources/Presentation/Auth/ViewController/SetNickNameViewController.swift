@@ -182,17 +182,25 @@ final class SetNickNameViewController: BaseViewController {
         if newNickname.isEmpty {
             setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
             setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
+            setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+            setNickNameView.inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.textFieldEmpty.textColor.cgColor
             setNickNameView.nicknameDoubleCheckButton.isEnabled = false
         } else if !(2...8).contains(newNickname.count) {
             setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
             setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
+            setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+            setNickNameView.inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor.cgColor
             setNickNameView.nicknameDoubleCheckButton.isEnabled = false
         } else if isNicknameChanged {
             setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
             setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
+            setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+            setNickNameView.inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor.cgColor
             setNickNameView.nicknameDoubleCheckButton.isEnabled = true
         } else {
             setNickNameView.nicknameValidationMessageLabel.text = ""
+            setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+            setNickNameView.inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
             setNickNameView.nicknameDoubleCheckButton.isEnabled = false
         }
         
@@ -301,9 +309,14 @@ extension SetNickNameViewController {
             switch result {
             case .success(let isNicknameAvailable):
                 let resultType: NicknameTextFieldResultType = isNicknameAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
+                
                 self.isNicknameChecked = isNicknameAvailable
                 self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
                 self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
+                
+                self.setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+                self.setNickNameView.inputNickNameTextField.layer.borderColor = resultType.textColor.cgColor
+                
                 self.setNickNameView.setNicknameChecked(isNicknameAvailable)
                 self.updateSaveButtonState()
                 
