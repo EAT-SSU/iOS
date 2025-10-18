@@ -71,7 +71,7 @@ final class UserWithdrawViewController: BaseViewController {
 
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = "탈퇴하기"
+        navigationItem.title = "회원탈퇴"
     }
 
     override func setButtonEvent() {

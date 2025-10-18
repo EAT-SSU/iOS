@@ -23,6 +23,11 @@ class FirebaseRemoteConfig {
     }
 
     func noticeCheck(completion: @escaping (String?) -> Void) {
+        #if DEBUG
+        // 개발 환경에서는 Remote Config 체크 건너뛰기
+        completion(nil)
+        return
+        #endif
         remoteConfig.fetch { [weak self] status, error in
             guard let self else { return }
 
