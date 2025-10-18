@@ -19,8 +19,6 @@ final class LoginViewController: BaseViewController {
 
     public static let isVacationPeriod = false
     public var toastMessage: String?
-    private let authProvider = MoyaProvider<AuthRouter>(session: Session(interceptor: AuthInterceptor.shared))
-    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     // MARK: - UI Components
 
@@ -211,18 +209,25 @@ extension LoginViewController {
 
     /// 카카오 로그인을 위해 서버에 이메일/아이디를 보내는 요청
     private func postKakaoLoginRequest(email: String, id: String) {
-        authProvider.request(.kakaoLogin(param: KakaoLoginRequest(email: email,
-                                                                  providerId: id))) { [weak self] result in
+        NetworkService.shared.request(
+            AuthRouter.kakaoLogin(param: KakaoLoginRequest(email: email, providerId: id)),
+            responseType: SignResponse.self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self else { return }
+            
             switch result {
-            case let .success(moyaResponse):
+            case .success(let signData):
                 #if DEBUG
-                    print("Kakao login response status code: \(moyaResponse.statusCode)")
+                    print("Kakao login success")
                 #endif
-                handleLoginSuccess(moyaResponse: moyaResponse, accountType: .kakao)
-
-            case let .failure(error):
-                presentBottomAlert(error.localizedDescription)
+                storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
+                                            refreshToken: signData.refreshToken)
+                _ = UserInfoManager.shared.createUserInfo(accountType: .kakao)
+                getMyInfo()
+                
+            case .failure(let error):
+                presentBottomAlert("카카오톡으로 생성된 계정입니다.")
                 #if DEBUG
                     print(error.localizedDescription)
                 #endif
@@ -232,17 +237,25 @@ extension LoginViewController {
 
     /// 전달받은 identity token으로 Apple 로그인 요청
     private func postAppleLoginRequest(token: String) {
-        authProvider.request(.appleLogin(param: AppleLoginRequest(identityToken: token))) { [weak self] result in
+        NetworkService.shared.request(
+            AuthRouter.appleLogin(param: AppleLoginRequest(identityToken: token)),
+            responseType: SignResponse.self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self else { return }
+            
             switch result {
-            case let .success(moyaResponse):
+            case .success(let signData):
                 #if DEBUG
-                    print("Apple 로그인 서버 응답코드: \(moyaResponse.statusCode)")
+                    print("Apple 로그인 성공")
                 #endif
-                handleLoginSuccess(moyaResponse: moyaResponse, accountType: .apple)
-
-            case let .failure(error):
-                presentBottomAlert(error.localizedDescription)
+                storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
+                                            refreshToken: signData.refreshToken)
+                _ = UserInfoManager.shared.createUserInfo(accountType: .apple)
+                getMyInfo()
+                
+            case .failure(let error):
+                presentBottomAlert("Apple로 생성된 계정입니다.")
                 #if DEBUG
                     print(error.localizedDescription)
                 #endif
@@ -252,25 +265,20 @@ extension LoginViewController {
 
     /// 서버에서 현재 유저 정보를 조회
     private func getMyInfo() {
-        myProvider.request(.myInfo) { [weak self] result in
+        NetworkService.shared.request(
+            MyRouter.myInfo,
+            responseType: MyInfoResponse.self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self else { return }
+            
             switch result {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<MyInfoResponse>.self)
-                    guard let responseData = responseData.result else {
-                        return
-                    }
-                    // 디버그 모드일 때만 받아온 유저 정보를 출력합니다.
-//                    #if DEBUG
-                    print("현재 로그인 정보: \(responseData)")
-//                    #endif
-                    handleNicknameCheck(info: responseData)
-                } catch {
-                    print(error.localizedDescription)
-                }
-            case let .failure(error):
-                print(error.localizedDescription)
+            case .success(let myInfo):
+                print("현재 로그인 정보: \(myInfo)")
+                handleNicknameCheck(info: myInfo)
+                
+            case .failure(let error):
+                print("내 정보 조회 실패: \(error.localizedDescription)")
             }
         }
     }

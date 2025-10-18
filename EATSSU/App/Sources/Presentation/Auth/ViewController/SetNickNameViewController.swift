@@ -20,8 +20,6 @@ final class SetNickNameViewController: BaseViewController {
     var source: SetNickNameSource = .signup
     // MARK: - Properties
     
-    private let nicknameProvider = MoyaProvider<UserNicknameRouter>(session: Session(interceptor: AuthInterceptor.shared))
-    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var originalNickname: String?
     private var originalDepartmentName: String?
     private var isNicknameChecked: Bool = false
@@ -247,14 +245,20 @@ final class SetNickNameViewController: BaseViewController {
 // MARK: - Network
 extension SetNickNameViewController {
     private func setUserNickname(_ nickname: String, completion: @escaping (Bool) -> Void) {
-        nicknameProvider.request(.setNickname(nickname: nickname)) { [weak self] result in
+        NetworkService.shared.request(
+            UserNicknameRouter.setNickname(nickname: nickname),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self = self else { return }
+            
             switch result {
             case .success:
                 if let user = UserInfoManager.shared.getCurrentUserInfo() {
                     UserInfoManager.shared.updateNickname(for: user, nickname: nickname)
                 }
                 completion(true)
+                
             case .failure:
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
@@ -264,32 +268,27 @@ extension SetNickNameViewController {
     }
 
     private func checkNickname(nickname: String) {
-        nicknameProvider.request(.checkNickname(nickname: nickname)) { [weak self] response in
+        NetworkService.shared.request(
+            UserNicknameRouter.checkNickname(nickname: nickname),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self = self else { return }
-            switch response {
-            case .success(let moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    let isNicknameAvailable = responseData.result ?? false
-                    let resultType: NicknameTextFieldResultType = isNicknameAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
-                    let toastMessage = isNicknameAvailable ? "사용 가능한 닉네임이에요" : "이미 사용 중인 닉네임이에요"
-                    
-                    self.isNicknameChecked = isNicknameAvailable
-                    self.view.showToast(message: toastMessage)
-                    self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
-                    self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
-                    self.setNickNameView.setNicknameChecked(isNicknameAvailable)
-                    self.updateSaveButtonState()
-
-                } catch let err {
-                    print(err.localizedDescription)
-                    
-                    RealmService.shared.resetDB()
-                    self.navigateToLogin()
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
+            
+            switch result {
+            case .success(let isNicknameAvailable):
+                let resultType: NicknameTextFieldResultType = isNicknameAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
+                let toastMessage = isNicknameAvailable ? "사용 가능한 닉네임이에요" : "이미 사용 중인 닉네임이에요"
                 
+                self.isNicknameChecked = isNicknameAvailable
+                self.view.showToast(message: toastMessage)
+                self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
+                self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
+                self.setNickNameView.setNicknameChecked(isNicknameAvailable)
+                self.updateSaveButtonState()
+                
+            case .failure(let error):
+                print("닉네임 중복 확인 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
             }
@@ -297,7 +296,11 @@ extension SetNickNameViewController {
     }
     
     private func setUserDepartment(departmentInfo: (id: Int, name: String?), collegeInfo: (id: Int?, name: String?), completion: @escaping (Bool) -> Void) {
-        nicknameProvider.request(.setDepartment(departmentId: departmentInfo.id)) { result in
+        NetworkService.shared.request(
+            UserNicknameRouter.setDepartment(departmentId: departmentInfo.id),
+            responseType: Bool.self,
+            useAuth: true
+        ) { result in
             switch result {
             case .success:
                 print("학과 등록 성공: ID \(departmentInfo.id)")
@@ -309,6 +312,7 @@ extension SetNickNameViewController {
                                                             departmentName: departmentInfo.name)
                 }
                 completion(true)
+                
             case .failure(let error):
                 print("학과 등록 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
@@ -319,42 +323,41 @@ extension SetNickNameViewController {
     }
     
     private func fetchColleges() {
-        myProvider.request(.colleges) { [weak self] result in
+        NetworkService.shared.request(
+            MyRouter.colleges,
+            responseType: [LookupItemDTO].self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self else { return }
+            
             switch result {
-            case let .success(res):
-                do {
-                   let decoded = try res.map(CollegesResponseDTO.self)
-                   let list = decoded.result ?? []
-                   self.colleges = list
-                   self.setNickNameView.updateCollegeItems(list.map(\.name))
-                   self.populateUIWithSavedData()
-                } catch {
-                    print("단과대 파싱 실패: \(error.localizedDescription)")
-                }
-            case let .failure(err):
-                print("단과대 조회 실패: \(err.localizedDescription)")
+            case .success(let list):
+                self.colleges = list
+                self.setNickNameView.updateCollegeItems(list.map(\.name))
+                self.populateUIWithSavedData()
+                
+            case .failure(let error):
+                print("단과대 조회 실패: \(error.localizedDescription)")
             }
         }
     }
-
+    
     private func fetchDepartments(collegeId: Int, completion: (() -> Void)? = nil) {
-        myProvider.request(.departments(collegeId: collegeId)) { [weak self] result in
+        NetworkService.shared.request(
+            MyRouter.departments(collegeId: collegeId),
+            responseType: [LookupItemDTO].self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self else { return }
+            
             switch result {
-            case let .success(res):
-                do {
-                    let decoded = try res.map(DepartmentsResponseDTO.self)
-                    let list = decoded.result ?? []
-                    self.departments = list
-                    self.setNickNameView.updateDepartmentItems(list.map(\.name))
-                    completion?()
-                } catch {
-                    print("학과 파싱 실패: \(error.localizedDescription)")
-                    completion?()
-                }
-            case let .failure(err):
-                print("학과 조회 실패: \(err.localizedDescription)")
+            case .success(let list):
+                self.departments = list
+                self.setNickNameView.updateDepartmentItems(list.map(\.name))
+                completion?()
+                
+            case .failure(let error):
+                print("학과 조회 실패: \(error.localizedDescription)")
                 completion?()
             }
         }

@@ -25,13 +25,6 @@ final class MainMapViewController: BaseViewController {
     var currentCollegeId: Int?
     var hasRequestedLocationPermission = false
 
-    let partnershipProvider = MoyaProvider<PartnershipRouter>(
-        session: Session(interceptor: AuthInterceptor.shared)
-    )
-    let myProvider = MoyaProvider<MyRouter>(
-        session: Session(interceptor: AuthInterceptor.shared)
-    )
-
     var clusterer: NMCClusterer<PartnershipMarkerKey>?
     
     // MARK: - Map Mode Management

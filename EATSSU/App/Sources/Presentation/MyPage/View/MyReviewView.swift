@@ -13,14 +13,11 @@ final class MyReviewView: BaseUIView {
     // MARK: - UI Components
 
     let myReviewTableView = UITableView()
-    let refreshControl = UIRefreshControl()
 
     // MARK: - Life Cycles
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        initRefresh()
     }
 
     // MARK: - Functions
@@ -35,22 +32,6 @@ final class MyReviewView: BaseUIView {
     override func setLayout() {
         myReviewTableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-        }
-    }
-
-    func initRefresh() {
-        refreshControl.addTarget(self,
-                                 action: #selector(refreshTable(refresh:)),
-                                 for: .valueChanged)
-
-        myReviewTableView.refreshControl = refreshControl
-    }
-
-    @objc
-    func refreshTable(refresh: UIRefreshControl) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.myReviewTableView.reloadData()
-            refresh.endRefreshing()
         }
     }
 }

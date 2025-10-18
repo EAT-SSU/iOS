@@ -15,8 +15,6 @@ import EATSSUDesign
 final class HomeRestaurantView: BaseUIView {
     // MARK: - UI Components
 
-    let refreshControl = UIRefreshControl()
-
     lazy var restaurantTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.separatorStyle = .none
@@ -29,8 +27,6 @@ final class HomeRestaurantView: BaseUIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        initRefresh()
     }
 
     // MARK: - Functions
@@ -42,22 +38,6 @@ final class HomeRestaurantView: BaseUIView {
     override func setLayout() {
         restaurantTableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-        }
-    }
-
-    func initRefresh() {
-        refreshControl.addTarget(self,
-                                 action: #selector(refreshTable(refresh:)),
-                                 for: .valueChanged)
-
-        restaurantTableView.refreshControl = refreshControl
-    }
-
-    @objc
-    func refreshTable(refresh: UIRefreshControl) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.restaurantTableView.reloadData()
-            refresh.endRefreshing()
         }
     }
 }
