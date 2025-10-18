@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 enum NicknameTextFieldResultType {
     /// common
     case textFieldEmpty
@@ -36,7 +38,7 @@ enum NicknameTextFieldResultType {
         case .textFieldEmpty, .nicknameTextFieldOver, .nicknameTextFieldDuplicated, .nicknameTextFieldDoubleCheck:
             .primary
         case .nicknameTextFieldValid:
-            .gray700
+            EATSSUDesignAsset.Color.info.color
         }
     }
 }
