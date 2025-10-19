@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 final class CustomTabBarContainerController: BaseViewController {
 
@@ -13,13 +14,14 @@ final class CustomTabBarContainerController: BaseViewController {
 
     private let contentContainerView = UIView()
     private let tabBarView = CustomTabBarView()
-    private let viewControllers: [UIViewController] = [
+    private let viewControllers: [UINavigationController] = [
         UINavigationController(rootViewController: HomeViewController()),
         UINavigationController(rootViewController: MainMapViewController()),
         UINavigationController(rootViewController: MyPageViewController())
     ]
     private var currentIndex = 0
-
+    private var contentBottomConstraint: Constraint?
+    
     // MARK: - View Setup
 
     override func configureUI() {
@@ -39,13 +41,19 @@ final class CustomTabBarContainerController: BaseViewController {
             }
 
             if index == self.currentIndex {
-                if let nav = self.viewControllers[index] as? UINavigationController,
-                   let mapVC = nav.viewControllers.first as? MainMapViewController {
+                let nav = self.viewControllers[index]
+                if let mapVC = nav.viewControllers.first as? MainMapViewController {
                     mapVC.reloadContent()
                 }
             }
 
             self.switchToViewController(at: index)
+        }
+        
+        // 각 네비게이션 컨트롤러의 delegate 설정
+        viewControllers.forEach { navController in
+            navController.delegate = self
+            navController.setNavigationBarHidden(false, animated: false)
         }
     }
 
@@ -57,7 +65,7 @@ final class CustomTabBarContainerController: BaseViewController {
         
         contentContainerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(tabBarView.snp.top)
+            contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
         }
     }
 
@@ -74,15 +82,24 @@ final class CustomTabBarContainerController: BaseViewController {
     private func switchToViewController(at index: Int) {
         contentContainerView.subviews.forEach { $0.removeFromSuperview() }
         
-        let selectedVC = viewControllers[index]
+        let selectedNav = viewControllers[index]
         
-        contentContainerView.addSubview(selectedVC.view)
-        selectedVC.view.snp.makeConstraints {
+        contentContainerView.addSubview(selectedNav.view)
+        selectedNav.view.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
         tabBarView.setSelectedIndex(index)
         currentIndex = index
+        
+        // 현재 표시 중인 VC의 shouldHideTabBar 확인
+        updateTabBarVisibility(for: selectedNav.topViewController)
+    }
+    
+    /// 탭바 가시성 업데이트
+    private func updateTabBarVisibility(for viewController: UIViewController?) {
+        guard let vc = viewController as? BaseViewController else { return }
+        setTabBarHidden(vc.shouldHideTabBar, animated: true)
     }
     
     /// 로그인 필요 시 알림창 표시
@@ -153,9 +170,64 @@ final class CustomTabBarContainerController: BaseViewController {
     public func setTab(index: Int) {
         switchToViewController(at: index)
     }
-
+    
+    /// 특정 인덱스의 네비게이션 컨트롤러를 반환
     public func getNavController(at index: Int) -> UINavigationController? {
         guard index < viewControllers.count else { return nil }
-        return viewControllers[index] as? UINavigationController
+        return viewControllers[index]
+    }
+
+    /// 탭바를 숨기거나 표시하는 메서드
+    public func setTabBarHidden(_ hidden: Bool, animated: Bool) {
+        guard tabBarView.isHidden != hidden else { return }
+        
+        // 제약 업데이트
+        contentBottomConstraint?.deactivate()
+        contentContainerView.snp.makeConstraints {
+            if hidden {
+                contentBottomConstraint = $0.bottom.equalToSuperview().constraint
+            } else {
+                contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
+            }
+        }
+        
+        if animated {
+            UIView.animate(withDuration: 0.3) {
+                self.tabBarView.alpha = hidden ? 0 : 1
+                self.view.layoutIfNeeded()
+            } completion: { _ in
+                self.tabBarView.isHidden = hidden
+            }
+        } else {
+            self.tabBarView.alpha = hidden ? 0 : 1
+            self.tabBarView.isHidden = hidden
+            self.view.layoutIfNeeded()
+        }
+    }
+}
+
+// MARK: - UINavigationControllerDelegate
+
+extension CustomTabBarContainerController: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        guard let vc = viewController as? BaseViewController else { return }
+        let shouldHide = vc.shouldHideTabBar
+        
+        contentBottomConstraint?.deactivate()
+        contentContainerView.snp.makeConstraints {
+            if shouldHide {
+                contentBottomConstraint = $0.bottom.equalToSuperview().constraint
+            } else {
+                contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
+            }
+        }
+        
+        self.tabBarView.alpha = shouldHide ? 0 : 1
+        self.tabBarView.isHidden = shouldHide
+        self.view.layoutIfNeeded()
     }
 }

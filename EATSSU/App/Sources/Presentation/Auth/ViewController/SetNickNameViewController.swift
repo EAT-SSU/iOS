@@ -20,6 +20,7 @@ enum SetNickNameSource {
 
 final class SetNickNameViewController: BaseViewController {
     var source: SetNickNameSource = .signup
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
     
     private var originalNickname: String?
