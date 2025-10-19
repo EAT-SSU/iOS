@@ -32,9 +32,12 @@ final class CustomTabBarContainerController: BaseViewController {
             guard let self = self else { return }
 
             if index == 1 {
+                //  firebase - click_map 이벤트 호출
                 MapAnalyticsManager.shared.logClickMap()
             }
             
+            // 마이페이지와 지도는 로그인 필요
+            // TODO: 지도는 서버팀과 함께 나중에 둘러보기 상태에서보 "전체" 카테고리는 볼 수 있게 수정
             if (index == 1 || index == 2), RealmService.shared.isAccessTokenPresent() == false {
                 self.presentLoginAlert()
                 return
@@ -167,6 +170,7 @@ final class CustomTabBarContainerController: BaseViewController {
 
     // MARK: - Public Interface
 
+    /// 외부에서 탭 전환 요청 시 사용
     public func setTab(index: Int) {
         switchToViewController(at: index)
     }
