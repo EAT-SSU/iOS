@@ -12,6 +12,7 @@ import SnapKit
 import FirebaseAnalytics
 
 final class MyReviewViewController: BaseViewController {
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
 
     private var reviewList = [MyDataList]()

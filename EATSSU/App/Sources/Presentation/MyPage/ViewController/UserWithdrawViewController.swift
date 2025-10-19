@@ -13,6 +13,7 @@ import SnapKit
 import FirebaseAnalytics
 
 final class UserWithdrawViewController: BaseViewController {
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
 
     private var nickName = String()
