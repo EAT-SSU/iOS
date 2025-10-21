@@ -52,6 +52,8 @@ final class ReviewViewController: BaseViewController {
 
         setTableView()
         setFirebaseTask()
+        reviewTableView.estimatedRowHeight = 300
+        reviewTableView.rowHeight = UITableView.automaticDimension
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -323,7 +325,7 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
-            251.adjusted
+            UITableView.automaticDimension
         case 1:
             if reviewList.count == 0 {
                 300.adjusted
