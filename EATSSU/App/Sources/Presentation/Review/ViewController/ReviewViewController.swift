@@ -21,6 +21,7 @@ final class ReviewViewController: BaseViewController {
     private var reviewList = [MenuDataList]()
     private var responseData: ReviewRateResponse?
     private var fixedResponseData: FixedReviewRateResponse?
+    private var isInitialLoad = true
 
     // MARK: - UI Component
 
@@ -54,6 +55,7 @@ final class ReviewViewController: BaseViewController {
         setFirebaseTask()
         reviewTableView.estimatedRowHeight = 300
         reviewTableView.rowHeight = UITableView.automaticDimension
+        reviewTableView.alpha = 0
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -357,8 +359,23 @@ extension ReviewViewController {
                     self.reviewTableView.reloadData()
                     self.makeDictionary()
                     
+                    // 초기 로드 완료 후 테이블뷰 표시
+                    if self.isInitialLoad {
+                        UIView.animate(withDuration: 0.3) {
+                            self.reviewTableView.alpha = 1
+                        }
+                        self.isInitialLoad = false
+                    }
+                    
                 case .failure(let error):
                     print("고정 메뉴 평점 조회 실패: \(error.localizedDescription)")
+                    // 실패해도 테이블뷰는 표시
+                    if self.isInitialLoad {
+                        UIView.animate(withDuration: 0.3) {
+                            self.reviewTableView.alpha = 1
+                        }
+                        self.isInitialLoad = false
+                    }
                 }
             }
         } else {
@@ -375,8 +392,23 @@ extension ReviewViewController {
                     self.reviewTableView.reloadData()
                     self.makeDictionary()
                     
+                    // 초기 로드 완료 후 테이블뷰 표시
+                    if self.isInitialLoad {
+                        UIView.animate(withDuration: 0.3) {
+                            self.reviewTableView.alpha = 1
+                        }
+                        self.isInitialLoad = false
+                    }
+                    
                 case .failure(let error):
                     print("변동 메뉴 평점 조회 실패: \(error.localizedDescription)")
+                    // 실패해도 테이블뷰는 표시
+                    if self.isInitialLoad {
+                        UIView.animate(withDuration: 0.3) {
+                            self.reviewTableView.alpha = 1
+                        }
+                        self.isInitialLoad = false
+                    }
                 }
             }
         }
