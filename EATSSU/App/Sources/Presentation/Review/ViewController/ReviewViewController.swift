@@ -424,6 +424,13 @@ extension ReviewViewController {
                 self.getReviewList(type: self.type, menuId: self.menuID)
                 self.reviewTableView.showToast(message: "삭제되었어요 !")
                 
+                // 네비게이션 스택에서 HomeViewController 찾아서 새로고침
+                if let navController = navigationController?.viewControllers.first?.navigationController,
+                   let tabBarController = navController.parent as? CustomTabBarContainerController,
+                   let homeNavController = tabBarController.getNavController(at: 0),
+                   let homeVC = homeNavController.viewControllers.first as? HomeViewController {
+                    homeVC.refreshAfterReview()
+                }
             case .failure(let error):
                 print("리뷰 삭제 실패: \(error.localizedDescription)")
             }
