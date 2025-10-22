@@ -21,7 +21,7 @@ final class ReviewViewController: BaseViewController {
     private var reviewList = [MenuDataList]()
     private var responseData: ReviewRateResponse?
     private var fixedResponseData: FixedReviewRateResponse?
-    private var isInitialLoad = true
+    private var isDataLoaded = false
 
     // MARK: - UI Component
 
@@ -55,7 +55,6 @@ final class ReviewViewController: BaseViewController {
         setFirebaseTask()
         reviewTableView.estimatedRowHeight = 300
         reviewTableView.rowHeight = UITableView.automaticDimension
-        reviewTableView.alpha = 0
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -246,16 +245,20 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            1
+            return 1
         case 1:
-            // 두 번째 섹션에서 리뷰 개수가 하나도 없을 때 셀 변경
+            // 데이터 로딩 전에는 아무것도 표시 안 함
+            if !isDataLoaded {
+                return 0
+            }
+            // 데이터 로딩 완료 후: 리뷰가 없으면 EmptyCell, 있으면 리뷰 개수만큼
             if reviewList.count == 0 {
-                1
+                return 1
             } else {
-                reviewList.count
+                return reviewList.count
             }
         default:
-            0
+            return 0
         }
     }
 
@@ -359,23 +362,8 @@ extension ReviewViewController {
                     self.reviewTableView.reloadData()
                     self.makeDictionary()
                     
-                    // 초기 로드 완료 후 테이블뷰 표시
-                    if self.isInitialLoad {
-                        UIView.animate(withDuration: 0.3) {
-                            self.reviewTableView.alpha = 1
-                        }
-                        self.isInitialLoad = false
-                    }
-                    
                 case .failure(let error):
                     print("고정 메뉴 평점 조회 실패: \(error.localizedDescription)")
-                    // 실패해도 테이블뷰는 표시
-                    if self.isInitialLoad {
-                        UIView.animate(withDuration: 0.3) {
-                            self.reviewTableView.alpha = 1
-                        }
-                        self.isInitialLoad = false
-                    }
                 }
             }
         } else {
@@ -392,23 +380,8 @@ extension ReviewViewController {
                     self.reviewTableView.reloadData()
                     self.makeDictionary()
                     
-                    // 초기 로드 완료 후 테이블뷰 표시
-                    if self.isInitialLoad {
-                        UIView.animate(withDuration: 0.3) {
-                            self.reviewTableView.alpha = 1
-                        }
-                        self.isInitialLoad = false
-                    }
-                    
                 case .failure(let error):
                     print("변동 메뉴 평점 조회 실패: \(error.localizedDescription)")
-                    // 실패해도 테이블뷰는 표시
-                    if self.isInitialLoad {
-                        UIView.animate(withDuration: 0.3) {
-                            self.reviewTableView.alpha = 1
-                        }
-                        self.isInitialLoad = false
-                    }
                 }
             }
         }
@@ -425,10 +398,13 @@ extension ReviewViewController {
             switch result {
             case .success(let data):
                 self.reviewList = data.dataList
+                self.isDataLoaded = true
                 self.reviewTableView.reloadData()
                 
             case .failure(let error):
                 print("리뷰 리스트 조회 실패: \(error.localizedDescription)")
+                self.isDataLoaded = true
+                self.reviewTableView.reloadData()
             }
         }
     }
