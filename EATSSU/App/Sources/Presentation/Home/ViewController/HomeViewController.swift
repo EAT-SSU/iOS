@@ -110,6 +110,13 @@ final class HomeViewController: BaseViewController {
         }
         tabmanController.didMove(toParent: self)
     }
+    
+    // MARK: - Public Functions
+
+    /// 리뷰 작성 후 데이터 새로고침
+    func refreshAfterReview() {
+        tabmanController.dateFetchData(for: currentDate)
+    }
 
     // MARK: - Firebase
 

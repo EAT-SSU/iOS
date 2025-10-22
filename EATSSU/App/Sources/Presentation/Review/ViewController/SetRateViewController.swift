@@ -495,6 +495,14 @@ final class SetRateViewController: BaseViewController {
     private func moveToReviewVC() {
         if let reviewViewController = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) {
             navigationController?.popToViewController(reviewViewController, animated: true)
+            
+            // 네비게이션 스택에서 HomeViewController 찾아서 새로고침
+            if let navController = navigationController?.viewControllers.first?.navigationController,
+               let tabBarController = navController.parent as? CustomTabBarContainerController,
+               let homeNavController = tabBarController.getNavController(at: 0),
+               let homeVC = homeNavController.viewControllers.first as? HomeViewController {
+                homeVC.refreshAfterReview()
+            }
         }
     }
 
