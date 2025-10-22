@@ -383,18 +383,21 @@ final class SetRateViewController: BaseViewController {
                                                    tasteRating: tasteRateView.currentStar,
                                                    content: userReviewTextView.text)
 
-                /// 리뷰 데이터는 현재 페이지가 어디든 상관 없이 저장되어야 함
-//                reviewList[currentPage] = (param, userPickedImage)
-
                 switch reviewId {
                 case .none:
-
+                    /// 현재 이미지를 별도 변수에 저장
+                    let currentImage = userPickedImage
+                    reviewList[currentPage] = (param, currentImage)
+                    
                     /// 현재 페이지가 마지막 메뉴에 대한 리뷰페이지일 때의 액션
-                    reviewList[currentPage] = (param, userPickedImage)
                     if currentPage == selectedList.count - 1 {
                         navigationController?.isNavigationBarHidden = false
                         sendDataIfCurrentPageIsLast()
                     } else {
+                        // 다음 리뷰를 위해 현재 화면의 이미지 초기화
+                        userPickedImage = nil
+                        userReviewImageView.image = nil
+                        imageCountLabel.text = "사진 0/1"
                         prepareForNextReview()
                     }
 
@@ -409,23 +412,60 @@ final class SetRateViewController: BaseViewController {
     }
 
     private func sendDataIfCurrentPageIsLast() {
-        for (index, review) in reviewList.enumerated() {
-            let (reviewDTO, image) = review
-            
-            //  firebase - complete_review_v1 이벤트 호출
-            let photoAttached = (image != nil) ? 1 : 0
-            let rating = reviewDTO.mainRating
-            let selection = self.selectedList.count
-            ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
-            
-            if image != nil {
-                postReviewImage(param: reviewDTO,
-                                image: image,
-                                menuId: selectedIDList[index])
-            } else {
-                let reviewDTO = WriteReviewRequest(content: reviewDTO, imageURL: "")
-                postNewWriteReview(param: reviewDTO,
-                                   menuID: selectedIDList[index])
+        _Concurrency.Task {
+            do {
+                for (index, review) in reviewList.enumerated() {
+                    let (reviewDTO, image) = review
+                    
+                    // Firebase 이벤트 로그
+                    let photoAttached = (image != nil) ? 1 : 0
+                    let rating = reviewDTO.mainRating
+                    let selection = self.selectedList.count
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
+                    
+                    // 순차적으로 업로드
+                    try await uploadReview(reviewDTO: reviewDTO, image: image, menuId: selectedIDList[index])
+                }
+                
+                await MainActor.run {
+                    self.moveToReviewVC()
+                }
+                
+            } catch {
+                await MainActor.run {
+                    print("리뷰 업로드 실패: \(error)")
+                    self.view.showToast(message: "리뷰 업로드에 실패했습니다.")
+                }
+            }
+        }
+    }
+    
+    private func uploadReview(reviewDTO: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) async throws {
+        if let image = image {
+            // 이미지 업로드 후 리뷰 작성
+            let imageUrl = try await uploadImage(image: image)
+            let request = WriteReviewRequest(content: reviewDTO, imageURL: imageUrl)
+            try await postReview(request: request, menuId: menuId)
+        } else {
+            // 이미지 없이 리뷰만 작성
+            let request = WriteReviewRequest(content: reviewDTO, imageURL: "")
+            try await postReview(request: request, menuId: menuId)
+        }
+    }
+
+    private func uploadImage(image: UIImage) async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkService.shared.request(
+                WriteReviewRouter.uploadImage(image: image),
+                responseType: UploadImageResponse.self,
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success(let data):
+                    continuation.resume(returning: data.url)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
@@ -479,45 +519,19 @@ extension SetRateViewController {
     /// 이미지 O -> URL 받고, URL을 넣어서 리뷰 작성 요청
     /// 이미지 X -> URL 없이 리뷰 작성 요청
     /// 이미지가 아예 없을 때 어떤 경우로 빠지는지 보고, 거기에서 호출하도록 하기
-    private func postReviewImage(param: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) {
-        NetworkService.shared.request(
-            WriteReviewRouter.uploadImage(image: image),
-            responseType: UploadImageResponse.self,
-            useAuth: true
-        ) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let data):
-                let reviewDTO = WriteReviewRequest(content: param, imageURL: data.url)
-                self.postNewWriteReview(param: reviewDTO, menuID: menuId)
-                
-            case .failure(let error):
-                print("이미지 업로드 실패: \(error.localizedDescription)")
-                let reviewDTO = WriteReviewRequest(content: param, imageURL: nil)
-                self.postNewWriteReview(param: reviewDTO, menuID: menuId)
-            }
-        }
-    }
-    
-    private func postNewWriteReview(param: WriteReviewRequest, menuID: Int) {
-        NetworkService.shared.request(
-            WriteReviewRouter.writeNewReview(param: param, menuID: menuID),
-            responseType: Bool.self,
-            useAuth: true
-        ) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success:
-                if self.currentPage == self.reviewList.count - 1 {
-                    self.moveToReviewVC()
+    private func postReview(request: WriteReviewRequest, menuId: Int) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkService.shared.request(
+                WriteReviewRouter.writeNewReview(param: request, menuID: menuId),
+                responseType: Bool.self,
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success:
+                    continuation.resume()
+                case .failure(let error):
+                    continuation.resume(throwing: error)
                 }
-                
-            case .failure(let error):
-                print("리뷰 작성 실패: \(error.localizedDescription)")
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
             }
         }
     }
