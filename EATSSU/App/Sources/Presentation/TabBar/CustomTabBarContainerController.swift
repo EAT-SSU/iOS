@@ -39,11 +39,21 @@ final class CustomTabBarContainerController: BaseViewController {
                 return
             }
 
-            // 같은 탭 다시 클릭 시 reloadContent
+            // 같은 탭 다시 클릭 시 처리
             if index == self.currentIndex {
-                if let nav = self.viewControllers[index] as? UINavigationController,
-                   let mapVC = nav.viewControllers.first as? MainMapViewController {
-                    mapVC.reloadContent()
+                print("다시 클릭")
+                if index == 0 {
+                    // 학식 탭: 오늘이 아니면 오늘로 이동
+                    if let nav = self.viewControllers[index] as? UINavigationController,
+                       let homeVC = nav.viewControllers.first as? HomeViewController {
+                        homeVC.resetToToday()
+                    }
+                } else if index == 1 {
+                    // 지도 탭: 콘텐츠 리로드
+                    if let nav = self.viewControllers[index] as? UINavigationController,
+                       let mapVC = nav.viewControllers.first as? MainMapViewController {
+                        mapVC.reloadContent()
+                    }
                 }
             }
 

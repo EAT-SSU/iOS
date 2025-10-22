@@ -27,6 +27,10 @@ final class CustomTimeTabController: BaseViewController {
     private var isProgrammaticScroll = false
     private var cancellables = Set<AnyCancellable>()
     private let dateSubject = PassthroughSubject<Date, Never>()
+    
+    var datePublisher: AnyPublisher<Date, Never> {
+        dateSubject.eraseToAnyPublisher()
+    }
 
     private lazy var morningVC = HomeRestaurantViewController()
     private lazy var lunchVC = HomeRestaurantViewController()
@@ -248,7 +252,7 @@ final class CustomTimeTabController: BaseViewController {
 
     func updateDate(to date: Date) {
        todayDate = date
-       dateSubject.send(date) 
+       dateSubject.send(date)
    }
 }
 
