@@ -41,7 +41,6 @@ final class CustomTabBarContainerController: BaseViewController {
 
             // 같은 탭 다시 클릭 시 처리
             if index == self.currentIndex {
-                print("다시 클릭")
                 if index == 0 {
                     // 학식 탭: 오늘이 아니면 오늘로 이동
                     if let nav = self.viewControllers[index] as? UINavigationController,
