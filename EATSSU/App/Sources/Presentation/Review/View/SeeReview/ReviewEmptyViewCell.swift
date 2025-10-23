@@ -20,7 +20,7 @@ final class ReviewEmptyViewCell: UITableViewCell {
 
     private lazy var reviewIconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUDesignAsset.Images.revviewIcon.image
+        imageView.image = EATSSUDesignAsset.Images.reviewIcon.image
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
