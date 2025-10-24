@@ -252,37 +252,3 @@ extension SetNickNameView: UITextFieldDelegate {
         return true
     }
 }
-
-// MARK: - Validation User Information
-
-private extension SetNickNameView {
-    func textFieldSettingWhenEmpty(_: UITextField) {
-        nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-        nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
-    }
-
-    func checkNicknameValidation(_ textField: UITextField) {
-        if let userNickname = textField.text {
-            if nicknameInputChanged(nickname: userNickname) {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
-            } else {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
-            }
-        }
-    }
-
-    func nicknameInputChanged(nickname: String) -> Bool {
-        isNicknameChecked = false
-        updateCompleteButtonState()
-
-        if nickname.count > 1, nickname.count < 9 {
-            nicknameDoubleCheckButton.isEnabled = true
-            return true
-        } else {
-            nicknameDoubleCheckButton.isEnabled = false
-            return false
-        }
-    }
-}
