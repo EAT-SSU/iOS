@@ -51,8 +51,24 @@ final class NicknameValidator {
     
     /// 허용된 문자만 포함되어 있는지 체크 (한글(초성포함), 영문, 숫자, -, _, 공백)
     private static func isAllowedCharacters(_ nickname: String) -> Bool {
-        let allowedCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ-_ ")
-        return nickname.unicodeScalars.allSatisfy { allowedCharacterSet.contains($0) }
+        var allowed = CharacterSet()
+        
+        // 영문 소문자
+        allowed.formUnion(CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz"))
+        // 영문 대문자
+        allowed.formUnion(CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+        // 숫자
+        allowed.formUnion(CharacterSet.decimalDigits)
+        // 한글 (완성된 글자)
+        allowed.formUnion(CharacterSet(charactersIn: "가".unicodeScalars.first!..."힣".unicodeScalars.first!))
+        // 한글 자음
+        allowed.formUnion(CharacterSet(charactersIn: "ㄱ".unicodeScalars.first!..."ㅎ".unicodeScalars.first!))
+        // 한글 모음
+        allowed.formUnion(CharacterSet(charactersIn: "ㅏ".unicodeScalars.first!..."ㅣ".unicodeScalars.first!))
+        // 특수문자
+        allowed.formUnion(CharacterSet(charactersIn: "-_ "))
+        
+        return nickname.unicodeScalars.allSatisfy { allowed.contains($0) }
     }
     
     /// 시작과 끝이 한글(초성포함), 영문, 숫자인지 체크
@@ -61,12 +77,26 @@ final class NicknameValidator {
             return false
         }
         
-        let validCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ")
+        var valid = CharacterSet()
+        
+        // 영문 소문자
+        valid.formUnion(CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz"))
+        // 영문 대문자
+        valid.formUnion(CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+        // 숫자
+        valid.formUnion(CharacterSet.decimalDigits)
+        // 한글 (완성된 글자)
+        valid.formUnion(CharacterSet(charactersIn: "가".unicodeScalars.first!..."힣".unicodeScalars.first!))
+        // 한글 자음
+        valid.formUnion(CharacterSet(charactersIn: "ㄱ".unicodeScalars.first!..."ㅎ".unicodeScalars.first!))
+        // 한글 모음
+        valid.formUnion(CharacterSet(charactersIn: "ㅏ".unicodeScalars.first!..."ㅣ".unicodeScalars.first!))
+        
         let firstString = String(first)
         let lastString = String(last)
         
-        let isFirstValid = firstString.unicodeScalars.allSatisfy { validCharacterSet.contains($0) }
-        let isLastValid = lastString.unicodeScalars.allSatisfy { validCharacterSet.contains($0) }
+        let isFirstValid = firstString.unicodeScalars.allSatisfy { valid.contains($0) }
+        let isLastValid = lastString.unicodeScalars.allSatisfy { valid.contains($0) }
         
         return isFirstValid && isLastValid
     }
