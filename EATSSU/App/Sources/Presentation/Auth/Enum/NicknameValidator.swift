@@ -51,7 +51,7 @@ final class NicknameValidator {
     
     /// 허용된 문자만 포함되어 있는지 체크 (한글, 영문, 숫자, -, _, 공백)
     private static func isAllowedCharacters(_ nickname: String) -> Bool {
-        let allowedCharacterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789가-힣-_ ")
+        let allowedCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣-_ ")
         return nickname.unicodeScalars.allSatisfy { allowedCharacterSet.contains($0) }
     }
     
@@ -61,8 +61,7 @@ final class NicknameValidator {
             return false
         }
         
-        let validCharacterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789가-힣")
-        
+        let validCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣")
         let firstString = String(first)
         let lastString = String(last)
         
