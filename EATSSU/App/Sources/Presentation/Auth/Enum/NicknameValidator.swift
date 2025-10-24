@@ -28,7 +28,7 @@ final class NicknameValidator {
             return .invalidCharacters
         }
         
-        // 시작과 끝이 한글, 영문, 숫자인지 체크
+        // 시작과 끝이 한글(초성포함), 영문, 숫자인지 체크
         if !isValidStartAndEnd(nickname) {
             return .invalidStartOrEnd
         }
@@ -49,19 +49,19 @@ final class NicknameValidator {
     
     // MARK: - Private Helper Methods
     
-    /// 허용된 문자만 포함되어 있는지 체크 (한글, 영문, 숫자, -, _, 공백)
+    /// 허용된 문자만 포함되어 있는지 체크 (한글(초성포함), 영문, 숫자, -, _, 공백)
     private static func isAllowedCharacters(_ nickname: String) -> Bool {
-        let allowedCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣-_ ")
+        let allowedCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ-_ ")
         return nickname.unicodeScalars.allSatisfy { allowedCharacterSet.contains($0) }
     }
     
-    /// 시작과 끝이 한글, 영문, 숫자인지 체크
+    /// 시작과 끝이 한글(초성포함), 영문, 숫자인지 체크
     private static func isValidStartAndEnd(_ nickname: String) -> Bool {
         guard let first = nickname.first, let last = nickname.last else {
             return false
         }
         
-        let validCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣")
+        let validCharacterSet = CharacterSet(charactersIn: "a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ")
         let firstString = String(first)
         let lastString = String(last)
         
