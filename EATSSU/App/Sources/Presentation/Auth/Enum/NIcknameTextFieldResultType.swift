@@ -16,10 +16,11 @@ enum NicknameTextFieldResultType {
     case nicknameTextFieldDoubleCheck
     case nicknameTextFieldValid
     case invalidLength
-    case invalidStartOrEnd          
+    case invalidStartOrEnd
     case consecutiveSpecialChars
     case onlyNumbers
     case invalidCharacters
+    case bannedWord
     
     var hintMessage: String {
         switch self {
@@ -34,22 +35,24 @@ enum NicknameTextFieldResultType {
         case .nicknameTextFieldValid:
             "사용가능한 닉네임이에요"
         case .invalidLength:
-            "1~16자로 입력해주세요"
+            "2~16글자를 입력해 주세요."
         case .invalidStartOrEnd:
-            "한글, 영문, 숫자로 시작하고 끝나야 해요"
+            "특수문자로 시작/끝나는 닉네임은 사용할 수 없어요."
         case .consecutiveSpecialChars:
-            "특수문자(-, _, 공백)는 연속으로 사용할 수 없어요"
+            "연속된 특수문자(--, __)는 사용할 수 없어요."
         case .onlyNumbers:
-            "숫자로만 구성할 수 없어요"
+            "숫자만으로 된 닉네임은 사용할 수 없어요."
         case .invalidCharacters:
-            "한글, 영문, 숫자, -, _, 공백만 사용 가능해요"
+            "허용 문자(한글/영문/숫자)만 사용할 수 있어요."
+        case .bannedWord:
+            "사용할 수 없는 단어가 포함되어 있어요."
         }
     }
 
     var textColor: UIColor {
         switch self {
         case .textFieldEmpty, .nicknameTextFieldOver, .nicknameTextFieldDuplicated, .nicknameTextFieldDoubleCheck,
-             .invalidLength, .invalidStartOrEnd, .consecutiveSpecialChars, .onlyNumbers, .invalidCharacters:
+             .invalidLength, .invalidStartOrEnd, .consecutiveSpecialChars, .onlyNumbers, .invalidCharacters, .bannedWord:
             .primary
         case .nicknameTextFieldValid:
             .gray700
