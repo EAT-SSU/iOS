@@ -18,9 +18,14 @@ final class NicknameValidator {
             return .textFieldEmpty
         }
         
-        // 길이 체크 (1~16자)
-        if !(1...16).contains(nickname.count) {
+        // 길이 체크 (2~16자)
+        if !(2...16).contains(nickname.count) {
             return .invalidLength
+        }
+        
+        // 금지어 체크
+        if NicknameBannedWords.containsBannedWord(nickname) {
+            return .bannedWord
         }
         
         // 허용되지 않은 문자 체크
@@ -49,7 +54,8 @@ final class NicknameValidator {
     
     // MARK: - Private Helper Methods
     
-    /// 허용된 문자만 포함되어 있는지 체크 (한글(초성포함), 영문, 숫자, -, _, 공백)
+    /// 허용된 문자만 포함되어 있는지 체크 (한글(초성포함), 영문, 숫자, -, _)
+    /// 띄어쓰기(공백) 금지
     private static func isAllowedCharacters(_ nickname: String) -> Bool {
         var allowed = CharacterSet()
         
@@ -65,8 +71,8 @@ final class NicknameValidator {
         allowed.formUnion(CharacterSet(charactersIn: "ㄱ".unicodeScalars.first!..."ㅎ".unicodeScalars.first!))
         // 한글 모음
         allowed.formUnion(CharacterSet(charactersIn: "ㅏ".unicodeScalars.first!..."ㅣ".unicodeScalars.first!))
-        // 특수문자
-        allowed.formUnion(CharacterSet(charactersIn: "-_ "))
+        // 특수문자 (띄어쓰기 제외, - 와 _ 만 허용)
+        allowed.formUnion(CharacterSet(charactersIn: "-_"))
         
         return nickname.unicodeScalars.allSatisfy { allowed.contains($0) }
     }
@@ -101,9 +107,9 @@ final class NicknameValidator {
         return isFirstValid && isLastValid
     }
     
-    /// 특수문자(-, _, 공백)가 연속으로 사용되었는지 체크
+    /// 특수문자(-, _)가 연속으로 사용되었는지 체크
     private static func hasConsecutiveSpecialChars(_ nickname: String) -> Bool {
-        let specialChars: [Character] = ["-", "_", " "]
+        let specialChars: [Character] = ["-", "_"]
         
         for i in 0..<nickname.count - 1 {
             let currentIndex = nickname.index(nickname.startIndex, offsetBy: i)
