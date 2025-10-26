@@ -11,11 +11,9 @@ struct NicknameBannedWords {
     
     // MARK: - 시스템/운영 관련 금지어
     static let systemWords: [String] = [
-        "admin", "administrator", "관리자",
-        "manager", "운영자", "운영진",
-        "system", "시스템",
-        "master", "마스터",
-        "owner", "주인"
+        "admin", "관리자",
+        "manager", "운영자",
+        "system",
     ]
     
     // MARK: - 서비스명/브랜드명
@@ -23,7 +21,7 @@ struct NicknameBannedWords {
         "eatssu", "EATSSU", "잇슈", "EatSSU"
     ]
     
-    // MARK: - 욕설/비속어 (기본 리스트)
+    // MARK: - 욕설/비속어 (임시 기본 리스트)
     static let profanityWords: [String] = [
         "시발", "씨발", "ㅅㅂ",
         "병신", "ㅂㅅ",
@@ -44,6 +42,35 @@ struct NicknameBannedWords {
         
         return allBannedWords.contains { bannedWord in
             lowercased.contains(bannedWord.lowercased())
+        }
+    }
+    
+    // MARK: - 타입별 금지어 체크
+    
+    /// 관리자/운영자 관련 금지어 체크
+    static func containsAdminWord(_ nickname: String) -> Bool {
+        let lowercased = nickname.lowercased()
+        
+        return systemWords.contains { word in
+            lowercased.contains(word.lowercased())
+        }
+    }
+    
+    /// 서비스명/브랜드명 금지어 체크
+    static func containsServiceName(_ nickname: String) -> Bool {
+        let lowercased = nickname.lowercased()
+        
+        return serviceWords.contains { word in
+            lowercased.contains(word.lowercased())
+        }
+    }
+    
+    /// 욕설/비속어 체크
+    static func containsProfanity(_ nickname: String) -> Bool {
+        let lowercased = nickname.lowercased()
+        
+        return profanityWords.contains { word in
+            lowercased.contains(word.lowercased())
         }
     }
 }

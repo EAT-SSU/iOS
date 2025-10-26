@@ -23,9 +23,19 @@ final class NicknameValidator {
             return .invalidLength
         }
         
-        // 금지어 체크
-        if NicknameBannedWords.containsBannedWord(nickname) {
-            return .bannedWord
+        // 띄어쓰기 시작/끝 체크
+        if hasWhitespaceAtStartOrEnd(nickname) {
+            return .whitespaceAtStartOrEnd
+        }
+        
+        // 연속 띄어쓰기 체크
+        if hasConsecutiveWhitespace(nickname) {
+            return .consecutiveWhitespace
+        }
+        
+        // 이모지 및 허용되지 않은 특수문자 체크
+        if containsEmojiOrInvalidSpecialChar(nickname) {
+            return .emojiOrSpecialChar
         }
         
         // 허용되지 않은 문자 체크
@@ -48,14 +58,48 @@ final class NicknameValidator {
             return .onlyNumbers
         }
         
+        // 금지어 체크 (타입별)
+        if let bannedWordType = checkBannedWordType(nickname) {
+            return bannedWordType
+        }
+        
         // 모든 검사 통과 - 중복 확인 필요
         return .nicknameTextFieldDoubleCheck
     }
     
     // MARK: - Private Helper Methods
     
-    /// 허용된 문자만 포함되어 있는지 체크 (한글(초성포함), 영문, 숫자, -, _)
-    /// 띄어쓰기(공백) 금지
+    /// 띄어쓰기로 시작하거나 끝나는지 체크
+    private static func hasWhitespaceAtStartOrEnd(_ nickname: String) -> Bool {
+        return nickname.first == " " || nickname.last == " "
+    }
+    
+    /// 연속된 띄어쓰기가 있는지 체크
+    private static func hasConsecutiveWhitespace(_ nickname: String) -> Bool {
+        return nickname.contains("  ")
+    }
+    
+    /// 이모지 또는 허용되지 않은 특수문자 포함 여부 체크
+    private static func containsEmojiOrInvalidSpecialChar(_ nickname: String) -> Bool {
+        for scalar in nickname.unicodeScalars {
+            // 이모지 체크
+            if scalar.properties.isEmoji {
+                return true
+            }
+            
+            // 허용된 문자 집합에 없는 특수문자 체크
+            let char = Character(scalar)
+            if char.isPunctuation || char.isSymbol {
+                // - 와 _ 는 허용
+                if char != "-" && char != "_" {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    /// 허용된 문자만 포함되어 있는지 체크 (한글(초성포함), 영문, 숫자, 띄어쓰기, -, _)
     private static func isAllowedCharacters(_ nickname: String) -> Bool {
         var allowed = CharacterSet()
         
@@ -71,8 +115,10 @@ final class NicknameValidator {
         allowed.formUnion(CharacterSet(charactersIn: "ㄱ".unicodeScalars.first!..."ㅎ".unicodeScalars.first!))
         // 한글 모음
         allowed.formUnion(CharacterSet(charactersIn: "ㅏ".unicodeScalars.first!..."ㅣ".unicodeScalars.first!))
-        // 특수문자 (띄어쓰기 제외, - 와 _ 만 허용)
+        // 특수문자 (- 와 _ 만 허용)
         allowed.formUnion(CharacterSet(charactersIn: "-_"))
+        // 띄어쓰기 허용
+        allowed.formUnion(CharacterSet(charactersIn: " "))
         
         return nickname.unicodeScalars.allSatisfy { allowed.contains($0) }
     }
@@ -129,5 +175,25 @@ final class NicknameValidator {
     /// 숫자로만 구성되어 있는지 체크
     private static func isOnlyNumbers(_ nickname: String) -> Bool {
         return nickname.allSatisfy { $0.isNumber }
+    }
+    
+    /// 금지어 타입별 체크
+    private static func checkBannedWordType(_ nickname: String) -> NicknameTextFieldResultType? {
+        // 관리자/운영자 관련 금지어 체크
+        if NicknameBannedWords.containsAdminWord(nickname) {
+            return .adminRelatedWord
+        }
+        
+        // 서비스명/브랜드명 금지어 체크
+        if NicknameBannedWords.containsServiceName(nickname) {
+            return .serviceNameWord
+        }
+        
+        // 욕설/비속어 체크
+        if NicknameBannedWords.containsProfanity(nickname) {
+            return .profanityWord
+        }
+        
+        return nil
     }
 }
