@@ -18,7 +18,12 @@ struct NicknameBannedWords {
     
     // MARK: - 서비스명/브랜드명
     static let serviceWords: [String] = [
-        "eatssu", "EATSSU", "잇슈", "EatSSU"
+        "eatssu", "EATSSU", "잇슈", "EatSSU",
+        "EAT-SSU", "읻슈", "잍슈", "잇쓔", "잇쓲", "잇씨유", "잇슈우", "잇슈웅",
+        "eat-ssu", "eatsu", "e4tssu", "3at-ssu", "ea7-ssu", "e @t-ssu",
+        "e.at.ssu", "e-a-t-s-s-u", "e_a_t_s_s_u", "e a t ssu",
+        "eat_ssu", "eatssu_", "eatssu123", "e @tssu", "ēat-ssu",
+        "3atssu", "eat$u", "eat5su", "eats$u", "eats-u", "E4T슈"
     ]
     
     // MARK: - 욕설/비속어 (임시 기본 리스트)
