@@ -349,7 +349,8 @@ extension ReviewViewController {
         if type == "FIXED" {
             NetworkService.shared.request(
                 ReviewRouter.reviewRate(type, menuID),
-                responseType: FixedReviewRateResponse.self
+                responseType: FixedReviewRateResponse.self,
+                useAuth: true
             ) { [weak self] result in
                 guard let self = self else { return }
                 
@@ -367,7 +368,8 @@ extension ReviewViewController {
         } else {
             NetworkService.shared.request(
                 ReviewRouter.reviewRate(type, menuID),
-                responseType: ReviewRateResponse.self
+                responseType: ReviewRateResponse.self,
+                useAuth: true
             ) { [weak self] result in
                 guard let self = self else { return }
                 
@@ -389,7 +391,8 @@ extension ReviewViewController {
     func getReviewList(type: String, menuId _: Int) {
         NetworkService.shared.request(
             ReviewRouter.reviewList(type, menuID),
-            responseType: ReviewListResponse.self
+            responseType: ReviewListResponse.self,
+            useAuth: true
         ) { [weak self] result in
             guard let self = self else { return }
             
