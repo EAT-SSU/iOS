@@ -12,6 +12,7 @@ import SnapKit
 import FirebaseAnalytics
 
 final class MyReviewViewController: BaseViewController {
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
 
     private var reviewList = [MyDataList]()
@@ -128,6 +129,8 @@ final class MyReviewViewController: BaseViewController {
     private func navigateToLogin() {
         let loginVC = LoginViewController()
         loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastType = .info
+        
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
@@ -185,8 +188,12 @@ extension MyReviewViewController {
     
     // 리뷰 삭제 알람 추가
     func deleteReview(reviewID: Int) {
-        let alert = UIAlertController(title: "리뷰 삭제", message: "리뷰를 삭제하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+        showCustomDialog(
+            title: "리뷰 삭제하기",
+            message: "해당 리뷰를 삭제할까요?",
+            cancelButtonTitle: "취소하기",
+            confirmButtonTitle: "삭제하기"
+        ) { [weak self] in
             guard let self = self else { return }
             
             NetworkService.shared.request(
@@ -197,15 +204,12 @@ extension MyReviewViewController {
                 switch result {
                 case .success:
                     self.getMyReview()
-                    
                 case .failure(let error):
                     print("리뷰 삭제 실패: \(error.localizedDescription)")
                     RealmService.shared.resetDB()
                     self.navigateToLogin()
                 }
             }
-        })
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        present(alert, animated: true)
+        }
     }
 }

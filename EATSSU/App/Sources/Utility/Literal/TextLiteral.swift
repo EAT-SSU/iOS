@@ -115,7 +115,7 @@ enum TextLiteral {
         static let logout: String = "로그아웃"
 
         /// "탈퇴하기"
-        static let withdraw: String = "탈퇴하기"
+        static let withdraw: String = "회원탈퇴"
 
         /// "이용약관"
         static let defaultTerms: String = "이용약관"

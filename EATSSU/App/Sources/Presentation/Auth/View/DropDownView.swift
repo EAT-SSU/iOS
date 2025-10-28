@@ -51,6 +51,7 @@ final class DropDownView: BaseUIView {
     override func setLayout() {
         button.snp.makeConstraints {
             $0.edges.equalToSuperview()
+            $0.height.equalTo(52)
         }
 
         arrow.snp.makeConstraints {

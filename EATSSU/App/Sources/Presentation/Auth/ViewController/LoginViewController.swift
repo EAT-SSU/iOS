@@ -19,6 +19,8 @@ final class LoginViewController: BaseViewController {
 
     public static let isVacationPeriod = false
     public var toastMessage: String?
+    var toastType: ToastType = .info
+
 
     // MARK: - UI Components
 
@@ -37,9 +39,11 @@ final class LoginViewController: BaseViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        showToastMessageIfNeeded()
-        
-        logScreenView(screenID: FirebaseScreenID.Login.log3)
+
+        if let message = toastMessage {
+            showToast(message: message, type: toastType)
+            self.toastMessage = nil
+        }
     }
 
     // MARK: - Functions
@@ -119,11 +123,6 @@ final class LoginViewController: BaseViewController {
             print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️", accessToken)
         #endif
     }
-    
-    private func showToastMessageIfNeeded() {
-        guard let toastMessage = self.toastMessage else { return }
-        view.showToast(message: toastMessage)
-    }
 
     // MARK: - 액션 메서드
 
@@ -195,9 +194,9 @@ extension LoginViewController {
         } catch {
             switch accountType {
             case .apple:
-                presentBottomAlert("카카오톡으로 생성된 계정입니다.")
+                showToast(message: "카카오톡으로 생성된 계정입니다.", type: .warning)
             case .kakao:
-                presentBottomAlert("Apple로 생성된 계정입니다.")
+                showToast(message: "Apple로 생성된 계정입니다.", type: .warning)
             }
 
             #if DEBUG
@@ -227,7 +226,7 @@ extension LoginViewController {
                 getMyInfo()
                 
             case .failure(let error):
-                presentBottomAlert("카카오톡으로 생성된 계정입니다.")
+                showToast(message: "카카오톡으로 생성된 계정입니다.", type: .warning)
                 #if DEBUG
                     print(error.localizedDescription)
                 #endif
@@ -255,7 +254,7 @@ extension LoginViewController {
                 getMyInfo()
                 
             case .failure(let error):
-                presentBottomAlert("Apple로 생성된 계정입니다.")
+                showToast(message: "Apple로 생성된 계정입니다.", type: .warning)
                 #if DEBUG
                     print(error.localizedDescription)
                 #endif

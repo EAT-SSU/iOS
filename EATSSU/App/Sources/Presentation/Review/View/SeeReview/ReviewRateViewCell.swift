@@ -149,6 +149,23 @@ final class ReviewRateViewCell: UITableViewCell {
 // MARK: - Data Binding
 
 extension ReviewRateViewCell {
+    func fixMenuDataBind(data: FixedReviewRateResponse) {
+        let total = String(format: "%.1f", data.mainRating ?? 0)
+        _ = String(format: "%.1f", data.tasteRating ?? 0)
+        _ = String(format: "%.1f", data.amountRating ?? 0)
+        menuLabel.text = data.menuName
+        totalReviewCount.text = "\(data.totalReviewCount)"
+        rateNumLabel.text = "\(total)"
+        totalRate = data.mainRating ?? 0
+        if data.tasteRating == nil || data.tasteRating == 0.0 {
+            tasteStackView.isHidden = true
+        } else {
+            tasteStackView.isHidden = false
+            let taste = String(format: "%.1f", data.tasteRating ?? 0)
+            tasteRateLabel.text = "\(taste)"
+        }
+
+extension ReviewRateViewCell {
     func dataBind(data: ReviewRateResponse) {
         menuLabel.text = data.menuNames.joined(separator: ", ")
         
@@ -222,6 +239,22 @@ private final class MainRatingView: UIView {
 }
 
 // MARK: - ReviewCountView (총 리뷰 수)
+
+func dataBind(data: ReviewRateResponse) {
+    let total = String(format: "%.1f", data.mainRating ?? 0)
+    _ = String(format: "%.1f", data.tasteRating ?? 0)
+    _ = String(format: "%.1f", data.amountRating ?? 0)
+    menuLabel.text = data.menuNames.joined(separator: ", ")
+    totalReviewCount.text = "\(data.totalReviewCount)"
+    rateNumLabel.text = "\(total)"
+    totalRate = data.mainRating ?? 0
+    if data.tasteRating == nil || data.tasteRating == 0.0 {
+        tasteStackView.isHidden = true
+    } else {
+        tasteStackView.isHidden = false
+        let taste = String(format: "%.1f", data.tasteRating ?? 0)
+        tasteRateLabel.text = "\(taste)"
+    }
 
 private final class ReviewCountView: UIView {
     private let titleLabel: UILabel = {
