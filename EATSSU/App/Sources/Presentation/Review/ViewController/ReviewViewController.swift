@@ -420,7 +420,7 @@ extension ReviewViewController {
                 self.getReviewRate()
                 self.updateViewConstraints()
                 self.getReviewList(type: self.type, menuId: self.menuID)
-                self.reviewTableView.showToast(message: "삭제되었어요 !")
+                self.showToast(message: "삭제되었어요 !")
                 
                 // 네비게이션 스택에서 HomeViewController 찾아서 새로고침
                 if let homeVC = navigationController?.viewControllers.first as? HomeViewController {

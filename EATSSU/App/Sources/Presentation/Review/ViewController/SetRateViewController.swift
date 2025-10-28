@@ -434,7 +434,7 @@ final class SetRateViewController: BaseViewController {
             } catch {
                 await MainActor.run {
                     print("리뷰 업로드 실패: \(error)")
-                    self.view.showToast(message: "리뷰 업로드에 실패했습니다.")
+                    self.showToast(message: "리뷰 업로드에 실패했습니다.")
                 }
             }
         }
