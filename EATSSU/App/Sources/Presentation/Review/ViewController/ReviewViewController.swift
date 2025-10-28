@@ -21,39 +21,38 @@ final class ReviewViewController: BaseViewController {
     private var reviewList = [MenuDataList]()
     private var responseData: ReviewRateResponse?
     private var fixedResponseData: FixedReviewRateResponse?
-
+    
     // MARK: - UI Component
-
     let reviewTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
-
+    
     private var activityIndicatorView: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.startAnimating()
         indicator.isHidden = true
         return indicator
     }()
-
+    
     private lazy var noReviewImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = ImageLiteral.noReview
         imageView.isHidden = true
         return imageView
     }()
-
+    
     // MARK: - Life Cycles
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setTableView()
         setFirebaseTask()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         getReviewRate()
@@ -65,46 +64,46 @@ final class ReviewViewController: BaseViewController {
         
         logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_1)
     }
-
+    
     // MARK: - Functions
-
+    
     override func configureUI() {
         reviewTableView.backgroundColor = .white
         view.addSubviews(reviewTableView,
                          activityIndicatorView,
                          noReviewImageView)
     }
-
+    
     override func setLayout() {
         reviewTableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
-
+        
         activityIndicatorView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         noReviewImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
     }
-
+    
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = "리뷰"
     }
-
+    
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
     }
-
+    
     func setTableView() {
         reviewTableView.register(ReviewTableCell.self, forCellReuseIdentifier: ReviewTableCell.identifier)
         reviewTableView.register(ReviewRateViewCell.self, forCellReuseIdentifier: ReviewRateViewCell.identifier)
         reviewTableView.register(ReviewEmptyViewCell.self, forCellReuseIdentifier: ReviewEmptyViewCell.identifier)
-
+        
         reviewTableView.delegate = self
         reviewTableView.dataSource = self
     }
@@ -112,59 +111,58 @@ final class ReviewViewController: BaseViewController {
     func bindMenuID(id: Int) {
         menuID = id
     }
-
+    
     private func showFixOrDeleteAlert(data: MenuDataList) {
         let alert = UIAlertController(title: "리뷰 수정 혹은 삭제",
                                       message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
                                       preferredStyle: UIAlertController.Style.actionSheet)
-
+        
         let fixAction = UIAlertAction(title: "수정하기",
                                       style: .default,
                                       handler: { _ in
-                                          let setRateViewController = SetRateViewController()
-                                          setRateViewController.dataBindForFix(list: [data.menu], reivewId: data.reviewID)
-                                          setRateViewController.settingForReviewFix(data: data)
-                                          self.navigationController?.pushViewController(setRateViewController, animated: true)
-                                      })
-
+            let setRateViewController = SetRateViewController()
+            setRateViewController.dataBindForFix(list: [data.menu], reivewId: data.reviewID)
+            setRateViewController.settingForReviewFix(data: data)
+            self.navigationController?.pushViewController(setRateViewController, animated: true)
+        })
+        
         let deleteAction = UIAlertAction(title: "삭제하기",
                                          style: .default,
                                          handler: { _ in
-                                             self.deleteReview(reviewID: data.reviewID)
-                                         })
-
+            self.showCustomDialog(
+                title: "리뷰 삭제하기",
+                message: "해당 리뷰를 삭제할까요?",
+                cancelButtonTitle: "취소하기",
+                confirmButtonTitle: "삭제하기"
+            ) { [weak self] in
+                self?.deleteReview(reviewID: data.reviewID)
+            }
+        })
+        
         let cancelAction = UIAlertAction(title: "취소하기",
                                          style: .cancel,
                                          handler: nil)
-
+        
         alert.addAction(fixAction)
         alert.addAction(deleteAction)
         alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
     }
-
+    
     private func showReportAlert(reviewID: Int) {
-        let alert = UIAlertController(title: "리뷰 신고하기",
-                                      message: "해당 리뷰를 신고하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.actionSheet)
-//                                      preferredStyle: UIAlertController.Style.alert)
-
-        let cancelAction = UIAlertAction(title: "취소",
-                                         style: .cancel,
-                                         handler: nil)
-
-        let deleteAction = UIAlertAction(title: "신고",
-                                         style: .default,
-                                         handler: { _ in
-                                             let reportViewController = ReportViewController()
-                                             reportViewController.bindData(reviewID: reviewID)
-                                             self.navigationController?.pushViewController(reportViewController, animated: true)
-                                         })
-        alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
+        showCustomDialog(
+            title: "리뷰 신고하기",
+            message: "해당 리뷰를 신고하시겠습니까?",
+            cancelButtonTitle: "취소하기",
+            confirmButtonTitle: "신고하기"
+        ) { [weak self] in
+            let reportViewController = ReportViewController()
+            reportViewController.bindData(reviewID: reviewID)
+            self?.navigationController?.pushViewController(reportViewController, animated: true)
+        }
     }
 
+    
     // MARK: - Action Method
 
     func userTapReviewButton() {
@@ -412,8 +410,8 @@ extension ReviewViewController {
                 self.getReviewRate()
                 self.updateViewConstraints()
                 self.getReviewList(type: self.type, menuId: self.menuID)
-                self.reviewTableView.showToast(message: "삭제되었어요 !")
-                
+                self.showToast(message: "삭제되었어요 !", type: .success)
+            
             case .failure(let error):
                 print("리뷰 삭제 실패: \(error.localizedDescription)")
             }

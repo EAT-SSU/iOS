@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "icon_danger.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

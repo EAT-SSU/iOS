@@ -15,6 +15,7 @@ import FirebaseAnalytics
 import EATSSUDesign
 
 class CreatorViewController: BaseViewController {
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
     private enum URLConstants {
         static let instagram = "https://www.instagram.com/eatssu.official/"

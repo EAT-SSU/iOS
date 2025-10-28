@@ -406,8 +406,8 @@ final class ReviewRateViewCell: UITableViewCell {
 extension ReviewRateViewCell {
     func fixMenuDataBind(data: FixedReviewRateResponse) {
         let total = String(format: "%.1f", data.mainRating ?? 0)
-        let taste = String(format: "%.1f", data.tasteRating ?? 0)
-        let amount = String(format: "%.1f", data.amountRating ?? 0)
+        _ = String(format: "%.1f", data.tasteRating ?? 0)
+        _ = String(format: "%.1f", data.amountRating ?? 0)
         menuLabel.text = data.menuName
         totalReviewCount.text = "\(data.totalReviewCount)"
         rateNumLabel.text = "\(total)"
@@ -466,8 +466,8 @@ extension ReviewRateViewCell {
 
     func dataBind(data: ReviewRateResponse) {
         let total = String(format: "%.1f", data.mainRating ?? 0)
-        let taste = String(format: "%.1f", data.tasteRating ?? 0)
-        let amount = String(format: "%.1f", data.amountRating ?? 0)
+        _ = String(format: "%.1f", data.tasteRating ?? 0)
+        _ = String(format: "%.1f", data.amountRating ?? 0)
         menuLabel.text = data.menuNames.joined(separator: ", ")
         totalReviewCount.text = "\(data.totalReviewCount)"
         rateNumLabel.text = "\(total)"
