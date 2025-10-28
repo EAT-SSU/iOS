@@ -11,6 +11,8 @@ import Moya
 
 import FirebaseAnalytics
 
+import EATSSUDesign
+
 enum SetNickNameSource {
     case signup   // 첫 로그인/회원가입 시
     case mypage   // 마이페이지-내 정보 시
@@ -18,6 +20,7 @@ enum SetNickNameSource {
 
 final class SetNickNameViewController: BaseViewController {
     var source: SetNickNameSource = .signup
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
     
     private var originalNickname: String?
@@ -107,7 +110,6 @@ final class SetNickNameViewController: BaseViewController {
         
         guard hasNicknameChanged || departmentChanged else {
             print("변경된 정보가 없습니다.")
-            view.showToast(message: "변경된 정보가 없습니다.")
             return
         }
 
@@ -142,10 +144,30 @@ final class SetNickNameViewController: BaseViewController {
         
         dispatchGroup.notify(queue: .main) {
             if isNicknameUpdateSuccess && isDepartmentUpdateSuccess {
-                self.showCompletionAlert()
+                self.navigateToMyPageWithToast()
             } else {
-                // 실패 시 사용자에게 알림
-                self.showAlertController(title: "오류", message: "정보 업데이트 중 오류가 발생했습니다.", style: .cancel)
+                self.showToast(message: "정보 업데이트 중 오류가 발생했습니다.", type: .danger)
+            }
+        }
+    }
+
+    private func navigateToMyPageWithToast() {
+        if let myPageVC = self.navigationController?
+            .viewControllers
+            .first(where: { $0 is MyPageViewController }) as? MyPageViewController {
+            
+            self.navigationController?.popToViewController(myPageVC, animated: true)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                myPageVC.showToast(message: "내 정보가 수정되었어요.", type: .success)
+            }
+        } else {
+            let homeVC = HomeViewController()
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                keyWindow.replaceRootViewController(
+                    UINavigationController(rootViewController: homeVC)
+                )
             }
         }
     }
@@ -158,22 +180,10 @@ final class SetNickNameViewController: BaseViewController {
             self.isNicknameChecked = false
         }
         
-        if newNickname.isEmpty {
-            setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-            setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-        } else if !(2...8).contains(newNickname.count) {
-            setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-            setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-        } else if isNicknameChanged {
-            setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-            setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = true
-        } else {
-            setNickNameView.nicknameValidationMessageLabel.text = ""
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-        }
+        setNickNameView.updateValidationUI(
+            for: newNickname,
+            originalNickname: originalNickname
+        )
         
         updateSaveButtonState()
     }
@@ -233,6 +243,8 @@ final class SetNickNameViewController: BaseViewController {
     private func navigateToLogin() {
         let loginVC = LoginViewController()
         loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastType = .info
+        
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
@@ -277,13 +289,8 @@ extension SetNickNameViewController {
             
             switch result {
             case .success(let isNicknameAvailable):
-                let resultType: NicknameTextFieldResultType = isNicknameAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
-                let toastMessage = isNicknameAvailable ? "사용 가능한 닉네임이에요" : "이미 사용 중인 닉네임이에요"
-                
                 self.isNicknameChecked = isNicknameAvailable
-                self.view.showToast(message: toastMessage)
-                self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
-                self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
+                self.setNickNameView.updateCheckResultUI(isAvailable: isNicknameAvailable)
                 self.setNickNameView.setNicknameChecked(isNicknameAvailable)
                 self.updateSaveButtonState()
                 
@@ -359,26 +366,6 @@ extension SetNickNameViewController {
             case .failure(let error):
                 print("학과 조회 실패: \(error.localizedDescription)")
                 completion?()
-            }
-        }
-    }
-    
-    private func showCompletionAlert() {
-        self.showAlertController(title: "완료",
-                                 message: "정보 수정이 완료되었습니다.",
-                                 style: .cancel) {
-            if let myPageVC = self.navigationController?
-                .viewControllers
-                .first(where: { $0 is MyPageViewController }) {
-                self.navigationController?.popToViewController(myPageVC, animated: true)
-            } else {
-                let homeVC = HomeViewController()
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                    keyWindow.replaceRootViewController(
-                        UINavigationController(rootViewController: homeVC)
-                    )
-                }
             }
         }
     }

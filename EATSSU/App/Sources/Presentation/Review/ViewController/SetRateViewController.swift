@@ -374,7 +374,7 @@ final class SetRateViewController: BaseViewController {
     @objc
     func tappedNextButton() {
         if userReviewTextView.text == "3글자 이상 작성해주세요!" || userReviewTextView.text.count < 3 {
-            view.showToast(message: "리뷰를 3글자 이상 작성해주세요!")
+            showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
         } else {
             if rateView.currentStar != 0, quantityRateView.currentStar != 0, tasteRateView.currentStar != 0 {
                 // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
@@ -406,7 +406,7 @@ final class SetRateViewController: BaseViewController {
                 }
 
             } else {
-                view.showToast(message: "별점을 모두 입력해주세요 !")
+                showToast(message: "별점을 모두 입력해주세요!", type: .info)
             }
         }
     }
@@ -564,6 +564,8 @@ extension SetRateViewController {
     private func navigateToLogin() {
         let loginVC = LoginViewController()
         loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastType = .info
+        
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {

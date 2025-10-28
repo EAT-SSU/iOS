@@ -129,7 +129,7 @@ final class ChoiceMenuViewController: BaseViewController {
     func nextButtonTapped() {
         makeList(menuList: menuNameList, selectedList: isMenuSelected)
         if selectedList.count == 0 {
-            view.showToast(message: "리뷰를 작성할 메뉴를 선택해주세요!")
+            showToast(message: "리뷰를 작성할 메뉴를 선택해주세요!", type: .info)
         } else {
             let setRateVC = SetRateViewController()
             setRateVC.dataBind(list: selectedList,

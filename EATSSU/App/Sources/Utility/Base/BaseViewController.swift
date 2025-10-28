@@ -28,6 +28,10 @@ class BaseViewController: UIViewController {
     // MARK: - Properties
 
     private(set) lazy var className: String = type(of: self).description().components(separatedBy: ".").last ?? ""
+    
+    /// 이 ViewController가 push될 때 탭바를 숨길지 여부
+    /// 오버라이드해서 true를 반환하면 탭바가 숨겨집니다.
+    var shouldHideTabBar: Bool { false }
 
     // MARK: - Initialize
 
