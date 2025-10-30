@@ -250,7 +250,7 @@ final class SetNickNameView: BaseUIView {
         nicknameValidationMessageLabel.text = resultType.hintMessage
         nicknameValidationMessageLabel.textColor = resultType.textColor
         inputNickNameTextField.layer.borderWidth = 1.0
-        inputNickNameTextField.layer.borderColor = resultType.textColor.cgColor
+        inputNickNameTextField.layer.borderColor = resultType.borderColor.cgColor
     }
     
     public func updateCollegeItems(_ items: [String]) {

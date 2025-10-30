@@ -73,7 +73,18 @@ enum NicknameTextFieldResultType {
              .whitespaceAtStartOrEnd, .consecutiveWhitespace, .emojiOrSpecialChar, .adminRelatedWord, .serviceNameWord, .profanityWord:
             .primary
         case .nicknameTextFieldValid:
-            EATSSUDesignAsset.Color.info.color
+            EATSSUDesignAsset.Color.GrayScale.gray600.color
+        }
+    }
+    
+    var borderColor: UIColor {
+        switch self {
+        case .textFieldEmpty, .nicknameTextFieldDuplicated, .nicknameTextFieldDoubleCheck,
+             .invalidLength, .invalidStartOrEnd, .consecutiveSpecialChars, .onlyNumbers, .invalidCharacters, .bannedWord,
+             .whitespaceAtStartOrEnd, .consecutiveWhitespace, .emojiOrSpecialChar, .adminRelatedWord, .serviceNameWord, .profanityWord:
+            .primary
+        case .nicknameTextFieldValid:
+            EATSSUDesignAsset.Color.Main.primary.color
         }
     }
 }
