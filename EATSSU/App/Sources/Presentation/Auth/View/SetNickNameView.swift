@@ -244,39 +244,6 @@ final class SetNickNameView: BaseUIView {
         }
     }
     
-    func updateValidationUI(
-        for newNickname: String,
-        originalNickname: String?
-    ) {
-        if newNickname.isEmpty {
-            nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-            nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.textFieldEmpty.textColor.cgColor
-            nicknameDoubleCheckButton.isEnabled = false
-            
-        } else if !(2...8).contains(newNickname.count) {
-            nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-            nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor.cgColor
-            nicknameDoubleCheckButton.isEnabled = false
-            
-        } else if newNickname != originalNickname {
-            nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-            nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor.cgColor
-            nicknameDoubleCheckButton.isEnabled = true
-            
-        } else {
-            nicknameValidationMessageLabel.text = ""
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-            nicknameDoubleCheckButton.isEnabled = false
-        }
-    }
-    
     func updateCheckResultUI(isAvailable: Bool) {
         let resultType: NicknameTextFieldResultType = isAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
         
