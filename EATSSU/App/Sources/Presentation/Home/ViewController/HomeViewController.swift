@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 import FirebaseAnalytics
 import Moya
@@ -23,6 +24,8 @@ final class HomeViewController: BaseViewController {
             #endif
         }
     }
+    
+    private var cancellables = Set<AnyCancellable>()
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
@@ -87,7 +90,7 @@ final class HomeViewController: BaseViewController {
 
     override func setLayout() {
         logoImageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide) 
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.centerX.equalToSuperview()
             make.height.equalTo(28)
         }
@@ -110,6 +113,27 @@ final class HomeViewController: BaseViewController {
         }
         tabmanController.didMove(toParent: self)
     }
+    
+    // MARK: - Public Functions
+
+    /// 리뷰 작성 후 데이터 새로고침
+    func refreshAfterReview() {
+        tabmanController.dateFetchData(for: currentDate)
+    }
+    
+    /// 하단 탭바에서 학식 탭 클릭 시 오늘 날짜로 초기화
+    func resetToToday() {
+        let today = Date()
+        
+        // 이미 오늘 날짜면 아무것도 안 함
+        if Calendar.current.isDate(currentDate, inSameDayAs: today) {
+            return
+        }
+        // 오늘이 아니면 날짜 업데이트
+        currentDate = today
+        homeCalendarView.setSelected(date: today)
+        tabmanController.updateDate(to: today)
+    }
 
     // MARK: - Firebase
 
@@ -121,6 +145,11 @@ final class HomeViewController: BaseViewController {
 
     private func setupDelegates() {
         homeCalendarView.delegate = tabmanController
+        tabmanController.datePublisher
+            .sink { [weak self] date in
+                self?.currentDate = date
+            }
+            .store(in: &cancellables)
     }
     
     @objc private func handleNewDayNotification(_ notification: Notification) {

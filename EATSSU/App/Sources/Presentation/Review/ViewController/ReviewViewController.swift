@@ -21,7 +21,8 @@ final class ReviewViewController: BaseViewController {
     private var reviewList = [MenuDataList]()
     private var responseData: ReviewRateResponse?
     private var fixedResponseData: FixedReviewRateResponse?
-    
+    private var isDataLoaded = false
+
     // MARK: - UI Component
     let reviewTableView: UITableView = {
         let tableView = UITableView()
@@ -51,6 +52,8 @@ final class ReviewViewController: BaseViewController {
         
         setTableView()
         setFirebaseTask()
+        reviewTableView.estimatedRowHeight = 300
+        reviewTableView.rowHeight = UITableView.automaticDimension
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -240,16 +243,20 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            1
+            return 1
         case 1:
-            // 두 번째 섹션에서 리뷰 개수가 하나도 없을 때 셀 변경
+            // 데이터 로딩 전에는 아무것도 표시 안 함
+            if !isDataLoaded {
+                return 0
+            }
+            // 데이터 로딩 완료 후: 리뷰가 없으면 EmptyCell, 있으면 리뷰 개수만큼
             if reviewList.count == 0 {
-                1
+                return 1
             } else {
-                reviewList.count
+                return reviewList.count
             }
         default:
-            0
+            return 0
         }
     }
 
@@ -321,7 +328,7 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
-            251.adjusted
+            UITableView.automaticDimension
         case 1:
             if reviewList.count == 0 {
                 300.adjusted
@@ -342,7 +349,8 @@ extension ReviewViewController {
         if type == "FIXED" {
             NetworkService.shared.request(
                 ReviewRouter.reviewRate(type, menuID),
-                responseType: FixedReviewRateResponse.self
+                responseType: FixedReviewRateResponse.self,
+                useAuth: true
             ) { [weak self] result in
                 guard let self = self else { return }
                 
@@ -360,7 +368,8 @@ extension ReviewViewController {
         } else {
             NetworkService.shared.request(
                 ReviewRouter.reviewRate(type, menuID),
-                responseType: ReviewRateResponse.self
+                responseType: ReviewRateResponse.self,
+                useAuth: true
             ) { [weak self] result in
                 guard let self = self else { return }
                 
@@ -382,17 +391,21 @@ extension ReviewViewController {
     func getReviewList(type: String, menuId _: Int) {
         NetworkService.shared.request(
             ReviewRouter.reviewList(type, menuID),
-            responseType: ReviewListResponse.self
+            responseType: ReviewListResponse.self,
+            useAuth: true
         ) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let data):
                 self.reviewList = data.dataList
+                self.isDataLoaded = true
                 self.reviewTableView.reloadData()
                 
             case .failure(let error):
                 print("리뷰 리스트 조회 실패: \(error.localizedDescription)")
+                self.isDataLoaded = true
+                self.reviewTableView.reloadData()
             }
         }
     }
@@ -410,8 +423,12 @@ extension ReviewViewController {
                 self.getReviewRate()
                 self.updateViewConstraints()
                 self.getReviewList(type: self.type, menuId: self.menuID)
-                self.showToast(message: "삭제되었어요 !", type: .success)
-            
+                self.showToast(message: "삭제되었어요 !")
+                
+                // 네비게이션 스택에서 HomeViewController 찾아서 새로고침
+                if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
+                    homeVC.refreshAfterReview()
+                }
             case .failure(let error):
                 print("리뷰 삭제 실패: \(error.localizedDescription)")
             }
