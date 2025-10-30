@@ -234,6 +234,12 @@ final class SetNickNameViewController: BaseViewController {
     }
 
     private func validateNickname(_ nickname: String) {
+        // 텍스트 변경 시 닉네임 체크 상태 초기화 및 UI 기본 상태로 리셋
+        isNicknameChecked = false
+        setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+        setNickNameView.inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        setNickNameView.nicknameValidationMessageLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        
         // 원래 닉네임과 같으면 검증 스킵
         if nickname == originalNickname {
             setNickNameView.nicknameValidationMessageLabel.text = ""
@@ -250,10 +256,10 @@ final class SetNickNameViewController: BaseViewController {
             // 중복 확인이 필요한 경우에만 버튼 활성화
             if validationResult == .nicknameTextFieldDoubleCheck {
                 setNickNameView.nicknameDoubleCheckButton.isEnabled = true
-                isNicknameChecked = false
             } else {
                 setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-                isNicknameChecked = false
+                // 에러인 경우 테두리도 빨강으로
+                setNickNameView.inputNickNameTextField.layer.borderColor = validationResult.borderColor.cgColor
             }
         }
         
