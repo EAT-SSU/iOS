@@ -7,6 +7,8 @@
 
 import UIKit
 
+import EATSSUDesign
+
 enum NicknameTextFieldResultType {
     /// common
     case textFieldEmpty
@@ -32,9 +34,9 @@ enum NicknameTextFieldResultType {
         case .textFieldEmpty:
             "필수 입력 사항입니다"
         case .nicknameTextFieldDoubleCheck:
-            "중복 확인을 진행해주세요"
+            "중복 확인을 진행해주세요."
         case .nicknameTextFieldDuplicated:
-            "이미 사용 중인 닉네임이에요"
+            "이미 사용 중인 닉네임이에요."
         case .nicknameTextFieldValid:
             "사용가능한 닉네임이에요"
         case .invalidLength:
@@ -71,7 +73,7 @@ enum NicknameTextFieldResultType {
              .whitespaceAtStartOrEnd, .consecutiveWhitespace, .emojiOrSpecialChar, .adminRelatedWord, .serviceNameWord, .profanityWord:
             .primary
         case .nicknameTextFieldValid:
-            .gray700
+            EATSSUDesignAsset.Color.info.color
         }
     }
 }

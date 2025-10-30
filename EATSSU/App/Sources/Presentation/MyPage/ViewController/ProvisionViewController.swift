@@ -13,6 +13,7 @@ import WebKit
 import SnapKit
 
 final class ProvisionViewController: BaseViewController {
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
 
     var navigationTitle = TextLiteral.MyPage.defaultTerms
