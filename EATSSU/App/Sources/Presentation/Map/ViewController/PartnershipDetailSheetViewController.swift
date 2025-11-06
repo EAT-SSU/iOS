@@ -146,8 +146,8 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     private func makeInfoCard(info: PartnershipInfoDTO, isLast: Bool) -> UIView {
         let labelText = info.collegeName ?? info.departmentName ?? "학과 정보 없음"
         
-        let start = String(info.startDate.dropFirst(5))
-        let end = String(info.endDate.dropFirst(5))
+        let start = String(info.startDate.dropFirst(2))
+        let end = String(info.endDate.dropFirst(2))
 
         let fullText = "\(labelText)  \(start) ~ \(end)"
         let attrText = NSMutableAttributedString(string: fullText)

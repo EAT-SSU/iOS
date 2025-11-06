@@ -244,46 +244,13 @@ final class SetNickNameView: BaseUIView {
         }
     }
     
-    func updateValidationUI(
-        for newNickname: String,
-        originalNickname: String?
-    ) {
-        if newNickname.isEmpty {
-            nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-            nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.textFieldEmpty.textColor.cgColor
-            nicknameDoubleCheckButton.isEnabled = false
-            
-        } else if !(2...8).contains(newNickname.count) {
-            nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-            nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor.cgColor
-            nicknameDoubleCheckButton.isEnabled = false
-            
-        } else if newNickname != originalNickname {
-            nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-            nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor.cgColor
-            nicknameDoubleCheckButton.isEnabled = true
-            
-        } else {
-            nicknameValidationMessageLabel.text = ""
-            inputNickNameTextField.layer.borderWidth = 1.0
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-            nicknameDoubleCheckButton.isEnabled = false
-        }
-    }
-    
     func updateCheckResultUI(isAvailable: Bool) {
         let resultType: NicknameTextFieldResultType = isAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
         
         nicknameValidationMessageLabel.text = resultType.hintMessage
         nicknameValidationMessageLabel.textColor = resultType.textColor
         inputNickNameTextField.layer.borderWidth = 1.0
-        inputNickNameTextField.layer.borderColor = resultType.textColor.cgColor
+        inputNickNameTextField.layer.borderColor = resultType.borderColor.cgColor
     }
     
     public func updateCollegeItems(_ items: [String]) {
@@ -301,47 +268,5 @@ extension SetNickNameView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-}
-
-// MARK: - Validation User Information
-
-private extension SetNickNameView {
-    func textFieldSettingWhenEmpty(_: UITextField) {
-        nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-        nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
-        updateTextFieldBorder(type: .textFieldEmpty)
-    }
-
-    func checkNicknameValidation(_ textField: UITextField) {
-        if let userNickname = textField.text {
-            if nicknameInputChanged(nickname: userNickname) {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
-                updateTextFieldBorder(type: .nicknameTextFieldDoubleCheck)
-            } else {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
-                updateTextFieldBorder(type: .nicknameTextFieldOver)
-            }
-        }
-    }
-
-    func nicknameInputChanged(nickname: String) -> Bool {
-        isNicknameChecked = false
-        updateCompleteButtonState()
-
-        if nickname.count > 1, nickname.count < 9 {
-            nicknameDoubleCheckButton.isEnabled = true
-            return true
-        } else {
-            nicknameDoubleCheckButton.isEnabled = false
-            return false
-        }
-    }
-    
-    func updateTextFieldBorder(type: NicknameTextFieldResultType) {
-        inputNickNameTextField.layer.borderWidth = 1.0
-        inputNickNameTextField.layer.borderColor = type.textColor.cgColor
     }
 }

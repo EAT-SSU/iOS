@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 import Moya
 
@@ -28,7 +29,8 @@ final class SetNickNameViewController: BaseViewController {
     private var isNicknameChecked: Bool = false
     private var colleges: [LookupItemDTO] = []
     private var departments: [LookupItemDTO] = []
-
+    private var cancellables = Set<AnyCancellable>()
+    
     // MARK: - UI Components
     
     private let setNickNameView = SetNickNameView()
@@ -85,9 +87,6 @@ final class SetNickNameViewController: BaseViewController {
     private func bindUI() {
         setNickNameView.completeSettingNickNameButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
         setNickNameView.nicknameDoubleCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
-        setNickNameView.inputNickNameTextField.addTarget(self,
-                                                         action: #selector(nicknameTextFieldDidChange),
-                                                         for: .editingChanged)
         setNickNameView.onSelectCollege = { [weak self] collegeName in
             guard let self,
                   let id = self.colleges.first(where: { $0.name == collegeName })?.id
@@ -98,6 +97,7 @@ final class SetNickNameViewController: BaseViewController {
         setNickNameView.onSelectDepartment = { [weak self] _ in
             self?.updateSaveButtonState()
         }
+        setupNicknameValidation()
     }
 
     // MARK: - @objc Methods
@@ -172,22 +172,6 @@ final class SetNickNameViewController: BaseViewController {
         }
     }
     
-    @objc private func nicknameTextFieldDidChange(_ textField: UITextField) {
-        let newNickname = textField.text ?? ""
-        let isNicknameChanged = (newNickname != originalNickname)
-        
-        if isNicknameChanged {
-            self.isNicknameChecked = false
-        }
-        
-        setNickNameView.updateValidationUI(
-            for: newNickname,
-            originalNickname: originalNickname
-        )
-        
-        updateSaveButtonState()
-    }
-    
     @objc
     private func tappedCheckButton() {
         checkNickname(nickname: setNickNameView.inputNickNameTextField.text ?? "")
@@ -238,6 +222,48 @@ final class SetNickNameViewController: BaseViewController {
         let departmentChanged = isDepartmentChanged()
         
         setNickNameView.completeSettingNickNameButton.isEnabled = isNicknameStateValid && (hasNicknameChanged || departmentChanged)
+    }
+    
+    private func setupNicknameValidation() {
+        setNickNameView.inputNickNameTextField.textPublisher
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .sink { [weak self] text in
+                self?.validateNickname(text ?? "")
+            }
+            .store(in: &cancellables)
+    }
+
+    private func validateNickname(_ nickname: String) {
+        // 텍스트 변경 시 닉네임 체크 상태 초기화 및 UI 기본 상태로 리셋
+        isNicknameChecked = false
+        setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+        setNickNameView.inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        setNickNameView.nicknameValidationMessageLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        
+        // 원래 닉네임과 같으면 검증 스킵
+        if nickname == originalNickname {
+            setNickNameView.nicknameValidationMessageLabel.text = ""
+            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
+            updateSaveButtonState()
+            return
+        }
+        
+        // NicknameValidator로 검증
+        if let validationResult = NicknameValidator.validate(nickname) {
+            setNickNameView.nicknameValidationMessageLabel.text = validationResult.hintMessage
+            setNickNameView.nicknameValidationMessageLabel.textColor = validationResult.textColor
+            
+            // 중복 확인이 필요한 경우에만 버튼 활성화
+            if validationResult == .nicknameTextFieldDoubleCheck {
+                setNickNameView.nicknameDoubleCheckButton.isEnabled = true
+            } else {
+                setNickNameView.nicknameDoubleCheckButton.isEnabled = false
+                // 에러인 경우 테두리도 빨강으로
+                setNickNameView.inputNickNameTextField.layer.borderColor = validationResult.borderColor.cgColor
+            }
+        }
+        
+        updateSaveButtonState()
     }
     
     private func navigateToLogin() {
@@ -368,5 +394,15 @@ extension SetNickNameViewController {
                 completion?()
             }
         }
+    }
+}
+
+// MARK: - UITextField+Combine
+extension UITextField {
+    var textPublisher: AnyPublisher<String?, Never> {
+        NotificationCenter.default
+            .publisher(for: UITextField.textDidChangeNotification, object: self)
+            .map { ($0.object as? UITextField)?.text }
+            .eraseToAnyPublisher()
     }
 }
