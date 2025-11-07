@@ -345,14 +345,14 @@ extension HomeRestaurantViewController {
                 promise(result) // 네트워크 결과를 Future의 promise로 전달
             }
         }
+        .subscribe(on: DispatchQueue.global())
+        .receive(on: DispatchQueue.main)
         .sink(receiveCompletion: { [weak self] completion in
             if case .failure(let error) = completion {
                 print("\(restaurant) 변경 메뉴 조회 실패: \(error.localizedDescription)")
                 self?.changeMenuTableViewData[restaurant] = []
                 if let sectionIndex = self?.getSectionIndex(for: restaurant) {
-                    DispatchQueue.main.async {
-                        self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
-                    }
+                    self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
                 }
             }
         }, receiveValue: { [weak self] menus in
@@ -362,9 +362,7 @@ extension HomeRestaurantViewController {
             self.changeMenuTableViewData[restaurant] = filteredMenus
             
             if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                DispatchQueue.main.async {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
-                }
+                self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
             }
         })
         .store(in: &cancellables)
@@ -381,14 +379,14 @@ extension HomeRestaurantViewController {
                 promise(result) // 네트워크 결과를 Future의 promise로 전달
             }
         }
+        .subscribe(on: DispatchQueue.global())
+        .receive(on: DispatchQueue.main)
         .sink(receiveCompletion: { [weak self] completion in
             if case .failure(let error) = completion {
                 print("\(restaurant) 고정 메뉴 조회 실패: \(error.localizedDescription)")
                 self?.fixMenuTableViewData[restaurant] = []
                 if let sectionIndex = self?.getSectionIndex(for: restaurant) {
-                    DispatchQueue.main.async {
-                        self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
-                    }
+                    self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
                 }
             }
         }, receiveValue: { [weak self] response in
@@ -401,9 +399,7 @@ extension HomeRestaurantViewController {
             self.fixMenuTableViewData[restaurant] = allMenuInformations
             
             if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                DispatchQueue.main.async {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
-                }
+                self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
             }
         })
         .store(in: &cancellables)
