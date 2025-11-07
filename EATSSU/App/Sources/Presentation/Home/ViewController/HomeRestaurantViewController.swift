@@ -349,7 +349,13 @@ extension HomeRestaurantViewController: UITableViewDelegate {
 extension HomeRestaurantViewController {
     // 변경 메뉴 요청 API 호출
     func fetchChangeMenuData(date: String, restaurant: String, time: String) async {
+        
+        // UI 업데이트에 사용할 메뉴 목록과 애니메이션 타입을 저장할 변수
+        let menusToUpdate: [ChangeMenuTableResponse]
+        let animation: UITableView.RowAnimation
+        
         do {
+            // 비동기 네트워크 요청을 통해 메뉴 데이터 가져오기
             let menus: [ChangeMenuTableResponse] = try await withCheckedThrowingContinuation { continuation in
                 NetworkService.shared.request(
                     HomeRouter.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time),
@@ -359,30 +365,30 @@ extension HomeRestaurantViewController {
                 }
             }
             
-            // 메인 스레드에서 UI 업데이트
-            await MainActor.run {
-                let filteredMenus = menus.filter { !($0.briefMenus.first?.name.isEmpty ?? true) }
-                self.changeMenuTableViewData[restaurant] = filteredMenus
-                
-                if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
-                }
-            }
+            menusToUpdate = menus.filter { !($0.briefMenus.first?.name.isEmpty ?? true) }
+            animation = .fade
+            
         } catch {
             print("\(restaurant) 변경 메뉴 조회 실패: \(error.localizedDescription)")
+            menusToUpdate = []
+            animation = .none
+        }
+        
+        // 메인 스레드에서 UI 업데이트
+        await MainActor.run {
+            self.changeMenuTableViewData[restaurant] = menusToUpdate
             
-            // 실패 시에도 메인 스레드에서 UI 업데이트
-            await MainActor.run {
-                self.changeMenuTableViewData[restaurant] = []
-                if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
-                }
+            if let sectionIndex = self.getSectionIndex(for: restaurant) {
+                self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: animation)
             }
         }
     }
 
     // 고정 메뉴 요청 API 호출
     func fetchFixedMenuData(restaurant: String) async {
+        var menuData: [Menus] = []
+        var animation: UITableView.RowAnimation = .none
+
         do {
             let response: FixedMenuTableResponse = try await withCheckedThrowingContinuation { continuation in
                 NetworkService.shared.request(
@@ -393,27 +399,17 @@ extension HomeRestaurantViewController {
                 }
             }
             
-            // 메인 스레드에서 UI 업데이트
-            await MainActor.run {
-                var allMenuInformations = [Menus]()
-                for categoryMenu in response.categoryMenuListCollection {
-                    allMenuInformations += categoryMenu.menus
-                }
-                self.fixMenuTableViewData[restaurant] = allMenuInformations
-                
-                if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
-                }
-            }
+            menuData = response.categoryMenuListCollection.flatMap { $0.menus }
+            animation = .fade
         } catch {
             print("\(restaurant) 고정 메뉴 조회 실패: \(error.localizedDescription)")
-            
-            // 실패 시에도 메인 스레드에서 UI 업데이트
-            await MainActor.run {
-                self.fixMenuTableViewData[restaurant] = []
-                if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
-                }
+        }
+        
+        // 메인 스레드에서 UI 업데이트
+        await MainActor.run {
+            self.fixMenuTableViewData[restaurant] = menuData
+            if let sectionIndex = self.getSectionIndex(for: restaurant) {
+                self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: animation)
             }
         }
     }
