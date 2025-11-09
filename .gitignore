@@ -83,5 +83,8 @@ fastlane/test_output
 ### fastlane
 fastlane/.env
 .env
+fastlane/api_key.json
+fastlane/AuthKey_*.p8
+*.p8
 
 

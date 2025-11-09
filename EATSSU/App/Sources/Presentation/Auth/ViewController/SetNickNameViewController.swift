@@ -6,10 +6,13 @@
 //
 
 import UIKit
+import Combine
 
 import Moya
 
 import FirebaseAnalytics
+
+import EATSSUDesign
 
 enum SetNickNameSource {
     case signup   // 첫 로그인/회원가입 시
@@ -18,16 +21,16 @@ enum SetNickNameSource {
 
 final class SetNickNameViewController: BaseViewController {
     var source: SetNickNameSource = .signup
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
     
-    private let nicknameProvider = MoyaProvider<UserNicknameRouter>(session: Session(interceptor: AuthInterceptor.shared))
-    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var originalNickname: String?
     private var originalDepartmentName: String?
     private var isNicknameChecked: Bool = false
     private var colleges: [LookupItemDTO] = []
     private var departments: [LookupItemDTO] = []
-
+    private var cancellables = Set<AnyCancellable>()
+    
     // MARK: - UI Components
     
     private let setNickNameView = SetNickNameView()
@@ -84,9 +87,6 @@ final class SetNickNameViewController: BaseViewController {
     private func bindUI() {
         setNickNameView.completeSettingNickNameButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
         setNickNameView.nicknameDoubleCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
-        setNickNameView.inputNickNameTextField.addTarget(self,
-                                                         action: #selector(nicknameTextFieldDidChange),
-                                                         for: .editingChanged)
         setNickNameView.onSelectCollege = { [weak self] collegeName in
             guard let self,
                   let id = self.colleges.first(where: { $0.name == collegeName })?.id
@@ -97,6 +97,7 @@ final class SetNickNameViewController: BaseViewController {
         setNickNameView.onSelectDepartment = { [weak self] _ in
             self?.updateSaveButtonState()
         }
+        setupNicknameValidation()
     }
 
     // MARK: - @objc Methods
@@ -109,7 +110,6 @@ final class SetNickNameViewController: BaseViewController {
         
         guard hasNicknameChanged || departmentChanged else {
             print("변경된 정보가 없습니다.")
-            view.showToast(message: "변경된 정보가 없습니다.")
             return
         }
 
@@ -144,40 +144,32 @@ final class SetNickNameViewController: BaseViewController {
         
         dispatchGroup.notify(queue: .main) {
             if isNicknameUpdateSuccess && isDepartmentUpdateSuccess {
-                self.showCompletionAlert()
+                self.navigateToMyPageWithToast()
             } else {
-                // 실패 시 사용자에게 알림
-                self.showAlertController(title: "오류", message: "정보 업데이트 중 오류가 발생했습니다.", style: .cancel)
+                self.showToast(message: "정보 업데이트 중 오류가 발생했습니다.", type: .danger)
             }
         }
     }
-    
-    @objc private func nicknameTextFieldDidChange(_ textField: UITextField) {
-        let newNickname = textField.text ?? ""
-        let isNicknameChanged = (newNickname != originalNickname)
-        
-        if isNicknameChanged {
-            self.isNicknameChecked = false
-        }
-        
-        if newNickname.isEmpty {
-            setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-            setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-        } else if !(2...8).contains(newNickname.count) {
-            setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-            setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
-        } else if isNicknameChanged {
-            setNickNameView.nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-            setNickNameView.nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = true
+
+    private func navigateToMyPageWithToast() {
+        if let myPageVC = self.navigationController?
+            .viewControllers
+            .first(where: { $0 is MyPageViewController }) as? MyPageViewController {
+            
+            self.navigationController?.popToViewController(myPageVC, animated: true)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                myPageVC.showToast(message: "내 정보가 수정되었어요.", type: .success)
+            }
         } else {
-            setNickNameView.nicknameValidationMessageLabel.text = ""
-            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
+            let homeVC = HomeViewController()
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                keyWindow.replaceRootViewController(
+                    UINavigationController(rootViewController: homeVC)
+                )
+            }
         }
-        
-        updateSaveButtonState()
     }
     
     @objc
@@ -232,9 +224,53 @@ final class SetNickNameViewController: BaseViewController {
         setNickNameView.completeSettingNickNameButton.isEnabled = isNicknameStateValid && (hasNicknameChanged || departmentChanged)
     }
     
+    private func setupNicknameValidation() {
+        setNickNameView.inputNickNameTextField.textPublisher
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .sink { [weak self] text in
+                self?.validateNickname(text ?? "")
+            }
+            .store(in: &cancellables)
+    }
+
+    private func validateNickname(_ nickname: String) {
+        // 텍스트 변경 시 닉네임 체크 상태 초기화 및 UI 기본 상태로 리셋
+        isNicknameChecked = false
+        setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
+        setNickNameView.inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        setNickNameView.nicknameValidationMessageLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        
+        // 원래 닉네임과 같으면 검증 스킵
+        if nickname == originalNickname {
+            setNickNameView.nicknameValidationMessageLabel.text = ""
+            setNickNameView.nicknameDoubleCheckButton.isEnabled = false
+            updateSaveButtonState()
+            return
+        }
+        
+        // NicknameValidator로 검증
+        if let validationResult = NicknameValidator.validate(nickname) {
+            setNickNameView.nicknameValidationMessageLabel.text = validationResult.hintMessage
+            setNickNameView.nicknameValidationMessageLabel.textColor = validationResult.textColor
+            
+            // 중복 확인이 필요한 경우에만 버튼 활성화
+            if validationResult == .nicknameTextFieldDoubleCheck {
+                setNickNameView.nicknameDoubleCheckButton.isEnabled = true
+            } else {
+                setNickNameView.nicknameDoubleCheckButton.isEnabled = false
+                // 에러인 경우 테두리도 빨강으로
+                setNickNameView.inputNickNameTextField.layer.borderColor = validationResult.borderColor.cgColor
+            }
+        }
+        
+        updateSaveButtonState()
+    }
+    
     private func navigateToLogin() {
         let loginVC = LoginViewController()
         loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastType = .info
+        
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
@@ -247,14 +283,20 @@ final class SetNickNameViewController: BaseViewController {
 // MARK: - Network
 extension SetNickNameViewController {
     private func setUserNickname(_ nickname: String, completion: @escaping (Bool) -> Void) {
-        nicknameProvider.request(.setNickname(nickname: nickname)) { [weak self] result in
+        NetworkService.shared.request(
+            UserNicknameRouter.setNickname(nickname: nickname),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self = self else { return }
+            
             switch result {
             case .success:
                 if let user = UserInfoManager.shared.getCurrentUserInfo() {
                     UserInfoManager.shared.updateNickname(for: user, nickname: nickname)
                 }
                 completion(true)
+                
             case .failure:
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
@@ -264,32 +306,22 @@ extension SetNickNameViewController {
     }
 
     private func checkNickname(nickname: String) {
-        nicknameProvider.request(.checkNickname(nickname: nickname)) { [weak self] response in
+        NetworkService.shared.request(
+            UserNicknameRouter.checkNickname(nickname: nickname),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self = self else { return }
-            switch response {
-            case .success(let moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    let isNicknameAvailable = responseData.result ?? false
-                    let resultType: NicknameTextFieldResultType = isNicknameAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
-                    let toastMessage = isNicknameAvailable ? "사용 가능한 닉네임이에요" : "이미 사용 중인 닉네임이에요"
-                    
-                    self.isNicknameChecked = isNicknameAvailable
-                    self.view.showToast(message: toastMessage)
-                    self.setNickNameView.nicknameValidationMessageLabel.text = resultType.hintMessage
-                    self.setNickNameView.nicknameValidationMessageLabel.textColor = resultType.textColor
-                    self.setNickNameView.setNicknameChecked(isNicknameAvailable)
-                    self.updateSaveButtonState()
-
-                } catch let err {
-                    print(err.localizedDescription)
-                    
-                    RealmService.shared.resetDB()
-                    self.navigateToLogin()
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
+            
+            switch result {
+            case .success(let isNicknameAvailable):
+                self.isNicknameChecked = isNicknameAvailable
+                self.setNickNameView.updateCheckResultUI(isAvailable: isNicknameAvailable)
+                self.setNickNameView.setNicknameChecked(isNicknameAvailable)
+                self.updateSaveButtonState()
                 
+            case .failure(let error):
+                print("닉네임 중복 확인 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
             }
@@ -297,7 +329,11 @@ extension SetNickNameViewController {
     }
     
     private func setUserDepartment(departmentInfo: (id: Int, name: String?), collegeInfo: (id: Int?, name: String?), completion: @escaping (Bool) -> Void) {
-        nicknameProvider.request(.setDepartment(departmentId: departmentInfo.id)) { result in
+        NetworkService.shared.request(
+            UserNicknameRouter.setDepartment(departmentId: departmentInfo.id),
+            responseType: Bool.self,
+            useAuth: true
+        ) { result in
             switch result {
             case .success:
                 print("학과 등록 성공: ID \(departmentInfo.id)")
@@ -309,6 +345,7 @@ extension SetNickNameViewController {
                                                             departmentName: departmentInfo.name)
                 }
                 completion(true)
+                
             case .failure(let error):
                 print("학과 등록 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
@@ -319,64 +356,53 @@ extension SetNickNameViewController {
     }
     
     private func fetchColleges() {
-        myProvider.request(.colleges) { [weak self] result in
+        NetworkService.shared.request(
+            MyRouter.colleges,
+            responseType: [LookupItemDTO].self,
+            useAuth: true
+        ) { [weak self] result in
             guard let self else { return }
+            
             switch result {
-            case let .success(res):
-                do {
-                   let decoded = try res.map(CollegesResponseDTO.self)
-                   let list = decoded.result ?? []
-                   self.colleges = list
-                   self.setNickNameView.updateCollegeItems(list.map(\.name))
-                   self.populateUIWithSavedData()
-                } catch {
-                    print("단과대 파싱 실패: \(error.localizedDescription)")
-                }
-            case let .failure(err):
-                print("단과대 조회 실패: \(err.localizedDescription)")
-            }
-        }
-    }
-
-    private func fetchDepartments(collegeId: Int, completion: (() -> Void)? = nil) {
-        myProvider.request(.departments(collegeId: collegeId)) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case let .success(res):
-                do {
-                    let decoded = try res.map(DepartmentsResponseDTO.self)
-                    let list = decoded.result ?? []
-                    self.departments = list
-                    self.setNickNameView.updateDepartmentItems(list.map(\.name))
-                    completion?()
-                } catch {
-                    print("학과 파싱 실패: \(error.localizedDescription)")
-                    completion?()
-                }
-            case let .failure(err):
-                print("학과 조회 실패: \(err.localizedDescription)")
-                completion?()
+            case .success(let list):
+                self.colleges = list
+                self.setNickNameView.updateCollegeItems(list.map(\.name))
+                self.populateUIWithSavedData()
+                
+            case .failure(let error):
+                print("단과대 조회 실패: \(error.localizedDescription)")
             }
         }
     }
     
-    private func showCompletionAlert() {
-        self.showAlertController(title: "완료",
-                                 message: "정보 수정이 완료되었습니다.",
-                                 style: .cancel) {
-            if let myPageVC = self.navigationController?
-                .viewControllers
-                .first(where: { $0 is MyPageViewController }) {
-                self.navigationController?.popToViewController(myPageVC, animated: true)
-            } else {
-                let homeVC = HomeViewController()
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                    keyWindow.replaceRootViewController(
-                        UINavigationController(rootViewController: homeVC)
-                    )
-                }
+    private func fetchDepartments(collegeId: Int, completion: (() -> Void)? = nil) {
+        NetworkService.shared.request(
+            MyRouter.departments(collegeId: collegeId),
+            responseType: [LookupItemDTO].self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let list):
+                self.departments = list
+                self.setNickNameView.updateDepartmentItems(list.map(\.name))
+                completion?()
+                
+            case .failure(let error):
+                print("학과 조회 실패: \(error.localizedDescription)")
+                completion?()
             }
         }
+    }
+}
+
+// MARK: - UITextField+Combine
+extension UITextField {
+    var textPublisher: AnyPublisher<String?, Never> {
+        NotificationCenter.default
+            .publisher(for: UITextField.textDidChangeNotification, object: self)
+            .map { ($0.object as? UITextField)?.text }
+            .eraseToAnyPublisher()
     }
 }

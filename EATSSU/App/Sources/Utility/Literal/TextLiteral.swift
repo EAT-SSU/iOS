@@ -41,7 +41,7 @@ enum TextLiteral {
     static let inputNickName: String = "닉네임을 입력해주세요"
     static let inputNickNameLabel: String = "닉네임을 설정해 주세요."
     static let doubleCheckNickName: String = "중복확인"
-    static let hintInputNickName: String = "2~8글자를 입력해주세요."
+    static let hintInputNickName: String = "2~16글자로 입력해주세요."
     static let completeLabel: String = "완료하기"
 
     // MARK: - Home
@@ -115,7 +115,7 @@ enum TextLiteral {
         static let logout: String = "로그아웃"
 
         /// "탈퇴하기"
-        static let withdraw: String = "탈퇴하기"
+        static let withdraw: String = "회원탈퇴"
 
         /// "이용약관"
         static let defaultTerms: String = "이용약관"

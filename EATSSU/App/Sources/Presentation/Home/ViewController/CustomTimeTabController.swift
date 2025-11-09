@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 import SnapKit
 
@@ -24,6 +25,12 @@ final class CustomTimeTabController: BaseViewController {
     var todayDate: Date = .init()
 
     private var isProgrammaticScroll = false
+    private var cancellables = Set<AnyCancellable>()
+    private let dateSubject = PassthroughSubject<Date, Never>()
+    
+    var datePublisher: AnyPublisher<Date, Never> {
+        dateSubject.eraseToAnyPublisher()
+    }
 
     private lazy var morningVC = HomeRestaurantViewController()
     private lazy var lunchVC = HomeRestaurantViewController()
@@ -46,6 +53,7 @@ final class CustomTimeTabController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        setupDatePipeline()
     }
     
     @objc private func handleNewDayNotification(_ notification: Notification) {
@@ -152,10 +160,7 @@ final class CustomTimeTabController: BaseViewController {
     }
     
     func dateFetchData(for date: Date) {
-        morningVC.fetchData(date: date, time: "MORNING")
-        lunchVC.fetchData(date: date, time: "LUNCH")
-        dinnerVC.fetchData(date: date, time: "DINNER")
-
+        dateSubject.send(date)
     }
 
     private func setupPageViewController() {
@@ -225,15 +230,30 @@ final class CustomTimeTabController: BaseViewController {
         default: return 1
         }
     }
-
-    // MARK: - External API
-
-    func updateDate(to date: Date) {
-        todayDate = date
+    
+    // 날짜 변경 파이프라인 설정
+    private func setupDatePipeline() {
+        dateSubject
+            .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] date in
+                self?.performDateUpdate(date)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func performDateUpdate(_ date: Date) {
         morningVC.fetchData(date: date, time: "MORNING")
         lunchVC.fetchData(date: date, time: "LUNCH")
         dinnerVC.fetchData(date: date, time: "DINNER")
     }
+
+    // MARK: - External API
+
+    func updateDate(to date: Date) {
+       todayDate = date
+       dateSubject.send(date)
+   }
 }
 
 // MARK: - UIPageViewControllerDataSource, UIPageViewControllerDelegate

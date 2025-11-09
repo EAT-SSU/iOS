@@ -12,10 +12,8 @@ import SnapKit
 import FirebaseAnalytics
 
 final class MyReviewViewController: BaseViewController {
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
-
-    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
-    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
 
     private var reviewList = [MyDataList]()
     var nickname: String = .init()
@@ -131,6 +129,8 @@ final class MyReviewViewController: BaseViewController {
     private func navigateToLogin() {
         let loginVC = LoginViewController()
         loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastType = .info
+        
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
@@ -165,24 +165,21 @@ extension MyReviewViewController: UITableViewDataSource {
 
 extension MyReviewViewController {
     private func getMyReview() {
-        myProvider.request(.myReview) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<MyReviewResponse>.self)
-                    guard let data = responseData.result else { return }
-                    self.reviewList = data.dataList
-                    self.checkReviewCount()
-                    self.myReviewView.myReviewTableView.reloadData()
-                } catch let err {
-                    print(err.localizedDescription)
-                    
-                    RealmService.shared.resetDB()
-                    self.navigateToLogin()
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
+        NetworkService.shared.request(
+            MyRouter.myReview,
+            responseType: MyReviewResponse.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                self.reviewList = response.dataList
+                self.checkReviewCount()
+                self.myReviewView.myReviewTableView.reloadData()
                 
+            case .failure(let error):
+                print("내 리뷰 조회 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
             }
@@ -191,21 +188,28 @@ extension MyReviewViewController {
     
     // 리뷰 삭제 알람 추가
     func deleteReview(reviewID: Int) {
-        let alert = UIAlertController(title: "리뷰 삭제", message: "리뷰를 삭제하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
-            self.reviewProvider.request(.deleteReview(reviewID)) { response in
-                switch response {
+        showCustomDialog(
+            title: "리뷰 삭제하기",
+            message: "해당 리뷰를 삭제할까요?",
+            cancelButtonTitle: "취소하기",
+            confirmButtonTitle: "삭제하기"
+        ) { [weak self] in
+            guard let self = self else { return }
+            
+            NetworkService.shared.request(
+                ReviewRouter.deleteReview(reviewID),
+                responseType: Bool.self,
+                useAuth: true
+            ) { result in
+                switch result {
                 case .success:
                     self.getMyReview()
-                case let .failure(err):
-                    print(err.localizedDescription)
-                    
+                case .failure(let error):
+                    print("리뷰 삭제 실패: \(error.localizedDescription)")
                     RealmService.shared.resetDB()
                     self.navigateToLogin()
                 }
             }
-        })
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        present(alert, animated: true)
+        }
     }
 }

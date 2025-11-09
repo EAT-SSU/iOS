@@ -13,11 +13,11 @@ import SnapKit
 import FirebaseAnalytics
 
 final class UserWithdrawViewController: BaseViewController {
+    override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
 
     private var nickName = String()
-    var currentKeyboardHeight: CGFloat = 0.0
-    private let myProvider = MoyaProvider<MyRouter>(session: Session(interceptor: AuthInterceptor.shared))
+    private var buttonBottomConstraint: Constraint?
 
     // MARK: - UI Components
 
@@ -68,11 +68,17 @@ final class UserWithdrawViewController: BaseViewController {
         userWithdrawView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        
+        userWithdrawView.completeSignOutButton.snp.remakeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(52)
+            buttonBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(26).constraint
+        }
     }
 
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = "탈퇴하기"
+        navigationItem.title = "회원탈퇴"
     }
 
     override func setButtonEvent() {
@@ -108,20 +114,20 @@ final class UserWithdrawViewController: BaseViewController {
     @objc
     private func keyboardWillShow(_ notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            let updateKeyboardHeight = keyboardSize.height
-            let difference = updateKeyboardHeight - currentKeyboardHeight
-
-            userWithdrawView.completeSignOutButton.frame.origin.y -= difference
-            currentKeyboardHeight = updateKeyboardHeight
+            let keyboardHeight = keyboardSize.height
+            
+            UIView.animate(withDuration: 0.3) {
+                self.buttonBottomConstraint?.update(inset: keyboardHeight + 16)
+                self.view.layoutIfNeeded()
+            }
         }
     }
 
     @objc
     private func keyboardWillHide(_ notification: Notification) {
-        // TODO: keyboardSize 변수는 사용하지 않아서 _ 로 대체했지만, 해당 로직이 왜 필요한 지 연구
-        if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            userWithdrawView.completeSignOutButton.frame.origin.y += currentKeyboardHeight
-            currentKeyboardHeight = 0.0
+        UIView.animate(withDuration: 0.3) {
+            self.buttonBottomConstraint?.update(inset: 26)
+            self.view.layoutIfNeeded()
         }
     }
 }
@@ -130,26 +136,24 @@ final class UserWithdrawViewController: BaseViewController {
 
 extension UserWithdrawViewController {
     private func deleteUser() {
-        myProvider.request(.signOut) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<Bool>.self)
-                    guard let data = responseData.result, data else { return }
-                    
-                    RealmService.shared.resetDB()
-                    let loginViewController = LoginViewController()
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-                    {
-                        loginViewController.toastMessage = "탈퇴 처리가 완료되었습니다."
-                        keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
-                    }
-                } catch let err {
-                    print(err.localizedDescription)
+        NetworkService.shared.request(
+            MyRouter.signOut,
+            responseType: Bool.self,
+            useAuth: true
+        ) { result in
+            switch result {
+            case .success:
+                RealmService.shared.resetDB()
+                let loginViewController = LoginViewController()
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                {
+                    loginViewController.toastMessage = "탈퇴 처리가 완료되었습니다."
+                    keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
                 }
-            case let .failure(err):
-                print(err.localizedDescription)
+                
+            case .failure(let error):
+                print("회원 탈퇴 실패: \(error.localizedDescription)")
             }
         }
     }

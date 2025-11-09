@@ -15,7 +15,7 @@ enum NoAuthRequiredPath: String, CaseIterable {
     case getFixedMenuTableResponse = "/menus"
     case variableMenuReviewRate = "/reviews/meals"
     case fixedMenuReviewRate = "/reviews/menus"
-    case reviewList = "/reviews"
+//    case reviewList = "/reviews"
     
     static func contains(_ path: String) -> Bool {
         return Self.allCases.contains {

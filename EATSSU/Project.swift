@@ -229,15 +229,15 @@ let project = Project(
                 configurations: [
                     .debug(name: "Debug",
                            settings: [
-                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
-                               "CODE_SIGN_IDENTITY": "Apple Development"
+                                "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
+                                "CODE_SIGN_IDENTITY": "Apple Development"
                            ],
                            xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     ),
                     .release(name: "Release",
                              settings: [
-                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
-                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                                "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
+                                "CODE_SIGN_IDENTITY": "Apple Distribution"
                              ],
                              xcconfig: "App/Resources/Secrets/Release.xcconfig"
                     )
@@ -270,15 +270,15 @@ let project = Project(
                 configurations: [
                     .debug(name: "Debug",
                            settings: [
-                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
-                               "CODE_SIGN_IDENTITY": "Apple Development"
+                                "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
+                                "CODE_SIGN_IDENTITY": "Apple Development"
                            ],
                            xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     ),
                     .release(name: "Release",
                              settings: [
-                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
-                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                                "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
+                                "CODE_SIGN_IDENTITY": "Apple Distribution"
                              ],
                              xcconfig: "App/Resources/Secrets/Release.xcconfig"
                     )

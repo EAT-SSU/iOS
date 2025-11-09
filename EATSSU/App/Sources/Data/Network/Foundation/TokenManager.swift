@@ -55,6 +55,13 @@ final class TokenManager {
         guard let data = Data(base64Encoded: base64) else { return nil }
         return try? JSONDecoder().decode(TokenPayload.self, from: data)
     }
+    
+    /// 에러를 상위로 전파하는 버전
+    func refreshIfNeededWithThrow() async throws {
+        if isTokenExpiringSoon() {
+            try await TokenRefresher.shared.refreshIfNeeded()
+        }
+    }
 }
 
 extension TokenManager {

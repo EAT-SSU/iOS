@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import Combine
 
 import SnapKit
+
+import EATSSUDesign
 
 enum ValidationLabelState {
     case unCorrected
@@ -19,6 +22,7 @@ final class UserWithdrawView: BaseUIView {
     // MARK: - Properties
 
     private var userNickname: String = ""
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - UI Components
 
@@ -26,7 +30,7 @@ final class UserWithdrawView: BaseUIView {
     private let subscription = UILabel()
     public let inputNickNameTextField = UITextField()
     public var nickNameStateGuideLabel = UILabel()
-    public var completeSignOutButton = PostUIButton()
+    public var completeSignOutButton = ESButton(size: .big, title: TextLiteral.MyPage.withdraw)
     private lazy var nickNameInputStackView: UIStackView = .init(
         arrangedSubviews: [
             inputNickNameTextField,
@@ -43,6 +47,7 @@ final class UserWithdrawView: BaseUIView {
         setTextFieldDelegate()
         setProperties()
         configureUI()
+        bindTextField()
     }
 
     // MARK: - Functions
@@ -77,13 +82,13 @@ final class UserWithdrawView: BaseUIView {
         inputNickNameTextField.snp.makeConstraints {
             $0.height.equalTo(48)
         }
+        
         completeSignOutButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(26)
-            $0.height.equalTo(50)
         }
     }
-
+    
     private func setProperties() {
         nickNameLabel.text = TextLiteral.MyPage.confirmWithdrawal
         nickNameLabel.font = .bold(size: 16)
@@ -98,6 +103,8 @@ final class UserWithdrawView: BaseUIView {
         inputNickNameTextField.setRoundBorder()
         inputNickNameTextField.addLeftPadding()
         inputNickNameTextField.clearButtonMode = .whileEditing
+        inputNickNameTextField.layer.borderWidth = 1.0
+        inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
 
         nickNameStateGuideLabel.text = TextLiteral.inputNickName
         nickNameStateGuideLabel.textColor = .gray700
@@ -105,39 +112,60 @@ final class UserWithdrawView: BaseUIView {
 
         nickNameInputStackView.axis = .vertical
         nickNameInputStackView.spacing = 8.0
-
-        completeSignOutButton.addTitleAttribute(
-            title: TextLiteral.MyPage.withdraw,
-            titleColor: .white,
-            fontName: .bold(size: 18)
-        )
-        completeSignOutButton.setRoundBorder(borderColor: .gray300, borderWidth: 0, cornerRadius: 10)
+        
         completeSignOutButton.isEnabled = false
     }
 
-    private func setTextFieldDelegate() {
-        inputNickNameTextField.delegate = self
+    private func bindTextField() {
+        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: inputNickNameTextField)
+            .compactMap { ($0.object as? UITextField)?.text }
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .sink { [weak self] text in
+                guard let self = self else { return }
+                self.validateNickname(text)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func validateNickname(_ text: String) {
+        if text.isEmpty {
+            setValidationLabel(state: .pleaseEnter)
+        } else if text == userNickname {
+            setValidationLabel(state: .corrected)
+        } else {
+            setValidationLabel(state: .unCorrected)
+        }
     }
 
     private func setValidationLabel(state: ValidationLabelState) {
         switch state {
         case .corrected:
+            // 올바른 닉네임 입력 시 -> 회색
             nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
-            nickNameStateGuideLabel.textColor = .systemGreen
+            nickNameStateGuideLabel.textColor = .gray700
+            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
             completeSignOutButton.isEnabled = true
 
         case .unCorrected:
+            // 잘못된 닉네임 입력 시 -> 빨간색
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.MyPage.invalidNicknameMessage
             nickNameStateGuideLabel.textColor = .primary
+            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.danger.color.cgColor
             completeSignOutButton.isEnabled = false
 
         case .pleaseEnter:
+            // 비어있을 때 -> 회색
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.inputNickName
             nickNameStateGuideLabel.textColor = .gray700
+            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
             completeSignOutButton.isEnabled = false
         }
+    }
+
+    private func setTextFieldDelegate() {
+        inputNickNameTextField.delegate = self
     }
 }
 
@@ -149,34 +177,9 @@ extension UserWithdrawView: UITextFieldDelegate {
         return true
     }
 
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard let inputValue = textField.text?.trimmingCharacters(in: .whitespaces) else { return }
-
-        if inputValue.isEmpty {
-            textFieldSettingWhenEmpty(textField)
-            return
-        }
-        checkIsNickNameCorrect(textField)
-    }
-
     func textFieldShouldClear(_: UITextField) -> Bool {
         completeSignOutButton.isEnabled = false
+        inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         return true
-    }
-}
-
-private extension UserWithdrawView {
-    func textFieldSettingWhenEmpty(_: UITextField) {
-        setValidationLabel(state: .pleaseEnter)
-    }
-
-    func checkIsNickNameCorrect(_ textField: UITextField) {
-        if let userNickname = textField.text {
-            if userNickname == self.userNickname {
-                setValidationLabel(state: .corrected)
-            } else {
-                setValidationLabel(state: .unCorrected)
-            }
-        }
     }
 }

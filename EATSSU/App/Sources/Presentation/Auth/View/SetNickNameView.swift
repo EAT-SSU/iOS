@@ -154,15 +154,23 @@ final class SetNickNameView: BaseUIView {
             $0.top.equalTo(safeAreaLayoutGuide).offset(16)
             $0.leading.equalToSuperview().inset(24)
         }
+        
+        inputNickNameTextField.snp.makeConstraints {
+            $0.height.equalTo(52)
+        }
+        
         setNickNameStackView.snp.makeConstraints {
             $0.top.equalTo(nickNameLabel.snp.bottom).offset(8)
             $0.leading.equalToSuperview().inset(24)
             $0.trailing.equalTo(nicknameDoubleCheckButton.snp.leading).offset(-5)
         }
+        
         nicknameDoubleCheckButton.snp.makeConstraints {
             $0.top.equalTo(inputNickNameTextField)
             $0.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(52)
         }
+        
         affiliationLabel.snp.makeConstraints {
             $0.top.equalTo(setNickNameStackView.snp.bottom).offset(24)
             $0.leading.equalToSuperview().inset(24)
@@ -172,8 +180,8 @@ final class SetNickNameView: BaseUIView {
             $0.top.equalTo(affiliationLabel.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(24)
         }
-        collegeDropDownView.snp.makeConstraints { $0.height.equalTo(48) }
-        departmentDropDownView.snp.makeConstraints { $0.height.equalTo(48) }
+        collegeDropDownView.snp.makeConstraints { $0.height.equalTo(52) }
+        departmentDropDownView.snp.makeConstraints { $0.height.equalTo(52) }
 
         totalAccountStackView.snp.makeConstraints {
             $0.top.equalTo(affiliationStackView.snp.bottom).offset(40)
@@ -183,6 +191,7 @@ final class SetNickNameView: BaseUIView {
         completeSettingNickNameButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(26)
+            $0.height.equalTo(52)
         }
     }
 
@@ -235,6 +244,15 @@ final class SetNickNameView: BaseUIView {
         }
     }
     
+    func updateCheckResultUI(isAvailable: Bool) {
+        let resultType: NicknameTextFieldResultType = isAvailable ? .nicknameTextFieldValid : .nicknameTextFieldDuplicated
+        
+        nicknameValidationMessageLabel.text = resultType.hintMessage
+        nicknameValidationMessageLabel.textColor = resultType.textColor
+        inputNickNameTextField.layer.borderWidth = 1.0
+        inputNickNameTextField.layer.borderColor = resultType.borderColor.cgColor
+    }
+    
     public func updateCollegeItems(_ items: [String]) {
         collegeDropDownView.updateItems(items)
     }
@@ -250,39 +268,5 @@ extension SetNickNameView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-}
-
-// MARK: - Validation User Information
-
-private extension SetNickNameView {
-    func textFieldSettingWhenEmpty(_: UITextField) {
-        nicknameValidationMessageLabel.text = NicknameTextFieldResultType.textFieldEmpty.hintMessage
-        nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.textFieldEmpty.textColor
-    }
-
-    func checkNicknameValidation(_ textField: UITextField) {
-        if let userNickname = textField.text {
-            if nicknameInputChanged(nickname: userNickname) {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldDoubleCheck.textColor
-            } else {
-                nicknameValidationMessageLabel.text = NicknameTextFieldResultType.nicknameTextFieldOver.hintMessage
-                nicknameValidationMessageLabel.textColor = NicknameTextFieldResultType.nicknameTextFieldOver.textColor
-            }
-        }
-    }
-
-    func nicknameInputChanged(nickname: String) -> Bool {
-        isNicknameChecked = false
-        updateCompleteButtonState()
-
-        if nickname.count > 1, nickname.count < 9 {
-            nicknameDoubleCheckButton.isEnabled = true
-            return true
-        } else {
-            nicknameDoubleCheckButton.isEnabled = false
-            return false
-        }
     }
 }

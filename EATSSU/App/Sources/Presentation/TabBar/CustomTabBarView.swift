@@ -11,33 +11,51 @@ import EATSSUDesign
 
 final class CustomTabBarView: BaseUIView {
 
+    // MARK: - Constants
+    
+    private static let titles = ["학식", "지도", "마이"]
+    private static let normalImages = [
+        EATSSUDesignAsset.Images.tabMeal.image,
+        EATSSUDesignAsset.Images.tabMap.image,
+        EATSSUDesignAsset.Images.tabMypage.image
+    ]
+    private static let selectedImages = [
+        EATSSUDesignAsset.Images.tabMealSelected.image,
+        EATSSUDesignAsset.Images.tabMapSelected.image,
+        EATSSUDesignAsset.Images.tabMypageSelected.image
+    ]
+    private static let imageSizes = [
+        CGSize(width: 23, height: 23),
+        CGSize(width: 23, height: 23),
+        CGSize(width: 44, height: 23)
+    ]
+
     // MARK: - Properties
 
     var buttonTapped: ((Int) -> Void)?
 
-    private let buttons: [UIButton] = {
-        let titles = ["학식", "지도", "마이"]
-        let images = ["fork.knife", "map.fill", "person.fill"]
-
-        return zip(titles, images).enumerated().map { index, pair in
+    private lazy var buttons: [UIButton] = {
+        return Self.titles.indices.map { index in
+            let title = Self.titles[index]
+            let normalImage = Self.normalImages[index]
+            let imageSize = Self.imageSizes[index]
+            
+            let resizedImage = normalImage.resized(to: imageSize)
+            
             var config = UIButton.Configuration.plain()
-            config.title = pair.0
-            config.image = UIImage(
-                systemName: pair.1,
-                withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .regular)
-            )
+            config.title = title
+            config.image = resizedImage
             config.imagePlacement = .top
             config.imagePadding = 4
-            config.baseForegroundColor = .gray
             config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0)
 
             let button = UIButton(configuration: config, primaryAction: nil)
             button.tag = index
 
             let font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
-            var attrTitle = AttributedString(pair.0)
+            var attrTitle = AttributedString(title)
             attrTitle.font = font
-            attrTitle.foregroundColor = .gray
+            attrTitle.foregroundColor = .gray500
             config.attributedTitle = attrTitle
             button.configuration = config
 
@@ -61,7 +79,7 @@ final class CustomTabBarView: BaseUIView {
 
         // 각 버튼 액션 연결
         buttons.forEach { button in
-            button.setTitleColor(.gray, for: .normal)
+            button.setTitleColor(.gray500, for: .normal)
             button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         }
     }
@@ -85,15 +103,18 @@ final class CustomTabBarView: BaseUIView {
     func setSelectedIndex(_ index: Int) {
         for (i, button) in buttons.enumerated() {
             let isSelected = i == index
-            let color: UIColor = isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray
+            let color: UIColor = isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray500
+            
+            let image = isSelected ? Self.selectedImages[i] : Self.normalImages[i]
+            let resizedImage = image.resized(to: Self.imageSizes[i])
 
             if var config = button.configuration,
                let title = config.title {
                 var attrTitle = AttributedString(title)
-                attrTitle.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 11)
+                attrTitle.font = isSelected ? EATSSUDesignFontFamily.Pretendard.bold.font(size: 11) : EATSSUDesignFontFamily.Pretendard.regular.font(size: 11)
                 attrTitle.foregroundColor = color
                 config.attributedTitle = attrTitle
-                config.baseForegroundColor = color
+                config.image = resizedImage
                 button.configuration = config
             }
         }
@@ -105,5 +126,16 @@ final class CustomTabBarView: BaseUIView {
     @objc private func buttonTapped(_ sender: UIButton) {
         setSelectedIndex(sender.tag)
         buttonTapped?(sender.tag)
+    }
+}
+
+// MARK: - UIImage Extension
+
+extension UIImage {
+    func resized(to size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }

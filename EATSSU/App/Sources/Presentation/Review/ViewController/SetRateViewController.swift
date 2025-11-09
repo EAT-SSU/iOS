@@ -15,8 +15,6 @@ import EATSSUDesign
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
 
-    private let writeReviewProvider = MoyaProvider<WriteReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
-    private let reviewProvider = MoyaProvider<ReviewRouter>(session: Session(interceptor: AuthInterceptor.shared))
     private var currentPage: Int = 0 {
         didSet {
 //            menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
@@ -460,7 +458,7 @@ final class SetRateViewController: BaseViewController {
     @objc
     func tappedNextButton() {
         if userReviewTextView.text == "3글자 이상 작성해주세요!" || userReviewTextView.text.count < 3 {
-            view.showToast(message: "리뷰를 3글자 이상 작성해주세요!")
+            showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
         } else {
             if rateView.currentStar != 0, quantityRateView.currentStar != 0, tasteRateView.currentStar != 0 {
                 // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
@@ -469,18 +467,21 @@ final class SetRateViewController: BaseViewController {
                                                    tasteRating: tasteRateView.currentStar,
                                                    content: userReviewTextView.text)
 
-                /// 리뷰 데이터는 현재 페이지가 어디든 상관 없이 저장되어야 함
-//                reviewList[currentPage] = (param, userPickedImage)
-
                 switch reviewId {
                 case .none:
-
+                    /// 현재 이미지를 별도 변수에 저장
+                    let currentImage = userPickedImage
+                    reviewList[currentPage] = (param, currentImage)
+                    
                     /// 현재 페이지가 마지막 메뉴에 대한 리뷰페이지일 때의 액션
-                    reviewList[currentPage] = (param, userPickedImage)
                     if currentPage == selectedList.count - 1 {
                         navigationController?.isNavigationBarHidden = false
                         sendDataIfCurrentPageIsLast()
                     } else {
+                        // 다음 리뷰를 위해 현재 화면의 이미지 초기화
+                        userPickedImage = nil
+                        userReviewImageView.image = nil
+                        imageCountLabel.text = "사진 0/1"
                         prepareForNextReview()
                     }
 
@@ -489,22 +490,66 @@ final class SetRateViewController: BaseViewController {
                 }
 
             } else {
-                view.showToast(message: "별점을 모두 입력해주세요 !")
+                showToast(message: "별점을 모두 입력해주세요!", type: .info)
             }
         }
     }
 
     private func sendDataIfCurrentPageIsLast() {
-        for (index, review) in reviewList.enumerated() {
-            let (reviewDTO, image) = review
-            if image != nil {
-                postReviewImage(param: reviewDTO,
-                                image: image,
-                                menuId: selectedIDList[index])
-            } else {
-                let reviewDTO = WriteReviewRequest(content: reviewDTO, imageURL: "")
-                postNewWriteReview(param: reviewDTO,
-                                   menuID: selectedIDList[index])
+        _Concurrency.Task {
+            do {
+                for (index, review) in reviewList.enumerated() {
+                    let (reviewDTO, image) = review
+                    
+                    // Firebase 이벤트 로그
+                    let photoAttached = (image != nil) ? 1 : 0
+                    let rating = reviewDTO.mainRating
+                    let selection = self.selectedList.count
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
+                    
+                    // 순차적으로 업로드
+                    try await uploadReview(reviewDTO: reviewDTO, image: image, menuId: selectedIDList[index])
+                }
+                
+                await MainActor.run {
+                    self.moveToReviewVC()
+                }
+                
+            } catch {
+                await MainActor.run {
+                    print("리뷰 업로드 실패: \(error)")
+                    self.showToast(message: "리뷰 업로드에 실패했습니다.")
+                }
+            }
+        }
+    }
+    
+    private func uploadReview(reviewDTO: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) async throws {
+        if let image = image {
+            // 이미지 업로드 후 리뷰 작성
+            let imageUrl = try await uploadImage(image: image)
+            let request = WriteReviewRequest(content: reviewDTO, imageURL: imageUrl)
+            try await postReview(request: request, menuId: menuId)
+        } else {
+            // 이미지 없이 리뷰만 작성
+            let request = WriteReviewRequest(content: reviewDTO, imageURL: "")
+            try await postReview(request: request, menuId: menuId)
+        }
+    }
+
+    private func uploadImage(image: UIImage) async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkService.shared.request(
+                WriteReviewRouter.uploadImage(image: image),
+                responseType: UploadImageResponse.self,
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success(let data):
+                    continuation.resume(returning: data.url)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
@@ -535,6 +580,11 @@ final class SetRateViewController: BaseViewController {
     private func moveToReviewVC() {
         if let reviewViewController = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) {
             navigationController?.popToViewController(reviewViewController, animated: true)
+            
+            // 네비게이션 스택에서 HomeViewController 찾아서 새로고침
+            if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
+                homeVC.refreshAfterReview()
+            }
         }
     }
 
@@ -561,57 +611,37 @@ extension SetRateViewController {
     /// 이미지 O -> URL 받고, URL을 넣어서 리뷰 작성 요청
     /// 이미지 X -> URL 없이 리뷰 작성 요청
     /// 이미지가 아예 없을 때 어떤 경우로 빠지는지 보고, 거기에서 호출하도록 하기
-    private func postReviewImage(param: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) {
-        writeReviewProvider.request(.uploadImage(image: image)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<UploadImageResponse>.self)
-                    guard let data = responseData.result else { return }
-                    let reviewDTO = WriteReviewRequest(content: param, imageURL: data.url)
-                    self.postNewWriteReview(param: reviewDTO, menuID: menuId)
-                } catch let err {
-                    print(err.localizedDescription)
-                    let reviewDTO = WriteReviewRequest(content: param, imageURL: nil)
-                    self.postNewWriteReview(param: reviewDTO, menuID: menuId)
+    private func postReview(request: WriteReviewRequest, menuId: Int) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkService.shared.request(
+                WriteReviewRouter.writeNewReview(param: request, menuID: menuId),
+                responseType: Bool.self,
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success:
+                    continuation.resume()
+                case .failure(let error):
+                    continuation.resume(throwing: error)
                 }
-
-            case let .failure(err):
-                print(err.localizedDescription)
-                let reviewDTO = WriteReviewRequest(content: param, imageURL: nil)
-                self.postNewWriteReview(param: reviewDTO, menuID: menuId)
             }
         }
     }
     
-    private func postNewWriteReview(param: WriteReviewRequest,
-                                    menuID: Int) {
-        writeReviewProvider.request(.writeNewReview(param: param,
-                                                    menuID: menuID)) { result in
-            switch result {
-            case let .success(response):
-                if self.currentPage == self.reviewList.count - 1 {
-                    self.moveToReviewVC()
-                }
-            case let .failure(err):
-                debugPrint(err.localizedDescription)
-                
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
-            }
-        }
-    }
-    
-    // 이거 제대로 작동 되는지 확인하기
     private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
-        reviewProvider.request(.fixReview(reviewId, param)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                    self.navigationController?.popViewController(animated: true)
+        NetworkService.shared.request(
+            ReviewRouter.fixReview(reviewId, param),
+            responseType: Bool.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success:
+                self.navigationController?.popViewController(animated: true)
                 
-            case let .failure(err):
-                print(err.localizedDescription)
-                
+            case .failure(let error):
+                print("리뷰 수정 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
                 self.navigateToLogin()
             }
@@ -621,6 +651,8 @@ extension SetRateViewController {
     private func navigateToLogin() {
         let loginVC = LoginViewController()
         loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastType = .info
+        
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
