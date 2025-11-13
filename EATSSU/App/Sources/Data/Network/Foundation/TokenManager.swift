@@ -36,10 +36,6 @@ final class TokenManager {
                 try await TokenRefresher.shared.refreshIfNeeded()
             } catch {
                 print("앱 시작/포그라운드 시 재발급 실패: \(error)")
-                // 세션 만료 에러면 Publisher로 알림
-                if case TokenRefresherError.sessionExpired = error {
-                    TokenRefresher.sessionExpiredPublisher.send()
-                }
             }
         }
     }
