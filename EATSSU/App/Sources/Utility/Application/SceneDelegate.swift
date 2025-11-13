@@ -8,11 +8,13 @@
 import SwiftUI
 import UIKit
 import Intents
+import Combine
 
 import KakaoSDKAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - UIWindowSceneDelegate Methods
 
@@ -28,6 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         fetchNoticeAndConfigureRootViewController()
         checkForAppUpdate()
+        setupSessionExpirationObserver()
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -285,5 +288,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             // 새로운 날로 판단될 때, 알림을 보냄
             NotificationCenter.default.post(name: .didEnterNewDay, object: nil)
         }
+    }
+    
+    // MARK: - Session Expiration Observer
+        
+    private func setupSessionExpirationObserver() {
+        TokenRefresher.sessionExpiredPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.handleSessionExpired()
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Session Expiration Handler
+
+    private func handleSessionExpired() {
+        RealmService.shared.deleteAll(Token.self)
+        transitionToLogin(withMessage: "세션이 만료되었습니다. 다시 로그인해주세요.")
     }
 }
