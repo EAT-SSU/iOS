@@ -146,9 +146,7 @@ final class HomeViewController: BaseViewController {
     private func setupDelegates() {
         homeCalendarView.delegate = tabmanController
         tabmanController.datePublisher
-            .sink { [weak self] date in
-                self?.currentDate = date
-            }
+            .assign(to: \.currentDate, on: self)
             .store(in: &cancellables)
     }
     

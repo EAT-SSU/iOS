@@ -148,10 +148,20 @@ final class HomeRestaurantViewController: BaseViewController {
         let formatDate = changeDateFormat(date: date)
 
         // 변경 메뉴 일괄 요청(스낵 제외, UI 순서대로)
-        changeRestaurantIDs.forEach { id in
-            getChageMenuData(date: formatDate, restaurant: id, time: time)
+        let task = _Concurrency.Task {
+            // 변경 메뉴들을 병렬로 요청
+            await withTaskGroup(of: Void.self) { group in
+                for id in changeRestaurantIDs {
+                    group.addTask {
+                        await self.fetchChangeMenuData(date: formatDate, restaurant: id, time: time)
+                    }
+                }
+            }
         }
 
+        // Task를 AnyCancellable로 변환해서 저장 (취소 가능하도록)
+        cancellables.insert(AnyCancellable { task.cancel() })
+        
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend
 
@@ -159,7 +169,10 @@ final class HomeRestaurantViewController: BaseViewController {
             // 학기 중 평일 점심에만 스낵 고정 메뉴 요청
             if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
                 isSelectable = true
-                getFixMenuData(restaurant: Restaurant.snackCorner.identifier)
+                let fixTask = _Concurrency.Task {
+                    await self.fetchFixedMenuData(restaurant: Restaurant.snackCorner.identifier)
+                }
+                cancellables.insert(AnyCancellable { fixTask.cancel() })
             } else {
                 // 방학/주말 더미
                 fixMenuTableViewData[Restaurant.snackCorner.identifier] = []
@@ -335,77 +348,69 @@ extension HomeRestaurantViewController: UITableViewDelegate {
 
 extension HomeRestaurantViewController {
     // 변경 메뉴 요청 API 호출
-    func getChageMenuData(date: String, restaurant: String, time: String) {
-        // Future Publisher로 기존 네트워크 호출을 감싸줍니다.
-        Future<[ChangeMenuTableResponse], Error> { promise in
-            NetworkService.shared.request(
-                HomeRouter.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time),
-                responseType: [ChangeMenuTableResponse].self
-            ) { result in
-                promise(result) // 네트워크 결과를 Future의 promise로 전달
-            }
-        }
-        .sink(receiveCompletion: { [weak self] completion in
-            if case .failure(let error) = completion {
-                print("\(restaurant) 변경 메뉴 조회 실패: \(error.localizedDescription)")
-                self?.changeMenuTableViewData[restaurant] = []
-                if let sectionIndex = self?.getSectionIndex(for: restaurant) {
-                    DispatchQueue.main.async {
-                        self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
-                    }
+    func fetchChangeMenuData(date: String, restaurant: String, time: String) async {
+        
+        // UI 업데이트에 사용할 메뉴 목록과 애니메이션 타입을 저장할 변수
+        let menusToUpdate: [ChangeMenuTableResponse]
+        let animation: UITableView.RowAnimation
+        
+        do {
+            // 비동기 네트워크 요청을 통해 메뉴 데이터 가져오기
+            let menus: [ChangeMenuTableResponse] = try await withCheckedThrowingContinuation { continuation in
+                NetworkService.shared.request(
+                    HomeRouter.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time),
+                    responseType: [ChangeMenuTableResponse].self
+                ) { result in
+                    continuation.resume(with: result)
                 }
             }
-        }, receiveValue: { [weak self] menus in
-            guard let self = self else { return }
             
-            let filteredMenus = menus.filter { !($0.briefMenus.first?.name.isEmpty ?? true) }
-            self.changeMenuTableViewData[restaurant] = filteredMenus
+            menusToUpdate = menus.filter { !($0.briefMenus.first?.name.isEmpty ?? true) }
+            animation = .fade
+            
+        } catch {
+            print("\(restaurant) 변경 메뉴 조회 실패: \(error.localizedDescription)")
+            menusToUpdate = []
+            animation = .none
+        }
+        
+        // 메인 스레드에서 UI 업데이트
+        await MainActor.run {
+            self.changeMenuTableViewData[restaurant] = menusToUpdate
             
             if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                DispatchQueue.main.async {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
-                }
+                self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: animation)
             }
-        })
-        .store(in: &cancellables)
+        }
     }
 
     // 고정 메뉴 요청 API 호출
-    func getFixMenuData(restaurant: String) {
-        // Future Publisher로 기존 네트워크 호출을 감싸줍니다.
-        Future<FixedMenuTableResponse, Error> { promise in
-            NetworkService.shared.request(
-                HomeRouter.getFixedMenuTableResponse(restaurant: restaurant),
-                responseType: FixedMenuTableResponse.self
-            ) { result in
-                promise(result) // 네트워크 결과를 Future의 promise로 전달
+    func fetchFixedMenuData(restaurant: String) async {
+        var menuData: [Menus] = []
+        var animation: UITableView.RowAnimation = .none
+
+        do {
+            let response: FixedMenuTableResponse = try await withCheckedThrowingContinuation { continuation in
+                NetworkService.shared.request(
+                    HomeRouter.getFixedMenuTableResponse(restaurant: restaurant),
+                    responseType: FixedMenuTableResponse.self
+                ) { result in
+                    continuation.resume(with: result)
+                }
+            }
+            
+            menuData = response.categoryMenuListCollection.flatMap { $0.menus }
+            animation = .fade
+        } catch {
+            print("\(restaurant) 고정 메뉴 조회 실패: \(error.localizedDescription)")
+        }
+        
+        // 메인 스레드에서 UI 업데이트
+        await MainActor.run {
+            self.fixMenuTableViewData[restaurant] = menuData
+            if let sectionIndex = self.getSectionIndex(for: restaurant) {
+                self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: animation)
             }
         }
-        .sink(receiveCompletion: { [weak self] completion in
-            if case .failure(let error) = completion {
-                print("\(restaurant) 고정 메뉴 조회 실패: \(error.localizedDescription)")
-                self?.fixMenuTableViewData[restaurant] = []
-                if let sectionIndex = self?.getSectionIndex(for: restaurant) {
-                    DispatchQueue.main.async {
-                        self?.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
-                    }
-                }
-            }
-        }, receiveValue: { [weak self] response in
-            guard let self = self else { return }
-
-            var allMenuInformations = [Menus]()
-            for categoryMenu in response.categoryMenuListCollection {
-                allMenuInformations += categoryMenu.menus
-            }
-            self.fixMenuTableViewData[restaurant] = allMenuInformations
-            
-            if let sectionIndex = self.getSectionIndex(for: restaurant) {
-                DispatchQueue.main.async {
-                    self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: .fade)
-                }
-            }
-        })
-        .store(in: &cancellables)
     }
 }
