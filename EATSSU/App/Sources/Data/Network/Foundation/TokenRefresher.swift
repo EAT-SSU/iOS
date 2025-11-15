@@ -5,6 +5,8 @@
 //  Created by 황상환 on 7/24/25.
 //
 
+import Combine
+
 import Moya
 
 enum TokenRefresherError: Error {
@@ -14,6 +16,8 @@ enum TokenRefresherError: Error {
 
 actor TokenRefresher {
     static let shared = TokenRefresher()
+
+    nonisolated static let sessionExpiredPublisher = PassthroughSubject<Void, Never>()
 
     private var isRefreshing = false
     private var waitingContinuations: [CheckedContinuation<Void, Error>] = []
@@ -61,6 +65,8 @@ actor TokenRefresher {
                 case .success(let response):
                     // 서버가 refreshToken도 만료된 경우
                     if response.statusCode == 403 {
+                        // Publisher로 세션 만료 이벤트 발행
+                        Self.sessionExpiredPublisher.send()
                         continuation.resume(throwing: TokenRefresherError.sessionExpired)
                         return
                     }
