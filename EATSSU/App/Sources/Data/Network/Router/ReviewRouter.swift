@@ -20,6 +20,11 @@ enum ReviewRouter {
     
     // MARK: - New V2 API: 리뷰 작성이 가능한 메뉴 목록 조회
     case getValidMenusForReview(_ mealId: Int)
+    case newReviewList(_ type: String,
+                        _ id: Int,
+                        lastReviewId: Int?, // ✨ 추가: lastReviewId 파라미터
+                        page: Int? = 0,     // menu API용 (옵션)
+                        size: Int? = 20)
 }
 
 extension ReviewRouter: TargetType {
@@ -49,12 +54,21 @@ extension ReviewRouter: TargetType {
         // MARK: - New V2 Path
         case let .getValidMenusForReview(mealId):
             "/v2/reviews/meal/valid-for-review/\(mealId)" // Path Parameter 사용
+        case .newReviewList(let type, _, _, _, _):
+                    switch type {
+                    case "VARIABLE":
+                        "/v2/reviews/list/meal" // ✨ 수정: V2 Meal List API 경로
+                    case "FIXED":
+                        "/v2/reviews/list/menu" // ✨ 수정: V2 Menu List API 경로
+                    default:
+                        "" // 기존 경로 유지 (혹시 모를 에러 방지)
+                    }
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .reviewRate, .reviewList, .getValidMenusForReview:
+        case .reviewRate, .reviewList, .getValidMenusForReview, .newReviewList:
             .get
         case .report:
             .post
@@ -108,6 +122,26 @@ extension ReviewRouter: TargetType {
         // MARK: - New V2 Task
         case .getValidMenusForReview: // Path에 ID가 포함되므로 Body나 QueryString 없음
             .requestPlain
+        case let .newReviewList(type, id, lastReviewId, page, size):
+            switch type {
+            case "VARIABLE":
+                .requestParameters(
+                    parameters: (lastReviewId != nil)
+                        ? ["mealId": id, "size": size ?? 20, "lastReviewId": lastReviewId!]
+                        : ["mealId": id, "size": size ?? 20],
+                    encoding: URLEncoding.queryString
+                )
+                
+            case "FIXED":
+                .requestParameters(
+                    parameters: ["menuId": id, "page": page ?? 0, "size": size ?? 20],
+                    encoding: URLEncoding.queryString
+                )
+                
+            default:
+                .requestPlain
+            
+            }
         }
     }
     
