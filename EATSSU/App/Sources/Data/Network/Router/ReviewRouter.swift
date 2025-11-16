@@ -25,6 +25,8 @@ enum ReviewRouter {
                         lastReviewId: Int?, // ✨ 추가: lastReviewId 파라미터
                         page: Int? = 0,     // menu API용 (옵션)
                         size: Int? = 20)
+    case getFixedMenuStatistics(_ menuId: Int)
+    case getMealStatistics(_ mealId: Int)
 }
 
 extension ReviewRouter: TargetType {
@@ -63,12 +65,16 @@ extension ReviewRouter: TargetType {
                     default:
                         "" // 기존 경로 유지 (혹시 모를 에러 방지)
                     }
+        case let .getFixedMenuStatistics(menuId):
+                    "/v2/reviews/statistics/menus/\(menuId)"
+        case let .getMealStatistics(mealId):
+                    "/v2/reviews/statistics/meals/\(mealId)"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .reviewRate, .reviewList, .getValidMenusForReview, .newReviewList:
+        case .reviewRate, .reviewList, .getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics:
             .get
         case .report:
             .post
@@ -142,6 +148,10 @@ extension ReviewRouter: TargetType {
                 .requestPlain
             
             }
+        case .getFixedMenuStatistics:
+                    .requestPlain
+        case .getMealStatistics:
+                    .requestPlain
         }
     }
     
