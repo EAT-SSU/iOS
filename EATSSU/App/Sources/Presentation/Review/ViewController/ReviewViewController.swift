@@ -1,3 +1,4 @@
+
 //
 //  ReviewViewController.swift
 //  EatSSU-iOS
@@ -13,6 +14,7 @@ import Moya
 final class ReviewViewController: BaseViewController {
     // MARK: - Properties
 
+    let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
     var menuID: Int = .init()
     var type = "VARIABLE"
     private var menuNameList: [String] = []
@@ -21,23 +23,25 @@ final class ReviewViewController: BaseViewController {
     private var reviewList = [MenuDataList]()
     private var responseData: ReviewRateResponse?
     private var fixedResponseData: FixedReviewRateResponse?
-    private var isDataLoaded = false
 
     // MARK: - UI Component
+
+    let refreshControl = UIRefreshControl()
+
     let reviewTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
-    
+
     private var activityIndicatorView: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.startAnimating()
         indicator.isHidden = true
         return indicator
     }()
-    
+
     private lazy var noReviewImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = ImageLiteral.noReview
@@ -46,30 +50,30 @@ final class ReviewViewController: BaseViewController {
     }()
     
     private let reviewTabBarContainer: UIView = {
-            let view = UIView()
-            view.backgroundColor = .white
-            view.layer.cornerRadius = 0
-            view.clipsToBounds = true
-            return view
-        }()
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 0
+        view.clipsToBounds = true
+        return view
+    }()
+    
     
     private let reviewTabBarView: MainButton = {
-                let button = MainButton()
-                button.title = "리뷰 작성하기"
-                return button
-            }()
-    
+            let button = MainButton()
+            button.title = "리뷰 작성하기"
+            return button
+        }()
+
     // MARK: - Life Cycles
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setTableView()
+        initRefresh()
         setFirebaseTask()
-        reviewTableView.estimatedRowHeight = 300
-        reviewTableView.rowHeight = UITableView.automaticDimension
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         getReviewRate()
@@ -91,9 +95,9 @@ final class ReviewViewController: BaseViewController {
             }
         }
     }
-    
+
     // MARK: - Functions
-    
+
     override func configureUI() {
         reviewTableView.backgroundColor = .white
         view.addSubviews(reviewTableView,
@@ -102,7 +106,7 @@ final class ReviewViewController: BaseViewController {
                          reviewTabBarContainer)
         reviewTabBarContainer.addSubview(reviewTabBarView)
     }
-    
+
     override func setLayout() {
         reviewTableView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(24)
@@ -128,12 +132,22 @@ final class ReviewViewController: BaseViewController {
             $0.edges.equalToSuperview().inset(12) // 안쪽 여백
         }
     }
-    
+
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = "리뷰"
     }
     
+    override func setButtonEvent() {
+        reviewTabBarView.addTarget(self, action: #selector(handleAddReviewButtonTap), for: .touchUpInside)
+    }
+    
+    @objc private func handleAddReviewButtonTap() {
+        let reviewVC = SetRateViewController()
+        
+        navigationController?.pushViewController(reviewVC, animated: true)
+    }
+
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
 
@@ -142,20 +156,38 @@ final class ReviewViewController: BaseViewController {
             Analytics.logEvent("ReviewViewControllerLoad", parameters: nil)
         #endif
     }
-    
+
     func setTableView() {
         reviewTableView.register(ReviewTableCell.self, forCellReuseIdentifier: ReviewTableCell.identifier)
         reviewTableView.register(ReviewRateViewCell.self, forCellReuseIdentifier: ReviewRateViewCell.identifier)
         reviewTableView.register(ReviewEmptyViewCell.self, forCellReuseIdentifier: ReviewEmptyViewCell.identifier)
-        
+        reviewTableView.register(ReviewDividerCell.self, forCellReuseIdentifier: ReviewDividerCell.identifier)
+
         reviewTableView.delegate = self
         reviewTableView.dataSource = self
+    }
+
+    func initRefresh() {
+        refreshControl.addTarget(self,
+                                 action: #selector(refreshTable(refresh:)),
+                                 for: .valueChanged)
+
+        reviewTableView.refreshControl = refreshControl
+    }
+
+    @objc
+    func refreshTable(refresh: UIRefreshControl) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.getReviewRate()
+            self.getReviewList(type: self.type, menuId: self.menuID)
+            refresh.endRefreshing()
+        }
     }
 
     func bindMenuID(id: Int) {
         menuID = id
     }
-    
+
     private func showFixOrDeleteAlert(data: MenuDataList) {
         let alert = UIAlertController(title: "리뷰 수정 혹은 삭제",
                                       message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
@@ -285,6 +317,26 @@ extension ReviewViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {
         print("cell did touched")
     }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch section {
+        case 0:
+            return 0   // RateViewCell 위쪽 여백 제거
+        case 1:
+            // RateViewCell 아래 여백 (기존 16 → 6으로 줄임)
+            return 6
+        case 2:
+            // Divider 아래, 리뷰 리스트 위쪽 여백
+            return 8
+        default:
+            return 0
+        }
+    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let spacerView = UIView()
+        spacerView.backgroundColor = .clear
+        return spacerView
+    }
 }
 
 extension ReviewViewController: UITableViewDataSource {
@@ -296,20 +348,18 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1
+            1
         case 1:
-            // 데이터 로딩 전에는 아무것도 표시 안 함
-            if !isDataLoaded {
-                return 0
-            }
-            // 데이터 로딩 완료 후: 리뷰가 없으면 EmptyCell, 있으면 리뷰 개수만큼
+            1
+        case 2:
+            // 두 번째 섹션에서 리뷰 개수가 하나도 없을 때 셀 변경
             if reviewList.count == 0 {
-                return 1
+                1
             } else {
-                return reviewList.count
+                reviewList.count
             }
         default:
-            return 0
+            0
         }
     }
 
@@ -387,7 +437,8 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
-            UITableView.automaticDimension
+            251.adjusted
+//            UITableView.automaticDimension
         case 1:
             // Divider cell
             UITableView.automaticDimension
@@ -408,91 +459,63 @@ extension ReviewViewController: UITableViewDataSource {
 extension ReviewViewController {
     // 상단 메뉴 별점 불러오는 API
     func getReviewRate() {
-        if type == "FIXED" {
-            NetworkService.shared.request(
-                ReviewRouter.reviewRate(type, menuID),
-                responseType: FixedReviewRateResponse.self,
-                useAuth: true
-            ) { [weak self] result in
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let data):
-                    self.fixedResponseData = data
-                    self.menuNameList = [data.menuName]
-                    self.reviewTableView.reloadData()
+        reviewProvider.request(.reviewRate(type, menuID)) { response in
+            switch response {
+            case let .success(moyaResponse):
+                do {
+                    if self.type == "FIXED" {
+                        let responseData = try moyaResponse.map(BaseResponse<FixedReviewRateResponse>.self)
+                        guard let data = responseData.result else { return }
+                        self.fixedResponseData = data
+                        self.reviewTableView.reloadData()
+                        self.menuNameList = [data.menuName]
+                    } else {
+                        let responseData = try moyaResponse.map(BaseResponse<ReviewRateResponse>.self)
+                        guard let data = responseData.result else { return }
+                        self.responseData = data
+                        self.reviewTableView.reloadData()
+                        self.menuNameList = data.menuNames
+                    }
                     self.makeDictionary()
-                    
-                case .failure(let error):
-                    print("고정 메뉴 평점 조회 실패: \(error.localizedDescription)")
+                } catch let err {
+                    print(err.localizedDescription)
                 }
-            }
-        } else {
-            NetworkService.shared.request(
-                ReviewRouter.reviewRate(type, menuID),
-                responseType: ReviewRateResponse.self,
-                useAuth: true
-            ) { [weak self] result in
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let data):
-                    self.responseData = data
-                    self.menuNameList = data.menuNames
-                    self.reviewTableView.reloadData()
-                    self.makeDictionary()
-                    
-                case .failure(let error):
-                    print("변동 메뉴 평점 조회 실패: \(error.localizedDescription)")
-                }
+            case let .failure(err):
+                print(err.localizedDescription)
             }
         }
     }
 
     // 하단 리뷰 리스트 불러오는 API
     func getReviewList(type: String, menuId _: Int) {
-        NetworkService.shared.request(
-            ReviewRouter.reviewList(type, menuID),
-            responseType: ReviewListResponse.self,
-            useAuth: true
-        ) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let data):
-                self.reviewList = data.dataList
-                self.isDataLoaded = true
-                self.reviewTableView.reloadData()
-                
-            case .failure(let error):
-                print("리뷰 리스트 조회 실패: \(error.localizedDescription)")
-                self.isDataLoaded = true
-                self.reviewTableView.reloadData()
+        reviewProvider.request(.reviewList(type, menuID)) { response in
+            switch response {
+            case let .success(moyaResponse):
+                do {
+                    let responseData = try moyaResponse.map(BaseResponse<ReviewListResponse>.self)
+                    guard let data = responseData.result else { return }
+                    self.reviewList = data.dataList
+                    self.reviewTableView.reloadData()
+                    
+                } catch let err {
+                    print(err.localizedDescription)
+                }
+            case let .failure(err):
+                print(err.localizedDescription)
             }
         }
     }
-    
+
     func deleteReview(reviewID: Int) {
-        NetworkService.shared.request(
-            ReviewRouter.deleteReview(reviewID),
-            responseType: Bool.self,
-            useAuth: true
-        ) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
+        reviewProvider.request(.deleteReview(reviewID)) { response in
+            switch response {
             case .success:
                 self.getReviewRate()
                 self.updateViewConstraints()
                 self.getReviewList(type: self.type, menuId: self.menuID)
-                self.showToast(message: "삭제되었어요 !")
-                
-                // 네비게이션 스택에서 HomeViewController 찾아서 새로고침
-                if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
-                    homeVC.refreshAfterReview()
-                }
-            case .failure(let error):
-                print("리뷰 삭제 실패: \(error.localizedDescription)")
+//                self.reviewTableView.showToast(message: "삭제되었어요 !")
+            case let .failure(err):
+                print(err.localizedDescription)
             }
         }
     }

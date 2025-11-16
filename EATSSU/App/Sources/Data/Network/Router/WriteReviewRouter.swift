@@ -13,6 +13,10 @@ enum WriteReviewRouter {
     case uploadImage(image: UIImage?)
     case writeNewReview(param: WriteReviewRequest, menuID: Int)
     case writeReview(param: WriteReviewRequest, image: [UIImage?], menuId: Int)
+    
+    // MARK: - New V2 APIs
+    case writeMenuReview(param: WriteReviewMenuRequest)
+    case writeMealReview(param: WriteReviewMealRequest)
 }
 
 extension WriteReviewRouter: TargetType {
@@ -28,12 +32,18 @@ extension WriteReviewRouter: TargetType {
             "/reviews/upload/image"
         case .writeNewReview(param: _, menuID: let menuId):
             "/reviews/write/\(menuId)"
+            
+        // MARK: - New V2 Paths
+        case .writeMenuReview:
+            "/v2/reviews/menu"
+        case .writeMealReview:
+            "/v2/reviews/meal"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .writeReview, .uploadImage, .writeNewReview:
+        case .writeReview, .uploadImage, .writeNewReview, .writeMenuReview, .writeMealReview:
             .post
         }
     }
@@ -77,12 +87,18 @@ extension WriteReviewRouter: TargetType {
 
         case let .writeNewReview(param: param, _):
             return .requestJSONEncodable(param)
+            
+        // MARK: - New V2 Tasks (JSON Encoded)
+        case let .writeMenuReview(param: param):
+            return .requestJSONEncodable(param)
+        case let .writeMealReview(param: param):
+            return .requestJSONEncodable(param)
         }
     }
 
     var headers: [String: String]? {
         switch self {
-        case .writeNewReview:
+        case .writeNewReview, .writeMenuReview, .writeMealReview:
             return ["Content-Type": "application/json"]
         case .uploadImage, .writeReview:
             return ["Content-Type": "multipart/form-data"]

@@ -203,7 +203,8 @@ final class ReviewRateViewCell: UITableViewCell {
         backgroundColor = .white
 
         menuContainer.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.topMargin).offset(10)
+//            make.top.equalTo(safeAreaLayoutGuide.snp.topMargin).offset(10)
+            make.top.equalTo(contentView.snp.top).offset(0)
             make.centerX.equalToSuperview()
             make.width.equalTo(320.adjusted)
             make.height.greaterThanOrEqualTo(100)
