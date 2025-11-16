@@ -5,7 +5,7 @@
 //  Created by 한금준 on 11/16/25.
 //
 
-struct ReviewMealStatisticsResponse: Encodable {
+struct ReviewMealStatisticsResponse: Codable {
     // 식단에 포함된 메뉴 리스트
     let menuList: [MenuInfo] // Meal API 고유 필드
     
@@ -15,12 +15,12 @@ struct ReviewMealStatisticsResponse: Encodable {
     let reviewRatingCount: ReviewRatingCount // 별점별 카운트
 }
 
-struct MenuInfo: Encodable {
+struct MenuInfo: Codable {
     let id: Int
     let name: String
 }
 
-struct ReviewMealRatingCount: Encodable {
+struct ReviewMealRatingCount: Codable {
     let oneStarCount: Int
     let twoStarCount: Int
     let threeStarCount: Int

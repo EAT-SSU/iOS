@@ -14,14 +14,17 @@ final class ReviewViewController: BaseViewController {
     // MARK: - Properties
 
     let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
-    var menuID: Int = .init() // mealId를 담고 있다고 가정
+    var menuID: Int = .init()
     var type = "VARIABLE"
     private var menuNameList: [String] = []
     private var menuIDList: [Int]? = [Int]()
     private var menuDictionary: [String: Int] = [:]
     private var reviewList = [MenuDataList]()
-    private var responseData: ReviewRateResponse?
-    private var fixedResponseData: FixedReviewRateResponse?
+    
+    // ✨ V2 API 응답 데이터
+    private var mealStatistics: ReviewMealStatisticsResponse?
+    private var menuStatistics: ReviewMeuStatisticsResponse?
+    private var totalReviewCount: Int = 0
 
     // MARK: - UI Component
 
@@ -75,14 +78,14 @@ final class ReviewViewController: BaseViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getReviewRate()
+        // ✨ V2 API 호출로 변경
+        getStatistics()
         getReviewList(type: type, menuId: menuID)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        // 뒤로 가기(pop) 할 때만 실행되도록
         if self.isMovingFromParent {
             var parentVC = self.parent
             while parentVC != nil {
@@ -124,11 +127,11 @@ final class ReviewViewController: BaseViewController {
         reviewTabBarContainer.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(80) // 탭바 높이
+            $0.height.equalTo(80)
         }
         
         reviewTabBarView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(12) // 안쪽 여백
+            $0.edges.equalToSuperview().inset(12)
         }
     }
 
@@ -142,13 +145,10 @@ final class ReviewViewController: BaseViewController {
     }
     
     @objc private func handleAddReviewButtonTap() {
-        // type이 VARIABLE(식단)일 때만 mealId를 전달 (menuID가 mealId 역할을 함)
         if type == "VARIABLE" {
-            let reviewVC = SetRateViewController(mealId: menuID) // ✨ 수정: mealId 전달
+            let reviewVC = SetRateViewController(mealId: menuID)
             navigationController?.pushViewController(reviewVC, animated: true)
         } else {
-            // FIXED 메뉴는 기존 로직을 따라 `userTapReviewButton()` 내에서 처리되거나
-            // 이전 로직에서 dataBind를 통해 메뉴 ID를 전달해야 함
             let reviewVC = SetRateViewController()
             reviewVC.dataBind(list: menuNameList,
                                idList: menuIDList ?? [],
@@ -188,7 +188,7 @@ final class ReviewViewController: BaseViewController {
     @objc
     func refreshTable(refresh: UIRefreshControl) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.getReviewRate()
+            self.getStatistics()
             self.getReviewList(type: self.type, menuId: self.menuID)
             refresh.endRefreshing()
         }
@@ -251,14 +251,11 @@ final class ReviewViewController: BaseViewController {
     
     // MARK: - Action Method
 
-    //    @objc
     func userTapReviewButton() {
         if RealmService.shared.isAccessTokenPresent() {
             activityIndicatorView.isHidden = false
-            DispatchQueue.global().async { // 백그라운드 스레드에서 작업을 수행
-                // 작업 완료 후 UI 업데이트를 메인 스레드에서 수행
+            DispatchQueue.global().async {
                 DispatchQueue.main.async { [self] in
-                    // 고정메뉴인지 판별(메뉴 ID List에 nil값 들어옴)
                     if menuIDList == nil {
                         // FIXED
                         let setRateViewController = SetRateViewController()
@@ -270,11 +267,9 @@ final class ReviewViewController: BaseViewController {
                         activityIndicatorView.stopAnimating()
                         navigationController?.pushViewController(setRateViewController, animated: true)
                     } else {
-                        // VARIABLE (meal review)
-                        
-                        // 고정메뉴이고, 메뉴가 1개일때 선택창으로 안가고 바로 작성창으로 가도록
+                        // VARIABLE
                         if menuIDList?.count == 1 {
-                            let setRateViewController = SetRateViewController(mealId: menuID) // ✨ 수정: mealId 전달
+                            let setRateViewController = SetRateViewController(mealId: menuID)
                             setRateViewController.dataBind(list: menuNameList,
                                                            idList: menuIDList ?? [],
                                                            reviewList: nil,
@@ -282,8 +277,7 @@ final class ReviewViewController: BaseViewController {
                             activityIndicatorView.stopAnimating()
                             navigationController?.pushViewController(setRateViewController, animated: true)
                         } else {
-                            // 메뉴가 여러 개일 때 (VARIABLE)
-                            let setRateViewController = SetRateViewController(mealId: menuID) // ✨ 수정: mealId 전달
+                            let setRateViewController = SetRateViewController(mealId: menuID)
                             setRateViewController.dataBind(list: menuNameList,
                                                            idList: menuIDList ?? [],
                                                            reviewList: nil,
@@ -316,12 +310,6 @@ final class ReviewViewController: BaseViewController {
     }
 }
 
-//extension ReviewViewController: AddReviewButtonDelegate {
-//    func didTapAddReviewButton() {
-//        userTapReviewButton()
-//    }
-//}
-
 // MARK: - UITableView Delegate, DataSource
 
 extension ReviewViewController: UITableViewDelegate {
@@ -332,12 +320,10 @@ extension ReviewViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch section {
         case 0:
-            return 0   // RateViewCell 위쪽 여백 제거
+            return 0
         case 1:
-            // RateViewCell 아래 여백 (기존 16 → 6으로 줄임)
             return 6
         case 2:
-            // Divider 아래, 리뷰 리스트 위쪽 여백
             return 8
         default:
             return 0
@@ -352,7 +338,6 @@ extension ReviewViewController: UITableViewDelegate {
 
 extension ReviewViewController: UITableViewDataSource {
     func numberOfSections(in _: UITableView) -> Int {
-//        2
         3
     }
 
@@ -363,7 +348,6 @@ extension ReviewViewController: UITableViewDataSource {
         case 1:
             1
         case 2:
-            // 두 번째 섹션에서 리뷰 개수가 하나도 없을 때 셀 변경
             if reviewList.count == 0 {
                 1
             } else {
@@ -379,29 +363,18 @@ extension ReviewViewController: UITableViewDataSource {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: ReviewRateViewCell.identifier, for: indexPath) as? ReviewRateViewCell ?? ReviewRateViewCell()
             cell.selectionStyle = .none
+            
+            // ✨ V2 API 데이터로 바인딩
             if type == "FIXED" {
-                cell.fixMenuDataBind(data: fixedResponseData ?? FixedReviewRateResponse(menuName: "",
-                                                                                        totalReviewCount: 0,
-                                                                                        mainRating: 0,
-                                                                                        amountRating: 0,
-                                                                                        tasteRating: 0,
-                                                                                        reviewRatingCount: StarCount(fiveStarCount: 0,
-                                                                                                                     fourStarCount: 0,
-                                                                                                                     threeStarCount: 0,
-                                                                                                                     twoStarCount: 0,
-                                                                                                                     oneStarCount: 0)))
+                if let statistics = menuStatistics {
+                    cell.configureWithMenuStatistics(statistics)
+                }
             } else {
-                cell.dataBind(data: responseData ?? ReviewRateResponse(menuNames: [""],
-                                                                       totalReviewCount: 0,
-                                                                       mainRating: 0,
-                                                                       amountRating: 0,
-                                                                       tasteRating: 0,
-                                                                       reviewRatingCount: StarCount(fiveStarCount: 0,
-                                                                                                    fourStarCount: 0,
-                                                                                                    threeStarCount: 0,
-                                                                                                    twoStarCount: 0,
-                                                                                                    oneStarCount: 0)))
+                if let statistics = mealStatistics {
+                    cell.configureWithMealStatistics(statistics)
+                }
             }
+            
             cell.handler = { [weak self] in
                 guard let self else { return }
                 userTapReviewButton()
@@ -410,11 +383,11 @@ extension ReviewViewController: UITableViewDataSource {
             return cell
 
         case 1:
-            // Divider cell
             let cell = tableView.dequeueReusableCell(withIdentifier: ReviewDividerCell.identifier, for: indexPath) as? ReviewDividerCell ?? ReviewDividerCell()
-            cell.configure(reviewCount: reviewList.count)
+            cell.configure(reviewCount: totalReviewCount)
             cell.selectionStyle = .none
             return cell
+            
         case 2:
             if reviewList.count == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: ReviewEmptyViewCell.identifier, for: indexPath) as? ReviewEmptyViewCell ?? ReviewEmptyViewCell()
@@ -449,9 +422,7 @@ extension ReviewViewController: UITableViewDataSource {
         switch indexPath.section {
         case 0:
             251.adjusted
-//            UITableView.automaticDimension
         case 1:
-            // Divider cell
             UITableView.automaticDimension
         case 2:
             if reviewList.count == 0 {
@@ -468,31 +439,54 @@ extension ReviewViewController: UITableViewDataSource {
 // MARK: - Server Setting
 
 extension ReviewViewController {
-    // 상단 메뉴 별점 불러오는 API
-    func getReviewRate() {
-        reviewProvider.request(.reviewRate(type, menuID)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    if self.type == "FIXED" {
-                        let responseData = try moyaResponse.map(BaseResponse<FixedReviewRateResponse>.self)
-                        guard let data = responseData.result else { return }
-                        self.fixedResponseData = data
-                        self.reviewTableView.reloadData()
-                        self.menuNameList = [data.menuName]
-                    } else {
-                        let responseData = try moyaResponse.map(BaseResponse<ReviewRateResponse>.self)
-                        guard let data = responseData.result else { return }
-                        self.responseData = data
-                        self.reviewTableView.reloadData()
-                        self.menuNameList = data.menuNames
-                    }
-                    self.makeDictionary()
-                } catch let err {
-                    print(err.localizedDescription)
-                }
-            case let .failure(err):
-                print(err.localizedDescription)
+    // ✨ V2 API: 통계 데이터 가져오기
+    func getStatistics() {
+        if type == "FIXED" {
+            getFixedMenuStatistics()
+        } else {
+            getMealStatistics()
+        }
+    }
+    
+    // ✨ V2 API: 고정 메뉴 통계
+    func getFixedMenuStatistics() {
+        NetworkService.shared.request(
+            ReviewRouter.getFixedMenuStatistics(menuID),
+            responseType: ReviewMeuStatisticsResponse.self,
+            useAuth: false
+        ) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let data):
+                self.menuStatistics = data
+                self.totalReviewCount = data.totalReviewCount
+                self.menuNameList = [data.menuName]
+                self.makeDictionary()
+                self.reviewTableView.reloadData()
+            case .failure(let error):
+                print("Fixed Menu Statistics Error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    // ✨ V2 API: 식단 통계
+    func getMealStatistics() {
+        NetworkService.shared.request(
+            ReviewRouter.getMealStatistics(menuID),
+            responseType: ReviewMealStatisticsResponse.self,
+            useAuth: false
+        ) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let data):
+                self.mealStatistics = data
+                self.totalReviewCount = data.totalReviewCount
+                self.menuNameList = data.menuList.map { $0.name }
+                self.menuIDList = data.menuList.map { $0.id }
+                self.makeDictionary()
+                self.reviewTableView.reloadData()
+            case .failure(let error):
+                print("Meal Statistics Error: \(error.localizedDescription)")
             }
         }
     }
@@ -521,10 +515,9 @@ extension ReviewViewController {
         reviewProvider.request(.deleteReview(reviewID)) { response in
             switch response {
             case .success:
-                self.getReviewRate()
+                self.getStatistics()
                 self.updateViewConstraints()
                 self.getReviewList(type: self.type, menuId: self.menuID)
-//                self.reviewTableView.showToast(message: "삭제되었어요 !")
             case let .failure(err):
                 print(err.localizedDescription)
             }
@@ -540,5 +533,78 @@ extension ReviewViewController: ReviewMenuTypeInfoDelegate {
         type = reviewMenuTypeInfo.menuType
         menuID = reviewMenuTypeInfo.menuID
         menuIDList = reviewMenuTypeInfo.changeMenuIDList
+    }
+}
+
+// MARK: - ReviewRateViewCell Extension for V2 API
+
+extension ReviewRateViewCell {
+    // ✨ Meal 통계 데이터 바인딩
+    func configureWithMealStatistics(_ data: ReviewMealStatisticsResponse) {
+        // 메뉴명 설정
+        let menuNames = data.menuList.map { $0.name }
+        menuLabel.text = menuNames.joined(separator: " + ")
+        
+        // 평균 별점 설정
+        let ratingValue = data.rating
+        if ratingValue == 0.0 {
+            rateNumLabel.text = "-"
+        } else {
+            let total = String(format: "%.1f", ratingValue)
+            rateNumLabel.text = "\(total)"
+        }
+        totalRate = ratingValue
+        
+        // 별점 차트 업데이트
+        let totalCount = max(data.totalReviewCount, 1)
+        fiveForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.fiveStarCount / totalCount)
+        }
+        fourForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.fourStarCount / totalCount)
+        }
+        threeForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.threeStarCount / totalCount)
+        }
+        twoForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.twoStarCount / totalCount)
+        }
+        oneForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.oneStarCount / totalCount)
+        }
+    }
+    
+    // ✨ Menu 통계 데이터 바인딩
+    func configureWithMenuStatistics(_ data: ReviewMeuStatisticsResponse) {
+        // 메뉴명 설정
+        menuLabel.text = data.menuName
+        
+        // 평균 별점 설정
+        let ratingValue = data.rating
+        if ratingValue == 0.0 {
+            rateNumLabel.text = "-"
+        } else {
+            let total = String(format: "%.1f", ratingValue)
+            rateNumLabel.text = "\(total)"
+        }
+        totalRate = ratingValue
+        
+        // 별점 차트 업데이트
+        let totalCount = max(data.totalReviewCount, 1)
+        fiveForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.fiveStarCount / totalCount)
+        }
+        fourForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.fourStarCount / totalCount)
+        }
+        threeForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.threeStarCount / totalCount)
+        }
+        twoForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.twoStarCount / totalCount)
+        }
+        oneForeground.snp.updateConstraints {
+            $0.width.equalTo(126 * data.reviewRatingCount.oneStarCount / totalCount)
+        }
     }
 }

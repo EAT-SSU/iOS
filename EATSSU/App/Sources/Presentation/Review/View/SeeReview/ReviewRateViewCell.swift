@@ -27,7 +27,7 @@ final class ReviewRateViewCell: UITableViewCell {
         return view
     }()
 
-    private var menuLabel: UILabel = {
+    var menuLabel: UILabel = {
         let label = UILabel()
         label.text = "김치볶음밥 & 계란국"
         label.font = .header2
@@ -70,7 +70,7 @@ final class ReviewRateViewCell: UITableViewCell {
         return imageView
     }()
 
-    private let rateNumLabel: UILabel = {
+    var rateNumLabel: UILabel = {
         let label = UILabel()
         label.text = "4.3"
         label.font = .bold(size: 36)
@@ -85,17 +85,17 @@ final class ReviewRateViewCell: UITableViewCell {
     private let onePointLabel = ReviewRateViewCell.makePointLabel("1점")
 
     // Chart bar containers and foregrounds
-    private var oneChartBar: UIView!
-    private var twoChartBar: UIView!
-    private var threeChartBar: UIView!
-    private var fourChartBar: UIView!
-    private var fiveChartBar: UIView!
+    var oneChartBar: UIView!
+    var twoChartBar: UIView!
+    var threeChartBar: UIView!
+    var fourChartBar: UIView!
+    var fiveChartBar: UIView!
     
-    private var oneForeground: UIView!
-    private var twoForeground: UIView!
-    private var threeForeground: UIView!
-    private var fourForeground: UIView!
-    private var fiveForeground: UIView!
+    var oneForeground: UIView!
+    var twoForeground: UIView!
+    var threeForeground: UIView!
+    var fourForeground: UIView!
+    var fiveForeground: UIView!
 
     lazy var yAxisStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [fivePointLabel,

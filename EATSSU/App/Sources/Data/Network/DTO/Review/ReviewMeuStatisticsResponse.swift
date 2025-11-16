@@ -5,7 +5,7 @@
 //  Created by 한금준 on 11/16/25.
 //
 
-struct ReviewMeuStatisticsResponse: Encodable {
+struct ReviewMeuStatisticsResponse: Codable {
     let menuName: String
     let totalReviewCount: Int
     let rating: Double
@@ -14,7 +14,7 @@ struct ReviewMeuStatisticsResponse: Encodable {
     let reviewRatingCount: ReviewRatingCount
 }
 
-struct ReviewRatingCount: Encodable {
+struct ReviewRatingCount: Codable {
     let oneStarCount: Int
     let twoStarCount: Int
     let threeStarCount: Int
