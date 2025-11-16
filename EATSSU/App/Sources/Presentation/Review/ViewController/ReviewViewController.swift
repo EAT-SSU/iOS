@@ -45,6 +45,20 @@ final class ReviewViewController: BaseViewController {
         return imageView
     }()
     
+    private let reviewTabBarContainer: UIView = {
+            let view = UIView()
+            view.backgroundColor = .white
+            view.layer.cornerRadius = 0
+            view.clipsToBounds = true
+            return view
+        }()
+    
+    private let reviewTabBarView: MainButton = {
+                let button = MainButton()
+                button.title = "리뷰 작성하기"
+                return button
+            }()
+    
     // MARK: - Life Cycles
     
     override func viewDidLoad() {

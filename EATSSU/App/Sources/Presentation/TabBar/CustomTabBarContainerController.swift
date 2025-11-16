@@ -191,32 +191,32 @@ final class CustomTabBarContainerController: BaseViewController {
     }
 
     /// 탭바를 숨기거나 표시하는 메서드
-    public func setTabBarHidden(_ hidden: Bool, animated: Bool) {
-        guard tabBarView.isHidden != hidden else { return }
-        
-        // 제약 업데이트
-        contentBottomConstraint?.deactivate()
-        contentContainerView.snp.makeConstraints {
-            if hidden {
-                contentBottomConstraint = $0.bottom.equalToSuperview().constraint
-            } else {
-                contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
-            }
-        }
-        
-        if animated {
-            UIView.animate(withDuration: 0.3) {
-                self.tabBarView.alpha = hidden ? 0 : 1
-                self.view.layoutIfNeeded()
-            } completion: { _ in
-                self.tabBarView.isHidden = hidden
-            }
-        } else {
-            self.tabBarView.alpha = hidden ? 0 : 1
-            self.tabBarView.isHidden = hidden
-            self.view.layoutIfNeeded()
-        }
-    }
+//    public func setTabBarHidden(_ hidden: Bool, animated: Bool) {
+//        guard tabBarView.isHidden != hidden else { return }
+//        
+//        // 제약 업데이트
+//        contentBottomConstraint?.deactivate()
+//        contentContainerView.snp.makeConstraints {
+//            if hidden {
+//                contentBottomConstraint = $0.bottom.equalToSuperview().constraint
+//            } else {
+//                contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
+//            }
+//        }
+//        
+//        if animated {
+//            UIView.animate(withDuration: 0.3) {
+//                self.tabBarView.alpha = hidden ? 0 : 1
+//                self.view.layoutIfNeeded()
+//            } completion: { _ in
+//                self.tabBarView.isHidden = hidden
+//            }
+//        } else {
+//            self.tabBarView.alpha = hidden ? 0 : 1
+//            self.tabBarView.isHidden = hidden
+//            self.view.layoutIfNeeded()
+//        }
+//    }
 }
 
 // MARK: - UINavigationControllerDelegate
