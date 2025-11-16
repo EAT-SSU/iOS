@@ -17,6 +17,9 @@ enum ReviewRouter {
     case report(param: ReportRequest)
     case deleteReview(_ reviewId: Int)
     case fixReview(_ reviewId: Int, _ param: BeforeSelectedImageDTO)
+    
+    // MARK: - New V2 API: 리뷰 작성이 가능한 메뉴 목록 조회
+    case getValidMenusForReview(_ mealId: Int)
 }
 
 extension ReviewRouter: TargetType {
@@ -43,14 +46,15 @@ extension ReviewRouter: TargetType {
             "/reviews/\(reviewId)"
         case let .fixReview(reviewId, _):
             "/reviews/\(reviewId)"
+        // MARK: - New V2 Path
+        case let .getValidMenusForReview(mealId):
+            "/v2/reviews/meal/valid-for-review/\(mealId)" // Path Parameter 사용
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .reviewRate:
-            .get
-        case .reviewList:
+        case .reviewRate, .reviewList, .getValidMenusForReview:
             .get
         case .report:
             .post
@@ -100,6 +104,10 @@ extension ReviewRouter: TargetType {
             .requestPlain
         case let .fixReview(_, param):
             .requestJSONEncodable(param)
+        
+        // MARK: - New V2 Task
+        case .getValidMenusForReview: // Path에 ID가 포함되므로 Body나 QueryString 없음
+            .requestPlain
         }
     }
     

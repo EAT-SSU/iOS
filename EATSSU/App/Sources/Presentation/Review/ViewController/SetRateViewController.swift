@@ -26,15 +26,30 @@ final class SetRateViewController: BaseViewController {
 
     private var userPickedImage: UIImage?
     private var reviewList: [(BeforeSelectedImageDTO, UIImage?)] = []
-    private var selectedIDList: [Int] = []
+    
+    // ✨ 수정: selectedIDList를 validMenuIDList로 변경
+    private var validMenuIDList: [Int] = []
     private var selectedList: [String] = []
     private var reviewId: Int?
     
     // 좋아요 상태를 보관 (selectedList와 같은 인덱스)
-        private var likedStates: [Bool] = []
+    private var likedStates: [Bool] = []
     private var menuTableViewHeightConstraint: Constraint?
+    
+    // ✨ 추가: mealId를 저장할 프로퍼티
+    private var mealID: Int?
+
+    // MARK: - Initializer
+    
+    // ✨ 추가: mealId를 받는 이니셜라이저
+    convenience init(mealId: Int) {
+        self.init(nibName: nil, bundle: nil)
+        self.mealID = mealId
+    }
+
 
     // MARK: - UI Components
+    // ... (기존 UI Component 코드 유지)
 
     private var rateView = RateView()
     private var tasteRateView = RateView()
@@ -216,14 +231,20 @@ final class SetRateViewController: BaseViewController {
         super.viewDidLoad()
         setDelegate()
         
-        // 더미데이터 지정
-            selectedList = ["김치볶음밥", "돈까스", "된장찌개", "샐러드", "라면"]
-
-            // 좋아요 상태 배열도 맞춰서 초기화
-            likedStates = Array(repeating: false, count: selectedList.count)
-
-            // 테이블 갱신
-            menuTableView.reloadData()
+        // ✨ 수정: mealId가 있으면 API 호출, 없으면 기존 로직 유지
+        if let mealId = mealID {
+            fetchValidMenus(mealId: mealId)
+        } else {
+            // 기존 dataBind로 넘어온 데이터가 있거나, 리뷰 수정인 경우
+            // selectedList가 비어있지 않다면 테이블 뷰 갱신 (리뷰 수정 등 기존 로직 유지)
+            if !selectedList.isEmpty {
+                 // 좋아요 상태 배열도 맞춰서 초기화
+                likedStates = Array(repeating: false, count: selectedList.count)
+                // 테이블 갱신
+                menuTableView.reloadData()
+                // 높이 업데이트 (viewDidLayoutSubviews에서 실행됨)
+            }
+        }
     }
 
     override func viewWillAppear(_: Bool) {
@@ -236,9 +257,55 @@ final class SetRateViewController: BaseViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        // API 호출 후 데이터가 로드되면 높이가 업데이트되도록 처리
         menuTableViewHeightConstraint?.update(offset: menuTableView.contentSize.height)
     }
 
+
+    // MARK: - API Call
+    
+    // ✨ 추가: 리뷰 가능한 메뉴 목록을 조회하는 메서드
+    private func fetchValidMenus(mealId: Int) {
+        // NetworkService의 request 메서드를 사용하여 ReviewRouter 호출
+        NetworkService.shared.request(
+            ReviewRouter.getValidMenusForReview(mealId),
+            responseType: ReviewValidMenusResponse.self, // DTO 타입 사용
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let data):
+                    // 메뉴 이름과 ID를 각각 selectedList와 validMenuIDList에 저장
+                    self.selectedList = data.menuList.map { $0.name }
+                    self.validMenuIDList = data.menuList.map { $0.menuId }
+                    
+                    // 메뉴 목록 수에 맞춰 좋아요 상태 초기화 (초기값: false)
+                    self.likedStates = Array(repeating: false, count: self.selectedList.count)
+                    
+                    // reviewList 초기화 (API 결과에 따라 갯수 맞춤)
+                    self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
+                                                                               amountRating: nil,
+                                                                               tasteRating: nil,
+                                                                               content: ""),
+                                                        nil), count: self.validMenuIDList.count)
+                    
+                    // 테이블 뷰 리로드
+                    self.menuTableView.reloadData()
+                    // viewDidLayoutSubviews를 호출하여 높이 제약조건 업데이트
+                    self.view.setNeedsLayout()
+                    
+                    // currentPage 초기화
+                    self.currentPage = 0
+                    
+                case .failure(let error):
+                    print("Error fetching valid menus: \(error)")
+                    self.showToast(message: "메뉴 목록 조회에 실패했습니다.")
+                }
+            }
+        }
+    }
 
     // MARK: - Functions
 
@@ -326,15 +393,19 @@ final class SetRateViewController: BaseViewController {
         }
 
         for i in 0 ... 4 {
-            tasteRateView.buttons[i].snp.makeConstraints { make in
+            rateView.buttons[i].snp.makeConstraints { make in // rateView로 통합
                 make.height.equalTo(28)
                 make.width.equalTo(29.3)
             }
-
-            quantityRateView.buttons[i].snp.makeConstraints { make in
-                make.height.equalTo(28)
-                make.width.equalTo(29.3)
-            }
+//            tasteRateView.buttons[i].snp.makeConstraints { make in
+//                make.height.equalTo(28)
+//                make.width.equalTo(29.3)
+//            }
+//
+//            quantityRateView.buttons[i].snp.makeConstraints { make in
+//                make.height.equalTo(28)
+//                make.width.equalTo(29.3)
+//            }
         }
 
         userReviewTextView.snp.makeConstraints { make in
@@ -407,9 +478,10 @@ final class SetRateViewController: BaseViewController {
         }
     }
 
+    // ✨ 수정: selectedIDList -> validMenuIDList로 이름 변경 반영
     func dataBind(list: [String], idList: [Int], reviewList: [(BeforeSelectedImageDTO, UIImage?)]?, currentPage: Int) {
         selectedList = list
-        selectedIDList = idList
+        validMenuIDList = idList // ✨ 수정: selectedIDList -> validMenuIDList
         if let reviewList {
                 self.reviewList = reviewList
             } else {
@@ -460,7 +532,8 @@ final class SetRateViewController: BaseViewController {
         if userReviewTextView.text == "3글자 이상 작성해주세요!" || userReviewTextView.text.count < 3 {
             showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
         } else {
-            if rateView.currentStar != 0, quantityRateView.currentStar != 0, tasteRateView.currentStar != 0 {
+            // 별점 검사: rateView는 메인 별점, quantity/tasteRateView는 사용되지 않으므로 rateView만 확인
+            if rateView.currentStar != 0 /*, quantityRateView.currentStar != 0, tasteRateView.currentStar != 0*/ {
                 // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
                 let param = BeforeSelectedImageDTO(mainRating: rateView.currentStar,
                                                    amountRating: quantityRateView.currentStar,
@@ -508,7 +581,7 @@ final class SetRateViewController: BaseViewController {
                     ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
                     
                     // 순차적으로 업로드
-                    try await uploadReview(reviewDTO: reviewDTO, image: image, menuId: selectedIDList[index])
+                    try await uploadReview(reviewDTO: reviewDTO, image: image, menuId: validMenuIDList[index]) // ✨ 수정: selectedIDList -> validMenuIDList
                 }
                 
                 await MainActor.run {
@@ -564,13 +637,22 @@ final class SetRateViewController: BaseViewController {
         userReviewImageView.image = nil // 이미지 삭제
         userPickedImage = nil
         imageCountLabel.text = "사진 0/1"
-        closeButton.isHidden = true // Hide close button when image is cleared
+        closeButton.isHidden = true // Show close button when image is selected
     }
 
     private func prepareForNextReview() {
-        let setRateVC = SetRateViewController()
+        let setRateVC: SetRateViewController
+        
+        // ✨ 수정: 다음 페이지로 이동할 때 현재 mealId를 전달
+        if let mealId = self.mealID {
+             setRateVC = SetRateViewController(mealId: mealId)
+        } else {
+            // mealId가 없으면 기존처럼 인자 없이 초기화 (예: 고정 메뉴 리뷰 수정 후 다음 단계)
+            setRateVC = SetRateViewController()
+        }
+        
         setRateVC.dataBind(list: selectedList,
-                           idList: selectedIDList,
+                           idList: validMenuIDList, // ✨ 수정: selectedIDList -> validMenuIDList
                            reviewList: reviewList,
                            currentPage: currentPage + 1)
         navigationController?.pushViewController(setRateVC, animated: true)

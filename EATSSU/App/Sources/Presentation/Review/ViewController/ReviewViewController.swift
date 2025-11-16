@@ -1,4 +1,3 @@
-
 //
 //  ReviewViewController.swift
 //  EatSSU-iOS
@@ -15,7 +14,7 @@ final class ReviewViewController: BaseViewController {
     // MARK: - Properties
 
     let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
-    var menuID: Int = .init()
+    var menuID: Int = .init() // mealId를 담고 있다고 가정
     var type = "VARIABLE"
     private var menuNameList: [String] = []
     private var menuIDList: [Int]? = [Int]()
@@ -143,9 +142,20 @@ final class ReviewViewController: BaseViewController {
     }
     
     @objc private func handleAddReviewButtonTap() {
-        let reviewVC = SetRateViewController()
-        
-        navigationController?.pushViewController(reviewVC, animated: true)
+        // type이 VARIABLE(식단)일 때만 mealId를 전달 (menuID가 mealId 역할을 함)
+        if type == "VARIABLE" {
+            let reviewVC = SetRateViewController(mealId: menuID) // ✨ 수정: mealId 전달
+            navigationController?.pushViewController(reviewVC, animated: true)
+        } else {
+            // FIXED 메뉴는 기존 로직을 따라 `userTapReviewButton()` 내에서 처리되거나
+            // 이전 로직에서 dataBind를 통해 메뉴 ID를 전달해야 함
+            let reviewVC = SetRateViewController()
+            reviewVC.dataBind(list: menuNameList,
+                               idList: menuIDList ?? [],
+                               reviewList: nil,
+                               currentPage: 0)
+            navigationController?.pushViewController(reviewVC, animated: true)
+        }
     }
 
     private func setFirebaseTask() {
@@ -250,6 +260,7 @@ final class ReviewViewController: BaseViewController {
                 DispatchQueue.main.async { [self] in
                     // 고정메뉴인지 판별(메뉴 ID List에 nil값 들어옴)
                     if menuIDList == nil {
+                        // FIXED
                         let setRateViewController = SetRateViewController()
                         menuIDList = [menuID]
                         setRateViewController.dataBind(list: menuNameList,
@@ -259,9 +270,11 @@ final class ReviewViewController: BaseViewController {
                         activityIndicatorView.stopAnimating()
                         navigationController?.pushViewController(setRateViewController, animated: true)
                     } else {
+                        // VARIABLE (meal review)
+                        
                         // 고정메뉴이고, 메뉴가 1개일때 선택창으로 안가고 바로 작성창으로 가도록
                         if menuIDList?.count == 1 {
-                            let setRateViewController = SetRateViewController()
+                            let setRateViewController = SetRateViewController(mealId: menuID) // ✨ 수정: mealId 전달
                             setRateViewController.dataBind(list: menuNameList,
                                                            idList: menuIDList ?? [],
                                                            reviewList: nil,
@@ -269,15 +282,13 @@ final class ReviewViewController: BaseViewController {
                             activityIndicatorView.stopAnimating()
                             navigationController?.pushViewController(setRateViewController, animated: true)
                         } else {
-//                            let choiceMenuViewController = ChoiceMenuViewController()
-                            let setRateViewController = SetRateViewController()
-//                            choiceMenuViewController.menuDataBind(menuList: menuNameList, idList: menuIDList ?? [])
+                            // 메뉴가 여러 개일 때 (VARIABLE)
+                            let setRateViewController = SetRateViewController(mealId: menuID) // ✨ 수정: mealId 전달
                             setRateViewController.dataBind(list: menuNameList,
                                                            idList: menuIDList ?? [],
                                                            reviewList: nil,
                                                            currentPage: 0)
                             activityIndicatorView.stopAnimating()
-//                            navigationController?.pushViewController(choiceMenuViewController, animated: true)
                             navigationController?.pushViewController(setRateViewController, animated: true)
                         }
                     }
