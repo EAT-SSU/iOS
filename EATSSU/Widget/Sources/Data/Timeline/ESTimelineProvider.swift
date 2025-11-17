@@ -5,17 +5,16 @@
 //  Created by JIWOONG CHOI on 12/31/24.
 //
 
-import Moya
-import RxMoya
-import RxSwift
+import Combine
 import WidgetKit
+
+import Moya
 
 // 위젯의 타임라인 데이터를 제공하는 프로바이더 구조체
 struct ESTimelineProvider: AppIntentTimelineProvider {
     typealias Intent = SelectRestaurant // 사용자가 선택한 식당 정보를 저장하는 인텐트
     typealias Entry = ESEntry // 위젯에 표시될 데이터 구조체
 
-    private let disposeBag = DisposeBag() // RxSwift의 메모리 관리를 위한 DisposeBag
     private let userDefaults = UserDefaults(suiteName: Bundle.main.infoDictionary?["AppGroupID"] as? String)
     
     // 위젯이 처음 로드될 때 보여줄 기본 데이터
@@ -116,19 +115,9 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
 
     // 서버에서 특정 날짜, 식당, 시간대의 메뉴 정보를 가져오는 함수
     private func fetchMenu(provider: MoyaProvider<HomeRouter>, date: String, restaurant: String, time: String) async throws -> [String] {
-        try await withCheckedThrowingContinuation { continuation in
-            provider.rx.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
-                .map(BaseResponse<[ChangeMenuTableResponse]>.self) // 응답을 모델로 변환
-                .subscribe(onSuccess: { response in
-                    // 서버 응답에서 메뉴 이름만 추출
-                    let menuNames = response.result.flatMap { $0.briefMenus.map(\.name) }
-                    continuation.resume(returning: menuNames)
-                }, onFailure: { error in
-                    print("RxMoya Error: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
-                })
-                .disposed(by: disposeBag) // DisposeBag을 이용해 메모리 관리
-        }
+        let response = try await provider.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
+        let decoded = try response.map(BaseResponse<[ChangeMenuTableResponse]>.self)
+        return decoded.result.flatMap { $0.briefMenus.map(\.name) }
     }
 
     // Date 객체를 "yyyyMMdd" 형식의 문자열로 변환하는 함수
@@ -146,6 +135,22 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         case 10 ..< 16: return "LUNCH"
         case 16 ..< 24: return "DINNER"
         default: return "CLOSED"
+        }
+    }
+}
+
+// MARK: - Moya Async Extension
+extension MoyaProvider {
+    func request(_ target: Target) async throws -> Response {
+        try await withCheckedThrowingContinuation { continuation in
+            self.request(target) { result in
+                switch result {
+                case .success(let response):
+                    continuation.resume(returning: response)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
         }
     }
 }
