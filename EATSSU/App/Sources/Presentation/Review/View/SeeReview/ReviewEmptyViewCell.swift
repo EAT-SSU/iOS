@@ -83,4 +83,9 @@ final class ReviewEmptyViewCell: UITableViewCell {
             subLabel.text = "로그인 후 리뷰를 확인하세요"
         }
     }
+    
+    func configureForMyReview() {
+        mainLabel.text = "아직 작성한 리뷰가 없어요"
+        subLabel.text = "첫 리뷰를 남겨 주세요!"
+    }
 }
