@@ -216,8 +216,7 @@ let project = Project(
             entitlements: "App/Entitlements/EatSSU-iOS-Dev.entitlements",
             dependencies: [
                 .external(name: "Moya"),
-                .external(name: "RxSwift"),
-                .external(name: "RxMoya"),
+                .external(name: "CombineMoya"),
                 .external(name: "FirebaseAnalytics"),
                 .external(name: "GoogleAppMeasurement"),
 
@@ -257,8 +256,7 @@ let project = Project(
             entitlements: "App/Entitlements/EatSSU-iOS-Prod.entitlements",
             dependencies: [
                 .external(name: "Moya"),
-                .external(name: "RxSwift"),
-                .external(name: "RxMoya"),
+                .external(name: "CombineMoya"),
                 .external(name: "FirebaseAnalytics"),
                 .external(name: "GoogleAppMeasurement"),
 
