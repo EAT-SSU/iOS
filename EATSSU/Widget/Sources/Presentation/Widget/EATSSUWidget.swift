@@ -31,5 +31,6 @@ struct EATSSUWidget: Widget {
         .configurationDisplayName("EATSSU 위젯")
         .description("확인하고 싶은 식당을 선택하세요.")
         .supportedFamilies([.systemSmall, .systemMedium])
+        .contentMarginsDisabled()
     }
 }
