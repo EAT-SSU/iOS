@@ -28,20 +28,12 @@ final class MyReviewViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    private lazy var noMyReviewImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = ImageLiteral.noMyReview
-        imageView.isHidden = true
-        return imageView
-    }()
-
     // MARK: - Life Cycles
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setDelegate()
-        checkReviewCount()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -64,21 +56,18 @@ final class MyReviewViewController: BaseViewController {
     }
 
     override func configureUI() {
-        view.addSubviews(myReviewView, noMyReviewImageView)
+        view.addSubviews(myReviewView)
     }
 
     override func setLayout() {
         myReviewView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
-        noMyReviewImageView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
     }
 
     private func setDelegate() {
         myReviewView.myReviewTableView.register(ReviewTableCell.self, forCellReuseIdentifier: ReviewTableCell.identifier)
+        myReviewView.myReviewTableView.register(ReviewEmptyViewCell.self, forCellReuseIdentifier: ReviewEmptyViewCell.identifier)
         myReviewView.myReviewTableView.delegate = self
         myReviewView.myReviewTableView.dataSource = self
     }
@@ -115,16 +104,6 @@ final class MyReviewViewController: BaseViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
     }
-
-    func checkReviewCount() {
-        if reviewList.count == 0 {
-            myReviewView.myReviewTableView.isHidden = true
-            noMyReviewImageView.isHidden = false
-        } else {
-            myReviewView.myReviewTableView.isHidden = false
-            noMyReviewImageView.isHidden = true
-        }
-    }
     
     private func navigateToLogin() {
         let loginVC = LoginViewController()
@@ -144,10 +123,18 @@ extension MyReviewViewController: UITableViewDelegate {}
 
 extension MyReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        reviewList.count
+        return reviewList.isEmpty ? 1 : reviewList.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if reviewList.isEmpty {
+            let cell = tableView.dequeueReusableCell(withIdentifier: ReviewEmptyViewCell.identifier, for: indexPath) as? ReviewEmptyViewCell ?? ReviewEmptyViewCell()
+            cell.configureForMyReview()
+            cell.selectionStyle = .none
+            return cell
+        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: ReviewTableCell.identifier, for: indexPath) as? ReviewTableCell ?? ReviewTableCell()
         cell.myPageDataBind(response: reviewList[indexPath.row], nickname: nickname)
         cell.handler = { [weak self] in
@@ -175,7 +162,6 @@ extension MyReviewViewController {
             switch result {
             case .success(let response):
                 self.reviewList = response.dataList
-                self.checkReviewCount()
                 self.myReviewView.myReviewTableView.reloadData()
                 
             case .failure(let error):
