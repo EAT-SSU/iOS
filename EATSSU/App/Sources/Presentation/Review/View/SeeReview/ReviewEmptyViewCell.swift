@@ -28,7 +28,7 @@ final class ReviewEmptyViewCell: UITableViewCell {
     private lazy var mainLabel: UILabel = {
         let label = UILabel()
         label.text = "아직 작성된 리뷰가 없어요!"
-        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textAlignment = .center
         return label

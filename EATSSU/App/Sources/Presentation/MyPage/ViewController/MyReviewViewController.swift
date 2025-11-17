@@ -119,7 +119,14 @@ final class MyReviewViewController: BaseViewController {
     }
 }
 
-extension MyReviewViewController: UITableViewDelegate {}
+extension MyReviewViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if reviewList.isEmpty {
+            return tableView.bounds.height - 150
+        }
+        return UITableView.automaticDimension
+    }
+}
 
 extension MyReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
