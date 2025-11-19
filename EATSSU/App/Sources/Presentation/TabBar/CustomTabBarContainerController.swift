@@ -34,6 +34,15 @@ final class CustomTabBarContainerController: UITabBarController {
     private func setupTabBar() {
         tabBar.tintColor = EATSSUDesignAsset.Color.Main.primary.color
         tabBar.unselectedItemTintColor = .gray500
+        
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        
+        appearance.backgroundColor = .white
+        appearance.shadowColor = .clear
+        
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
     
     private func setupViewControllers() {
