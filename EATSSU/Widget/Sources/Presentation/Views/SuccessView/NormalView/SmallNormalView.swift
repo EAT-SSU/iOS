@@ -37,13 +37,22 @@ struct SmallNormalView: View {
 
             VStack {
                 VStack(alignment: .leading, spacing: 12) {
-                    ForEach(entry.menus, id: \.self) { menu in
-                        Text(menu)
+                    if entry.menus.count > 1 && !entry.menus.contains(where: { $0.contains("+") }) {
+                        Text(entry.menus.joined(separator: " + "))
                             .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
                             .foregroundStyle(.black)
                             .lineLimit(nil)
                             .multilineTextAlignment(.leading)
                             .dynamicTypeSize(.xLarge ... .xxxLarge)
+                    } else {
+                        ForEach(entry.menus, id: \.self) { menu in
+                            Text(menu)
+                                .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
+                                .foregroundStyle(.black)
+                                .lineLimit(nil)
+                                .multilineTextAlignment(.leading)
+                                .dynamicTypeSize(.xLarge ... .xxxLarge)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
