@@ -37,6 +37,7 @@ class BaseViewController: UIViewController {
 
     override init(nibName _: String?, bundle _: Bundle?) {
         super.init(nibName: nil, bundle: nil)
+        self.hidesBottomBarWhenPushed = shouldHideTabBar
     }
 
     @available(*, unavailable)

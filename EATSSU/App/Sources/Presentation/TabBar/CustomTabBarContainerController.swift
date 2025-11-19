@@ -6,114 +6,143 @@
 //
 
 import UIKit
-import SnapKit
 
-final class CustomTabBarContainerController: BaseViewController {
+import EATSSUDesign
+
+final class CustomTabBarContainerController: UITabBarController {
 
     // MARK: - Properties
-
-    private let contentContainerView = UIView()
-    private let tabBarView = CustomTabBarView()
-    private let viewControllers: [UINavigationController] = [
+    
+    private var tabViewControllers: [UINavigationController] = [
         UINavigationController(rootViewController: HomeViewController()),
         UINavigationController(rootViewController: MainMapViewController()),
         UINavigationController(rootViewController: MyPageViewController())
     ]
-    private var currentIndex = 0
-    private var contentBottomConstraint: Constraint?
     
-    // MARK: - View Setup
-
-    override func configureUI() {
-        view.addSubview(contentContainerView)
-        view.addSubview(tabBarView)
-
-        tabBarView.buttonTapped = { [weak self] index in
-            guard let self = self else { return }
-
-            if index == 1 {
-                //  firebase - click_map 이벤트 호출
-                MapAnalyticsManager.shared.logClickMap()
-            }
-            
-            // 마이페이지와 지도는 로그인 필요
-            // TODO: 지도는 서버팀과 함께 나중에 둘러보기 상태에서보 "전체" 카테고리는 볼 수 있게 수정
-            if (index == 1 || index == 2), RealmService.shared.isAccessTokenPresent() == false {
-                self.presentLoginAlert()
-                return
-            }
-
-            // 같은 탭 다시 클릭 시 처리
-            if index == self.currentIndex {
-                if index == 0 {
-                    // 학식 탭: 오늘이 아니면 오늘로 이동
-                    if let nav = self.viewControllers[index] as? UINavigationController,
-                       let homeVC = nav.viewControllers.first as? HomeViewController {
-                        homeVC.resetToToday()
-                    }
-                } else if index == 1 {
-                    // 지도 탭: 콘텐츠 리로드
-                    if let nav = self.viewControllers[index] as? UINavigationController,
-                       let mapVC = nav.viewControllers.first as? MainMapViewController {
-                        mapVC.reloadContent()
-                    }
-                }
-            }
-
-            self.switchToViewController(at: index)
-        }
-        
-        // 각 네비게이션 컨트롤러의 delegate 설정
-        viewControllers.forEach { navController in
-            navController.delegate = self
-            navController.setNavigationBarHidden(false, animated: false)
-        }
-    }
-
-    override func setLayout() {
-        tabBarView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(80)
-        }
-        
-        contentContainerView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
-        }
-    }
-
     // MARK: - Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        switchToViewController(at: currentIndex)
-    }
-
-    // MARK: - Navigation Control
-
-    /// 탭 전환 처리
-    private func switchToViewController(at index: Int) {
-        contentContainerView.subviews.forEach { $0.removeFromSuperview() }
         
-        let selectedNav = viewControllers[index]
-        
-        contentContainerView.addSubview(selectedNav.view)
-        selectedNav.view.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
-        tabBarView.setSelectedIndex(index)
-        currentIndex = index
-        
-        // 현재 표시 중인 VC의 shouldHideTabBar 확인
-        updateTabBarVisibility(for: selectedNav.topViewController)
+        setupTabBar()
+        setupViewControllers()
+        delegate = self
     }
     
-    /// 탭바 가시성 업데이트
-    private func updateTabBarVisibility(for viewController: UIViewController?) {
-        guard let vc = viewController as? BaseViewController else { return }
-        setTabBarHidden(vc.shouldHideTabBar, animated: true)
+    // MARK: - Setup
+    
+    private func setupTabBar() {
+        tabBar.tintColor = EATSSUDesignAsset.Color.Main.primary.color
+        tabBar.unselectedItemTintColor = .gray500
     }
+    
+    private func setupViewControllers() {
+        // Home Tab
+        let homeNav = tabViewControllers[0]
+        let mealImage = EATSSUDesignAsset.Images.tabMeal.image
+            .resized(to: CGSize(width: 23, height: 23))
+            .withRenderingMode(.alwaysOriginal)
+        let mealSelectedImage = EATSSUDesignAsset.Images.tabMealSelected.image
+            .resized(to: CGSize(width: 23, height: 23))
+            .withRenderingMode(.alwaysOriginal)
+        
+        homeNav.tabBarItem = UITabBarItem(
+            title: "학식",
+            image: mealImage,
+            selectedImage: mealSelectedImage
+        )
+        
+        // Map Tab
+        let mapNav = tabViewControllers[1]
+        let mapImage = EATSSUDesignAsset.Images.tabMap.image
+            .resized(to: CGSize(width: 23, height: 23))
+            .withRenderingMode(.alwaysOriginal)
+        let mapSelectedImage = EATSSUDesignAsset.Images.tabMapSelected.image
+            .resized(to: CGSize(width: 23, height: 23))
+            .withRenderingMode(.alwaysOriginal)
+        
+        mapNav.tabBarItem = UITabBarItem(
+            title: "지도",
+            image: mapImage,
+            selectedImage: mapSelectedImage
+        )
+        
+        // MyPage Tab
+        let myPageNav = tabViewControllers[2]
+        let mypageImage = EATSSUDesignAsset.Images.tabMypage.image
+            .resized(to: CGSize(width: 44, height: 23))
+            .withRenderingMode(.alwaysOriginal)
+        let mypageSelectedImage = EATSSUDesignAsset.Images.tabMypageSelected.image
+            .resized(to: CGSize(width: 44, height: 23))
+            .withRenderingMode(.alwaysOriginal)
+        
+        myPageNav.tabBarItem = UITabBarItem(
+            title: "마이",
+            image: mypageImage,
+            selectedImage: mypageSelectedImage
+        )
+        
+        // 폰트 설정
+        let normalAttributes: [NSAttributedString.Key: Any] = [
+            .font: EATSSUDesignFontFamily.Pretendard.regular.font(size: 11),
+            .foregroundColor: UIColor.gray500
+        ]
+        let selectedAttributes: [NSAttributedString.Key: Any] = [
+            .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 11),
+            .foregroundColor: EATSSUDesignAsset.Color.Main.primary.color
+        ]
+        
+        tabViewControllers.forEach { nav in
+            nav.tabBarItem.setTitleTextAttributes(normalAttributes, for: .normal)
+            nav.tabBarItem.setTitleTextAttributes(selectedAttributes, for: .selected)
+        }
+        
+        self.viewControllers = tabViewControllers
+    }
+    
+    // MARK: - Public Interface
+    
+    /// 외부에서 탭 전환 요청 시 사용
+    public func setTab(index: Int) {
+        guard index < tabViewControllers.count else { return }
+        selectedIndex = index
+    }
+    
+    /// 특정 인덱스의 네비게이션 컨트롤러를 반환
+    public func getNavController(at index: Int) -> UINavigationController? {
+        guard index < tabViewControllers.count else { return nil }
+        return tabViewControllers[index]
+    }
+    
+    /// 공용 다이얼로그(팝업)를 표시하는 함수
+    public func showDialog(
+        title: String,
+        message: String,
+        cancelButtonTitle: String = "취소하기",
+        confirmButtonTitle: String = "확인",
+        confirmAction: @escaping () -> Void
+    ) {
+        let dialogView = EATSSUDialogView()
+        
+        dialogView.configure(title: title, message: message)
+        dialogView.setButtonTitles(cancel: cancelButtonTitle, confirm: confirmButtonTitle)
+        
+        dialogView.cancelButton.addAction(UIAction { _ in
+            dialogView.removeFromSuperview()
+        }, for: .touchUpInside)
+        
+        dialogView.confirmButton.addAction(UIAction { _ in
+            confirmAction()
+            dialogView.removeFromSuperview()
+        }, for: .touchUpInside)
+        
+        self.view.addSubview(dialogView)
+        dialogView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Private Helpers
     
     /// 로그인 필요 시 알림창 표시
     private func presentLoginAlert() {
@@ -126,10 +155,7 @@ final class CustomTabBarContainerController: BaseViewController {
         let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
             self?.navigateToLogin()
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { [weak self] _ in
-            guard let self = self else { return }
-            self.tabBarView.setSelectedIndex(self.currentIndex)
-        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
 
         alert.addAction(confirmAction)
         alert.addAction(cancelAction)
@@ -146,102 +172,43 @@ final class CustomTabBarContainerController: BaseViewController {
             window.replaceRootViewController(loginVC)
         }
     }
-    
-    /// 공용 다이얼로그(팝업)를 표시하는 함수
-    public func showDialog(
-            title: String,
-            message: String,
-            cancelButtonTitle: String = "취소하기",
-            confirmButtonTitle: String = "확인",
-            confirmAction: @escaping () -> Void
-        ) {
-            let dialogView = EATSSUDialogView()
-            
-            // 다이얼로그 내용 설정
-            dialogView.configure(title: title, message: message)
-            dialogView.setButtonTitles(cancel: cancelButtonTitle, confirm: confirmButtonTitle)
-            
-            // '취소' 버튼 액션: 팝업 닫기
-            dialogView.cancelButton.addAction(UIAction { _ in
-                dialogView.removeFromSuperview()
-            }, for: .touchUpInside)
-            
-            // '확인' 버튼 액션: 전달받은 클로저 실행 후 팝업 닫기
-            dialogView.confirmButton.addAction(UIAction { _ in
-                confirmAction()
-                dialogView.removeFromSuperview()
-            }, for: .touchUpInside)
-            
-            self.view.addSubview(dialogView)
-            dialogView.snp.makeConstraints {
-                $0.edges.equalToSuperview()
-            }
-        }
-
-    // MARK: - Public Interface
-
-    /// 외부에서 탭 전환 요청 시 사용
-    public func setTab(index: Int) {
-        switchToViewController(at: index)
-    }
-    
-    /// 특정 인덱스의 네비게이션 컨트롤러를 반환
-    public func getNavController(at index: Int) -> UINavigationController? {
-        guard index < viewControllers.count else { return nil }
-        return viewControllers[index]
-    }
-
-    /// 탭바를 숨기거나 표시하는 메서드
-    public func setTabBarHidden(_ hidden: Bool, animated: Bool) {
-        guard tabBarView.isHidden != hidden else { return }
-        
-        // 제약 업데이트
-        contentBottomConstraint?.deactivate()
-        contentContainerView.snp.makeConstraints {
-            if hidden {
-                contentBottomConstraint = $0.bottom.equalToSuperview().constraint
-            } else {
-                contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
-            }
-        }
-        
-        if animated {
-            UIView.animate(withDuration: 0.3) {
-                self.tabBarView.alpha = hidden ? 0 : 1
-                self.view.layoutIfNeeded()
-            } completion: { _ in
-                self.tabBarView.isHidden = hidden
-            }
-        } else {
-            self.tabBarView.alpha = hidden ? 0 : 1
-            self.tabBarView.isHidden = hidden
-            self.view.layoutIfNeeded()
-        }
-    }
 }
 
-// MARK: - UINavigationControllerDelegate
+// MARK: - UITabBarControllerDelegate
 
-extension CustomTabBarContainerController: UINavigationControllerDelegate {
-    func navigationController(
-        _ navigationController: UINavigationController,
-        willShow viewController: UIViewController,
-        animated: Bool
-    ) {
-        guard let vc = viewController as? BaseViewController else { return }
-        let shouldHide = vc.shouldHideTabBar
+extension CustomTabBarContainerController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        guard let navController = viewController as? UINavigationController,
+              let index = tabViewControllers.firstIndex(of: navController) else {
+            return true
+        }
         
-        contentBottomConstraint?.deactivate()
-        contentContainerView.snp.makeConstraints {
-            if shouldHide {
-                contentBottomConstraint = $0.bottom.equalToSuperview().constraint
-            } else {
-                contentBottomConstraint = $0.bottom.equalTo(tabBarView.snp.top).constraint
+        // 지도 탭 클릭 시 Firebase 이벤트 호출
+        if index == 1 {
+            MapAnalyticsManager.shared.logClickMap()
+        }
+        
+        // 마이페이지와 지도는 로그인 필요
+        if (index == 1 || index == 2), RealmService.shared.isAccessTokenPresent() == false {
+            presentLoginAlert()
+            return false
+        }
+        
+        // 같은 탭 다시 클릭 시 처리
+        if index == selectedIndex {
+            if index == 0 {
+                // 학식 탭: 오늘이 아니면 오늘로 이동
+                if let homeVC = navController.viewControllers.first as? HomeViewController {
+                    homeVC.resetToToday()
+                }
+            } else if index == 1 {
+                // 지도 탭: 콘텐츠 리로드
+                if let mapVC = navController.viewControllers.first as? MainMapViewController {
+                    mapVC.reloadContent()
+                }
             }
         }
         
-        self.tabBarView.alpha = shouldHide ? 0 : 1
-        self.tabBarView.isHidden = shouldHide
-        self.view.layoutIfNeeded()
+        return true
     }
 }
