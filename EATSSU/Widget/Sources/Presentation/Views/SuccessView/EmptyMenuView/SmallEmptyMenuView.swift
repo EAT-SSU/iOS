@@ -13,9 +13,7 @@ struct SmallEmptyMenuView: View {
     var entry: ESEntry
 
     var body: some View {
-        Spacer()
-
-        VStack {
+        VStack(spacing: 8) {
             HStack {
                 Text(entry.restaurantName)
                     .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
@@ -29,17 +27,20 @@ struct SmallEmptyMenuView: View {
                         .dynamicTypeSize(.xLarge ... .xxxLarge)
                 }
 
-                Spacer()
+                Spacer(minLength: 4)
 
                 Image(asset: EATSSUDesignAsset.Images.miniLogo)
                     .resizable()
                     .frame(width: 10, height: 10)
             }
-
-            Spacer()
+            .padding(.horizontal, 8)
 
             VStack {
+                Spacer(minLength: 0)
+                
                 Image(asset: EATSSUDesignAsset.Images.noMenuInfoSign)
+                
+                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
@@ -47,8 +48,7 @@ struct SmallEmptyMenuView: View {
                     .fill(EATSSUDesignAsset.Color.GrayScale.gray100.swiftUIColor)
             )
         }
+        .padding(12)
         .background(Color.white)
-
-        Spacer()
     }
 }

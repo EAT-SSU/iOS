@@ -13,18 +13,16 @@ struct MediumErrorView: View {
     var entry: ESEntry
 
     var body: some View {
-        VStack {
-            Spacer()
-
+        VStack(spacing: 8) {
             HStack {
                 Text(entry.restaurantName)
-                    .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
+                    .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 12))
                     .foregroundStyle(.black)
                     .dynamicTypeSize(.xLarge ... .xxxLarge)
 
                 if entry.timeSlot == "MORNING" || entry.timeSlot == "LUNCH" || entry.timeSlot == "DINNER" {
                     Text(entry.timeSlot == "MORNING" ? "조식" : entry.timeSlot == "LUNCH" ? "중식" : "석식")
-                        .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 8))
+                        .font(EATSSUDesignFontFamily.Pretendard.regular.swiftUIFont(size: 10))
                         .foregroundStyle(.black)
                         .dynamicTypeSize(.xLarge ... .xxxLarge)
                 }
@@ -35,11 +33,14 @@ struct MediumErrorView: View {
                     .resizable()
                     .frame(width: 44, height: 14)
             }
-
-            Spacer()
+            .padding(8)
 
             VStack {
+                Spacer(minLength: 0)
+                
                 Image(asset: EATSSUDesignAsset.Images.networkErrorInfoMediumSign)
+                
+                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
@@ -47,6 +48,7 @@ struct MediumErrorView: View {
                     .fill(EATSSUDesignAsset.Color.GrayScale.gray100.swiftUIColor)
             )
         }
+        .padding(12)
         .background(Color.white)
     }
 }
