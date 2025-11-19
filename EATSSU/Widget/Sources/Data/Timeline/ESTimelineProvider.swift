@@ -5,17 +5,16 @@
 //  Created by JIWOONG CHOI on 12/31/24.
 //
 
-import Moya
-import RxMoya
-import RxSwift
+import Combine
 import WidgetKit
+
+import Moya
 
 // 위젯의 타임라인 데이터를 제공하는 프로바이더 구조체
 struct ESTimelineProvider: AppIntentTimelineProvider {
     typealias Intent = SelectRestaurant // 사용자가 선택한 식당 정보를 저장하는 인텐트
     typealias Entry = ESEntry // 위젯에 표시될 데이터 구조체
 
-    private let disposeBag = DisposeBag() // RxSwift의 메모리 관리를 위한 DisposeBag
     private let userDefaults = UserDefaults(suiteName: Bundle.main.infoDictionary?["AppGroupID"] as? String)
     
     // 위젯이 처음 로드될 때 보여줄 기본 데이터
@@ -50,7 +49,6 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         if !context.isPreview {
             checkForWidgetEvents(configuration: configuration)
         }
-        let updateInterval: TimeInterval = 60 * 60 // 1시간마다 업데이트
         let currentDate = Date()
         let formattedDate = formatDate(currentDate) // 현재 날짜를 문자열로 변환
         let restaurant = configuration.selectedRestaurant.rawValue // 선택된 식당의 rawValue
@@ -60,16 +58,9 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
             print("Requesting menu for date: \(formattedDate), restaurant: \(restaurant), time: \(timeSlot)")
         #endif
 
-        // 초기 기본 엔트리 생성 (네트워크 요청 이전 기본값)
-        let initialEntry = ESEntry(
-            date: currentDate,
-            restaurantName: configuration.selectedRestaurant.displayName,
-            timeSlot: timeSlot
-        )
-        var timeline = Timeline(entries: [initialEntry], policy: .after(currentDate.addingTimeInterval(updateInterval)))
-
         let provider = MoyaProvider<HomeRouter>() // Moya를 이용한 네트워크 요청 객체 생성
-
+        var timeline: Timeline<ESEntry>
+        
         do {
             // 네트워크 요청을 통해 메뉴 데이터를 가져옴
             let menus = try await fetchMenu(provider: provider, date: formattedDate, restaurant: restaurant, time: timeSlot)
@@ -81,7 +72,8 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
             )
 
             // 새로운 데이터로 타임라인 업데이트
-            timeline = Timeline(entries: [updatedEntry], policy: .atEnd)
+            let nextUpdate = calculateNextUpdateTime(from: currentDate)
+            timeline = Timeline(entries: [updatedEntry], policy: .after(nextUpdate))
         } catch {
             #if DEBUG
                 print("Error: \(error.localizedDescription)") // 네트워크 요청 실패 시 오류 출력
@@ -94,8 +86,8 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
                 timeSlot: timeSlot,
                 isError: true
             )
-            timeline = Timeline(entries: [errorEntry], policy: .atEnd)
-        }
+            let retryDate = currentDate.addingTimeInterval(300)
+            timeline = Timeline(entries: [errorEntry], policy: .after(retryDate))        }
 
         return timeline
     }
@@ -116,19 +108,9 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
 
     // 서버에서 특정 날짜, 식당, 시간대의 메뉴 정보를 가져오는 함수
     private func fetchMenu(provider: MoyaProvider<HomeRouter>, date: String, restaurant: String, time: String) async throws -> [String] {
-        try await withCheckedThrowingContinuation { continuation in
-            provider.rx.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
-                .map(BaseResponse<[ChangeMenuTableResponse]>.self) // 응답을 모델로 변환
-                .subscribe(onSuccess: { response in
-                    // 서버 응답에서 메뉴 이름만 추출
-                    let menuNames = response.result.flatMap { $0.briefMenus.map(\.name) }
-                    continuation.resume(returning: menuNames)
-                }, onFailure: { error in
-                    print("RxMoya Error: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
-                })
-                .disposed(by: disposeBag) // DisposeBag을 이용해 메모리 관리
-        }
+        let response = try await provider.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
+        let decoded = try response.map(BaseResponse<[ChangeMenuTableResponse]>.self)
+        return decoded.result.flatMap { $0.briefMenus.map(\.name) }
     }
 
     // Date 객체를 "yyyyMMdd" 형식의 문자열로 변환하는 함수
@@ -146,6 +128,41 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         case 10 ..< 16: return "LUNCH"
         case 16 ..< 24: return "DINNER"
         default: return "CLOSED"
+        }
+    }
+    
+    private func calculateNextUpdateTime(from date: Date) -> Date {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        
+        if hour < 10 {
+            // 현재 아침(0-10시) → 10시에 점심으로 전환
+            return calendar.date(bySettingHour: 10, minute: 0, second: 0, of: date) ?? date
+        } else if hour < 16 {
+            // 현재 점심(10-16시) → 16시에 저녁으로 전환
+            return calendar.date(bySettingHour: 16, minute: 0, second: 0, of: date) ?? date
+        } else {
+            // 현재 저녁(16-24시) → 다음날 0시에 아침으로 전환
+            if let tomorrow = calendar.date(byAdding: .day, value: 1, to: date) {
+                return calendar.startOfDay(for: tomorrow)
+            }
+            return date
+        }
+    }
+}
+
+// MARK: - Moya Async Extension
+extension MoyaProvider {
+    func request(_ target: Target) async throws -> Response {
+        try await withCheckedThrowingContinuation { continuation in
+            self.request(target) { result in
+                switch result {
+                case .success(let response):
+                    continuation.resume(returning: response)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
         }
     }
 }

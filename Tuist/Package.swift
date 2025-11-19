@@ -53,7 +53,6 @@ let package = Package(
         .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.1.0"),
         .package(url: "https://github.com/google/GoogleAppMeasurement", from: "11.1.0"),
         .package(url: "https://github.com/realm/realm-swift", from: "20.0.0"),
-        .package(url: "https://github.com/ReactiveX/RxSwift", from: "6.7.1"),
         .package(url: "https://github.com/navermaps/SPM-NMapsMap", from: "3.20.0"),
 
     ]

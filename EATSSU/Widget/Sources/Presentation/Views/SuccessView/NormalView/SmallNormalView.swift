@@ -13,9 +13,7 @@ struct SmallNormalView: View {
     var entry: ESEntry
 
     var body: some View {
-        Spacer()
-
-        VStack {
+        VStack(spacing: 8) {
             HStack {
                 Text(entry.restaurantName)
                     .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
@@ -29,28 +27,27 @@ struct SmallNormalView: View {
                         .dynamicTypeSize(.xLarge ... .xxxLarge)
                 }
 
-                Spacer()
+                Spacer(minLength: 4)
 
                 Image(asset: EATSSUDesignAsset.Images.miniLogo)
                     .resizable()
                     .frame(width: 10, height: 10)
             }
-
-            Spacer()
+            .padding(8)
 
             VStack {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
-                    ForEach(entry.menus.prefix(8), id: \.self) { menu in
+                VStack(alignment: .leading, spacing: 12) {
+                    ForEach(entry.menus, id: \.self) { menu in
                         Text(menu)
                             .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
                             .foregroundStyle(.black)
-                            .lineLimit(1)
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
                             .dynamicTypeSize(.xLarge ... .xxxLarge)
                     }
                 }
-                .padding(5)
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(8)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
@@ -58,8 +55,7 @@ struct SmallNormalView: View {
                     .fill(EATSSUDesignAsset.Color.GrayScale.gray100.swiftUIColor)
             )
         }
+        .padding(12)
         .background(Color.white)
-
-        Spacer()
     }
 }
