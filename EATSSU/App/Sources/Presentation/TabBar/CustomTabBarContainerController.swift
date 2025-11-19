@@ -36,10 +36,9 @@ final class CustomTabBarContainerController: UITabBarController {
         tabBar.unselectedItemTintColor = .gray500
         
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        
+
+        appearance.configureWithDefaultBackground()
         appearance.backgroundColor = .white
-        appearance.shadowColor = .clear
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
