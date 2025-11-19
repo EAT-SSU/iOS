@@ -89,8 +89,8 @@ final class MainMapView: BaseUIView {
 
         // 초기 선택 상태
         selectWhole(true)
-        toggleBackgroundView.addSubview(wholeButton)
         toggleBackgroundView.addSubview(myOnlyButton)
+        toggleBackgroundView.addSubview(wholeButton)
     }
 
     // MARK: - Layout Setup
@@ -108,16 +108,17 @@ final class MainMapView: BaseUIView {
             $0.trailing.lessThanOrEqualToSuperview().inset(15)
         }
 
-        wholeButton.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(4)
-            $0.leading.equalToSuperview().inset(4)
-            $0.width.equalTo(60)
-        }
-
         myOnlyButton.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(4)
-            $0.leading.equalTo(wholeButton.snp.trailing)
-            $0.trailing.equalToSuperview().inset(4)
+            $0.leading.equalToSuperview().inset(4)
+            $0.width.greaterThanOrEqualTo(60)
+        }
+
+        wholeButton.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview().inset(4)
+            $0.leading.equalTo(myOnlyButton.snp.trailing)
+            $0.trailing.equalToSuperview().inset(4)   
+            $0.width.equalTo(60)
         }
     }
 
