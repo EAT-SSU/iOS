@@ -11,8 +11,6 @@ struct ReviewRateResponse: Codable {
     let menuNames: [String]
     let totalReviewCount: Int
     let mainRating: Double?
-    let amountRating: Double?
-    let tasteRating: Double?
     let reviewRatingCount: StarCount
 }
 

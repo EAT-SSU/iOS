@@ -16,13 +16,12 @@ final class SetRateViewController: BaseViewController {
     // MARK: - Properties
 
     private var currentPage: Int = 0 {
-        didSet {
-//            menuLabel.text = "\(selectedList[currentPage]) 을/를 추천하시겠어요?"
-            if currentPage == selectedList.count - 1 {
-                nextButton.setTitle("리뷰 남기기", for: .normal)
+            didSet {
+                // V2 Meal Review는 단일 페이지이므로 항상 '리뷰 남기기'로 표시되어야 함
+                // V1의 페이지 넘김 로직을 제거하고, 항상 리뷰 남기기 버튼을 보여줍니다.
+                nextButton.setTitle("리뷰 남기기", for: .normal) // ✨ 수정: 항상 "리뷰 남기기"로 설정
             }
         }
-    }
 
     private var userPickedImage: UIImage?
     private var reviewList: [(BeforeSelectedImageDTO, UIImage?)] = []
@@ -285,18 +284,23 @@ final class SetRateViewController: BaseViewController {
                     self.likedStates = Array(repeating: false, count: self.selectedList.count)
                     
                     // reviewList 초기화 (API 결과에 따라 갯수 맞춤)
-                    self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
-                                                                               amountRating: nil,
-                                                                               tasteRating: nil,
-                                                                               content: ""),
-                                                        nil), count: self.validMenuIDList.count)
+//                    self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
+//                                                                               amountRating: nil,
+//                                                                               tasteRating: nil,
+//                                                                               content: ""),
+//                                                        nil), count: self.validMenuIDList.count)
+                    self.reviewList = [(BeforeSelectedImageDTO(mainRating: 0,
+                                                                                                   amountRating: nil,
+                                                                                                   tasteRating: nil,
+                                                                                                   content: ""),
+                                                                            nil)] // ✨ 수정: 1개만 초기화
                     
                     // 테이블 뷰 리로드
                     self.menuTableView.reloadData()
                     // viewDidLayoutSubviews를 호출하여 높이 제약조건 업데이트
                     self.view.setNeedsLayout()
                     
-                    // currentPage 초기화
+                    // currentPage 초기화 및 버튼 텍스트 업데이트
                     self.currentPage = 0
                     
                 case .failure(let error):
@@ -528,64 +532,90 @@ final class SetRateViewController: BaseViewController {
     }
 
     @objc
-    func tappedNextButton() {
-        if userReviewTextView.text == "3글자 이상 작성해주세요!" || userReviewTextView.text.count < 3 {
-            showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
-        } else {
-            // 별점 검사: rateView는 메인 별점, quantity/tasteRateView는 사용되지 않으므로 rateView만 확인
-            if rateView.currentStar != 0 /*, quantityRateView.currentStar != 0, tasteRateView.currentStar != 0*/ {
-                // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
-                let param = BeforeSelectedImageDTO(mainRating: rateView.currentStar,
-                                                   amountRating: quantityRateView.currentStar,
-                                                   tasteRating: tasteRateView.currentStar,
-                                                   content: userReviewTextView.text)
+        func tappedNextButton() {
+            // ✨ 수정: V1의 페이지 로직을 제거하고, 바로 데이터 전송 로직 호출
+            if userReviewTextView.text == "메뉴에 대한 상세한 리뷰를 작성해주세요" || userReviewTextView.text.count < 3 {
+                showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
+            } else {
+                // 별점 검사: rateView는 메인 별점
+                if rateView.currentStar != 0 {
+                    // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
+                    let param = BeforeSelectedImageDTO(mainRating: rateView.currentStar,
+                                                       amountRating: quantityRateView.currentStar,
+                                                       tasteRating: tasteRateView.currentStar,
+                                                       content: userReviewTextView.text)
 
-                switch reviewId {
-                case .none:
-                    /// 현재 이미지를 별도 변수에 저장
-                    let currentImage = userPickedImage
-                    reviewList[currentPage] = (param, currentImage)
-                    
-                    /// 현재 페이지가 마지막 메뉴에 대한 리뷰페이지일 때의 액션
-                    if currentPage == selectedList.count - 1 {
+                    switch reviewId {
+                    case .none:
+                        /// 현재 이미지를 별도 변수에 저장
+                        let currentImage = userPickedImage
+                        // 단일 페이지이므로 reviewList의 0번 인덱스에 저장
+                        reviewList[0] = (param, currentImage) // ✨ 수정: currentPage 대신 0번 인덱스 사용
+                        
                         navigationController?.isNavigationBarHidden = false
-                        sendDataIfCurrentPageIsLast()
-                    } else {
-                        // 다음 리뷰를 위해 현재 화면의 이미지 초기화
-                        userPickedImage = nil
-                        userReviewImageView.image = nil
-                        imageCountLabel.text = "사진 0/1"
-                        prepareForNextReview()
+                        sendDataIfCurrentPageIsLast() // ✨ 수정: 바로 API 전송
+                        
+                    case let .some(reviewID):
+                        // 단일 리뷰 수정 로직 (기존 로직 유지)
+                        patchFixedReview(reviewId: reviewID, param: param)
                     }
 
-                case let .some(reviewID):
-                    patchFixedReview(reviewId: reviewID, param: param)
+                } else {
+                    showToast(message: "별점을 모두 입력해주세요!", type: .info)
                 }
-
-            } else {
-                showToast(message: "별점을 모두 입력해주세요!", type: .info)
             }
         }
-    }
-
+    
+    // ✨ 수정: V2 Meal Review API를 사용하도록 변경
     private func sendDataIfCurrentPageIsLast() {
+        guard let mealId = mealID else { return } // mealId가 없으면 전송 불가
+
         _Concurrency.Task {
             do {
-                for (index, review) in reviewList.enumerated() {
-                    let (reviewDTO, image) = review
-                    
-                    // Firebase 이벤트 로그
-                    let photoAttached = (image != nil) ? 1 : 0
-                    let rating = reviewDTO.mainRating
-                    let selection = self.selectedList.count
-                    ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
-                    
-                    // 순차적으로 업로드
-                    try await uploadReview(reviewDTO: reviewDTO, image: image, menuId: validMenuIDList[index]) // ✨ 수정: selectedIDList -> validMenuIDList
+                // 1. 이미지 업로드 (만약 이미지가 있다면)
+                var imageUrl: String?
+//                if let image = reviewList.last?.1 { // 마지막 리뷰의 이미지만 사용 (Meal Review는 이미지 1개)
+//                    imageUrl = try await uploadImage(image: image)
+//                }
+//
+                if let image = reviewList.first?.1 { // ✨ 수정: .last? -> .first? 로 변경 (단일 리뷰이므로)
+                                    imageUrl = try await uploadImage(image: image)
+                                }
+                
+                // 2. Meal Review 요청 객체 생성
+                let menuLikes: [MenuLike] = validMenuIDList.enumerated().map { (index, menuId) in
+                    MenuLike(menuId: menuId, isLike: likedStates[index])
                 }
                 
+                // Meal Review는 하나의 평점/내용/이미지를 사용하므로, 마지막 메뉴의 리뷰 데이터를 사용
+//                guard let lastReview = reviewList.last else {
+//                    throw NSError(domain: "ReviewError", code: -1, userInfo: [NSLocalizedDescriptionKey: "리뷰 데이터가 없습니다."])
+//                }
+                
+                guard let lastReview = reviewList.first else { // ✨ 수정: .last? -> .first? 로 변경
+                                    throw NSError(domain: "ReviewError", code: -1, userInfo: [NSLocalizedDescriptionKey: "리뷰 데이터가 없습니다."])
+                                }
+                
+                let request = WriteReviewMealRequest(
+                    mealId: mealId,
+                    rating: lastReview.0.mainRating, // 메인 평점
+                    menuLikes: menuLikes,           // 메뉴별 좋아요 상태
+                    content: lastReview.0.content,  // 리뷰 내용
+                    imageUrls: imageUrl != nil ? [imageUrl!] : nil // 이미지 URL
+                )
+                
+                // Firebase 이벤트 로그 (V1 로그 제거 또는 V2 로직에 맞게 수정 필요)
+                // 현재는 단일 요청으로 통합되었으므로, 마지막 리뷰 기준으로만 로그를 남깁니다.
+                let photoAttached = (imageUrl != nil) ? 1 : 0
+                let rating = lastReview.0.mainRating
+                let selection = self.selectedList.count
+                ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
+
+                // 3. Meal Review 전송
+                try await postMealReview(request: request)
+                
                 await MainActor.run {
-                    self.moveToReviewVC()
+                    self.moveToReviewVC() // ✨ 수정: 성공 시 화면 이동
                 }
                 
             } catch {
@@ -597,18 +627,38 @@ final class SetRateViewController: BaseViewController {
         }
     }
     
-    private func uploadReview(reviewDTO: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) async throws {
-        if let image = image {
-            // 이미지 업로드 후 리뷰 작성
-            let imageUrl = try await uploadImage(image: image)
-            let request = WriteReviewRequest(content: reviewDTO, imageURL: imageUrl)
-            try await postReview(request: request, menuId: menuId)
-        } else {
-            // 이미지 없이 리뷰만 작성
-            let request = WriteReviewRequest(content: reviewDTO, imageURL: "")
-            try await postReview(request: request, menuId: menuId)
+    // ✨ 수정: 기존 uploadReview를 제거하고, postMealReview를 추가
+    private func postMealReview(request: WriteReviewMealRequest) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkService.shared.request(
+                WriteReviewRouter.writeMealReview(param: request),
+                responseType: Bool.self, // 응답 타입이 Bool이라고 가정
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success:
+                    continuation.resume()
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
         }
     }
+    
+    // 이 메서드는 단일 메뉴 리뷰를 위한 것이었으나, 현재 Meal Review 로직에서는 사용되지 않습니다.
+    // Menu Review (V2) 사용 시 재활용 가능성을 위해 주석 처리 없이 남겨둡니다.
+//    private func uploadReview(reviewDTO: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) async throws {
+//        if let image = image {
+//            // 이미지 업로드 후 리뷰 작성
+//            let imageUrl = try await uploadImage(image: image)
+//            let request = WriteReviewRequest(content: reviewDTO, imageURL: imageUrl)
+//            try await postReview(request: request, menuId: menuId)
+//        } else {
+//            // 이미지 없이 리뷰만 작성
+//            let request = WriteReviewRequest(content: reviewDTO, imageURL: "")
+//            try await postReview(request: request, menuId: menuId)
+//        }
+//    }
 
     private func uploadImage(image: UIImage) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
@@ -640,25 +690,25 @@ final class SetRateViewController: BaseViewController {
         closeButton.isHidden = true // Show close button when image is selected
     }
 
-    private func prepareForNextReview() {
-        let setRateVC: SetRateViewController
-        
-        // ✨ 수정: 다음 페이지로 이동할 때 현재 mealId를 전달
-        if let mealId = self.mealID {
-             setRateVC = SetRateViewController(mealId: mealId)
-        } else {
-            // mealId가 없으면 기존처럼 인자 없이 초기화 (예: 고정 메뉴 리뷰 수정 후 다음 단계)
-            setRateVC = SetRateViewController()
-        }
-        
-        setRateVC.dataBind(list: selectedList,
-                           idList: validMenuIDList, // ✨ 수정: selectedIDList -> validMenuIDList
-                           reviewList: reviewList,
-                           currentPage: currentPage + 1)
-        navigationController?.pushViewController(setRateVC, animated: true)
-    }
+//    private func prepareForNextReview() {
+//        let setRateVC: SetRateViewController
+//        
+//        // ✨ 수정: 다음 페이지로 이동할 때 현재 mealId를 전달
+//        if let mealId = self.mealID {
+//             setRateVC = SetRateViewController(mealId: mealId)
+//        } else {
+//            // mealId가 없으면 기존처럼 인자 없이 초기화 (예: 고정 메뉴 리뷰 수정 후 다음 단계)
+//            setRateVC = SetRateViewController()
+//        }
+//        
+//        setRateVC.dataBind(list: selectedList,
+//                           idList: validMenuIDList, // ✨ 수정: selectedIDList -> validMenuIDList
+//                           reviewList: reviewList,
+//                           currentPage: currentPage + 1)
+//        navigationController?.pushViewController(setRateVC, animated: true)
+//    }
 
-    // 리뷰 리스트 보는 화면으로 넘어가도록 하는 함수
+    // ✨ 수정: ReviewViewController로 돌아가는 로직 적용
     private func moveToReviewVC() {
         if let reviewViewController = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) {
             navigationController?.popToViewController(reviewViewController, animated: true)
@@ -690,13 +740,13 @@ final class SetRateViewController: BaseViewController {
 // MARK: - Server
 
 extension SetRateViewController {
-    /// 이미지 O -> URL 받고, URL을 넣어서 리뷰 작성 요청
-    /// 이미지 X -> URL 없이 리뷰 작성 요청
-    /// 이미지가 아예 없을 때 어떤 경우로 빠지는지 보고, 거기에서 호출하도록 하기
-    private func postReview(request: WriteReviewRequest, menuId: Int) async throws {
+    
+    // ✨ 수정: V1 postReview 제거 (V2 Meal Review 사용)
+    // V2 Menu Review API (단일 메뉴 리뷰)
+    private func postMenuReview(request: WriteReviewMenuRequest) async throws {
         try await withCheckedThrowingContinuation { continuation in
             NetworkService.shared.request(
-                WriteReviewRouter.writeNewReview(param: request, menuID: menuId),
+                WriteReviewRouter.writeMenuReview(param: request),
                 responseType: Bool.self,
                 useAuth: true
             ) { result in
@@ -709,6 +759,9 @@ extension SetRateViewController {
             }
         }
     }
+    
+    // V2 Meal Review API (식사 리뷰) - `sendDataIfCurrentPageIsLast()`에서 사용
+    // private func postMealReview(request: WriteReviewMealRequest) async throws { ... } // 위에 정의됨
     
     private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
         NetworkService.shared.request(
@@ -762,16 +815,25 @@ extension SetRateViewController: UIImagePickerControllerDelegate {
 
 extension SetRateViewController: UITextViewDelegate {
     func textView(_: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        let newLength = userReviewTextView.text.count - range.length + text.count
-        maximumWordLabel.text = "\(userReviewTextView.text.count) / 300"
+        let currentText = userReviewTextView.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let newLength = currentText.count + text.count - range.length
+        
+        // 최대 글자수 제한
         if newLength > 300 {
             return false
         }
+        
+        // 글자수 레이블 업데이트는 항상 허용
+        // **주의**: `newLength`는 아직 적용되지 않은 새로운 문자열의 길이
+        let textToDisplay = currentText.replacingCharacters(in: stringRange, with: text)
+        maximumWordLabel.text = "\(textToDisplay.count) / 300"
+        
         return true
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == "3글자 이상 작성해주세요!" {
+        if textView.text == "메뉴에 대한 상세한 리뷰를 작성해주세요" {
             textView.text = ""
             textView.textColor = .black
         }
@@ -779,8 +841,12 @@ extension SetRateViewController: UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
-            textView.text = "3글자 이상 작성해주세요!"
+            textView.text = "메뉴에 대한 상세한 리뷰를 작성해주세요"
             textView.textColor = .gray500
+            maximumWordLabel.text = "0 / 300"
+        } else {
+            // 끝났을 때 현재 글자 수 업데이트
+             maximumWordLabel.text = "\(textView.text.count) / 300"
         }
     }
 }

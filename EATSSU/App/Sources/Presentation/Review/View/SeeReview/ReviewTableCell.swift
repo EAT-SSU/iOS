@@ -23,24 +23,6 @@ final class ReviewTableCell: UITableViewCell {
     // MARK: - UI Components
     
     lazy var totalRateView = RateNumberView()
-    //    lazy var tasteRateView = RateNumberView()
-    //    lazy var quantityRateView = RateNumberView()
-    
-    //    private let tasteLabel: UILabel = {
-    //        let label = UILabel()
-    //        label.text = "맛"
-    //        label.font = .body3
-    //        label.textColor = .black
-    //        return label
-    //    }()
-    
-    //    private let quantityLabel: UILabel = {
-    //        let label = UILabel()
-    //        label.text = "양"
-    //        label.font = .body3
-    //        label.textColor = .black
-    //        return label
-    //    }()
     
     // 태그 표시용 컬렉션 뷰
     private lazy var tagCollectionView: UICollectionView = {
@@ -80,18 +62,9 @@ final class ReviewTableCell: UITableViewCell {
         let label = UILabel()
         label.text = "hellosoongsil1234"
         label.font = .caption1
-        //        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textColor = .black
         return label
     }()
-    
-    //    private var menuNameLabel: UILabel = {
-    //        let label = UILabel()
-    //        label.text = "계란국"
-    //        label.font = .caption3
-    //        label.textColor = .black
-    //        return label
-    //    }()
     
     private let userProfileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -125,27 +98,9 @@ final class ReviewTableCell: UITableViewCell {
         return imageView
     }()
     
-    /// 맛 별점
-    //    lazy var tasteStackView: UIStackView = {
-    //        let stackView = UIStackView(arrangedSubviews: [tasteLabel, tasteRateView])
-    //        stackView.axis = .horizontal
-    //        stackView.spacing = 4.adjusted
-    //        stackView.alignment = .center
-    //        return stackView
-    //    }()
-    
-    /// 양 별점
-    //    lazy var quantityStackView: UIStackView = {
-    //        let stackView = UIStackView(arrangedSubviews: [quantityLabel, quantityRateView])
-    //        stackView.axis = .horizontal
-    //        stackView.spacing = 4.adjusted
-    //        stackView.alignment = .center
-    //        return stackView
-    //    }()
-    
     /// 별점
     lazy var rateStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [totalRateView/*, tasteStackView, quantityStackView*/])
+        let stackView = UIStackView(arrangedSubviews: [totalRateView])
         stackView.axis = .horizontal
         stackView.spacing = 8.adjusted
         stackView.alignment = .center
@@ -154,7 +109,7 @@ final class ReviewTableCell: UITableViewCell {
     
     /// 이름 + 메뉴
     lazy var nameMenuStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [userNameLabel,/* menuNameLabel*/])
+        let stackView = UIStackView(arrangedSubviews: [userNameLabel])
         stackView.axis = .horizontal
         stackView.spacing = 8.adjusted
         stackView.alignment = .center
@@ -187,14 +142,6 @@ final class ReviewTableCell: UITableViewCell {
         return stackView
     }()
     
-    //    lazy var contentStackView: UIStackView = {
-    //        let stackView = UIStackView(arrangedSubviews: [reviewTextView, foodImageView])
-    //        stackView.axis = .vertical
-    //        stackView.spacing = 8.adjusted
-    //        stackView.alignment = .leading
-    //        return stackView
-    //    }()
-    
     // MARK: - Functions
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -219,6 +166,9 @@ final class ReviewTableCell: UITableViewCell {
         sideButton.setImage(UIImage(), for: .normal)
         foodImageView.image = UIImage()
         foodImageView.isHidden = true
+        reviewTextView.text = ""
+        dateLabel.text = ""
+        userNameLabel.text = ""
     }
     
     func setLayout() {
@@ -286,66 +236,46 @@ extension ReviewTableCell: UICollectionViewDataSource {
 // MARK: - Data Bind
 
 extension ReviewTableCell {
+    // ✨ V2 API 데이터 바인딩
     func dataBind(response: MenuDataList) {
-        //        menuNameLabel.text = response.menu
         menuName = response.menu
         userNameLabel.text = response.writerNickname
         totalRateView.setRating(response.mainRating)
-        //        totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        
-        //        if response.tasteRating == nil {
-        //            tasteStackView.isHidden = true
-        //        } else {
-        //            tasteStackView.isHidden = false
-        //            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
-        //        }
-        
-        //        if response.amountRating == nil {
-        //            quantityStackView.isHidden = true
-        //        } else {
-        //            quantityStackView.isHidden = false
-        //            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
-        //        }
         dateLabel.text = response.writedAt
         reviewTextView.text = response.content
         reviewId = response.reviewID
+        
+        // 이미지 처리
         if let firstImageUrl = response.imgURLList.compactMap({ $0 }).first(where: { !$0.isEmpty }) {
             foodImageView.isHidden = false
             foodImageView.kfSetImage(url: firstImageUrl)
         } else {
             foodImageView.isHidden = true
         }
+        
+        // 버튼 설정
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
         
-        
-        //        tags = (response.tags ?? []).map { ($0.name, $0.isLiked) }
-        tags = (response.tags ?? [Tag(name: "기본태그", isLiked: true),
-                                  Tag(name: "추천", isLiked: false)])
-        .map { ($0.name, $0.isLiked) }
+        // ✨ 태그 처리 (V2 API에서는 menuList가 태그 역할)
+        if let menuTags = response.tags, !menuTags.isEmpty {
+            tags = menuTags.map { ($0.name, $0.isLiked) }
+        } else {
+            tags = []
+        }
         tagCollectionView.reloadData()
         
+        // 태그가 없으면 컬렉션뷰 숨기기
+        tagCollectionView.isHidden = tags.isEmpty
     }
     
     func myPageDataBind(response: MyDataList, nickname: String) {
         userNameLabel.text = "\(nickname)"
-        //        menuNameLabel.text = response.menuName
-//        totalRateView.rateNumberLabel.text = "\(response.mainRating)"
-        //        if response.tasteRating == nil {
-        //            tasteStackView.isHidden = true
-        //        } else {
-        //            tasteStackView.isHidden = false
-        //            tasteRateView.rateNumberLabel.text = "\(response.tasteRating ?? 0)"
-        //        }
-        
-        //        if response.amountRating == nil {
-        //            quantityStackView.isHidden = true
-        //        } else {
-        //            quantityStackView.isHidden = false
-        //            quantityRateView.rateNumberLabel.text = "\(response.amountRating ?? 0)"
-        //        }
+        totalRateView.setRating(response.mainRating)
         dateLabel.text = response.writeDate
         reviewTextView.text = response.content
+        
+        // 이미지 처리
         if response.imgURLList.count != 0 {
             if response.imgURLList[0] != "" {
                 foodImageView.isHidden = false
@@ -354,9 +284,15 @@ extension ReviewTableCell {
         } else {
             foodImageView.isHidden = true
         }
+        
+        // 버튼 설정
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.setTitle("", for: .normal)
         reviewId = response.reviewID
+        
+        // 마이페이지에서는 태그 숨김
+        tags = []
+        tagCollectionView.isHidden = true
     }
 }

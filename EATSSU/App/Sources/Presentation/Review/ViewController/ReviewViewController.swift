@@ -491,22 +491,78 @@ extension ReviewViewController {
         }
     }
 
-    // 하단 리뷰 리스트 불러오는 API
+    // ✨ V2 API: 리뷰 리스트 불러오기
     func getReviewList(type: String, menuId _: Int) {
-        reviewProvider.request(.reviewList(type, menuID)) { response in
-            switch response {
-            case let .success(moyaResponse):
-                do {
-                    let responseData = try moyaResponse.map(BaseResponse<ReviewListResponse>.self)
-                    guard let data = responseData.result else { return }
-                    self.reviewList = data.dataList
-                    self.reviewTableView.reloadData()
-                    
-                } catch let err {
-                    print(err.localizedDescription)
+        if type == "FIXED" {
+            getFixedMenuReviewList()
+        } else {
+            getMealReviewList()
+        }
+    }
+    
+    // ✨ V2 API: 고정 메뉴 리뷰 리스트
+    func getFixedMenuReviewList() {
+        NetworkService.shared.request(
+            ReviewRouter.newReviewList(type, menuID, lastReviewId: nil, page: 0, size: 20),
+            responseType: NewMenuListResponse.self,
+            useAuth: false
+        ) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let data):
+                self.reviewList = data.dataList.map { item in
+                    MenuDataList(
+                        reviewID: item.reviewId,
+                        menu: item.menuList?.first?.name ?? "",
+                        writerID: item.writerId,
+                        isWriter: item.isWriter,
+                        writerNickname: item.writerNickname,
+                        mainRating: item.rating,
+                        amountRating: nil,
+                        tasteRating: nil,
+                        writedAt: item.writtenAt,
+                        content: item.content ?? "",
+                        imgURLList: item.imageUrls ?? [],
+                        
+                        tags: item.menuList?.map { Tag(name: $0.name, isLiked: $0.isLike) }
+                    )
                 }
-            case let .failure(err):
-                print(err.localizedDescription)
+                self.reviewTableView.reloadData()
+            case .failure(let error):
+                print("Fixed Menu Review List Error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    // ✨ V2 API: 식단 리뷰 리스트
+    func getMealReviewList() {
+        NetworkService.shared.request(
+            ReviewRouter.newReviewList(type, menuID, lastReviewId: nil, page: nil, size: 20),
+            responseType: NewMenuListResponse.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let data):
+                self.reviewList = data.dataList.map { item in
+                    MenuDataList(
+                        reviewID: item.reviewId,
+                        menu: item.menuList?.map { $0.name }.joined(separator: " + ") ?? "",
+                        writerID: item.writerId,
+                        isWriter: item.isWriter,
+                        writerNickname: item.writerNickname,
+                        mainRating: item.rating,
+                        amountRating: nil,
+                        tasteRating: nil,
+                        writedAt: item.writtenAt,
+                        content: item.content ?? "",
+                        imgURLList: item.imageUrls ?? [],
+                        tags: item.menuList?.map { Tag(name: $0.name, isLiked: $0.isLike) }
+                    )
+                }
+                self.reviewTableView.reloadData()
+            case .failure(let error):
+                print("Meal Review List Error: \(error.localizedDescription)")
             }
         }
     }

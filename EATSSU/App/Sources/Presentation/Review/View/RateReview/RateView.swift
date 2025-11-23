@@ -82,9 +82,13 @@ final class RateView: BaseUIView {
     }
 
     func settingStarForFix(currentStar: Int) {
-        for i in 0 ... currentStar - 1 {
-            buttons[i].setImage(starFillImage, for: .normal)
+        // ✨ 수정: currentStar가 0일 때 0...-1 범위 오류를 방지
+        if currentStar > 0 {
+            for i in 0 ... currentStar - 1 {
+                buttons[i].setImage(starFillImage, for: .normal)
+            }
         }
+        // 빈 별은 currentStar부터 시작
         for i in currentStar ..< starNumber {
             buttons[i].setImage(starEmptyImage, for: .normal)
         }

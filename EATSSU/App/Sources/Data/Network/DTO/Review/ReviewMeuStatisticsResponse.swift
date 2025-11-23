@@ -10,7 +10,6 @@ struct ReviewMeuStatisticsResponse: Codable {
     let totalReviewCount: Int
     let rating: Double
     let likeCount: Int?
-    let dislikeCount: Int?
     let reviewRatingCount: ReviewRatingCount
 }
 

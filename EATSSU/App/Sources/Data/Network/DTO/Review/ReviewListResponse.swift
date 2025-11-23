@@ -36,8 +36,3 @@ struct MenuDataList: Codable {
         case tags
     }
 }
-
-struct Tag: Codable {
-    let name: String
-    let isLiked: Bool
-}
