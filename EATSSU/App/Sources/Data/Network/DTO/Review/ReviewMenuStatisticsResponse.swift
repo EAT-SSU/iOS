@@ -1,11 +1,12 @@
 //
-//  ReviewMeuStatistics.swift
+//  ReviewMenuStatistics.swift
 //  EATSSU
 //
 //  Created by 한금준 on 11/16/25.
 //
 
-struct ReviewMeuStatisticsResponse: Codable {
+// 리뷰V2 api
+struct ReviewMenuStatisticsResponse: Codable {
     let menuName: String
     let totalReviewCount: Int
     let rating: Double

@@ -5,14 +5,13 @@
 //  Created by 한금준 on 11/16/25.
 //
 
+// 리뷰V2 api
 struct ReviewMealStatisticsResponse: Codable {
-    // 식단에 포함된 메뉴 리스트
-    let menuList: [MenuInfo] // Meal API 고유 필드
-    
+    let menuList: [MenuInfo]
     let totalReviewCount: Int
-    let rating: Double // 메인 평균 별점
+    let rating: Double
     let likeCount: Int?
-    let reviewRatingCount: ReviewRatingCount // 별점별 카운트
+    let reviewRatingCount: ReviewRatingCount 
 }
 
 struct MenuInfo: Codable {

@@ -1,17 +1,17 @@
+////
+////  FixedReviewRateResponse.swift
+////  EAT-SSU
+////
+////  Created by 박윤빈 on 3/18/24.
+////
 //
-//  FixedReviewRateResponse.swift
-//  EAT-SSU
+//import Foundation
 //
-//  Created by 박윤빈 on 3/18/24.
+//// MARK: - FixedReviewRateResponse
 //
-
-import Foundation
-
-// MARK: - FixedReviewRateResponse
-
-struct FixedReviewRateResponse: Codable {
-    let menuName: String
-    let totalReviewCount: Int
-    let mainRating, amountRating, tasteRating: Double?
-    let reviewRatingCount: StarCount
-}
+//struct FixedReviewRateResponse: Codable {
+//    let menuName: String
+//    let totalReviewCount: Int
+//    let mainRating, amountRating, tasteRating: Double?
+//    let reviewRatingCount: StarCount
+//}
