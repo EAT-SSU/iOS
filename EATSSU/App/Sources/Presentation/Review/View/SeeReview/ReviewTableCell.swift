@@ -2,13 +2,11 @@
 //  ReviewTableCell.swift
 //  EatSSU-iOS
 //
-//  Created by 박윤빈 on 2023/03/23.
+//  Updated to use ReviewListItem instead of MenuDataList
 //
 
 import UIKit
-
 import SnapKit
-
 import EATSSUDesign
 
 final class ReviewTableCell: UITableViewCell {
@@ -236,17 +234,20 @@ extension ReviewTableCell: UICollectionViewDataSource {
 // MARK: - Data Bind
 
 extension ReviewTableCell {
-    // ✨ V2 API 데이터 바인딩
-    func dataBind(response: MenuDataList) {
-        menuName = response.menu
+    // ✨ V2 API: ReviewListItem 직접 바인딩
+    func dataBind(response: ReviewListItem) {
+        // 메뉴명 설정 (여러 메뉴인 경우 " + "로 연결)
+        menuName = response.menu?.map { $0.name }.joined(separator: " + ") ?? ""
+        
+        // 기본 정보
         userNameLabel.text = response.writerNickname
-        totalRateView.setRating(response.mainRating)
-        dateLabel.text = response.writedAt
-        reviewTextView.text = response.content
-        reviewId = response.reviewID
+        totalRateView.setRating(Int(response.rating))
+        dateLabel.text = response.writtenAt
+        reviewTextView.text = response.content ?? ""
+        reviewId = response.reviewId
         
         // 이미지 처리
-        if let firstImageUrl = response.imgURLList.compactMap({ $0 }).first(where: { !$0.isEmpty }) {
+        if let firstImageUrl = response.imageUrls?.first(where: { !$0.isEmpty }) {
             foodImageView.isHidden = false
             foodImageView.kfSetImage(url: firstImageUrl)
         } else {
@@ -257,9 +258,9 @@ extension ReviewTableCell {
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
         
-        // ✨ 태그 처리 (V2 API에서는 menuList가 태그 역할)
-        if let menuTags = response.tags, !menuTags.isEmpty {
-            tags = menuTags.map { ($0.name, $0.isLiked) }
+        // ✨ 태그 처리 (V2 API에서는 menu가 태그 역할)
+        if let menuTags = response.menu, !menuTags.isEmpty {
+            tags = menuTags.map { ($0.name, $0.isLike) }
         } else {
             tags = []
         }
@@ -269,6 +270,7 @@ extension ReviewTableCell {
         tagCollectionView.isHidden = tags.isEmpty
     }
     
+    // 마이페이지용 바인딩 (기존 호환성 유지)
     func myPageDataBind(response: MyDataList, nickname: String) {
         userNameLabel.text = "\(nickname)"
         totalRateView.setRating(response.mainRating)

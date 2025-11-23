@@ -18,7 +18,6 @@ final class ReviewEmptyViewCell: UITableViewCell {
     // MARK: - UI Components
     private lazy var noReviewImageView: UIImageView = {
         let imageView = UIImageView()
-//        imageView.image = EATSSUDesignAsset.Images.noReview.image
         imageView.tintColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return imageView
     }()
@@ -74,14 +73,11 @@ final class ReviewEmptyViewCell: UITableViewCell {
     // MARK: - Configure
     func configure(isTokenExist: Bool) {
         if isTokenExist {
-//            noReviewImageView.image = ImageLiteral.noReview
             noReviewImageView.image = EATSSUDesignAsset.Images.noReview.image
             titleLabel.text = "아직 작성된 리뷰가 없어요"
             descriptionLabel.text = "메뉴에 가장 먼저 리뷰를 남겨주세요!"
         } else {
             noReviewImageView.image = ImageLiteral.pleaseLogin
-//            titleLabel.text = "로그인이 필요합니다"
-//            descriptionLabel.text = "리뷰 작성을 위해 먼저 로그인 해주세요"
         }
     }
 }

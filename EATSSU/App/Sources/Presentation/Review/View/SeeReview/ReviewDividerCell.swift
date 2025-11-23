@@ -46,7 +46,6 @@ final class ReviewDividerCell: UITableViewCell {
     required init?(coder: NSCoder) { fatalError() }
     
     func configure(reviewCount: Int) {
-//        label.text = "리뷰 \(reviewCount)"
         let text = "리뷰 \(reviewCount)"
         let attributed = NSMutableAttributedString(string: text)
         let range = (text as NSString).range(of: "\(reviewCount)")

@@ -15,10 +15,8 @@ final class ReviewRateViewCell: UITableViewCell {
     static let identifier = "ReviewRateViewCell"
     var handler: (() -> Void)?
     var totalRate: Double = 0
-    var reviewData: ReviewRateResponse?
 
     // MARK: - UI Components
-    
     private let menuContainer: UIView = {
         let view = UIView()
         view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
@@ -203,7 +201,6 @@ final class ReviewRateViewCell: UITableViewCell {
         backgroundColor = .white
 
         menuContainer.snp.makeConstraints { make in
-//            make.top.equalTo(safeAreaLayoutGuide.snp.topMargin).offset(10)
             make.top.equalTo(contentView.snp.top).offset(0)
             make.centerX.equalToSuperview()
             make.width.equalTo(320.adjusted)
@@ -282,66 +279,69 @@ final class ReviewRateViewCell: UITableViewCell {
     }
 }
 
+// MARK: - V2 API Data Binding Extensions
+
 extension ReviewRateViewCell {
-    func fixMenuDataBind(data: FixedReviewRateResponse) {
-//        let total = String(format: "%.1f", data.mainRating ?? 0)
-        let ratingValue = data.mainRating ?? 0
-        if ratingValue == 0.0 {
+    // ✨ Meal 통계 데이터 바인딩
+    func configureWithMealStatistics(_ data: ReviewMealStatisticsResponse) {
+        // 메뉴명 설정 (여러 메뉴를 " + "로 연결)
+        let menuNames = data.menuList.map { $0.name }
+        menuLabel.text = menuNames.joined(separator: " + ")
+        
+        // 평균 별점 설정
+        setRating(data.rating ?? 0)
+        
+        // 별점 차트 업데이트
+        updateRatingChart(with: data.reviewRatingCount, totalCount: data.totalReviewCount)
+    }
+    
+    // ✨ Menu 통계 데이터 바인딩
+    func configureWithMenuStatistics(_ data: ReviewMenuStatisticsResponse) {
+        // 메뉴명 설정
+        menuLabel.text = data.menuName
+        
+        // 평균 별점 설정
+        setRating(data.rating ?? 0)
+        
+        // 별점 차트 업데이트
+        updateRatingChart(with: data.reviewRatingCount, totalCount: data.totalReviewCount)
+    }
+    
+    // MARK: - Private Helper Methods
+    
+    /// 평균 별점 표시
+    private func setRating(_ rating: Double) {
+        totalRate = rating
+        
+        if rating == 0.0 {
             rateNumLabel.text = "-"
         } else {
-            let total = String(format: "%.1f", ratingValue)
-            rateNumLabel.text = "\(total)"
-        }
-        menuLabel.text = data.menuName
-//        rateNumLabel.text = "\(total)"
-//        totalRate = data.mainRating ?? 0
-        totalRate = ratingValue
-
-        fiveForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.fiveStarCount / max(data.totalReviewCount, 1))
-        }
-        fourForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.fourStarCount / max(data.totalReviewCount, 1))
-        }
-        threeForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.threeStarCount / max(data.totalReviewCount, 1))
-        }
-        twoForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.twoStarCount / max(data.totalReviewCount, 1))
-        }
-        oneForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.oneStarCount / max(data.totalReviewCount, 1))
+            let formattedRating = String(format: "%.1f", rating)
+            rateNumLabel.text = formattedRating
         }
     }
-
-    func dataBind(data: ReviewRateResponse) {
-//        let total = String(format: "%.1f", data.mainRating ?? 0)
-        let ratingValue = data.mainRating ?? 0
-        if ratingValue == 0.0 {
-            rateNumLabel.text = "-"
-        } else {
-            let total = String(format: "%.1f", ratingValue)
-            rateNumLabel.text = "\(total)"
-        }
-        menuLabel.text = data.menuNames.joined(separator: " + ")
-//        rateNumLabel.text = "\(total)"
-//        totalRate = data.mainRating ?? 0
-        totalRate = ratingValue
-
+    
+    /// 별점 차트 업데이트
+    private func updateRatingChart(with ratingCount: ReviewRatingCount, totalCount: Int) {
+        let safeTotal = max(totalCount, 1) // 0으로 나누기 방지
+        
         fiveForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.fiveStarCount / max(data.totalReviewCount, 1))
+            $0.width.equalTo(126 * ratingCount.fiveStarCount / safeTotal)
         }
         fourForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.fourStarCount / max(data.totalReviewCount, 1))
+            $0.width.equalTo(126 * ratingCount.fourStarCount / safeTotal)
         }
         threeForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.threeStarCount / max(data.totalReviewCount, 1))
+            $0.width.equalTo(126 * ratingCount.threeStarCount / safeTotal)
         }
         twoForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.twoStarCount / max(data.totalReviewCount, 1))
+            $0.width.equalTo(126 * ratingCount.twoStarCount / safeTotal)
         }
         oneForeground.snp.updateConstraints {
-            $0.width.equalTo(126 * data.reviewRatingCount.oneStarCount / max(data.totalReviewCount, 1))
+            $0.width.equalTo(126 * ratingCount.oneStarCount / safeTotal)
         }
+        
+        // 레이아웃 즉시 업데이트
+        layoutIfNeeded()
     }
 }

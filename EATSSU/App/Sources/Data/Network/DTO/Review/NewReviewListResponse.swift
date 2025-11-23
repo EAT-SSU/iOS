@@ -19,20 +19,38 @@ struct NewReviewListResponse: Codable {
 
 struct ReviewListItem: Codable {
     let reviewId: Int
-    let menu: [ReviewMenuInfo]?
+    var menu: [ReviewMenuInfo]?
     let writerId: Int
     let isWriter: Bool
     let writerNickname: String
-    let rating: Int
+    let rating: Double
     let writtenAt: String
     let content: String?
     let imageUrls: [String]?
+
+    enum CodingKeys: String, CodingKey {
+        case reviewId
+        case menu = "menuList"
+        case writerId
+        case isWriter
+        case writerNickname
+        case rating
+        case writtenAt
+        case content
+        case imageUrls
+    }
 }
 
 struct ReviewMenuInfo: Codable {
     let menuId: Int
     let name: String
     let isLike: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case menuId = "id"
+        case name
+        case isLike
+    }
 }
 
 struct Tag: Codable {

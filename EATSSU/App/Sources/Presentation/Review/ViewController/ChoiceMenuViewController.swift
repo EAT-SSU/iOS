@@ -1,175 +1,175 @@
+////
+////  ChoiceMenuViewController.swift
+////  EatSSU-iOS
+////
+////  Created by 박윤빈 on 2023/06/29.
+////
 //
-//  ChoiceMenuViewController.swift
-//  EatSSU-iOS
+//import UIKit
 //
-//  Created by 박윤빈 on 2023/06/29.
+//import SnapKit
+//import FirebaseAnalytics
 //
-
-import UIKit
-
-import SnapKit
-import FirebaseAnalytics
-
-import EATSSUDesign
-
-final class ChoiceMenuViewController: BaseViewController {
-    // MARK: - Properties
-
-    var menuNameList: [String] = []
-    var menuIDList: [Int] = []
-    var isMenuSelected: [Bool] = [] {
-        didSet {
-            choiceMenuTabelView.reloadData()
-            print(isMenuSelected)
-        }
-    }
-
-    private lazy var selectedList: [String] = []
-    private var selectedIDList: [Int] = []
-
-    // MARK: - UI Component
-
-    private let enjoyLabel = UILabel()
-    private let whichFoodLabel = UILabel()
-    private lazy var choiceMenuTabelView = UITableView(frame: .zero, style: .plain)
-    private lazy var nextButton = MainButton()
-
-    // MARK: - Life Cycles
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setTableViewConfig()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        /// pop한 후, 다시 메뉴를 선택할 경우를 방지하기 위하여 선택한 리스트를 초기화합니다
-        selectedList = []
-        selectedIDList = []
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_2)
-    }
-
-    // MARK: - Functions
-
-    override func configureUI() {
-        whichFoodLabel.text = "어떤 음식에 대한 리뷰인가요?"
-        whichFoodLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
-        whichFoodLabel.textColor = .black
-
-        enjoyLabel.text = "식사는 맛있게 하셨나요?"
-        enjoyLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
-        enjoyLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
-
-        choiceMenuTabelView.separatorStyle = .none
-
-        nextButton.setTitle("다음 단계로", for: .normal)
-
-        view.addSubviews(
-            enjoyLabel,
-            whichFoodLabel,
-            choiceMenuTabelView,
-            nextButton
-        )
-    }
-
-    override func setLayout() {
-        whichFoodLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).inset(25)
-            $0.centerX.equalToSuperview()
-        }
-
-        enjoyLabel.snp.makeConstraints {
-            $0.top.equalTo(whichFoodLabel.snp.bottom).offset(15)
-            $0.centerX.equalToSuperview()
-        }
-
-        choiceMenuTabelView.snp.makeConstraints {
-            $0.top.equalTo(enjoyLabel.snp.bottom).offset(40)
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
-
-        nextButton.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(17)
-        }
-    }
-
-    override func setButtonEvent() {
-        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
-    }
-
-    override func setCustomNavigationBar() {
-        super.setCustomNavigationBar()
-        navigationItem.title = "리뷰 남기기"
-    }
-
-    private func setTableViewConfig() {
-        choiceMenuTabelView.delegate = self
-        choiceMenuTabelView.dataSource = self
-        choiceMenuTabelView.register(ChoiceMenuTableViewCell.self,
-                                     forCellReuseIdentifier: ChoiceMenuTableViewCell.identifier)
-    }
-
-    private func makeList(menuList: [String], selectedList: [Bool]) {
-        for i in 0 ..< menuList.count {
-            if selectedList[i] {
-                self.selectedList.append(menuList[i])
-                selectedIDList.append(menuIDList[i])
-            }
-        }
-    }
-
-    @objc
-    func nextButtonTapped() {
-        makeList(menuList: menuNameList, selectedList: isMenuSelected)
-        if selectedList.count == 0 {
-            showToast(message: "리뷰를 작성할 메뉴를 선택해주세요!", type: .info)
-        } else {
-            let setRateVC = SetRateViewController()
-            setRateVC.dataBind(list: selectedList,
-                               idList: selectedIDList,
-                               reviewList: nil,
-                               currentPage: 0)
-            navigationController?.pushViewController(setRateVC, animated: true)
-        }
-    }
-
-    func menuDataBind(menuList: [String], idList: [Int]) {
-        menuNameList = menuList
-        menuIDList = idList
-        for _ in 0 ..< menuNameList.count {
-            isMenuSelected.append(false)
-        }
-    }
-}
-
-extension ChoiceMenuViewController: UITableViewDelegate {}
-
-extension ChoiceMenuViewController: UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        menuNameList.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ChoiceMenuTableViewCell.identifier) as? ChoiceMenuTableViewCell else { return UITableViewCell() }
-        cell.selectionStyle = .none
-        cell.dataBind(menu: menuNameList[indexPath.row], isTapped: isMenuSelected[indexPath.row])
-        cell.handler = { [weak self] in
-            guard let self else { return }
-            cell.isChecked.toggle()
-            isMenuSelected[indexPath.row].toggle()
-        }
-
-        return cell
-    }
-
-    func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        50
-    }
-}
+//import EATSSUDesign
+//
+//final class ChoiceMenuViewController: BaseViewController {
+//    // MARK: - Properties
+//
+//    var menuNameList: [String] = []
+//    var menuIDList: [Int] = []
+//    var isMenuSelected: [Bool] = [] {
+//        didSet {
+//            choiceMenuTabelView.reloadData()
+//            print(isMenuSelected)
+//        }
+//    }
+//
+//    private lazy var selectedList: [String] = []
+//    private var selectedIDList: [Int] = []
+//
+//    // MARK: - UI Component
+//
+//    private let enjoyLabel = UILabel()
+//    private let whichFoodLabel = UILabel()
+//    private lazy var choiceMenuTabelView = UITableView(frame: .zero, style: .plain)
+//    private lazy var nextButton = MainButton()
+//
+//    // MARK: - Life Cycles
+//
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//        setTableViewConfig()
+//    }
+//
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//
+//        /// pop한 후, 다시 메뉴를 선택할 경우를 방지하기 위하여 선택한 리스트를 초기화합니다
+//        selectedList = []
+//        selectedIDList = []
+//    }
+//    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        
+//        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_2)
+//    }
+//
+//    // MARK: - Functions
+//
+//    override func configureUI() {
+//        whichFoodLabel.text = "어떤 음식에 대한 리뷰인가요?"
+//        whichFoodLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
+//        whichFoodLabel.textColor = .black
+//
+//        enjoyLabel.text = "식사는 맛있게 하셨나요?"
+//        enjoyLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+//        enjoyLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+//
+//        choiceMenuTabelView.separatorStyle = .none
+//
+//        nextButton.setTitle("다음 단계로", for: .normal)
+//
+//        view.addSubviews(
+//            enjoyLabel,
+//            whichFoodLabel,
+//            choiceMenuTabelView,
+//            nextButton
+//        )
+//    }
+//
+//    override func setLayout() {
+//        whichFoodLabel.snp.makeConstraints {
+//            $0.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).inset(25)
+//            $0.centerX.equalToSuperview()
+//        }
+//
+//        enjoyLabel.snp.makeConstraints {
+//            $0.top.equalTo(whichFoodLabel.snp.bottom).offset(15)
+//            $0.centerX.equalToSuperview()
+//        }
+//
+//        choiceMenuTabelView.snp.makeConstraints {
+//            $0.top.equalTo(enjoyLabel.snp.bottom).offset(40)
+//            $0.leading.trailing.bottom.equalToSuperview()
+//        }
+//
+//        nextButton.snp.makeConstraints {
+//            $0.horizontalEdges.equalToSuperview().inset(16)
+//            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(17)
+//        }
+//    }
+//
+//    override func setButtonEvent() {
+//        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+//    }
+//
+//    override func setCustomNavigationBar() {
+//        super.setCustomNavigationBar()
+//        navigationItem.title = "리뷰 남기기"
+//    }
+//
+//    private func setTableViewConfig() {
+//        choiceMenuTabelView.delegate = self
+//        choiceMenuTabelView.dataSource = self
+//        choiceMenuTabelView.register(ChoiceMenuTableViewCell.self,
+//                                     forCellReuseIdentifier: ChoiceMenuTableViewCell.identifier)
+//    }
+//
+//    private func makeList(menuList: [String], selectedList: [Bool]) {
+//        for i in 0 ..< menuList.count {
+//            if selectedList[i] {
+//                self.selectedList.append(menuList[i])
+//                selectedIDList.append(menuIDList[i])
+//            }
+//        }
+//    }
+//
+//    @objc
+//    func nextButtonTapped() {
+//        makeList(menuList: menuNameList, selectedList: isMenuSelected)
+//        if selectedList.count == 0 {
+//            showToast(message: "리뷰를 작성할 메뉴를 선택해주세요!", type: .info)
+//        } else {
+//            let setRateVC = SetRateViewController()
+//            setRateVC.dataBind(list: selectedList,
+//                               idList: selectedIDList,
+//                               reviewList: nil,
+//                               currentPage: 0)
+//            navigationController?.pushViewController(setRateVC, animated: true)
+//        }
+//    }
+//
+//    func menuDataBind(menuList: [String], idList: [Int]) {
+//        menuNameList = menuList
+//        menuIDList = idList
+//        for _ in 0 ..< menuNameList.count {
+//            isMenuSelected.append(false)
+//        }
+//    }
+//}
+//
+//extension ChoiceMenuViewController: UITableViewDelegate {}
+//
+//extension ChoiceMenuViewController: UITableViewDataSource {
+//    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+//        menuNameList.count
+//    }
+//
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        guard let cell = tableView.dequeueReusableCell(withIdentifier: ChoiceMenuTableViewCell.identifier) as? ChoiceMenuTableViewCell else { return UITableViewCell() }
+//        cell.selectionStyle = .none
+//        cell.dataBind(menu: menuNameList[indexPath.row], isTapped: isMenuSelected[indexPath.row])
+//        cell.handler = { [weak self] in
+//            guard let self else { return }
+//            cell.isChecked.toggle()
+//            isMenuSelected[indexPath.row].toggle()
+//        }
+//
+//        return cell
+//    }
+//
+//    func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
+//        50
+//    }
+//}

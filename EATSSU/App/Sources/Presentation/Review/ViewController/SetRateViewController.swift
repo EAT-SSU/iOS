@@ -6,53 +6,49 @@
 //
 
 import UIKit
-
 import SnapKit
 import Moya
-
 import EATSSUDesign
 
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
 
-    private var currentPage: Int = 0 {
-            didSet {
-                // V2 Meal Review는 단일 페이지이므로 항상 '리뷰 남기기'로 표시되어야 함
-                // V1의 페이지 넘김 로직을 제거하고, 항상 리뷰 남기기 버튼을 보여줍니다.
-                nextButton.setTitle("리뷰 남기기", for: .normal) // ✨ 수정: 항상 "리뷰 남기기"로 설정
-            }
-        }
-
     private var userPickedImage: UIImage?
-    private var reviewList: [(BeforeSelectedImageDTO, UIImage?)] = []
     
-    // ✨ 수정: selectedIDList를 validMenuIDList로 변경
     private var validMenuIDList: [Int] = []
     private var selectedList: [String] = []
     private var reviewId: Int?
     
-    // 좋아요 상태를 보관 (selectedList와 같은 인덱스)
     private var likedStates: [Bool] = []
     private var menuTableViewHeightConstraint: Constraint?
     
-    // ✨ 추가: mealId를 저장할 프로퍼티
+    // ✨ 타입 구분: FIXED(고정 메뉴) vs VARIABLE(식단)
+    private var reviewType: ReviewType = .variable
     private var mealID: Int?
+    private var menuID: Int?
+    
+    enum ReviewType {
+        case fixed    // writeMenuReview 사용
+        case variable // writeMealReview 사용
+    }
 
     // MARK: - Initializer
     
-    // ✨ 추가: mealId를 받는 이니셜라이저
     convenience init(mealId: Int) {
         self.init(nibName: nil, bundle: nil)
         self.mealID = mealId
+        self.reviewType = .variable
+    }
+    
+    convenience init(menuId: Int) {
+        self.init(nibName: nil, bundle: nil)
+        self.menuID = menuId
+        self.reviewType = .fixed
     }
 
-
     // MARK: - UI Components
-    // ... (기존 UI Component 코드 유지)
 
     private var rateView = RateView()
-    private var tasteRateView = RateView()
-    private var quantityRateView = RateView()
     private let imagePickerController = UIImagePickerController()
 
     private var contentView: UIView = {
@@ -67,15 +63,8 @@ final class SetRateViewController: BaseViewController {
         return scrollView
     }()
 
-    private let progressView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .primary
-        return view
-    }()
-
     private var menuLabel: UILabel = {
         let label = UILabel()
-//        label.text = "김치볶음밥 & 계란국을 추천하시겠어요?"
         label.text = "오늘의 식사는 어떠셨나요?"
         label.font = .subtitle1
         label.textColor = .black
@@ -98,38 +87,6 @@ final class SetRateViewController: BaseViewController {
         return tableView
     }()
 
-//    private var tasteLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "맛"
-//        label.font = .subtitle1
-//        label.textColor = .black
-//        return label
-//    }()
-//
-//    private var quantityLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "양"
-//        label.font = .subtitle1
-//        label.textColor = .black
-//        return label
-//    }()
-
-//    private lazy var tasteStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.axis = .horizontal
-//        stackView.spacing = 16.adjusted
-//        stackView.alignment = .center
-//        return stackView
-//    }()
-//
-//    private lazy var quantityStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.axis = .horizontal
-//        stackView.spacing = 16.adjusted
-//        stackView.alignment = .center
-//        return stackView
-//    }()
-
     private let userReviewTextView: UITextView = {
         let textView = UITextView()
         textView.font = .body1
@@ -138,7 +95,6 @@ final class SetRateViewController: BaseViewController {
         textView.layer.borderWidth = 1.adjusted
         textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted, left: 16.0.adjusted, bottom: 16.0.adjusted, right: 16.0.adjusted)
-//        textView.text = "3글자 이상 작성해주세요!"
         textView.text = "메뉴에 대한 상세한 리뷰를 작성해주세요"
         textView.textColor = .gray500
         return textView
@@ -149,7 +105,7 @@ final class SetRateViewController: BaseViewController {
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTappedimageView))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTappedImageView))
         imageView.addGestureRecognizer(tapGesture)
         return imageView
     }()
@@ -158,23 +114,9 @@ final class SetRateViewController: BaseViewController {
         let button = UIButton()
         button.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
         button.tintColor = .lightGray
-        button.addTarget(self, action: #selector(didTappedimageView), for: .touchUpInside)
-        button.isHidden = true // Hide close button initially
+        button.addTarget(self, action: #selector(didTappedImageView), for: .touchUpInside)
+        button.isHidden = true
         return button
-    }()
-    
-//    private lazy var imageContainerView: UIView = {
-//        let view = UIView()
-//        view.layer.cornerRadius = 10
-//        view.clipsToBounds = true
-//        return view
-//    }()
-
-    private lazy var imageContainer: UIView = {
-        let view = UIView()
-        view.addSubview(selectImageButton)
-        view.addSubview(imageCountLabel)
-        return view
     }()
 
     private lazy var selectImageButton: UIButton = {
@@ -188,8 +130,6 @@ final class SetRateViewController: BaseViewController {
         button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
         button.layer.cornerRadius = 8
         button.clipsToBounds = true
-        button.contentVerticalAlignment = .center
-        button.contentHorizontalAlignment = .center
         return button
     }()
 
@@ -220,7 +160,7 @@ final class SetRateViewController: BaseViewController {
 
     private var nextButton: MainButton = {
         let button = MainButton()
-        button.title = "다음 단계로"
+        button.title = "리뷰 남기기"
         return button
     }()
 
@@ -230,19 +170,14 @@ final class SetRateViewController: BaseViewController {
         super.viewDidLoad()
         setDelegate()
         
-        // ✨ 수정: mealId가 있으면 API 호출, 없으면 기존 로직 유지
-        if let mealId = mealID {
+        // ✨ 타입에 따라 적절한 초기화
+        if reviewType == .variable, let mealId = mealID {
             fetchValidMenus(mealId: mealId)
-        } else {
-            // 기존 dataBind로 넘어온 데이터가 있거나, 리뷰 수정인 경우
-            // selectedList가 비어있지 않다면 테이블 뷰 갱신 (리뷰 수정 등 기존 로직 유지)
-            if !selectedList.isEmpty {
-                 // 좋아요 상태 배열도 맞춰서 초기화
-                likedStates = Array(repeating: false, count: selectedList.count)
-                // 테이블 갱신
-                menuTableView.reloadData()
-                // 높이 업데이트 (viewDidLayoutSubviews에서 실행됨)
-            }
+        } else if reviewType == .fixed {
+            setupFixedMenuReview()
+        } else if !selectedList.isEmpty {
+            likedStates = Array(repeating: false, count: selectedList.count)
+            menuTableView.reloadData()
         }
     }
 
@@ -256,19 +191,16 @@ final class SetRateViewController: BaseViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // API 호출 후 데이터가 로드되면 높이가 업데이트되도록 처리
         menuTableViewHeightConstraint?.update(offset: menuTableView.contentSize.height)
     }
 
-
-    // MARK: - API Call
+    // MARK: - API Calls
     
-    // ✨ 추가: 리뷰 가능한 메뉴 목록을 조회하는 메서드
+    // ✨ VARIABLE: 리뷰 가능한 메뉴 목록 조회
     private func fetchValidMenus(mealId: Int) {
-        // NetworkService의 request 메서드를 사용하여 ReviewRouter 호출
         NetworkService.shared.request(
             ReviewRouter.getValidMenusForReview(mealId),
-            responseType: ReviewValidMenusResponse.self, // DTO 타입 사용
+            responseType: [MenuInfo].self,
             useAuth: true
         ) { [weak self] result in
             guard let self = self else { return }
@@ -276,73 +208,47 @@ final class SetRateViewController: BaseViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let data):
-                    // 메뉴 이름과 ID를 각각 selectedList와 validMenuIDList에 저장
-                    self.selectedList = data.menuList.map { $0.name }
-                    self.validMenuIDList = data.menuList.map { $0.menuId }
-                    
-                    // 메뉴 목록 수에 맞춰 좋아요 상태 초기화 (초기값: false)
+                    self.selectedList = data.map { $0.name }
+                    self.validMenuIDList = data.map { $0.id }
                     self.likedStates = Array(repeating: false, count: self.selectedList.count)
-                    
-                    // reviewList 초기화 (API 결과에 따라 갯수 맞춤)
-//                    self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
-//                                                                               amountRating: nil,
-//                                                                               tasteRating: nil,
-//                                                                               content: ""),
-//                                                        nil), count: self.validMenuIDList.count)
-                    self.reviewList = [(BeforeSelectedImageDTO(mainRating: 0,
-                                                                                                   amountRating: nil,
-                                                                                                   tasteRating: nil,
-                                                                                                   content: ""),
-                                                                            nil)] // ✨ 수정: 1개만 초기화
-                    
-                    // 테이블 뷰 리로드
                     self.menuTableView.reloadData()
-                    // viewDidLayoutSubviews를 호출하여 높이 제약조건 업데이트
                     self.view.setNeedsLayout()
                     
-                    // currentPage 초기화 및 버튼 텍스트 업데이트
-                    self.currentPage = 0
-                    
                 case .failure(let error):
-                    print("Error fetching valid menus: \(error)")
+                    print("❌ Error fetching valid menus: \(error)")
                     self.showToast(message: "메뉴 목록 조회에 실패했습니다.")
                 }
             }
         }
     }
+    
+    // ✨ FIXED: 단일 메뉴 리뷰 설정
+    private func setupFixedMenuReview() {
+        likedStates = [false]
+        menuTableView.reloadData()
+        view.setNeedsLayout()
+    }
 
-    // MARK: - Functions
+    // MARK: - UI Configuration
 
     override func configureUI() {
         dismissKeyboard()
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(rateView,
-                                menuLabel,
-//                                tasteLabel,
-//                                quantityLabel,
-                                detailLabel,
-                                
-                                menuTableView,
-//                                tasteStackView,
-//                                quantityStackView,
-                                userReviewTextView,
-                                maximumWordLabel,
-                                selectImageButton,
-                                imageCountLabel,
-                                userReviewImageView,
-                                closeButton,
-//                                imageContainerView,
-                                deleteMethodLabel,
-                                nextButton)
-
-//        tasteStackView.addArrangedSubviews([tasteLabel,
-//                                            tasteRateView])
-
-//        quantityStackView.addArrangedSubviews([quantityLabel,
-//                                               quantityRateView])
-//        imageContainerView.addSubview(userReviewImageView)
-//        imageContainerView.addSubview(closeButton)
+        contentView.addSubviews(
+            rateView,
+            menuLabel,
+            detailLabel,
+            menuTableView,
+            userReviewTextView,
+            maximumWordLabel,
+            selectImageButton,
+            imageCountLabel,
+            userReviewImageView,
+            closeButton,
+            deleteMethodLabel,
+            nextButton
+        )
     }
 
     override func setLayout() {
@@ -372,51 +278,15 @@ final class SetRateViewController: BaseViewController {
         }
         
         menuTableView.snp.makeConstraints {
-                $0.top.equalTo(detailLabel.snp.bottom).offset(20)
+            $0.top.equalTo(detailLabel.snp.bottom).offset(20)
             $0.leading.equalToSuperview().offset(32)
             $0.trailing.equalToSuperview().offset(-32)
-//                $0.bottom.equalToSuperview()
-//            $0.height.equalTo(200)
-            menuTableViewHeightConstraint = $0.height.equalTo(0).constraint // 처음엔 0으로
-            }
-
-//        tasteStackView.snp.makeConstraints { make in
-//            make.top.equalTo(detailLabel.snp.bottom).offset(30)
-//            make.centerX.equalToSuperview()
-//        }
-//
-//        quantityStackView.snp.makeConstraints { make in
-//            make.top.equalTo(tasteStackView.snp.bottom).offset(30)
-//            make.centerX.equalToSuperview()
-//        }
-
-        nextButton.snp.makeConstraints { make in
-            make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
-            make.horizontalEdges.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().offset(-15)
-        }
-
-        for i in 0 ... 4 {
-            rateView.buttons[i].snp.makeConstraints { make in // rateView로 통합
-                make.height.equalTo(28)
-                make.width.equalTo(29.3)
-            }
-//            tasteRateView.buttons[i].snp.makeConstraints { make in
-//                make.height.equalTo(28)
-//                make.width.equalTo(29.3)
-//            }
-//
-//            quantityRateView.buttons[i].snp.makeConstraints { make in
-//                make.height.equalTo(28)
-//                make.width.equalTo(29.3)
-//            }
+            menuTableViewHeightConstraint = $0.height.equalTo(0).constraint
         }
 
         userReviewTextView.snp.makeConstraints { make in
-//            make.top.equalTo(quantityStackView.snp.bottom).offset(40)
             make.top.equalTo(menuTableView.snp.bottom).offset(40)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(181)
         }
 
@@ -428,34 +298,19 @@ final class SetRateViewController: BaseViewController {
         selectImageButton.snp.makeConstraints {
             $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
             $0.leading.equalToSuperview().offset(15)
-            $0.width.equalTo(60)
-            $0.height.equalTo(60)
+            $0.width.height.equalTo(60)
         }
 
         imageCountLabel.snp.makeConstraints {
             $0.top.equalTo(selectImageButton.snp.bottom).offset(-19)
             $0.centerX.equalTo(selectImageButton)
-            $0.width.equalTo(selectImageButton)
         }
 
         userReviewImageView.snp.makeConstraints {
             $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
             $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
-            $0.width.equalTo(60)
-            $0.height.equalTo(60)
+            $0.width.height.equalTo(60)
         }
-//        imageContainerView.snp.makeConstraints {
-//            $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
-//            $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
-//            $0.width.height.equalTo(70)   // 원하는 크기로 조절
-//        }
-        
-//        userReviewImageView.snp.makeConstraints {
-////            $0.edges.equalToSuperview()
-//            $0.size.equalTo(60)
-//
-//        }
-
         
         closeButton.snp.makeConstraints {
             $0.top.equalTo(userReviewImageView.snp.top).offset(-6)
@@ -467,6 +322,19 @@ final class SetRateViewController: BaseViewController {
             $0.top.equalTo(selectImageButton.snp.bottom).offset(7)
             $0.leading.equalTo(selectImageButton)
         }
+
+        nextButton.snp.makeConstraints { make in
+            make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().offset(-15)
+        }
+
+        for i in 0...4 {
+            rateView.buttons[i].snp.makeConstraints { make in
+                make.height.equalTo(28)
+                make.width.equalTo(29.3)
+            }
+        }
     }
 
     override func setButtonEvent() {
@@ -475,48 +343,50 @@ final class SetRateViewController: BaseViewController {
 
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        if reviewId != nil {
-            navigationItem.title = "리뷰 수정하기"
-        } else {
-            navigationItem.title = "리뷰 남기기"
-        }
+        navigationItem.title = reviewId != nil ? "리뷰 수정하기" : "리뷰 남기기"
     }
 
-    // ✨ 수정: selectedIDList -> validMenuIDList로 이름 변경 반영
-    func dataBind(list: [String], idList: [Int], reviewList: [(BeforeSelectedImageDTO, UIImage?)]?, currentPage: Int) {
+    // MARK: - Data Binding
+
+    func dataBind(list: [String], idList: [Int]) {
         selectedList = list
-        validMenuIDList = idList // ✨ 수정: selectedIDList -> validMenuIDList
-        if let reviewList {
-                self.reviewList = reviewList
-            } else {
-                self.reviewList = Array(repeating: (BeforeSelectedImageDTO(mainRating: 0,
-                                                                           amountRating: nil,
-                                                                           tasteRating: nil,
-                                                                           content: ""),
-                                                    nil), count: idList.count)
-            }
-        self.currentPage = currentPage
+        validMenuIDList = idList
+        likedStates = Array(repeating: false, count: list.count)
+        
+        // ✨ 타입 추정
+        if idList.count == 1 {
+            reviewType = .fixed
+            menuID = idList.first
+        } else {
+            reviewType = .variable
+        }
+        
+        menuTableView.reloadData()
     }
     
-    // 좋아요 토글 메서드 (여기가 없으면 'Cannot find toggleLike' 에러)
-    private func toggleLike(for index: Int) {
-        likedStates[index].toggle()
-        let idx = IndexPath(row: index, section: 0)
-
-        if let cell = menuTableView.cellForRow(at: idx) as? MenuLikeCell {
-            cell.dataBind(menu: selectedList[index], isLiked: likedStates[index])
-        } else {
-            menuTableView.reloadRows(at: [idx], with: .none)
-        }
-    }
-
-    func dataBindForFix(list: [String], reivewId: Int) {
-        selectedList = list
-        reviewId = reivewId
-        menuLabel.text = "\(selectedList[0]) 을/를 추천하시겠어요?"
+    func dataBindForFix(list: [String], reviewId: Int) {
+        self.selectedList = list
+        self.reviewId = reviewId
+        self.likedStates = Array(repeating: false, count: list.count)
+        
+        menuLabel.text = "\(list[0]) 을/를 추천하시겠어요?"
         selectImageButton.isHidden = true
         deleteMethodLabel.isHidden = true
         nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
+    }
+    
+    func settingForReviewFix(data: ReviewListItem) {
+        rateView.currentStar = Int(data.rating)
+        rateView.settingStarForFix(currentStar: Int(data.rating))
+        userReviewTextView.text = data.content ?? ""
+        userReviewTextView.textColor = .black
+        maximumWordLabel.text = "\(data.content?.count ?? 0) / 300"
+        
+        if let imageUrl = data.imageUrls?.first, !imageUrl.isEmpty {
+            userReviewImageView.kfSetImage(url: imageUrl)
+            imageCountLabel.text = "사진 1/1"
+            closeButton.isHidden = false
+        }
     }
 
     func setDelegate() {
@@ -527,138 +397,196 @@ final class SetRateViewController: BaseViewController {
         imagePickerController.delegate = self
         imagePickerController.sourceType = .photoLibrary
         imagePickerController.allowsEditing = false
-
         userReviewTextView.delegate = self
     }
 
-    @objc
-        func tappedNextButton() {
-            // ✨ 수정: V1의 페이지 로직을 제거하고, 바로 데이터 전송 로직 호출
-            if userReviewTextView.text == "메뉴에 대한 상세한 리뷰를 작성해주세요" || userReviewTextView.text.count < 3 {
-                showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
-            } else {
-                // 별점 검사: rateView는 메인 별점
-                if rateView.currentStar != 0 {
-                    // 리뷰 작성하기 버튼이 isEnabled = true일 때의 area
-                    let param = BeforeSelectedImageDTO(mainRating: rateView.currentStar,
-                                                       amountRating: quantityRateView.currentStar,
-                                                       tasteRating: tasteRateView.currentStar,
-                                                       content: userReviewTextView.text)
-
-                    switch reviewId {
-                    case .none:
-                        /// 현재 이미지를 별도 변수에 저장
-                        let currentImage = userPickedImage
-                        // 단일 페이지이므로 reviewList의 0번 인덱스에 저장
-                        reviewList[0] = (param, currentImage) // ✨ 수정: currentPage 대신 0번 인덱스 사용
-                        
-                        navigationController?.isNavigationBarHidden = false
-                        sendDataIfCurrentPageIsLast() // ✨ 수정: 바로 API 전송
-                        
-                    case let .some(reviewID):
-                        // 단일 리뷰 수정 로직 (기존 로직 유지)
-                        patchFixedReview(reviewId: reviewID, param: param)
-                    }
-
-                } else {
-                    showToast(message: "별점을 모두 입력해주세요!", type: .info)
-                }
-            }
+    private func toggleLike(for index: Int) {
+        likedStates[index].toggle()
+        let idx = IndexPath(row: index, section: 0)
+        
+        if let cell = menuTableView.cellForRow(at: idx) as? MenuLikeCell {
+            cell.dataBind(menu: selectedList[index], isLiked: likedStates[index])
+        } else {
+            menuTableView.reloadRows(at: [idx], with: .none)
         }
+    }
+
+    // MARK: - Actions
+
+    @objc
+    func tappedNextButton() {
+        // 유효성 검증
+        let reviewText = userReviewTextView.text ?? ""
+        if reviewText == "메뉴에 대한 상세한 리뷰를 작성해주세요" || reviewText.count < 3 {
+            showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
+            return
+        }
+        
+        guard rateView.currentStar != 0 else {
+            showToast(message: "별점을 입력해주세요!", type: .info)
+            return
+        }
+        
+        // ✨ 타입에 따라 적절한 API 호출
+        switch reviewType {
+        case .variable:
+            sendMealReview()
+        case .fixed:
+            sendMenuReview()
+        }
+    }
     
-    // ✨ 수정: V2 Meal Review API를 사용하도록 변경
-    private func sendDataIfCurrentPageIsLast() {
-        guard let mealId = mealID else { return } // mealId가 없으면 전송 불가
+    // ✨ V2 API: Meal Review (VARIABLE)
+    private func sendMealReview() {
+        guard let mealId = mealID else {
+            showToast(message: "식단 정보가 없습니다.")
+            return
+        }
 
         _Concurrency.Task {
             do {
-                // 1. 이미지 업로드 (만약 이미지가 있다면)
+                // 1. 이미지 업로드
                 var imageUrl: String?
-//                if let image = reviewList.last?.1 { // 마지막 리뷰의 이미지만 사용 (Meal Review는 이미지 1개)
-//                    imageUrl = try await uploadImage(image: image)
-//                }
-//
-                if let image = reviewList.first?.1 { // ✨ 수정: .last? -> .first? 로 변경 (단일 리뷰이므로)
-                                    imageUrl = try await uploadImage(image: image)
-                                }
+                if let image = userPickedImage {
+                    imageUrl = try await uploadImage(image: image)
+                }
                 
-                // 2. Meal Review 요청 객체 생성
-                let menuLikes: [MenuLike] = validMenuIDList.enumerated().map { (index, menuId) in
+                // 2. Meal Review 요청 생성
+                let menuLikes = validMenuIDList.enumerated().map { (index, menuId) in
                     MenuLike(menuId: menuId, isLike: likedStates[index])
                 }
                 
-                // Meal Review는 하나의 평점/내용/이미지를 사용하므로, 마지막 메뉴의 리뷰 데이터를 사용
-//                guard let lastReview = reviewList.last else {
-//                    throw NSError(domain: "ReviewError", code: -1, userInfo: [NSLocalizedDescriptionKey: "리뷰 데이터가 없습니다."])
-//                }
-                
-                guard let lastReview = reviewList.first else { // ✨ 수정: .last? -> .first? 로 변경
-                                    throw NSError(domain: "ReviewError", code: -1, userInfo: [NSLocalizedDescriptionKey: "리뷰 데이터가 없습니다."])
-                                }
-                
                 let request = WriteReviewMealRequest(
                     mealId: mealId,
-                    rating: lastReview.0.mainRating, // 메인 평점
-                    menuLikes: menuLikes,           // 메뉴별 좋아요 상태
-                    content: lastReview.0.content,  // 리뷰 내용
-                    imageUrls: imageUrl != nil ? [imageUrl!] : nil // 이미지 URL
+                    rating: rateView.currentStar,
+                    menuLikes: menuLikes,
+                    content: userReviewTextView.text,
+                    imageUrls: imageUrl != nil ? [imageUrl!] : nil
                 )
                 
-                // Firebase 이벤트 로그 (V1 로그 제거 또는 V2 로직에 맞게 수정 필요)
-                // 현재는 단일 요청으로 통합되었으므로, 마지막 리뷰 기준으로만 로그를 남깁니다.
-                let photoAttached = (imageUrl != nil) ? 1 : 0
-                let rating = lastReview.0.mainRating
-                let selection = self.selectedList.count
-                ReviewAnalyticsManager.shared.logCompleteReviewV1(photoAttached: photoAttached, rating: rating, selection: selection)
-
-                // 3. Meal Review 전송
+                // 3. API 전송
                 try await postMealReview(request: request)
                 
                 await MainActor.run {
-                    self.moveToReviewVC() // ✨ 수정: 성공 시 화면 이동
+                    self.moveToReviewVC()
                 }
                 
             } catch {
                 await MainActor.run {
-                    print("리뷰 업로드 실패: \(error)")
+                    print("❌ Meal 리뷰 업로드 실패: \(error)")
                     self.showToast(message: "리뷰 업로드에 실패했습니다.")
                 }
             }
         }
     }
     
-    // ✨ 수정: 기존 uploadReview를 제거하고, postMealReview를 추가
-    private func postMealReview(request: WriteReviewMealRequest) async throws {
+    // ✨ V2 API: Menu Review (FIXED)
+    private func sendMenuReview() {
+        guard let menuId = menuID ?? validMenuIDList.first else {
+            showToast(message: "메뉴 정보가 없습니다.")
+            return
+        }
+
+        _Concurrency.Task {
+            do {
+                // 1. 이미지 업로드
+                var imageUrl: String?
+                if let image = userPickedImage {
+                    imageUrl = try await uploadImage(image: image)
+                }
+                
+                // 2. Menu Review 요청 생성
+                let menuLike = MenuLikeItem(
+                    menuId: menuId,
+                    isLike: likedStates.first ?? false
+                )
+                
+                let request = WriteReviewMenuRequest(
+                    rating: rateView.currentStar,
+                    menuLike: menuLike,
+                    content: userReviewTextView.text,
+                    imageUrls: imageUrl != nil ? [imageUrl!] : nil
+                )
+                
+                // 3. API 전송
+                try await postMenuReview(request: request)
+                
+                await MainActor.run {
+                    self.moveToReviewVC()
+                }
+                
+            } catch {
+                await MainActor.run {
+                    print("❌ Menu 리뷰 업로드 실패: \(error)")
+                    self.showToast(message: "리뷰 업로드에 실패했습니다.")
+                }
+            }
+        }
+    }
+    
+    private func moveToReviewVC() {
+        if let reviewVC = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) {
+            navigationController?.popToViewController(reviewVC, animated: true)
+            
+            if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
+                homeVC.refreshAfterReview()
+            }
+        }
+    }
+
+    @objc func didSelectedImage() {
+        present(imagePickerController, animated: true)
+    }
+
+    @objc func didTappedImageView() {
+        userReviewImageView.image = nil
+        userPickedImage = nil
+        imageCountLabel.text = "사진 0/1"
+        closeButton.isHidden = true
+    }
+}
+
+// MARK: - Network
+
+extension SetRateViewController {
+    
+    private func postMenuReview(request: WriteReviewMenuRequest) async throws {
         try await withCheckedThrowingContinuation { continuation in
             NetworkService.shared.request(
-                WriteReviewRouter.writeMealReview(param: request),
-                responseType: Bool.self, // 응답 타입이 Bool이라고 가정
+                WriteReviewRouter.writeMenuReview(param: request),
+                responseType: Bool.self,
                 useAuth: true
             ) { result in
                 switch result {
                 case .success:
+                    print("✅ Menu Review 작성 성공")
                     continuation.resume()
                 case .failure(let error):
+                    print("❌ Menu Review 작성 실패: \(error)")
                     continuation.resume(throwing: error)
                 }
             }
         }
     }
     
-    // 이 메서드는 단일 메뉴 리뷰를 위한 것이었으나, 현재 Meal Review 로직에서는 사용되지 않습니다.
-    // Menu Review (V2) 사용 시 재활용 가능성을 위해 주석 처리 없이 남겨둡니다.
-//    private func uploadReview(reviewDTO: BeforeSelectedImageDTO, image: UIImage?, menuId: Int) async throws {
-//        if let image = image {
-//            // 이미지 업로드 후 리뷰 작성
-//            let imageUrl = try await uploadImage(image: image)
-//            let request = WriteReviewRequest(content: reviewDTO, imageURL: imageUrl)
-//            try await postReview(request: request, menuId: menuId)
-//        } else {
-//            // 이미지 없이 리뷰만 작성
-//            let request = WriteReviewRequest(content: reviewDTO, imageURL: "")
-//            try await postReview(request: request, menuId: menuId)
-//        }
-//    }
+    private func postMealReview(request: WriteReviewMealRequest) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkService.shared.request(
+                WriteReviewRouter.writeMealReview(param: request),
+                responseType: Bool.self,
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success:
+                    print("✅ Meal Review 작성 성공")
+                    continuation.resume()
+                case .failure(let error):
+                    print("❌ Meal Review 작성 실패: \(error)")
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
 
     private func uploadImage(image: UIImage) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
@@ -676,138 +604,19 @@ final class SetRateViewController: BaseViewController {
             }
         }
     }
-
-    @objc
-    func didSelectedImage() {
-        present(imagePickerController, animated: true, completion: nil)
-    }
-
-    @objc
-    func didTappedimageView() {
-        userReviewImageView.image = nil // 이미지 삭제
-        userPickedImage = nil
-        imageCountLabel.text = "사진 0/1"
-        closeButton.isHidden = true // Show close button when image is selected
-    }
-
-//    private func prepareForNextReview() {
-//        let setRateVC: SetRateViewController
-//        
-//        // ✨ 수정: 다음 페이지로 이동할 때 현재 mealId를 전달
-//        if let mealId = self.mealID {
-//             setRateVC = SetRateViewController(mealId: mealId)
-//        } else {
-//            // mealId가 없으면 기존처럼 인자 없이 초기화 (예: 고정 메뉴 리뷰 수정 후 다음 단계)
-//            setRateVC = SetRateViewController()
-//        }
-//        
-//        setRateVC.dataBind(list: selectedList,
-//                           idList: validMenuIDList, // ✨ 수정: selectedIDList -> validMenuIDList
-//                           reviewList: reviewList,
-//                           currentPage: currentPage + 1)
-//        navigationController?.pushViewController(setRateVC, animated: true)
-//    }
-
-    // ✨ 수정: ReviewViewController로 돌아가는 로직 적용
-    private func moveToReviewVC() {
-        if let reviewViewController = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) {
-            navigationController?.popToViewController(reviewViewController, animated: true)
-            
-            // 네비게이션 스택에서 HomeViewController 찾아서 새로고침
-            if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
-                homeVC.refreshAfterReview()
-            }
-        }
-    }
-
-    func settingForReviewFix(data: MenuDataList) {
-        rateView.currentStar = data.mainRating
-        rateView.settingStarForFix(currentStar: data.mainRating)
-
-        quantityRateView.currentStar = data.amountRating ?? 0
-        quantityRateView.settingStarForFix(currentStar: data.amountRating ?? 0)
-
-        tasteRateView.currentStar = data.tasteRating ?? 0
-        tasteRateView.settingStarForFix(currentStar: data.tasteRating ?? 0)
-
-        userReviewTextView.text = data.content
-        userReviewTextView.textColor = .black
-    }
-    
-    
-}
-
-// MARK: - Server
-
-extension SetRateViewController {
-    
-    // ✨ 수정: V1 postReview 제거 (V2 Meal Review 사용)
-    // V2 Menu Review API (단일 메뉴 리뷰)
-    private func postMenuReview(request: WriteReviewMenuRequest) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            NetworkService.shared.request(
-                WriteReviewRouter.writeMenuReview(param: request),
-                responseType: Bool.self,
-                useAuth: true
-            ) { result in
-                switch result {
-                case .success:
-                    continuation.resume()
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-    
-    // V2 Meal Review API (식사 리뷰) - `sendDataIfCurrentPageIsLast()`에서 사용
-    // private func postMealReview(request: WriteReviewMealRequest) async throws { ... } // 위에 정의됨
-    
-    private func patchFixedReview(reviewId: Int, param: BeforeSelectedImageDTO) {
-        NetworkService.shared.request(
-            ReviewRouter.fixReview(reviewId, param),
-            responseType: Bool.self,
-            useAuth: true
-        ) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success:
-                self.navigationController?.popViewController(animated: true)
-                
-            case .failure(let error):
-                print("리뷰 수정 실패: \(error.localizedDescription)")
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
-            }
-        }
-    }
-    
-    private func navigateToLogin() {
-        let loginVC = LoginViewController()
-        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
-        loginVC.toastType = .info
-        
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
-            }
-        }
-    }
 }
 
 // MARK: - UIImagePickerControllerDelegate
 
-extension SetRateViewController: UIImagePickerControllerDelegate {
+extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+        if let image = info[.originalImage] as? UIImage {
             userReviewImageView.image = image
             userPickedImage = image
             imageCountLabel.text = "사진 1/1"
-            closeButton.isHidden = false // Show close button when image is selected
+            closeButton.isHidden = false
         }
-        picker.dismiss(animated: true, completion: nil)
+        picker.dismiss(animated: true)
     }
 }
 
@@ -819,16 +628,10 @@ extension SetRateViewController: UITextViewDelegate {
         guard let stringRange = Range(range, in: currentText) else { return false }
         let newLength = currentText.count + text.count - range.length
         
-        // 최대 글자수 제한
-        if newLength > 300 {
-            return false
-        }
+        if newLength > 300 { return false }
         
-        // 글자수 레이블 업데이트는 항상 허용
-        // **주의**: `newLength`는 아직 적용되지 않은 새로운 문자열의 길이
         let textToDisplay = currentText.replacingCharacters(in: stringRange, with: text)
         maximumWordLabel.text = "\(textToDisplay.count) / 300"
-        
         return true
     }
 
@@ -845,74 +648,45 @@ extension SetRateViewController: UITextViewDelegate {
             textView.textColor = .gray500
             maximumWordLabel.text = "0 / 300"
         } else {
-            // 끝났을 때 현재 글자 수 업데이트
-             maximumWordLabel.text = "\(textView.text.count) / 300"
+            maximumWordLabel.text = "\(textView.text.count) / 300"
         }
     }
 }
 
-// MARK: - UINavigationControllerDelegate
+// MARK: - Keyboard Handling
 
-extension SetRateViewController: UINavigationControllerDelegate {
-    func navigationController(_: UINavigationController, willShow viewController: UIViewController, animated _: Bool) {
-        if viewController == self {
-            // Pop 되기 직전의 로직을 여기서 실행
-            print("Back button pressed, will pop the current view controller")
-        }
-    }
-
-    // 키보드가 나타났다는 알림을 받으면 실행할 메서드
-    @objc
-    func keyboardWillShow(_ noti: NSNotification) {
-        // 키보드의 높이만큼 화면을 올려준다.
+extension SetRateViewController {
+    @objc func keyboardWillShow(_ noti: NSNotification) {
         if let keyboardFrame: NSValue = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-            UIView.animate(
-                withDuration: 0.3,
-                animations: {
-                    self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
-                    self.navigationController?.isNavigationBarHidden = true
-                }
-            )
+            UIView.animate(withDuration: 0.3) {
+                self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
+                self.navigationController?.isNavigationBarHidden = true
+            }
         }
     }
 
-    // 키보드가 사라졌다는 알림을 받으면 실행할 메서드
-    @objc
-    func keyboardWillHide(_: NSNotification) {
+    @objc func keyboardWillHide(_: NSNotification) {
         view.transform = .identity
         navigationController?.isNavigationBarHidden = false
     }
 
-    // 노티피케이션을 추가하는 메서드
     func addKeyboardNotifications() {
-        // 키보드가 나타날 때 앱에게 알리는 메서드 추가
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        // 키보드가 사라질 때 앱에게 알리는 메서드 추가
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    // 노티피케이션을 제거하는 메서드
     func removeKeyboardNotifications() {
-        // 키보드가 나타날 때 앱에게 알리는 메서드 제거
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillShowNotification,
-                                                  object: nil)
-        // 키보드가 사라질 때 앱에게 알리는 메서드 제거
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIResponder.keyboardWillHideNotification,
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 }
 
+// MARK: - UITableViewDataSource & Delegate
+
 extension SetRateViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return selectedList.count   // 리뷰 대상 메뉴 리스트
+        selectedList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -920,31 +694,17 @@ extension SetRateViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         
-        let menuName = selectedList[indexPath.row]
-        let isLiked = likedStates[indexPath.row]
-        cell.dataBind(menu: menuName, isLiked: isLiked)
-        
-        // 인덱스 캡처 대신, 셀로부터 현재 indexPath를 찾아서 토글 (재사용 안전)
-                cell.onLikeTapped = { [weak self, weak cell, weak tableView] in
-                    guard
-                        let self = self,
-                        let tableView = tableView,
-                        let cell = cell,
-                        let tappedIndexPath = tableView.indexPath(for: cell)
-                    else { return }
-                    self.toggleLike(for: tappedIndexPath.row)
-                }
+        cell.dataBind(menu: selectedList[indexPath.row], isLiked: likedStates[indexPath.row])
+        cell.onLikeTapped = { [weak self, weak cell, weak tableView] in
+            guard let self, let tableView, let cell, let idx = tableView.indexPath(for: cell) else { return }
+            self.toggleLike(for: idx.row)
+        }
         
         return cell
     }
     
-    // 선택 이벤트 (좋아요 버튼 눌렀을 때 등)
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("\(selectedList[indexPath.row]) 선택됨")
-        // 선택 효과 제거 (회색 하이라이트 방지)
-            tableView.deselectRow(at: indexPath, animated: false)
-
-            // 행을 눌렀을 때도 토글 실행
-            toggleLike(for: indexPath.row)
+        tableView.deselectRow(at: indexPath, animated: false)
+        toggleLike(for: indexPath.row)
     }
 }

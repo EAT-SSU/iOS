@@ -9,7 +9,7 @@
 struct ReviewMealStatisticsResponse: Codable {
     let menuList: [MenuInfo]
     let totalReviewCount: Int
-    let rating: Double
+    let rating: Double?
     let likeCount: Int?
     let reviewRatingCount: ReviewRatingCount 
 }

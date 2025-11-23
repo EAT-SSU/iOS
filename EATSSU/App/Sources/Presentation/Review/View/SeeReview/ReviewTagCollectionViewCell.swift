@@ -13,7 +13,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
 
     private let iconImageView: UIImageView = {
         let iv = UIImageView()
-        iv.image = UIImage(systemName: "hand.thumbsup") // 기본 좋아요 아이콘
+        iv.image = UIImage(systemName: "hand.thumbsup")
         iv.tintColor = .systemTeal
         iv.isHidden = true
         iv.contentMode = .scaleAspectFit
@@ -52,7 +52,6 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
 
     private func setupViews() {
         contentView.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.1)
-//        contentView.layer.cornerRadius = 12
         contentView.layer.borderColor = UIColor.systemTeal.cgColor
         contentView.layer.borderWidth = 1
 
@@ -61,15 +60,6 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
 
         contentView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
-
-//        NSLayoutConstraint.activate([
-//            iconImageView.widthAnchor.constraint(equalToConstant: 10),
-//            iconImageView.heightAnchor.constraint(equalToConstant: 10),
-//            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-//            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-//            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 2),
-//            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -2)
-//        ])
         
         iconImageView.snp.makeConstraints { make in
             make.width.height.equalTo(10)

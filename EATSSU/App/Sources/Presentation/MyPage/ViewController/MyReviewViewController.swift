@@ -96,7 +96,7 @@ final class MyReviewViewController: BaseViewController {
                                       style: .default,
                                       handler: { _ in
                                           let setRateViewController = SetRateViewController()
-                                          setRateViewController.dataBindForFix(list: [menuName], reivewId: reviewID)
+            setRateViewController.dataBindForFix(list: [menuName], reviewId: reviewID)
                                           self.navigationController?.pushViewController(setRateViewController, animated: true)
                                       })
 
