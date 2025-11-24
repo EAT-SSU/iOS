@@ -12,6 +12,9 @@ import EATSSUDesign
 
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
+    override var shouldHideTabBar: Bool {
+            return true
+        }
 
     private var userPickedImage: UIImage?
     
@@ -157,6 +160,14 @@ final class SetRateViewController: BaseViewController {
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return label
     }()
+    
+    private let buttonContainer: UIView = {
+            let view = UIView()
+            view.backgroundColor = .white // 버튼 배경색 (TabBarContainer와 유사)
+            view.layer.cornerRadius = 0
+            view.clipsToBounds = true
+            return view
+        }()
 
     private var nextButton: MainButton = {
         let button = MainButton()
@@ -233,7 +244,10 @@ final class SetRateViewController: BaseViewController {
 
     override func configureUI() {
         dismissKeyboard()
-        view.addSubview(scrollView)
+        view.addSubviews(scrollView, buttonContainer)
+                
+                // buttonContainer에 nextButton을 추가
+        buttonContainer.addSubview(nextButton)
         scrollView.addSubview(contentView)
         contentView.addSubviews(
             rateView,
@@ -247,7 +261,7 @@ final class SetRateViewController: BaseViewController {
             userReviewImageView,
             closeButton,
             deleteMethodLabel,
-            nextButton
+//            nextButton
         )
     }
 
@@ -255,6 +269,21 @@ final class SetRateViewController: BaseViewController {
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        
+        // ✨ 2. buttonContainer 레이아웃 (화면 하단에 고정)
+        buttonContainer.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            // safeAreaLayoutGuide.bottom을 기준으로 높이 80인 버튼 영역의 top을 잡습니다.
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-80)
+            // 그리고 view의 맨 아래까지 확장하여 버튼 영역 아래를 채웁니다.
+            $0.bottom.equalToSuperview()
+        }
+                
+                // ✨ 3. nextButton 레이아웃 (buttonContainer 내부에)
+                nextButton.snp.makeConstraints {
+                    $0.horizontalEdges.equalToSuperview().inset(16)
+                    $0.top.equalToSuperview().offset(12)
+                }
 
         contentView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
@@ -296,21 +325,28 @@ final class SetRateViewController: BaseViewController {
         }
 
         selectImageButton.snp.makeConstraints {
-            $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
-            $0.leading.equalToSuperview().offset(15)
-            $0.width.height.equalTo(60)
-        }
+                    $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
+                    $0.leading.equalToSuperview().offset(16) // 인셋 16으로 통일
+                    $0.width.height.equalTo(60)
+                }
 
-        imageCountLabel.snp.makeConstraints {
-            $0.top.equalTo(selectImageButton.snp.bottom).offset(-19)
-            $0.centerX.equalTo(selectImageButton)
-        }
+                imageCountLabel.snp.makeConstraints {
+                    $0.top.equalTo(selectImageButton.snp.bottom).offset(5)
+                    $0.centerX.equalTo(selectImageButton)
+                }
 
-        userReviewImageView.snp.makeConstraints {
-            $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
-            $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
-            $0.width.height.equalTo(60)
-        }
+                userReviewImageView.snp.makeConstraints {
+                    $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
+                    $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
+                    $0.width.height.equalTo(60)
+                }
+                
+                deleteMethodLabel.snp.makeConstraints {
+                    $0.top.equalTo(imageCountLabel.snp.bottom).offset(7)
+                    $0.leading.equalTo(selectImageButton)
+                    // ✨ contentView bottom 제약을 deleteMethodLabel 아래로 연결 (여유 공간 100pt 확보)
+                    $0.bottom.equalTo(contentView.snp.bottom).offset(-100)
+                }
         
         closeButton.snp.makeConstraints {
             $0.top.equalTo(userReviewImageView.snp.top).offset(-6)
@@ -318,16 +354,16 @@ final class SetRateViewController: BaseViewController {
             $0.size.equalTo(24)
         }
 
-        deleteMethodLabel.snp.makeConstraints {
-            $0.top.equalTo(selectImageButton.snp.bottom).offset(7)
-            $0.leading.equalTo(selectImageButton)
-        }
+//        deleteMethodLabel.snp.makeConstraints {
+//            $0.top.equalTo(selectImageButton.snp.bottom).offset(7)
+//            $0.leading.equalTo(selectImageButton)
+//        }
 
-        nextButton.snp.makeConstraints { make in
-            make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
-            make.horizontalEdges.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().offset(-15)
-        }
+//        nextButton.snp.makeConstraints { make in
+//            make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
+//            make.horizontalEdges.equalToSuperview().inset(16)
+//            make.bottom.equalToSuperview().offset(-15)
+//        }
 
         for i in 0...4 {
             rateView.buttons[i].snp.makeConstraints { make in
@@ -412,6 +448,12 @@ final class SetRateViewController: BaseViewController {
         imagePickerController.sourceType = .photoLibrary
         imagePickerController.allowsEditing = false
         userReviewTextView.delegate = self
+        
+        // ✨ 네비게이션 델리게이트 설정
+        self.navigationController?.delegate = self
+                
+        // ✨ 스와이프 제스처 델리게이트 설정
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
 
     private func toggleLike(for index: Int) {
@@ -685,7 +727,7 @@ extension SetRateViewController {
 
 // MARK: - UIImagePickerControllerDelegate
 
-extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let image = info[.originalImage] as? UIImage {
             userReviewImageView.image = image
@@ -695,6 +737,81 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
         picker.dismiss(animated: true)
     }
+    
+    // 💡 네비게이션 컨트롤러의 뷰 컨트롤러가 pop되기 직전에 호출됩니다.
+        func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+            
+            // 현재 뷰 컨트롤러(SetRateViewController)가 pop되는지 확인합니다.
+            let isPopping = !navigationController.viewControllers.contains(self)
+            
+            // 만약 pop이 발생하고, 리뷰 작성 중이라면
+            if isPopping {
+                
+                // 1. 리뷰 내용이 있는지 확인 (별점, 텍스트 등)
+                let textHasContent = userReviewTextView.text != "메뉴에 대한 상세한 리뷰를 작성해주세요" && !userReviewTextView.text.isEmpty
+                let isReviewStarted: Bool = rateView.currentStar > 0 || textHasContent
+                
+                // 2. 리뷰를 새로 작성 중이며 (reviewId == nil) 내용이 있을 경우에만 다이얼로그 표시
+                if reviewId == nil, isReviewStarted {
+                    
+                    // pop을 즉시 취소 (다이얼로그 결과를 기다림)
+                    navigationController.viewControllers.append(self)
+                    
+                    let title = "작성 취소"
+                    let message = "작성 중인 리뷰는 저장되지 않습니다. 정말 나가시겠습니까?"
+                    let confirmButtonTitle = "나가기"
+                    let cancelButtonTitle = "계속 작성"
+                    
+                    showCustomDialog(
+                        title: title,
+                        message: message,
+                        cancelButtonTitle: cancelButtonTitle,
+                        confirmButtonTitle: confirmButtonTitle
+                    ) { [weak self] in
+                        guard let self = self else { return }
+                        // "나가기" 확인 시, delegate를 nil로 설정하여 재귀 방지
+                        self.navigationController?.delegate = nil
+                        self.navigationController?.popViewController(animated: true)
+                        // pop 완료 후 다시 delegate 설정
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.navigationController?.delegate = self
+                        }
+                    }
+                }
+            }
+        }
+    
+    // 💡 스와이프 제스처가 시작될 때 호출됩니다.
+        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            
+            // 1. 리뷰 내용이 있는지 확인 (별점, 텍스트 등)
+            let isReviewStarted: Bool = rateView.currentStar > 0 || !userReviewTextView.text.isEmpty
+            
+            // 2. 리뷰를 새로 작성 중이며 내용이 있을 경우
+            if reviewId == nil, isReviewStarted {
+                
+                let title = "작성 취소"
+                let message = "작성 중인 리뷰는 저장되지 않습니다. 정말 나가시겠습니까?"
+                let confirmButtonTitle = "나가기"
+                let cancelButtonTitle = "계속 작성"
+                
+                // pop을 바로 막고 다이얼로그 표시
+                showCustomDialog(
+                    title: title,
+                    message: message,
+                    cancelButtonTitle: cancelButtonTitle,
+                    confirmButtonTitle: confirmButtonTitle
+                ) { [weak self] in
+                    // "나가기" 확인 시, 명시적으로 pop
+                    self?.navigationController?.popViewController(animated: true)
+                }
+                // 스와이프 동작을 취소합니다.
+                return false
+            }
+            
+            // 내용이 없으면 기본 동작 (스와이프 가능)
+            return true
+        }
 }
 
 // MARK: - UITextViewDelegate

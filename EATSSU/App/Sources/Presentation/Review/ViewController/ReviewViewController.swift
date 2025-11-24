@@ -16,7 +16,9 @@ import SnapKit
 
 final class ReviewViewController: BaseViewController {
     // MARK: - Properties
-
+    override var shouldHideTabBar: Bool {
+            return true
+        }
     let reviewProvider = MoyaProvider<ReviewRouter>(plugins: [ESMoyaLoggingPlugin()])
     var menuID: Int = .init()
     var type = "VARIABLE"
