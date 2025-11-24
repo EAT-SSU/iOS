@@ -226,46 +226,90 @@ final class ReviewViewController: BaseViewController {
         menuID = id
     }
 
-    private func showFixOrDeleteAlert(data: ReviewListItem) {
-        let alert = UIAlertController(title: "리뷰 수정 혹은 삭제",
-                                      message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.actionSheet)
-        
-        let fixAction = UIAlertAction(title: "수정하기",
-                                      style: .default,
-                                      handler: { _ in
+    private func showDeleteAlert(data: ReviewListItem) {
             
-            let menuNames = data.menu?.map { $0.name } ?? []
-            
-            let setRateViewController = SetRateViewController(menuId: self.menuID)
-            
-            setRateViewController.dataBindForFix(list: menuNames, reviewId: data.reviewId)
-            setRateViewController.settingForReviewFix(data: data)
-            self.navigationController?.pushViewController(setRateViewController, animated: true)
-        })
-        
-        let deleteAction = UIAlertAction(title: "삭제하기",
-                                         style: .default,
-                                         handler: { _ in
-            self.showCustomDialog(
-                title: "리뷰 삭제하기",
-                message: "해당 리뷰를 삭제할까요?",
-                cancelButtonTitle: "취소하기",
-                confirmButtonTitle: "삭제하기"
-            ) { [weak self] in
-                self?.deleteReview(reviewID: data.reviewId)
+            // ✨ 리뷰 작성자가 아니면 바로 신고 다이얼로그를 띄웁니다.
+            if !data.isWriter {
+                self.showReportAlert(reviewID: data.reviewId)
+                return
             }
-        })
+            
+            // ✨ 리뷰 작성자인 경우: 삭제 시 Custom Dialog를 사용합니다.
+            
+            // Custom Dialog를 위한 데이터
+            let title = "리뷰 삭제"
+            let message = "해당 리뷰를 삭제할까요?"
+            let confirmButtonTitle = "삭제하기"
+            let cancelButtonTitle = "취소하기"
+            
+            self.showCustomDialog(
+                title: title,
+                message: message,
+                cancelButtonTitle: cancelButtonTitle,
+                confirmButtonTitle: confirmButtonTitle
+            ) { [weak self] in
+                guard let self = self else { return }
+                
+                // 삭제 확인 시, deleteReview 함수 호출
+                self.deleteReview(reviewID: data.reviewId)
+            }
+        }
         
-        let cancelAction = UIAlertAction(title: "취소하기",
-                                         style: .cancel,
-                                         handler: nil)
-        
-        alert.addAction(fixAction)
-        alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
-    }
+        private func showFixOrDeleteAlert_OLD(data: ReviewListItem) {
+            let alert = UIAlertController(title: "리뷰 수정 혹은 삭제",
+                                              message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
+                                              preferredStyle: UIAlertController.Style.actionSheet)
+                
+                let fixAction = UIAlertAction(title: "수정하기",
+                                              style: .default,
+                                              handler: { _ in
+                    
+                    let menuNames = data.menu?.map { $0.name } ?? []
+                    // ✨ MenuLike 배열에서 menuId만 추출 (수정 요청 DTO의 menuLikes를 구성하기 위함)
+                    let menuIds = data.menu?.map { $0.menuId } ?? []
+                    
+                    // 🛠️ 수정: data.type에 따라 SetRateViewController 생성자 변경 필요
+                    // ReviewViewController는 dataBindForFix를 사용할 것이므로 menuId 생성자를 사용하는 것이 적절
+                    let setRateViewController = SetRateViewController(menuId: self.menuID)
+                    
+                    // 1. 리뷰 ID와 메뉴 이름을 바인딩 (UI 설정 및 reviewId 저장)
+                    setRateViewController.dataBindForFix(list: menuNames, reviewId: data.reviewId)
+                    
+                    // 2. 리뷰 상세 정보 (별점, 내용, 이미지) 바인딩
+                    setRateViewController.settingForReviewFix(data: data)
+                    
+                    // 3. 리뷰 수정 API 호출을 위한 추가 정보 바인딩 (menuId, isLike)
+                    // SetRateViewController의 validMenuIDList와 likedStates에 원본 정보를 설정
+                    let likedStates = data.menu?.map { $0.isLike } ?? []
+                    setRateViewController.dataBindForFix(
+                        menuNames: menuNames,
+                        menuIds: menuIds,
+                        likedStates: likedStates
+                    )
+
+                    self.navigationController?.pushViewController(setRateViewController, animated: true)
+                })
+            
+            let deleteAction = UIAlertAction(title: "삭제하기",
+                                                 style: .destructive,
+                                                 handler: { [weak self] _ in
+                    guard let self = self else { return }
+                    
+                    // ✨ V2 API를 사용하는 deleteReview 함수 호출 (reviewId 전달)
+                    // ReviewRouter.deleteReview에 V2 Path와 Method가 적용되었으므로
+                    // 이 함수 내부의 호출 로직은 변경 없이 V2 API를 사용하게 됩니다.
+                    self.deleteReview(reviewID: data.reviewId)
+                })
+            
+            let cancelAction = UIAlertAction(title: "취소하기",
+                                             style: .cancel,
+                                             handler: nil)
+            
+            alert.addAction(fixAction)
+            alert.addAction(deleteAction)
+            alert.addAction(cancelAction)
+            present(alert, animated: true, completion: nil)
+        }
     
     private func showReportAlert(reviewID: Int) {
         showCustomDialog(
@@ -433,7 +477,7 @@ extension ReviewViewController: UITableViewDataSource {
                 cell.handler = { [weak self] in
                     guard let self else { return }
 
-                    reviewList[indexPath.row].isWriter ? self.showFixOrDeleteAlert(data: reviewList[indexPath.row])
+                    reviewList[indexPath.row].isWriter ? self.showDeleteAlert(data: reviewList[indexPath.row])
                         : self.showReportAlert(reviewID: reviewList[indexPath.row].reviewId)
                 }
                 cell.selectionStyle = .none
@@ -596,16 +640,27 @@ extension ReviewViewController {
     }
 
     func deleteReview(reviewID: Int) {
-        reviewProvider.request(.deleteReview(reviewID)) { response in
-            switch response {
+        NetworkService.shared.request(
+            ReviewRouter.deleteReview(reviewID), // 1. ReviewRouter를 타겟으로 지정
+            responseType: Bool.self,             // 2. 응답 타입은 Bool로 가정
+            useAuth: true                        // 3. ✨ 인증 필요!
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
             case .success:
+                print("✅ Review 삭제 성공")
+                // 삭제 성공 시, 통계 및 리뷰 목록을 새로고침
                 self.getStatistics()
                 if self.type == "VARIABLE" {
                     self.getValidMenusForReview()
                 }
                 self.getReviewList(type: self.type, menuId: self.menuID)
-            case let .failure(err):
-                print("❌ Delete Review Error: \(err.localizedDescription)")
+                self.showToast(message: "리뷰가 성공적으로 삭제되었습니다.") // 사용자에게 피드백 제공
+                
+            case let .failure(error):
+                print("❌ Delete Review Error: \(error.localizedDescription)")
+                self.showToast(message: "리뷰 삭제에 실패했습니다.")
             }
         }
     }

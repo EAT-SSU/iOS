@@ -50,7 +50,7 @@ extension ReviewRouter: TargetType {
         case .report:
             "/reports"
         case let .deleteReview(reviewId):
-            "/reviews/\(reviewId)"
+            "/v2/reviews/\(reviewId)"
 //        case let .fixReview(reviewId, _):
 //            "/reviews/\(reviewId)"
         // MARK: - New V2 Path

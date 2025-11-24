@@ -364,6 +364,20 @@ final class SetRateViewController: BaseViewController {
         menuTableView.reloadData()
     }
     
+    // ✨ 리뷰 수정 시 메뉴 ID와 isLike 상태를 함께 바인딩하는 오버로드
+    func dataBindForFix(menuNames: [String], menuIds: [Int], likedStates: [Bool]) {
+        self.selectedList = menuNames
+        self.validMenuIDList = menuIds
+        self.likedStates = likedStates
+        self.reviewType = .fixed // 리뷰 수정은 일반적으로 단일 메뉴 (fixed) 처럼 동작
+        
+        menuLabel.text = "\(menuNames.first ?? "") 을/를 추천하시겠어요?"
+        
+        // 테이블 뷰 다시 로드 및 높이 업데이트
+        menuTableView.reloadData()
+        view.setNeedsLayout()
+    }
+    
     func dataBindForFix(list: [String], reviewId: Int) {
         self.selectedList = list
         self.reviewId = reviewId
@@ -427,12 +441,56 @@ final class SetRateViewController: BaseViewController {
             return
         }
         
+        // ✨ 리뷰 ID가 있으면 수정, 없으면 작성
+            if reviewId != nil {
+                sendFixReview()
+                return
+            }
+        
         // ✨ 타입에 따라 적절한 API 호출
         switch reviewType {
         case .variable:
             sendMealReview()
         case .fixed:
             sendMenuReview()
+        }
+    }
+    
+    // ✨ V2 API: Review Fix
+    private func sendFixReview() {
+        guard let reviewId = reviewId else {
+            showToast(message: "수정할 리뷰 정보가 없습니다.")
+            return
+        }
+
+        _Concurrency.Task {
+            do {
+                // 1. MenuLike 배열 생성 (현재는 FIXED 리뷰만 수정 가능하다고 가정)
+                // FIXED 리뷰는 likedStates에 하나의 Bool 값만 가집니다.
+                let menuLikes: [MenuLike] = validMenuIDList.enumerated().map { (index, menuId) in
+                    MenuLike(menuId: menuId, isLike: likedStates[index])
+                }
+                
+                // 2. Fixed Review 요청 생성
+                let request = FixedReviewRequestDTO(
+                    rating: rateView.currentStar,
+                    menuLikes: menuLikes,
+                    content: userReviewTextView.text
+                )
+                
+                // 3. API 전송
+                try await postFixReview(reviewId: reviewId, request: request)
+                
+                await MainActor.run {
+                    self.moveToReviewVC()
+                }
+                
+            } catch {
+                await MainActor.run {
+                    print("❌ Review 수정 업로드 실패: \(error)")
+                    self.showToast(message: "리뷰 수정에 실패했습니다.")
+                }
+            }
         }
     }
     
@@ -604,6 +662,25 @@ extension SetRateViewController {
             }
         }
     }
+    
+    private func postFixReview(reviewId: Int, request: FixedReviewRequestDTO) async throws {
+            try await withCheckedThrowingContinuation { continuation in
+                NetworkService.shared.request(
+                    WriteReviewRouter.fixReview(reviewId: reviewId, param: request),
+                    responseType: Bool.self, // 수정 성공 시 Bool (또는 BaseResponse의 result가 nil인 경우)
+                    useAuth: true
+                ) { result in
+                    switch result {
+                    case .success:
+                        print("✅ Review 수정 성공")
+                        continuation.resume()
+                    case .failure(let error):
+                        print("❌ Review 수정 실패: \(error)")
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
 }
 
 // MARK: - UIImagePickerControllerDelegate

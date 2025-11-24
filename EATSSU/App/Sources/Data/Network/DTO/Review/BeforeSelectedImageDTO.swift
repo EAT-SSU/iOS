@@ -9,7 +9,5 @@ import Foundation
 
 struct BeforeSelectedImageDTO: Codable {
     let mainRating: Int
-    let amountRating: Int?
-    let tasteRating: Int?
     let content: String
 }
