@@ -14,6 +14,7 @@ struct SmallNormalView: View {
 
     var body: some View {
         VStack(spacing: 8) {
+            // 상단 헤더 영역 (식당 이름, 시간, 로고)
             HStack {
                 Text(entry.restaurantName)
                     .font(EATSSUDesignFontFamily.Pretendard.bold.swiftUIFont(size: 10))
@@ -35,24 +36,17 @@ struct SmallNormalView: View {
             }
             .padding(8)
 
+            // 메인 콘텐츠 영역 (메뉴 리스트)
             VStack {
                 VStack(alignment: .leading, spacing: 12) {
-                    if entry.menus.count > 1 && !entry.menus.contains(where: { $0.contains("+") }) {
-                        Text(entry.menus.joined(separator: " + "))
+                    ForEach(entry.menus, id: \.self) { menuSet in
+                        // 하나의 세트 안에 있는 반찬들을 " + "로 연결
+                        Text(menuSet.joined(separator: " + "))
                             .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
                             .foregroundStyle(.black)
-                            .lineLimit(nil)
+                            .lineLimit(nil) 
                             .multilineTextAlignment(.leading)
                             .dynamicTypeSize(.xLarge ... .xxxLarge)
-                    } else {
-                        ForEach(entry.menus, id: \.self) { menu in
-                            Text(menu)
-                                .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
-                                .foregroundStyle(.black)
-                                .lineLimit(nil)
-                                .multilineTextAlignment(.leading)
-                                .dynamicTypeSize(.xLarge ... .xxxLarge)
-                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

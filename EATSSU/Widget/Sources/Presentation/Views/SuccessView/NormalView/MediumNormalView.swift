@@ -35,29 +35,18 @@ struct MediumNormalView: View {
             }
             .padding(8)
 
-            VStack {
-                VStack(alignment: .leading, spacing: 10) {
-                    if entry.menus.count > 1 && !entry.menus.contains(where: { $0.contains("+") }) {
-                        Text(entry.menus.joined(separator: " + "))
-                            .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
-                            .foregroundStyle(.black)
-                            .lineLimit(nil)
-                            .multilineTextAlignment(.leading)
-                            .dynamicTypeSize(.xLarge ... .xxxLarge)
-                    } else {
-                        ForEach(entry.menus, id: \.self) { menu in
-                            Text(menu)
-                                .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
-                                .foregroundStyle(.black)
-                                .lineLimit(nil)
-                                .multilineTextAlignment(.leading)
-                                .dynamicTypeSize(.xLarge ... .xxxLarge)
-                        }
-                    }
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(entry.menus, id: \.self) { menuSet in
+                    Text(menuSet.joined(separator: " + "))
+                        .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
+                        .foregroundStyle(.black)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                        .dynamicTypeSize(.xLarge ... .xxxLarge)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(8)
             }
+            .frame(maxWidth: .infinity, alignment: .leading) 
+            .padding(8)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 10)
