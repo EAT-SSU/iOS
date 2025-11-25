@@ -36,7 +36,7 @@ struct MediumNormalView: View {
             .padding(8)
 
             VStack(alignment: .leading, spacing: 10) {
-                ForEach(entry.menus, id: \.self) { menuSet in
+                ForEach(Array(entry.menus.enumerated()), id: \.offset) { index, menuSet in
                     Text(menuSet.joined(separator: " + "))
                         .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 12))
                         .foregroundStyle(.black)

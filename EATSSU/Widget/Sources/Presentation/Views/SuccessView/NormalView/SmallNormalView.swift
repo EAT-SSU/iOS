@@ -39,7 +39,7 @@ struct SmallNormalView: View {
             // 메인 콘텐츠 영역 (메뉴 리스트)
             VStack {
                 VStack(alignment: .leading, spacing: 12) {
-                    ForEach(entry.menus, id: \.self) { menuSet in
+                    ForEach(Array(entry.menus.enumerated()), id: \.offset) { index, menuSet in
                         // 하나의 세트 안에 있는 반찬들을 " + "로 연결
                         Text(menuSet.joined(separator: " + "))
                             .font(EATSSUDesignFontFamily.Pretendard.medium.swiftUIFont(size: 11))
