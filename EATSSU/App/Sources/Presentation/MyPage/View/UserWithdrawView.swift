@@ -91,15 +91,15 @@ final class UserWithdrawView: BaseUIView {
     
     private func setProperties() {
         nickNameLabel.text = TextLiteral.MyPage.confirmWithdrawal
-        nickNameLabel.font = .bold(size: 16)
+        nickNameLabel.font = .subtitle1
 
         subscription.text = TextLiteral.MyPage.withdrawalNotice
         subscription.numberOfLines = 2
-        subscription.font = .medium(size: 12)
-        subscription.textColor = .gray700
+        subscription.font = .caption2
+        subscription.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
 
-        inputNickNameTextField.font = .regular(size: 12)
-        inputNickNameTextField.textColor = .black
+        inputNickNameTextField.font = .caption2
+        inputNickNameTextField.textColor = .gray700Basic
         inputNickNameTextField.setRoundBorder()
         inputNickNameTextField.addLeftPadding()
         inputNickNameTextField.clearButtonMode = .whileEditing
@@ -107,8 +107,8 @@ final class UserWithdrawView: BaseUIView {
         inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
 
         nickNameStateGuideLabel.text = TextLiteral.inputNickName
-        nickNameStateGuideLabel.textColor = .gray700
-        nickNameStateGuideLabel.font = .medium(size: 10)
+        nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        nickNameStateGuideLabel.font = .caption3
 
         nickNameInputStackView.axis = .vertical
         nickNameInputStackView.spacing = 8.0
@@ -142,7 +142,7 @@ final class UserWithdrawView: BaseUIView {
         case .corrected:
             // 올바른 닉네임 입력 시 -> 회색
             nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
-            nickNameStateGuideLabel.textColor = .gray700
+            nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
             inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
             completeSignOutButton.isEnabled = true
 
@@ -150,7 +150,7 @@ final class UserWithdrawView: BaseUIView {
             // 잘못된 닉네임 입력 시 -> 빨간색
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.MyPage.invalidNicknameMessage
-            nickNameStateGuideLabel.textColor = .primary
+            nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.Main.primary.color
             inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.danger.color.cgColor
             completeSignOutButton.isEnabled = false
 
@@ -158,7 +158,7 @@ final class UserWithdrawView: BaseUIView {
             // 비어있을 때 -> 회색
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.inputNickName
-            nickNameStateGuideLabel.textColor = .gray700
+            nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
             inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
             completeSignOutButton.isEnabled = false
         }

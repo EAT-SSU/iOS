@@ -106,7 +106,7 @@ final class CustomTimeTabController: BaseViewController {
         tabContainerView.layer.cornerRadius = 30
         tabContainerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         tabContainerView.layer.masksToBounds = false
-        tabContainerView.layer.shadowColor = UIColor.black.cgColor
+        tabContainerView.layer.shadowColor = UIColor.gray700Basic.cgColor
         tabContainerView.layer.shadowOpacity = 0.6
         tabContainerView.layer.shadowOffset = CGSize(width: 0, height: 0)
         tabContainerView.layer.shadowRadius = 7
@@ -120,8 +120,8 @@ final class CustomTimeTabController: BaseViewController {
         for (index, title) in tabTitles.enumerated() {
             let button = UIButton(type: .system)
             button.setTitle(title, for: .normal)
-            button.setTitleColor(.gray700, for: .normal)
-            button.titleLabel?.font = .semiBold(size: 16)
+            button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray700.color, for: .normal)
+            button.titleLabel?.font = UIFont.subtitle2
             button.tag = index
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
             tabStackView.addArrangedSubview(button)
@@ -205,7 +205,7 @@ final class CustomTimeTabController: BaseViewController {
     private func updateTabSelection(animated: Bool) {
         for (index, button) in tabButtons.enumerated() {
             let isSelected = index == selectedIndex
-            button.setTitleColor(isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray700, for: .normal)
+            button.setTitleColor(isSelected ? EATSSUDesignAsset.Color.Main.primary.color : EATSSUDesignAsset.Color.GrayScale.gray700.color, for: .normal)
         }
 
         let tabWidth = view.frame.width / CGFloat(tabTitles.count)

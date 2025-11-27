@@ -89,7 +89,7 @@ final class SetNickNameView: BaseUIView {
     private let accountTypeLabel: UILabel = {
         let label = UILabel()
         label.text = "없음"
-        label.font = .bold(size: 14)
+        label.font = .button2
         return label
     }()
 

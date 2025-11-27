@@ -39,12 +39,12 @@ class MainTextField: UITextField {
 
     func configureUI() {
         layer.cornerRadius = 10
-        layer.borderColor = UIColor.primary.cgColor
+        layer.borderColor = EATSSUDesignAsset.Color.Main.primary.color.cgColor
         layer.borderWidth = 1.0
         placeholder = placeHolder
         leftView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 10.0, height: 0.0))
         leftViewMode = .always
-        font = UIFont.regular(size: 16.0)
+        font = .body1
     }
 
     func setLayout() {

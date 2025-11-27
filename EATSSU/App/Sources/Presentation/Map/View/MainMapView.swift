@@ -39,7 +39,7 @@ final class MainMapView: BaseUIView {
         toggleBackgroundView.backgroundColor = .white
         addSubview(toggleBackgroundView)
 
-        let titleFont = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
+        let titleFont = UIFont.button2
 
         // 전체 버튼
         wholeButton.setTitle("전체", for: .normal)

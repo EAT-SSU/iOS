@@ -90,7 +90,7 @@ class EATSSUToastView: BaseUIView {
     
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
+        label.font = .body2
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
         label.numberOfLines = 0
         return label
@@ -99,7 +99,7 @@ class EATSSUToastView: BaseUIView {
     private let actionButton: UIButton = {
         let button = UIButton()
         button.setTitle("보러가기", for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
+        button.titleLabel?.font = .button2
         button.isHidden = true
         return button
     }()

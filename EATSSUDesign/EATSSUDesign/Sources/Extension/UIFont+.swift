@@ -1,37 +1,6 @@
-//
-//  UIFont+.swift
-//  EatSSU-iOS
-//
-//  Created by 박윤빈 on 2023/03/15.
-//
-
 import UIKit
 
 extension UIFont {
-    /*
-     설명
-     1.x.x 버전에서 사용 중이던 AppleSD 폰트 사용입니다.
-     이제 더 이상 사용하지는 않지만, 개발단계에 있어서 빌드에러가 발생하지 않도록 남겨두고, 추후 제거하겠습니다.
-     */
-    public class func regular(size: CGFloat) -> UIFont {
-        UIFont(name: AppFontName.regularFont.rawValue, size: size)!
-    }
-
-    public class func medium(size: CGFloat) -> UIFont {
-        UIFont(name: AppFontName.mediumFont.rawValue, size: size)!
-    }
-
-    public class func semiBold(size: CGFloat) -> UIFont {
-        UIFont(name: AppFontName.semiBoldFont.rawValue, size: size)!
-    }
-
-    public class func bold(size: CGFloat) -> UIFont {
-        UIFont(name: AppFontName.boldFont.rawValue, size: size)!
-    }
-
-    public class func extraBold(size: CGFloat) -> UIFont {
-        UIFont(name: AppFontName.extraBoldFont.rawValue, size: size)!
-    }
 
     // MARK: - Heading
 

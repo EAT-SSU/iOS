@@ -31,8 +31,8 @@ final class MyPageView: BaseUIView {
     var userNicknameLabel: UILabel = {
         let label = UILabel()
         label.text = "다시 시도해주세요"
-        label.textColor = .black
-        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 20)
+        label.textColor = .gray700Basic
+        label.font = .header1
         return label
     }()
 
@@ -47,7 +47,7 @@ final class MyPageView: BaseUIView {
     private let appVersionStringLabel: UILabel = {
         let label = UILabel()
         label.text = TextLiteral.MyPage.appVersion
-        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.font = .caption2
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         return label
     }()
@@ -56,7 +56,7 @@ final class MyPageView: BaseUIView {
     private let appVersionLabel: UILabel = {
         let label = UILabel()
         label.text = MyPageRightItemData.version
-        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.font = .caption2
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         return label
     }()
@@ -67,7 +67,7 @@ final class MyPageView: BaseUIView {
         button.setTitle(TextLiteral.MyPage.withdraw, for: .normal)
         button.setImage(EATSSUDesignAsset.Images.withdrawIcon.image, for: .normal)
         button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray400.color, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        button.titleLabel?.font = .caption2
         button.tintColor = .red
         return button
     }()

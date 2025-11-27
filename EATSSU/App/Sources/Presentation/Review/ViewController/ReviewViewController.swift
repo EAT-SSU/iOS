@@ -10,6 +10,8 @@ import UIKit
 import FirebaseAnalytics
 import Moya
 
+import EATSSUDesign
+
 final class ReviewViewController: BaseViewController {
     // MARK: - Properties
 
@@ -36,13 +38,6 @@ final class ReviewViewController: BaseViewController {
         indicator.startAnimating()
         indicator.isHidden = true
         return indicator
-    }()
-    
-    private lazy var noReviewImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = ImageLiteral.noReview
-        imageView.isHidden = true
-        return imageView
     }()
     
     // MARK: - Life Cycles
@@ -73,8 +68,7 @@ final class ReviewViewController: BaseViewController {
     override func configureUI() {
         reviewTableView.backgroundColor = .white
         view.addSubviews(reviewTableView,
-                         activityIndicatorView,
-                         noReviewImageView)
+                         activityIndicatorView)
     }
     
     override func setLayout() {
@@ -85,10 +79,6 @@ final class ReviewViewController: BaseViewController {
         }
         
         activityIndicatorView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        
-        noReviewImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
     }
