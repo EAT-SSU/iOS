@@ -27,7 +27,7 @@ import UIKit.UIViewController
 #endif
 
 extension UIViewController {
-    func dismissKeyboard() {
+    public func dismissKeyboard() {
         let tap = UITapGestureRecognizer(target: self,
                                          action: #selector(UIViewController.dismissKeyboardTouchOutside))
         tap.cancelsTouchesInView = false
@@ -45,7 +45,7 @@ extension UIViewController {
     ///   - message: AlertController 메시지
     ///   - style: AlertAction 스타일
     ///   - action: 컨트롤러 액션
-    func showAlertController(title: String, message: String, style: UIAlertAction.Style, action: (() -> Void)? = nil) {
+    public func showAlertController(title: String, message: String, style: UIAlertAction.Style, action: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         let confirmAction = UIAlertAction(title: "확인", style: style) { _ in
@@ -64,7 +64,7 @@ extension UIViewController {
     ///   - confirmStyle: AlertController 확인 스타일
     ///   - cancelStyle: AlertController 취소 스타일
     ///   - action: 컨트롤러 액션
-    func showAlertControllerWithCancel(title: String,
+    public func showAlertControllerWithCancel(title: String,
                                        message: String,
                                        confirmStyle: UIAlertAction.Style,
                                        cancelStyle: UIAlertAction.Style = .cancel,

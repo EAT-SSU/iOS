@@ -8,33 +8,37 @@
 import UIKit
 
 extension UIColor {
-    static var gray100: UIColor {
+    public static var gray100: UIColor {
         UIColor(hex: "#F9F9F9")
     }
 
-    static var gray200: UIColor {
+    public static var gray200: UIColor {
         UIColor(hex: "#E6E6E6")
     }
 
-    static var gray300: UIColor {
+    public static var gray300: UIColor {
         UIColor(hex: "#D9D9D9")
     }
 
-    static var gray500: UIColor {
+    public static var gray500: UIColor {
         UIColor(hex: "#9D9D9D")
     }
 
-    static var gray700: UIColor {
+    public static var gray700: UIColor {
         UIColor(hex: "#565656")
     }
+    
+    public static var gray700Basic: UIColor {
+        UIColor(hex: "#1F1F1F")
+    }
 
-    static var primary: UIColor {
+    public static var primary: UIColor {
         UIColor(hex: "#DF5757")
     }
 }
 
 extension UIColor {
-    convenience init(hex: String, alpha: CGFloat = 1.0) {
+    public convenience init(hex: String, alpha: CGFloat = 1.0) {
         var hexFormatted: String = hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
 
         if hexFormatted.hasPrefix("#") {

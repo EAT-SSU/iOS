@@ -8,7 +8,7 @@
 import UIKit
 
 extension UICollectionViewCell {
-    static var cellIdentifier: String {
+    public static var cellIdentifier: String {
         String(describing: self)
     }
 }

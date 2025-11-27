@@ -9,6 +9,8 @@ import UIKit
 
 import SnapKit
 
+import EATSSUDesign
+
 class MainTextField: UITextField {
     private enum Size {
         static let width: CGFloat = 358.0
