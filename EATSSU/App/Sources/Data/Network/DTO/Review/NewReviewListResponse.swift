@@ -5,12 +5,7 @@
 //  Created by 한금준 on 11/16/25.
 //
 
-//struct NewReviewListResponse: Codable {
-//    let hasNext: Bool
-//    let dataList: [ReviewListItem]
-//}
-
-/// 리뷰 V2 리스트 조회 API의 result 내부 DTO (Menu용 - 페이지 기반)
+/// 리뷰 V2 리스트 조회 API
 struct NewReviewListResponse: Codable {
     let numberOfElements: Int?
     let hasNext: Bool

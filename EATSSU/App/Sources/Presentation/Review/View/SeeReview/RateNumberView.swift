@@ -16,27 +16,27 @@ final class RateNumberView: BaseUIView {
     private var starImageViews: [UIImageView] = []
     private lazy var starsStackView = UIStackView()
     private lazy var rateNumberStackView = UIStackView(arrangedSubviews: [starsStackView])
-
+    
     var filledStarImage: UIImage? = EATSSUDesignAsset.Images.icStarYellow.image
     var emptyStarImage: UIImage? = EATSSUDesignAsset.Images.icStarGray.image
-
+    
     // MARK: - init
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-
+    
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
     }
-
+    
     // MARK: - Functions
-
+    
     override func configureUI() {
         addSubviews(rateNumberStackView)
         starImageViews = (0..<5).map { _ in
@@ -53,7 +53,7 @@ final class RateNumberView: BaseUIView {
         rateNumberStackView.spacing = 6
         rateNumberStackView.alignment = .bottom
     }
-
+    
     override func setLayout() {
         starImageViews.forEach {
             $0.snp.makeConstraints {
@@ -61,7 +61,7 @@ final class RateNumberView: BaseUIView {
                 $0.width.equalTo(12.adjusted)
             }
         }
-
+        
         rateNumberStackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

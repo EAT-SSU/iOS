@@ -17,7 +17,7 @@ final class MenuLikeCell: UITableViewCell {
     var onLikeTapped: (() -> Void)?
     var isLiked: Bool = false {
         didSet {
-            tapped()   // 상태값 변경 시 UI 갱신
+            tapped()
         }
     }
     
@@ -36,7 +36,7 @@ final class MenuLikeCell: UITableViewCell {
         button.isUserInteractionEnabled = false
         return button
     }()
-
+    
     private let likeContainer: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 14
@@ -60,11 +60,11 @@ final class MenuLikeCell: UITableViewCell {
         
         contentView.addSubview(hStack)
         likeContainer.addSubview(likeButton)
-
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(likeTapped))
         likeContainer.isUserInteractionEnabled = true
         likeContainer.addGestureRecognizer(tapGesture)
-
+        
         hStack.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(12)
         }
@@ -99,17 +99,16 @@ final class MenuLikeCell: UITableViewCell {
         print("tapped 실행됨 → isLiked:", isLiked)
         let image = isLiked ? EATSSUDesignAsset.Images.thumbUp.image : EATSSUDesignAsset.Images.thumbUpGray.image
         DispatchQueue.main.async {
-                self.likeButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
-                
-                // Container 스타일 업데이트
-                if self.isLiked {
-                    self.likeContainer.backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
-                    self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.Main.primary.color.cgColor
-                } else {
-                    self.likeContainer.backgroundColor = .clear
-                    self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
-                }
+            self.likeButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
+            
+            if self.isLiked {
+                self.likeContainer.backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.Main.primary.color.cgColor
+            } else {
+                self.likeContainer.backgroundColor = .clear
+                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
             }
+        }
     }
 }
 

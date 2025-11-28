@@ -22,7 +22,6 @@ final class ReviewTableCell: UITableViewCell {
     
     lazy var totalRateView = RateNumberView()
     
-    // 태그 표시용 컬렉션 뷰
     private lazy var tagCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -96,7 +95,6 @@ final class ReviewTableCell: UITableViewCell {
         return imageView
     }()
     
-    /// 별점
     lazy var rateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [totalRateView])
         stackView.axis = .horizontal
@@ -105,7 +103,6 @@ final class ReviewTableCell: UITableViewCell {
         return stackView
     }()
     
-    /// 이름 + 메뉴
     lazy var nameMenuStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [userNameLabel])
         stackView.axis = .horizontal
@@ -114,7 +111,6 @@ final class ReviewTableCell: UITableViewCell {
         return stackView
     }()
     
-    /// 이름 + 메뉴 + 별점
     lazy var infoStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameMenuStackView, rateStackView])
         stackView.axis = .vertical
@@ -123,7 +119,6 @@ final class ReviewTableCell: UITableViewCell {
         return stackView
     }()
     
-    /// 프로필 + 이름 + 메뉴 + 별점
     lazy var profileStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [userProfileImageView, infoStackView])
         stackView.axis = .horizontal
@@ -194,7 +189,6 @@ final class ReviewTableCell: UITableViewCell {
         }
         
         foodImageView.snp.makeConstraints { make in
-//            make.height.width.equalTo(358)
             make.top.equalTo(reviewTextView.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(foodImageView.snp.width).multipliedBy(0.75)
@@ -238,19 +232,15 @@ extension ReviewTableCell: UICollectionViewDataSource {
 // MARK: - Data Bind
 
 extension ReviewTableCell {
-    // ✨ V2 API: ReviewListItem 직접 바인딩
     func dataBind(response: ReviewListItem) {
-        // 메뉴명 설정 (여러 메뉴인 경우 " + "로 연결)
         menuName = response.menu?.map { $0.name }.joined(separator: " + ") ?? ""
         
-        // 기본 정보
         userNameLabel.text = response.writerNickname
         totalRateView.setRating(Int(response.rating))
         dateLabel.text = response.writtenAt
         reviewTextView.text = response.content ?? ""
         reviewId = response.reviewId
         
-        // 이미지 처리
         if let firstImageUrl = response.imageUrls?.first(where: { !$0.isEmpty }) {
             foodImageView.isHidden = false
             foodImageView.kfSetImage(url: firstImageUrl)
@@ -258,11 +248,9 @@ extension ReviewTableCell {
             foodImageView.isHidden = true
         }
         
-        // 버튼 설정
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
         
-        // ✨ 태그 처리 (V2 API에서는 menu가 태그 역할)
         if let menuTags = response.menu, !menuTags.isEmpty {
             tags = menuTags.map { ($0.name, $0.isLike) }
         } else {
@@ -270,18 +258,15 @@ extension ReviewTableCell {
         }
         tagCollectionView.reloadData()
         
-        // 태그가 없으면 컬렉션뷰 숨기기
         tagCollectionView.isHidden = tags.isEmpty
     }
     
-    // 마이페이지용 바인딩 (기존 호환성 유지)
     func myPageDataBind(response: MyDataList, nickname: String) {
         userNameLabel.text = "\(nickname)"
         totalRateView.setRating(response.mainRating)
         dateLabel.text = response.writeDate
         reviewTextView.text = response.content
         
-        // 이미지 처리
         if response.imgURLList.count != 0 {
             if response.imgURLList[0] != "" {
                 foodImageView.isHidden = false
@@ -291,13 +276,11 @@ extension ReviewTableCell {
             foodImageView.isHidden = true
         }
         
-        // 버튼 설정
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.setTitle("", for: .normal)
         reviewId = response.reviewID
         
-        // 마이페이지에서는 태그 숨김
         tags = []
         tagCollectionView.isHidden = true
     }

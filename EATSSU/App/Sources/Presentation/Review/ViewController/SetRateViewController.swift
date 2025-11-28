@@ -25,17 +25,16 @@ final class SetRateViewController: BaseViewController {
     private var likedStates: [Bool] = []
     private var menuTableViewHeightConstraint: Constraint?
     
-    // ✨ 타입 구분: FIXED(고정 메뉴) vs VARIABLE(식단)
     private var reviewType: ReviewType = .variable
     private var mealID: Int?
     private var menuID: Int?
     
-    private var isReviewSubmitting = false     // 서버로 전송 중 여부
-    private var isReviewSubmitted = false      // 리뷰가 정상 제출된 상태
+    private var isReviewSubmitting = false
+    private var isReviewSubmitted = false
     
     enum ReviewType {
-        case fixed    // writeMenuReview 사용
-        case variable // writeMealReview 사용
+        case fixed
+        case variable
     }
     
     // MARK: - Initializer
@@ -166,7 +165,7 @@ final class SetRateViewController: BaseViewController {
     
     private let buttonContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = .white // 버튼 배경색 (TabBarContainer와 유사)
+        view.backgroundColor = .white
         view.layer.cornerRadius = 0
         view.clipsToBounds = true
         return view
@@ -184,7 +183,6 @@ final class SetRateViewController: BaseViewController {
         super.viewDidLoad()
         setDelegate()
         
-        // ✨ 타입에 따라 적절한 초기화
         if reviewType == .variable, let mealId = mealID {
             fetchValidMenus(mealId: mealId)
         } else if reviewType == .fixed {
@@ -209,8 +207,6 @@ final class SetRateViewController: BaseViewController {
     }
     
     // MARK: - API Calls
-    
-    // ✨ VARIABLE: 리뷰 가능한 메뉴 목록 조회
     private func fetchValidMenus(mealId: Int) {
         NetworkService.shared.request(
             ReviewRouter.getValidMenusForReview(mealId),
@@ -236,7 +232,6 @@ final class SetRateViewController: BaseViewController {
         }
     }
     
-    // ✨ FIXED: 단일 메뉴 리뷰 설정
     private func setupFixedMenuReview() {
         likedStates = [false]
         menuTableView.reloadData()
@@ -249,7 +244,6 @@ final class SetRateViewController: BaseViewController {
         dismissKeyboard()
         view.addSubviews(scrollView, buttonContainer)
         
-        // buttonContainer에 nextButton을 추가
         buttonContainer.addSubview(nextButton)
         scrollView.addSubview(contentView)
         contentView.addSubviews(
@@ -263,8 +257,7 @@ final class SetRateViewController: BaseViewController {
             imageCountLabel,
             userReviewImageView,
             closeButton,
-            deleteMethodLabel,
-            //            nextButton
+            deleteMethodLabel
         )
     }
     
@@ -273,16 +266,12 @@ final class SetRateViewController: BaseViewController {
             $0.edges.equalToSuperview()
         }
         
-        // ✨ 2. buttonContainer 레이아웃 (화면 하단에 고정)
         buttonContainer.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            // safeAreaLayoutGuide.bottom을 기준으로 높이 80인 버튼 영역의 top을 잡습니다.
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-80)
-            // 그리고 view의 맨 아래까지 확장하여 버튼 영역 아래를 채웁니다.
             $0.bottom.equalToSuperview()
         }
         
-        // ✨ 3. nextButton 레이아웃 (buttonContainer 내부에)
         nextButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.top.equalToSuperview().offset(12)
@@ -347,7 +336,6 @@ final class SetRateViewController: BaseViewController {
         deleteMethodLabel.snp.makeConstraints {
             $0.top.equalTo(imageCountLabel.snp.bottom).offset(7)
             $0.leading.equalTo(selectImageButton)
-            // ✨ contentView bottom 제약을 deleteMethodLabel 아래로 연결 (여유 공간 100pt 확보)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-100)
         }
         
@@ -357,20 +345,8 @@ final class SetRateViewController: BaseViewController {
             $0.size.equalTo(24)
         }
         
-        //        deleteMethodLabel.snp.makeConstraints {
-        //            $0.top.equalTo(selectImageButton.snp.bottom).offset(7)
-        //            $0.leading.equalTo(selectImageButton)
-        //        }
-        
-        //        nextButton.snp.makeConstraints { make in
-        //            make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
-        //            make.horizontalEdges.equalToSuperview().inset(16)
-        //            make.bottom.equalToSuperview().offset(-15)
-        //        }
-        
         for i in 0...4 {
             rateView.buttons[i].snp.makeConstraints { make in
-                //                make.height.equalTo(28)
                 make.width.equalTo(29.3)
             }
         }
@@ -392,7 +368,6 @@ final class SetRateViewController: BaseViewController {
         validMenuIDList = idList
         likedStates = Array(repeating: false, count: list.count)
         
-        // ✨ 타입 추정
         if idList.count == 1 {
             reviewType = .fixed
             menuID = idList.first
@@ -403,16 +378,13 @@ final class SetRateViewController: BaseViewController {
         menuTableView.reloadData()
     }
     
-    // ✨ 리뷰 수정 시 메뉴 ID와 isLike 상태를 함께 바인딩하는 오버로드
     func dataBindForFix(menuNames: [String], menuIds: [Int], likedStates: [Bool]) {
         self.selectedList = menuNames
         self.validMenuIDList = menuIds
         self.likedStates = likedStates
-        self.reviewType = .fixed // 리뷰 수정은 일반적으로 단일 메뉴 (fixed) 처럼 동작
+        self.reviewType = .fixed
         
         menuLabel.text = "\(menuNames.first ?? "") 을/를 추천하시겠어요?"
-        
-        // 테이블 뷰 다시 로드 및 높이 업데이트
         menuTableView.reloadData()
         view.setNeedsLayout()
     }
@@ -452,10 +424,7 @@ final class SetRateViewController: BaseViewController {
         imagePickerController.allowsEditing = false
         userReviewTextView.delegate = self
         
-        // ✨ 네비게이션 델리게이트 설정
         self.navigationController?.delegate = self
-        
-        // ✨ 스와이프 제스처 델리게이트 설정
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
@@ -486,16 +455,13 @@ final class SetRateViewController: BaseViewController {
             return
         }
         
-        // 리뷰 전송 시작 → 인터셉트 차단
         isReviewSubmitting = true
         
-        // ✨ 리뷰 ID가 있으면 수정, 없으면 작성
         if reviewId != nil {
             sendFixReview()
             return
         }
         
-        // ✨ 타입에 따라 적절한 API 호출
         switch reviewType {
         case .variable:
             sendMealReview()
@@ -504,7 +470,6 @@ final class SetRateViewController: BaseViewController {
         }
     }
     
-    // ✨ V2 API: Review Fix
     private func sendFixReview() {
         guard let reviewId = reviewId else {
             showToast(message: "수정할 리뷰 정보가 없습니다.")
@@ -513,20 +478,16 @@ final class SetRateViewController: BaseViewController {
         
         _Concurrency.Task {
             do {
-                // 1. MenuLike 배열 생성 (현재는 FIXED 리뷰만 수정 가능하다고 가정)
-                // FIXED 리뷰는 likedStates에 하나의 Bool 값만 가집니다.
                 let menuLikes: [MenuLike] = validMenuIDList.enumerated().map { (index, menuId) in
                     MenuLike(menuId: menuId, isLike: likedStates[index])
                 }
                 
-                // 2. Fixed Review 요청 생성
                 let request = FixedReviewRequestDTO(
                     rating: rateView.currentStar,
                     menuLikes: menuLikes,
                     content: userReviewTextView.text
                 )
                 
-                // 3. API 전송
                 try await postFixReview(reviewId: reviewId, request: request)
                 
                 await MainActor.run {
@@ -543,7 +504,6 @@ final class SetRateViewController: BaseViewController {
         }
     }
     
-    // ✨ V2 API: Meal Review (VARIABLE)
     private func sendMealReview() {
         guard let mealId = mealID else {
             showToast(message: "식단 정보가 없습니다.")
@@ -552,13 +512,10 @@ final class SetRateViewController: BaseViewController {
         
         _Concurrency.Task {
             do {
-                // 1. 이미지 업로드
                 var imageUrl: String?
                 if let image = userPickedImage {
                     imageUrl = try await uploadImage(image: image)
                 }
-                
-                // 2. Meal Review 요청 생성
                 let menuLikes = validMenuIDList.enumerated().map { (index, menuId) in
                     MenuLike(menuId: menuId, isLike: likedStates[index])
                 }
@@ -570,8 +527,6 @@ final class SetRateViewController: BaseViewController {
                     content: userReviewTextView.text,
                     imageUrls: imageUrl != nil ? [imageUrl!] : nil
                 )
-                
-                // 3. API 전송
                 try await postMealReview(request: request)
                 
                 await MainActor.run {
@@ -588,7 +543,6 @@ final class SetRateViewController: BaseViewController {
         }
     }
     
-    // ✨ V2 API: Menu Review (FIXED)
     private func sendMenuReview() {
         guard let menuId = menuID ?? validMenuIDList.first else {
             showToast(message: "메뉴 정보가 없습니다.")
@@ -597,13 +551,11 @@ final class SetRateViewController: BaseViewController {
         
         _Concurrency.Task {
             do {
-                // 1. 이미지 업로드
                 var imageUrl: String?
                 if let image = userPickedImage {
                     imageUrl = try await uploadImage(image: image)
                 }
                 
-                // 2. Menu Review 요청 생성
                 let menuLike = MenuLikeItem(
                     menuId: menuId,
                     isLike: likedStates.first ?? false
@@ -616,7 +568,6 @@ final class SetRateViewController: BaseViewController {
                     imageUrls: imageUrl != nil ? [imageUrl!] : nil
                 )
                 
-                // 3. API 전송
                 try await postMenuReview(request: request)
                 
                 await MainActor.run {
@@ -643,16 +594,11 @@ final class SetRateViewController: BaseViewController {
         }
     }
     
-//    @objc func didSelectedImage() {
-//        present(imagePickerController, animated: true)
-//    }
     @objc func didSelectedImage() {
-        // ✨ navigationController delegate 잠시 비활성화
         let originalDelegate = self.navigationController?.delegate
         self.navigationController?.delegate = nil
         
         present(imagePickerController, animated: true) { [weak self] in
-            // ✨ picker가 올라온 후 delegate 다시 복원
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 self?.navigationController?.delegate = originalDelegate
             }
@@ -759,30 +705,22 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
         picker.dismiss(animated: true)
     }
     
-    // 💡 네비게이션 컨트롤러의 뷰 컨트롤러가 pop되기 직전에 호출됩니다.
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         if isReviewSubmitted {
-                return
-            }
+            return
+        }
         
         if navigationController is UIImagePickerController {
-                return
-            }
+            return
+        }
         
-        // 현재 뷰 컨트롤러(SetRateViewController)가 pop되는지 확인합니다.
         let isPopping = !navigationController.viewControllers.contains(self)
         
-        // 만약 pop이 발생하고, 리뷰 작성 중이라면
         if isPopping {
-            
-            // 1. 리뷰 내용이 있는지 확인 (별점, 텍스트 등)
             let textHasContent = userReviewTextView.text != "메뉴에 대한 상세한 리뷰를 작성해주세요" && !userReviewTextView.text.isEmpty
             let isReviewStarted: Bool = rateView.currentStar > 0 || textHasContent
             
-            // 2. 리뷰를 새로 작성 중이며 (reviewId == nil) 내용이 있을 경우에만 다이얼로그 표시
             if reviewId == nil, isReviewStarted {
-                
-                // pop을 즉시 취소 (다이얼로그 결과를 기다림)
                 navigationController.viewControllers.append(self)
                 
                 let title = "작성 취소"
@@ -797,10 +735,8 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
                     confirmButtonTitle: confirmButtonTitle
                 ) { [weak self] in
                     guard let self = self else { return }
-                    // "나가기" 확인 시, delegate를 nil로 설정하여 재귀 방지
                     self.navigationController?.delegate = nil
                     self.navigationController?.popViewController(animated: true)
-                    // pop 완료 후 다시 delegate 설정
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         self.navigationController?.delegate = self
                     }
@@ -809,13 +745,8 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
     }
     
-    // 💡 스와이프 제스처가 시작될 때 호출됩니다.
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        // 1. 리뷰 내용이 있는지 확인 (별점, 텍스트 등)
         let isReviewStarted: Bool = rateView.currentStar > 0 || !userReviewTextView.text.isEmpty
-        
-        // 2. 리뷰를 새로 작성 중이며 내용이 있을 경우
         if reviewId == nil, isReviewStarted {
             
             let title = "작성 취소"
@@ -823,21 +754,16 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
             let confirmButtonTitle = "나가기"
             let cancelButtonTitle = "계속 작성"
             
-            // pop을 바로 막고 다이얼로그 표시
             showCustomDialog(
                 title: title,
                 message: message,
                 cancelButtonTitle: cancelButtonTitle,
                 confirmButtonTitle: confirmButtonTitle
             ) { [weak self] in
-                // "나가기" 확인 시, 명시적으로 pop
                 self?.navigationController?.popViewController(animated: true)
             }
-            // 스와이프 동작을 취소합니다.
             return false
         }
-        
-        // 내용이 없으면 기본 동작 (스와이프 가능)
         return true
     }
 }

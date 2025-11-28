@@ -9,22 +9,16 @@ import Foundation
 import Moya
 
 enum ReviewRouter {
-//    // 상단 메뉴 별점 불러오는 API -> 두개로 쪼개짐. 고정, 변동 분기처리는 아래에서!
-//    case reviewRate(_ type: String, _ id: Int)
-//
-//    // 하단 리뷰 리스트 불러오는 API
-//    case reviewList(_ type: String, _ id: Int)
     case report(param: ReportRequest)
     case deleteReview(_ reviewId: Int)
-//    case fixReview(_ reviewId: Int, _ param: BeforeSelectedImageDTO)
     
-    // MARK: - New V2 API: 리뷰 작성이 가능한 메뉴 목록 조회
+    // MARK: - New V2 API
     case getValidMenusForReview(_ mealId: Int)
     case newReviewList(_ type: String,
-                        _ id: Int,
-                        lastReviewId: Int?, // ✨ 추가: lastReviewId 파라미터
-                        page: Int? = 0,     // menu API용 (옵션)
-                        size: Int? = 20)
+                       _ id: Int,
+                       lastReviewId: Int?,
+                       page: Int? = 0,
+                       size: Int? = 20)
     case getFixedMenuStatistics(_ menuId: Int)
     case getMealStatistics(_ mealId: Int)
 }
@@ -33,125 +27,77 @@ extension ReviewRouter: TargetType {
     var baseURL: URL {
         URL(string: Config.baseURL)!
     }
-
+    
     var path: String {
         switch self {
-//        case let .reviewRate(type, id):
-//            switch type {
-//            case "VARIABLE":
-//                "/reviews/meals/\(id)"
-//            case "FIXED":
-//                "/reviews/menus/\(id)"
-//            default:
-//                ""
-//            }
-//        case .reviewList:
-//            "/reviews"
         case .report:
             "/reports"
         case let .deleteReview(reviewId):
             "/v2/reviews/\(reviewId)"
-//        case let .fixReview(reviewId, _):
-//            "/reviews/\(reviewId)"
-        // MARK: - New V2 Path
+            // MARK: - New V2 Path
         case let .getValidMenusForReview(mealId):
-            "/v2/reviews/meal/valid-for-review/\(mealId)" // Path Parameter 사용
+            "/v2/reviews/meal/valid-for-review/\(mealId)"
         case .newReviewList(let type, _, _, _, _):
-                    switch type {
-                    case "VARIABLE":
-                        "/v2/reviews/list/meal" // ✨ 수정: V2 Meal List API 경로
-                    case "FIXED":
-                        "/v2/reviews/list/menu" // ✨ 수정: V2 Menu List API 경로
-                    default:
-                        "" // 기존 경로 유지 (혹시 모를 에러 방지)
-                    }
+            switch type {
+            case "VARIABLE":
+                "/v2/reviews/list/meal"
+            case "FIXED":
+                "/v2/reviews/list/menu"
+            default:
+                ""
+            }
         case let .getFixedMenuStatistics(menuId):
-                    "/v2/reviews/statistics/menus/\(menuId)"
+            "/v2/reviews/statistics/menus/\(menuId)"
         case let .getMealStatistics(mealId):
-                    "/v2/reviews/statistics/meals/\(mealId)"
+            "/v2/reviews/statistics/meals/\(mealId)"
         }
     }
-
+    
     var method: Moya.Method {
         switch self {
-        case /*.reviewRate,*/ /*.reviewList, */.getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics:
-            .get
+        case .getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics:
+                .get
         case .report:
-            .post
+                .post
         case .deleteReview:
-            .delete
-//        case .fixReview:
-//            .patch
+                .delete
         }
     }
-
+    
     var task: Moya.Task {
         switch self {
-//        case let .reviewRate(type, id):
-//            switch type {
-//            case "VARIABLE":
-//                .requestParameters(parameters: ["mealId": id],
-//                                   encoding: URLEncoding.queryString)
-//            case "FIXED":
-//                .requestParameters(parameters: ["menuId": id],
-//                                   encoding: URLEncoding.queryString)
-//            default:
-//                .requestPlain
-//            }
-        /// 이후 정렬 순서, 리뷰 로드 개수 등 수정 필요하면 고치기
-//        case let .reviewList(type, id):
-//            switch type {
-//            case "VARIABLE":
-//                .requestParameters(parameters: ["menuType": type,
-//                                                "mealId": id,
-//                                                "page": 0,
-//                                                "size": 20,
-//                                                "sort": "date,DESC"],
-//                                   encoding: URLEncoding.queryString)
-//            case "FIXED":
-//                .requestParameters(parameters: ["menuType": type,
-//                                                "menuId": id,
-//                                                "page": 0,
-//                                                "size": 20,
-//                                                "sort": "date,DESC"],
-//                                   encoding: URLEncoding.queryString)
-//            default:
-//                .requestPlain
-//            }
         case let .report(param: param):
-            .requestJSONEncodable(param)
+                .requestJSONEncodable(param)
         case .deleteReview:
-            .requestPlain
-//        case let .fixReview(_, param):
-//            .requestJSONEncodable(param)
-        
-        // MARK: - New V2 Task
-        case .getValidMenusForReview: // Path에 ID가 포함되므로 Body나 QueryString 없음
-            .requestPlain
+                .requestPlain
+            
+            // MARK: - New V2 Task
+        case .getValidMenusForReview:
+                .requestPlain
         case let .newReviewList(type, id, lastReviewId, page, size):
             switch type {
             case "VARIABLE":
-                .requestParameters(
-                    parameters: (lastReviewId != nil)
+                    .requestParameters(
+                        parameters: (lastReviewId != nil)
                         ? ["mealId": id, "size": size ?? 20, "lastReviewId": lastReviewId!]
                         : ["mealId": id, "size": size ?? 20],
-                    encoding: URLEncoding.queryString
-                )
+                        encoding: URLEncoding.queryString
+                    )
                 
             case "FIXED":
-                .requestParameters(
-                    parameters: ["menuId": id, "page": page ?? 0, "size": size ?? 20],
-                    encoding: URLEncoding.queryString
-                )
+                    .requestParameters(
+                        parameters: ["menuId": id, "page": page ?? 0, "size": size ?? 20],
+                        encoding: URLEncoding.queryString
+                    )
                 
             default:
-                .requestPlain
-            
+                    .requestPlain
+                
             }
         case .getFixedMenuStatistics:
-                    .requestPlain
+                .requestPlain
         case .getMealStatistics:
-                    .requestPlain
+                .requestPlain
         }
     }
     

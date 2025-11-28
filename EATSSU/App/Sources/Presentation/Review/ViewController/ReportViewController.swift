@@ -27,7 +27,7 @@ final class ReportViewController: BaseViewController {
     private var buttonArray: [UIButton] = []
     private var contentArray: [String?] = []
     private var reviewID: Int = .init()
-
+    
     // MARK: - View Life Cycle
     
     override func viewWillAppear(_: Bool) {
@@ -261,7 +261,7 @@ extension ReportViewController: UITextViewDelegate {
     func textView(_: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let newLength = reportView.reviewReportReasonTextView.text.count - range.length + text.count
         reportView.characterCountLabel.text = "\(reportView.reviewReportReasonTextView.text.count) / 300"
-
+        
         if newLength > 300 {
             return false
         } else {

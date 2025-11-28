@@ -2,7 +2,7 @@
 //  BeforeSelectedImageDTO.swift
 //  EAT-SSU
 //
-//  Created by 박윤빈 on 3/7/24.
+//  Created by 한금준 on 28/11/25.
 //
 
 import Foundation

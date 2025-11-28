@@ -11,11 +11,11 @@ import EATSSUDesign
 
 final class ReviewRateViewCell: UITableViewCell {
     // MARK: - Properties
-
+    
     static let identifier = "ReviewRateViewCell"
     var handler: (() -> Void)?
     var totalRate: Double = 0
-
+    
     // MARK: - UI Components
     private let menuContainer: UIView = {
         let view = UIView()
@@ -24,7 +24,7 @@ final class ReviewRateViewCell: UITableViewCell {
         view.layer.masksToBounds = true
         return view
     }()
-
+    
     var menuLabel: UILabel = {
         let label = UILabel()
         label.text = "김치볶음밥 & 계란국"
@@ -40,7 +40,7 @@ final class ReviewRateViewCell: UITableViewCell {
         imageView.image = EATSSUDesignAsset.Images.icRestaurant.image
         return imageView
     }()
-
+    
     private let menuTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "오늘의 메뉴"
@@ -48,7 +48,7 @@ final class ReviewRateViewCell: UITableViewCell {
         label.textColor = .black
         return label
     }()
-
+    
     private lazy var menuTitleStackView: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [menuIcon, menuTitleLabel])
         stack.axis = .horizontal
@@ -56,7 +56,7 @@ final class ReviewRateViewCell: UITableViewCell {
         stack.spacing = 6
         return stack
     }()
-
+    
     private let rateSectionContainer: UIView = {
         let view = UIView()
         return view
@@ -67,7 +67,7 @@ final class ReviewRateViewCell: UITableViewCell {
         imageView.image = EATSSUDesignAsset.Images.icStarYellow.image
         return imageView
     }()
-
+    
     var rateNumLabel: UILabel = {
         let label = UILabel()
         label.text = "4.3"
@@ -75,13 +75,13 @@ final class ReviewRateViewCell: UITableViewCell {
         label.textColor = .black
         return label
     }()
-
+    
     private let fivePointLabel = ReviewRateViewCell.makePointLabel("5점")
     private let fourPointLabel = ReviewRateViewCell.makePointLabel("4점")
     private let threePointLabel = ReviewRateViewCell.makePointLabel("3점")
     private let twoPointLabel = ReviewRateViewCell.makePointLabel("2점")
     private let onePointLabel = ReviewRateViewCell.makePointLabel("1점")
-
+    
     // Chart bar containers and foregrounds
     var oneChartBar: UIView!
     var twoChartBar: UIView!
@@ -94,7 +94,7 @@ final class ReviewRateViewCell: UITableViewCell {
     var threeForeground: UIView!
     var fourForeground: UIView!
     var fiveForeground: UIView!
-
+    
     lazy var yAxisStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [fivePointLabel,
                                                        fourPointLabel,
@@ -106,7 +106,7 @@ final class ReviewRateViewCell: UITableViewCell {
         stackView.alignment = .trailing
         return stackView
     }()
-
+    
     lazy var totalRateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [bigStarImageView,
                                                        rateNumLabel])
@@ -115,22 +115,22 @@ final class ReviewRateViewCell: UITableViewCell {
         stackView.alignment = .center
         return stackView
     }()
-
+    
     // MARK: - Init
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()
         setLayout()
     }
-
+    
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - Helper
-
+    
     private static func makePointLabel(_ text: String) -> UILabel {
         let label = UILabel()
         label.text = text
@@ -138,11 +138,10 @@ final class ReviewRateViewCell: UITableViewCell {
         label.textColor = .black
         return label
     }
-
+    
     // MARK: - UI Setup
-
+    
     func configureUI() {
-        // Helper to create chart bar with background and foreground
         func makeChartBar() -> (container: UIView, foreground: UIView) {
             let container = UIView()
             container.backgroundColor = .gray200
@@ -159,7 +158,7 @@ final class ReviewRateViewCell: UITableViewCell {
             }
             return (container, foreground)
         }
-
+        
         let oneBar = makeChartBar()
         oneChartBar = oneBar.container
         oneForeground = oneBar.foreground
@@ -175,31 +174,31 @@ final class ReviewRateViewCell: UITableViewCell {
         let fiveBar = makeChartBar()
         fiveChartBar = fiveBar.container
         fiveForeground = fiveBar.foreground
-
+        
         contentView.addSubviews(
             menuContainer,
             rateSectionContainer
         )
-
+        
         menuContainer.addSubviews(menuTitleStackView, menuLabel)
-
+        
         rateSectionContainer.addSubviews(totalRateStackView, yAxisStackView,
                                          oneChartBar, twoChartBar, threeChartBar, fourChartBar, fiveChartBar)
-
+        
         totalRateStackView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().offset(35.5)
             make.leading.equalToSuperview().offset(36)
         }
-
+        
         yAxisStackView.snp.makeConstraints { make in
             make.leading.equalTo(totalRateStackView.snp.trailing).offset(36)
             make.centerY.equalTo(totalRateStackView)
         }
     }
-
+    
     func setLayout() {
         backgroundColor = .white
-
+        
         menuContainer.snp.makeConstraints { make in
             make.top.equalTo(contentView.snp.top).offset(0)
             make.centerX.equalToSuperview()
@@ -215,7 +214,7 @@ final class ReviewRateViewCell: UITableViewCell {
         menuIcon.snp.makeConstraints { make in
             make.width.height.equalTo(20)
         }
-
+        
         menuLabel.snp.makeConstraints { make in
             make.top.equalTo(menuTitleStackView.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview().inset(28)
@@ -226,90 +225,74 @@ final class ReviewRateViewCell: UITableViewCell {
             make.top.equalTo(menuLabel.snp.bottom).offset(40)
             make.leading.trailing.equalToSuperview().inset(60)
         }
-
+        
         oneChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(onePointLabel)
             make.leading.equalTo(onePointLabel.snp.trailing).offset(7)
             make.height.equalTo(10)
             make.width.equalTo(126)
         }
-
+        
         twoChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(twoPointLabel)
             make.leading.equalTo(twoPointLabel.snp.trailing).offset(7)
             make.height.equalTo(10)
             make.width.equalTo(126)
         }
-
+        
         threeChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(threePointLabel)
             make.leading.equalTo(threePointLabel.snp.trailing).offset(7)
             make.height.equalTo(10)
             make.width.equalTo(126)
         }
-
+        
         fourChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(fourPointLabel)
             make.leading.equalTo(fourPointLabel.snp.trailing).offset(7)
             make.height.equalTo(10)
             make.width.equalTo(126)
         }
-
+        
         fiveChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(fivePointLabel)
             make.leading.equalTo(fivePointLabel.snp.trailing).offset(7)
             make.height.equalTo(10)
             make.width.equalTo(126)
         }
-
+        
         for item in [onePointLabel, twoPointLabel, threePointLabel, fourPointLabel, fivePointLabel] {
             item.snp.makeConstraints {
                 $0.height.equalTo(18.adjusted)
             }
         }
-
+        
         bigStarImageView.snp.makeConstraints {
             $0.height.width.equalTo(24.adjusted)
         }
     }
-
+    
     @objc
     func touchAddReviewButton() {
         handler?()
     }
 }
 
-// MARK: - V2 API Data Binding Extensions
-
 extension ReviewRateViewCell {
-    // ✨ Meal 통계 데이터 바인딩
     func configureWithMealStatistics(_ data: ReviewMealStatisticsResponse) {
-        // 메뉴명 설정 (여러 메뉴를 " + "로 연결)
         let menuNames = data.menuList.map { $0.name }
         menuLabel.text = menuNames.joined(separator: " + ")
-        
-        // 평균 별점 설정
         setRating(data.rating ?? 0)
-        
-        // 별점 차트 업데이트
         updateRatingChart(with: data.reviewRatingCount, totalCount: data.totalReviewCount)
     }
     
-    // ✨ Menu 통계 데이터 바인딩
     func configureWithMenuStatistics(_ data: ReviewMenuStatisticsResponse) {
-        // 메뉴명 설정
         menuLabel.text = data.menuName
-        
-        // 평균 별점 설정
         setRating(data.rating ?? 0)
-        
-        // 별점 차트 업데이트
         updateRatingChart(with: data.reviewRatingCount, totalCount: data.totalReviewCount)
     }
     
     // MARK: - Private Helper Methods
-    
-    /// 평균 별점 표시
     private func setRating(_ rating: Double) {
         totalRate = rating
         
@@ -321,9 +304,8 @@ extension ReviewRateViewCell {
         }
     }
     
-    /// 별점 차트 업데이트
     private func updateRatingChart(with ratingCount: ReviewRatingCount, totalCount: Int) {
-        let safeTotal = max(totalCount, 1) // 0으로 나누기 방지
+        let safeTotal = max(totalCount, 1)
         
         fiveForeground.snp.updateConstraints {
             $0.width.equalTo(126 * ratingCount.fiveStarCount / safeTotal)
@@ -341,7 +323,6 @@ extension ReviewRateViewCell {
             $0.width.equalTo(126 * ratingCount.oneStarCount / safeTotal)
         }
         
-        // 레이아웃 즉시 업데이트
         layoutIfNeeded()
     }
 }
