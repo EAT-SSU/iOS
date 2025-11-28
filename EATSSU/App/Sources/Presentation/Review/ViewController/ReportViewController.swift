@@ -20,6 +20,8 @@ final class ReportViewController: BaseViewController {
     private let reportView = ReportView()
     private let scrollView = UIScrollView()
     
+    private let sendToEATSSUButton = ESButton(size: .big, title: "EAT SSU 팀에게 보내기")
+    
     // Variable Properties
     private var isChecked = false
     private var isReasonSelected = false
@@ -27,6 +29,10 @@ final class ReportViewController: BaseViewController {
     private var buttonArray: [UIButton] = []
     private var contentArray: [String?] = []
     private var reviewID: Int = .init()
+    
+    override var shouldHideTabBar: Bool {
+        return true
+    }
     
     // MARK: - View Life Cycle
     
@@ -46,12 +52,11 @@ final class ReportViewController: BaseViewController {
         configureUI()
         setLayout()
         setScrollViewSetting()
-        setDelegate()
         addArray()
         setButtonEvent()
         setCustomNavigationBar()
         
-        reportView.sendToEATSSUButton.isEnabled = false
+        sendToEATSSUButton.isEnabled = false
     }
     
     override func viewWillDisappear(_: Bool) {
@@ -61,17 +66,25 @@ final class ReportViewController: BaseViewController {
     // MARK: - Methods
     
     override func configureUI() {
+        view.addSubview(sendToEATSSUButton)
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { make in
-            make.edges.equalTo(view.safeAreaLayoutGuide)
+            make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(sendToEATSSUButton.snp.top)
         }
+        
+        
+        sendToEATSSUButton.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(view).inset(24)
+            make.height.equalTo(52)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(24)
+        }
+        
         
         scrollView.addSubview(reportView)
         reportView.snp.makeConstraints { make in
             make.edges.equalTo(scrollView.contentLayoutGuide)
             make.width.equalTo(scrollView.frameLayoutGuide)
-            
-            make.height.equalTo(800)
         }
     }
     
@@ -99,7 +112,8 @@ final class ReportViewController: BaseViewController {
          reportView.otherReasonButton].forEach {
             $0.addTarget(self, action: #selector(checkButtonIsTapped(_:)), for: .touchUpInside)
         }
-        reportView.sendToEATSSUButton.addTarget(self, action: #selector(sendButtonIsTapped), for: .touchUpInside)
+        
+        sendToEATSSUButton.addTarget(self, action: #selector(sendButtonIsTapped), for: .touchUpInside)
     }
     
     func bindData(reviewID: Int) {
@@ -169,21 +183,14 @@ final class ReportViewController: BaseViewController {
         sender.isSelected = true
         isChecked = true
         status = sender.tag
-        canTextViewUsed(status: status)
-        
-        reportView.sendToEATSSUButton.isEnabled = true
-    }
-    
-    private func canTextViewUsed(status: Int) {
+
         if status == 5 {
-            reportView.reviewReportReasonTextView.isEditable = true
+            reportView.enableTextView()
         } else {
-            reportView.reviewReportReasonTextView.isEditable = false
+            reportView.disableTextView()
         }
-    }
-    
-    private func setDelegate() {
-        reportView.reviewReportReasonTextView.delegate = self
+        
+        sendToEATSSUButton.isEnabled = true
     }
     
     @objc
@@ -254,19 +261,6 @@ final class ReportViewController: BaseViewController {
         navigationController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
             previousVC.showToast(message: "신고가 성공적으로 접수되었어요!", type: .success)
         })
-    }
-}
-
-extension ReportViewController: UITextViewDelegate {
-    func textView(_: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        let newLength = reportView.reviewReportReasonTextView.text.count - range.length + text.count
-        reportView.characterCountLabel.text = "\(reportView.reviewReportReasonTextView.text.count) / 300"
-        
-        if newLength > 300 {
-            return false
-        } else {
-            return true
-        }
     }
 }
 
