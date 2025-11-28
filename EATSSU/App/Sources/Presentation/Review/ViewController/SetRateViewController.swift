@@ -13,9 +13,9 @@ import EATSSUDesign
 final class SetRateViewController: BaseViewController {
     // MARK: - Properties
     override var shouldHideTabBar: Bool {
-            return true
-        }
-
+        return true
+    }
+    
     private var userPickedImage: UIImage?
     
     private var validMenuIDList: [Int] = []
@@ -30,11 +30,14 @@ final class SetRateViewController: BaseViewController {
     private var mealID: Int?
     private var menuID: Int?
     
+    private var isReviewSubmitting = false     // 서버로 전송 중 여부
+    private var isReviewSubmitted = false      // 리뷰가 정상 제출된 상태
+    
     enum ReviewType {
         case fixed    // writeMenuReview 사용
         case variable // writeMealReview 사용
     }
-
+    
     // MARK: - Initializer
     
     convenience init(mealId: Int) {
@@ -48,24 +51,24 @@ final class SetRateViewController: BaseViewController {
         self.menuID = menuId
         self.reviewType = .fixed
     }
-
+    
     // MARK: - UI Components
-
+    
     private var rateView = RateView()
     private let imagePickerController = UIImagePickerController()
-
+    
     private var contentView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-
+    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
-
+    
     private var menuLabel: UILabel = {
         let label = UILabel()
         label.text = "오늘의 식사는 어떠셨나요?"
@@ -73,7 +76,7 @@ final class SetRateViewController: BaseViewController {
         label.textColor = .black
         return label
     }()
-
+    
     private var detailLabel: UILabel = {
         let label = UILabel()
         label.text = "추천하고 싶은 메뉴가 있나요?"
@@ -89,7 +92,7 @@ final class SetRateViewController: BaseViewController {
         tableView.isScrollEnabled = false
         return tableView
     }()
-
+    
     private let userReviewTextView: UITextView = {
         let textView = UITextView()
         textView.font = .body1
@@ -102,7 +105,7 @@ final class SetRateViewController: BaseViewController {
         textView.textColor = .gray500
         return textView
     }()
-
+    
     private lazy var userReviewImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 10
@@ -121,7 +124,7 @@ final class SetRateViewController: BaseViewController {
         button.isHidden = true
         return button
     }()
-
+    
     private lazy var selectImageButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.plain()
@@ -135,7 +138,7 @@ final class SetRateViewController: BaseViewController {
         button.clipsToBounds = true
         return button
     }()
-
+    
     private let imageCountLabel: UILabel = {
         let label = UILabel()
         label.text = "사진 0/1"
@@ -144,7 +147,7 @@ final class SetRateViewController: BaseViewController {
         label.textAlignment = .center
         return label
     }()
-
+    
     private let deleteMethodLabel: UILabel = {
         let label = UILabel()
         label.text = "사진 클릭 시, 삭제됩니다"
@@ -152,7 +155,7 @@ final class SetRateViewController: BaseViewController {
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         return label
     }()
-
+    
     private let maximumWordLabel: UILabel = {
         let label = UILabel()
         label.text = "0 / 300"
@@ -162,21 +165,21 @@ final class SetRateViewController: BaseViewController {
     }()
     
     private let buttonContainer: UIView = {
-            let view = UIView()
-            view.backgroundColor = .white // 버튼 배경색 (TabBarContainer와 유사)
-            view.layer.cornerRadius = 0
-            view.clipsToBounds = true
-            return view
-        }()
-
+        let view = UIView()
+        view.backgroundColor = .white // 버튼 배경색 (TabBarContainer와 유사)
+        view.layer.cornerRadius = 0
+        view.clipsToBounds = true
+        return view
+    }()
+    
     private var nextButton: MainButton = {
         let button = MainButton()
         button.title = "리뷰 남기기"
         return button
     }()
-
+    
     // MARK: - Life Cycles
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setDelegate()
@@ -191,11 +194,11 @@ final class SetRateViewController: BaseViewController {
             menuTableView.reloadData()
         }
     }
-
+    
     override func viewWillAppear(_: Bool) {
         addKeyboardNotifications()
     }
-
+    
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
     }
@@ -204,14 +207,14 @@ final class SetRateViewController: BaseViewController {
         super.viewDidLayoutSubviews()
         menuTableViewHeightConstraint?.update(offset: menuTableView.contentSize.height)
     }
-
+    
     // MARK: - API Calls
     
     // ✨ VARIABLE: 리뷰 가능한 메뉴 목록 조회
     private func fetchValidMenus(mealId: Int) {
         NetworkService.shared.request(
             ReviewRouter.getValidMenusForReview(mealId),
-            responseType: [MenuInfo].self,
+            responseType: ReviewValidMenusResponse.self,
             useAuth: true
         ) { [weak self] result in
             guard let self = self else { return }
@@ -219,8 +222,8 @@ final class SetRateViewController: BaseViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let data):
-                    self.selectedList = data.map { $0.name }
-                    self.validMenuIDList = data.map { $0.id }
+                    self.selectedList = data.menuList.map { $0.name }
+                    self.validMenuIDList = data.menuList.map { $0.menuId }
                     self.likedStates = Array(repeating: false, count: self.selectedList.count)
                     self.menuTableView.reloadData()
                     self.view.setNeedsLayout()
@@ -239,14 +242,14 @@ final class SetRateViewController: BaseViewController {
         menuTableView.reloadData()
         view.setNeedsLayout()
     }
-
+    
     // MARK: - UI Configuration
-
+    
     override func configureUI() {
         dismissKeyboard()
         view.addSubviews(scrollView, buttonContainer)
-                
-                // buttonContainer에 nextButton을 추가
+        
+        // buttonContainer에 nextButton을 추가
         buttonContainer.addSubview(nextButton)
         scrollView.addSubview(contentView)
         contentView.addSubviews(
@@ -261,10 +264,10 @@ final class SetRateViewController: BaseViewController {
             userReviewImageView,
             closeButton,
             deleteMethodLabel,
-//            nextButton
+            //            nextButton
         )
     }
-
+    
     override func setLayout() {
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -278,29 +281,29 @@ final class SetRateViewController: BaseViewController {
             // 그리고 view의 맨 아래까지 확장하여 버튼 영역 아래를 채웁니다.
             $0.bottom.equalToSuperview()
         }
-                
-                // ✨ 3. nextButton 레이아웃 (buttonContainer 내부에)
-                nextButton.snp.makeConstraints {
-                    $0.horizontalEdges.equalToSuperview().inset(16)
-                    $0.top.equalToSuperview().offset(12)
-                }
-
+        
+        // ✨ 3. nextButton 레이아웃 (buttonContainer 내부에)
+        nextButton.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.top.equalToSuperview().offset(12)
+        }
+        
         contentView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.width.equalTo(scrollView)
         }
-
+        
         menuLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.centerX.equalToSuperview()
         }
-
+        
         rateView.snp.makeConstraints { make in
             make.top.equalTo(menuLabel.snp.bottom).offset(17)
             make.centerX.equalToSuperview()
             make.height.equalTo(36.12)
         }
-
+        
         detailLabel.snp.makeConstraints { make in
             make.top.equalTo(rateView.snp.bottom).offset(35)
             make.centerX.equalToSuperview()
@@ -312,78 +315,78 @@ final class SetRateViewController: BaseViewController {
             $0.trailing.equalToSuperview().offset(-32)
             menuTableViewHeightConstraint = $0.height.equalTo(0).constraint
         }
-
+        
         userReviewTextView.snp.makeConstraints { make in
             make.top.equalTo(menuTableView.snp.bottom).offset(40)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(181)
         }
-
+        
         maximumWordLabel.snp.makeConstraints { make in
             make.top.equalTo(userReviewTextView.snp.bottom).offset(7)
             make.trailing.equalTo(userReviewTextView)
         }
-
+        
         selectImageButton.snp.makeConstraints {
-                    $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
-                    $0.leading.equalToSuperview().offset(16) // 인셋 16으로 통일
-                    $0.width.height.equalTo(60)
-                }
-
-                imageCountLabel.snp.makeConstraints {
-                    $0.top.equalTo(selectImageButton.snp.bottom).offset(5)
-                    $0.centerX.equalTo(selectImageButton)
-                }
-
-                userReviewImageView.snp.makeConstraints {
-                    $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
-                    $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
-                    $0.width.height.equalTo(60)
-                }
-                
-                deleteMethodLabel.snp.makeConstraints {
-                    $0.top.equalTo(imageCountLabel.snp.bottom).offset(7)
-                    $0.leading.equalTo(selectImageButton)
-                    // ✨ contentView bottom 제약을 deleteMethodLabel 아래로 연결 (여유 공간 100pt 확보)
-                    $0.bottom.equalTo(contentView.snp.bottom).offset(-100)
-                }
+            $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
+            $0.leading.equalToSuperview().offset(16) // 인셋 16으로 통일
+            $0.width.height.equalTo(60)
+        }
+        
+        imageCountLabel.snp.makeConstraints {
+            $0.top.equalTo(selectImageButton.snp.bottom).offset(5)
+            $0.centerX.equalTo(selectImageButton)
+        }
+        
+        userReviewImageView.snp.makeConstraints {
+            $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
+            $0.leading.equalTo(selectImageButton.snp.trailing).offset(13)
+            $0.width.height.equalTo(60)
+        }
+        
+        deleteMethodLabel.snp.makeConstraints {
+            $0.top.equalTo(imageCountLabel.snp.bottom).offset(7)
+            $0.leading.equalTo(selectImageButton)
+            // ✨ contentView bottom 제약을 deleteMethodLabel 아래로 연결 (여유 공간 100pt 확보)
+            $0.bottom.equalTo(contentView.snp.bottom).offset(-100)
+        }
         
         closeButton.snp.makeConstraints {
             $0.top.equalTo(userReviewImageView.snp.top).offset(-6)
             $0.trailing.equalTo(userReviewImageView.snp.trailing).offset(6)
             $0.size.equalTo(24)
         }
-
-//        deleteMethodLabel.snp.makeConstraints {
-//            $0.top.equalTo(selectImageButton.snp.bottom).offset(7)
-//            $0.leading.equalTo(selectImageButton)
-//        }
-
-//        nextButton.snp.makeConstraints { make in
-//            make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
-//            make.horizontalEdges.equalToSuperview().inset(16)
-//            make.bottom.equalToSuperview().offset(-15)
-//        }
-
+        
+        //        deleteMethodLabel.snp.makeConstraints {
+        //            $0.top.equalTo(selectImageButton.snp.bottom).offset(7)
+        //            $0.leading.equalTo(selectImageButton)
+        //        }
+        
+        //        nextButton.snp.makeConstraints { make in
+        //            make.top.equalTo(maximumWordLabel.snp.bottom).offset(132)
+        //            make.horizontalEdges.equalToSuperview().inset(16)
+        //            make.bottom.equalToSuperview().offset(-15)
+        //        }
+        
         for i in 0...4 {
             rateView.buttons[i].snp.makeConstraints { make in
-                make.height.equalTo(28)
+                //                make.height.equalTo(28)
                 make.width.equalTo(29.3)
             }
         }
     }
-
+    
     override func setButtonEvent() {
         nextButton.addTarget(self, action: #selector(tappedNextButton), for: .touchUpInside)
     }
-
+    
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = reviewId != nil ? "리뷰 수정하기" : "리뷰 남기기"
     }
-
+    
     // MARK: - Data Binding
-
+    
     func dataBind(list: [String], idList: [Int]) {
         selectedList = list
         validMenuIDList = idList
@@ -438,7 +441,7 @@ final class SetRateViewController: BaseViewController {
             closeButton.isHidden = false
         }
     }
-
+    
     func setDelegate() {
         menuTableView.register(MenuLikeCell.self, forCellReuseIdentifier: MenuLikeCell.identifier)
         menuTableView.dataSource = self
@@ -451,11 +454,11 @@ final class SetRateViewController: BaseViewController {
         
         // ✨ 네비게이션 델리게이트 설정
         self.navigationController?.delegate = self
-                
+        
         // ✨ 스와이프 제스처 델리게이트 설정
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
-
+    
     private func toggleLike(for index: Int) {
         likedStates[index].toggle()
         let idx = IndexPath(row: index, section: 0)
@@ -466,9 +469,9 @@ final class SetRateViewController: BaseViewController {
             menuTableView.reloadRows(at: [idx], with: .none)
         }
     }
-
+    
     // MARK: - Actions
-
+    
     @objc
     func tappedNextButton() {
         // 유효성 검증
@@ -483,11 +486,14 @@ final class SetRateViewController: BaseViewController {
             return
         }
         
+        // 리뷰 전송 시작 → 인터셉트 차단
+        isReviewSubmitting = true
+        
         // ✨ 리뷰 ID가 있으면 수정, 없으면 작성
-            if reviewId != nil {
-                sendFixReview()
-                return
-            }
+        if reviewId != nil {
+            sendFixReview()
+            return
+        }
         
         // ✨ 타입에 따라 적절한 API 호출
         switch reviewType {
@@ -504,7 +510,7 @@ final class SetRateViewController: BaseViewController {
             showToast(message: "수정할 리뷰 정보가 없습니다.")
             return
         }
-
+        
         _Concurrency.Task {
             do {
                 // 1. MenuLike 배열 생성 (현재는 FIXED 리뷰만 수정 가능하다고 가정)
@@ -524,6 +530,7 @@ final class SetRateViewController: BaseViewController {
                 try await postFixReview(reviewId: reviewId, request: request)
                 
                 await MainActor.run {
+                    self.isReviewSubmitted = true
                     self.moveToReviewVC()
                 }
                 
@@ -542,7 +549,7 @@ final class SetRateViewController: BaseViewController {
             showToast(message: "식단 정보가 없습니다.")
             return
         }
-
+        
         _Concurrency.Task {
             do {
                 // 1. 이미지 업로드
@@ -568,6 +575,7 @@ final class SetRateViewController: BaseViewController {
                 try await postMealReview(request: request)
                 
                 await MainActor.run {
+                    self.isReviewSubmitted = true
                     self.moveToReviewVC()
                 }
                 
@@ -586,7 +594,7 @@ final class SetRateViewController: BaseViewController {
             showToast(message: "메뉴 정보가 없습니다.")
             return
         }
-
+        
         _Concurrency.Task {
             do {
                 // 1. 이미지 업로드
@@ -612,6 +620,7 @@ final class SetRateViewController: BaseViewController {
                 try await postMenuReview(request: request)
                 
                 await MainActor.run {
+                    self.isReviewSubmitted = true
                     self.moveToReviewVC()
                 }
                 
@@ -633,11 +642,23 @@ final class SetRateViewController: BaseViewController {
             }
         }
     }
-
+    
+//    @objc func didSelectedImage() {
+//        present(imagePickerController, animated: true)
+//    }
     @objc func didSelectedImage() {
-        present(imagePickerController, animated: true)
+        // ✨ navigationController delegate 잠시 비활성화
+        let originalDelegate = self.navigationController?.delegate
+        self.navigationController?.delegate = nil
+        
+        present(imagePickerController, animated: true) { [weak self] in
+            // ✨ picker가 올라온 후 delegate 다시 복원
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self?.navigationController?.delegate = originalDelegate
+            }
+        }
     }
-
+    
     @objc func didTappedImageView() {
         userReviewImageView.image = nil
         userPickedImage = nil
@@ -687,7 +708,7 @@ extension SetRateViewController {
             }
         }
     }
-
+    
     private func uploadImage(image: UIImage) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
             NetworkService.shared.request(
@@ -706,23 +727,23 @@ extension SetRateViewController {
     }
     
     private func postFixReview(reviewId: Int, request: FixedReviewRequestDTO) async throws {
-            try await withCheckedThrowingContinuation { continuation in
-                NetworkService.shared.request(
-                    WriteReviewRouter.fixReview(reviewId: reviewId, param: request),
-                    responseType: Bool.self, // 수정 성공 시 Bool (또는 BaseResponse의 result가 nil인 경우)
-                    useAuth: true
-                ) { result in
-                    switch result {
-                    case .success:
-                        print("✅ Review 수정 성공")
-                        continuation.resume()
-                    case .failure(let error):
-                        print("❌ Review 수정 실패: \(error)")
-                        continuation.resume(throwing: error)
-                    }
+        try await withCheckedThrowingContinuation { continuation in
+            NetworkService.shared.request(
+                WriteReviewRouter.fixReview(reviewId: reviewId, param: request),
+                responseType: Bool.self, // 수정 성공 시 Bool (또는 BaseResponse의 result가 nil인 경우)
+                useAuth: true
+            ) { result in
+                switch result {
+                case .success:
+                    print("✅ Review 수정 성공")
+                    continuation.resume()
+                case .failure(let error):
+                    print("❌ Review 수정 실패: \(error)")
+                    continuation.resume(throwing: error)
                 }
             }
         }
+    }
 }
 
 // MARK: - UIImagePickerControllerDelegate
@@ -739,79 +760,86 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
     }
     
     // 💡 네비게이션 컨트롤러의 뷰 컨트롤러가 pop되기 직전에 호출됩니다.
-        func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-            
-            // 현재 뷰 컨트롤러(SetRateViewController)가 pop되는지 확인합니다.
-            let isPopping = !navigationController.viewControllers.contains(self)
-            
-            // 만약 pop이 발생하고, 리뷰 작성 중이라면
-            if isPopping {
-                
-                // 1. 리뷰 내용이 있는지 확인 (별점, 텍스트 등)
-                let textHasContent = userReviewTextView.text != "메뉴에 대한 상세한 리뷰를 작성해주세요" && !userReviewTextView.text.isEmpty
-                let isReviewStarted: Bool = rateView.currentStar > 0 || textHasContent
-                
-                // 2. 리뷰를 새로 작성 중이며 (reviewId == nil) 내용이 있을 경우에만 다이얼로그 표시
-                if reviewId == nil, isReviewStarted {
-                    
-                    // pop을 즉시 취소 (다이얼로그 결과를 기다림)
-                    navigationController.viewControllers.append(self)
-                    
-                    let title = "작성 취소"
-                    let message = "작성 중인 리뷰는 저장되지 않습니다. 정말 나가시겠습니까?"
-                    let confirmButtonTitle = "나가기"
-                    let cancelButtonTitle = "계속 작성"
-                    
-                    showCustomDialog(
-                        title: title,
-                        message: message,
-                        cancelButtonTitle: cancelButtonTitle,
-                        confirmButtonTitle: confirmButtonTitle
-                    ) { [weak self] in
-                        guard let self = self else { return }
-                        // "나가기" 확인 시, delegate를 nil로 설정하여 재귀 방지
-                        self.navigationController?.delegate = nil
-                        self.navigationController?.popViewController(animated: true)
-                        // pop 완료 후 다시 delegate 설정
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self.navigationController?.delegate = self
-                        }
-                    }
-                }
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        if isReviewSubmitted {
+                return
             }
-        }
-    
-    // 💡 스와이프 제스처가 시작될 때 호출됩니다.
-        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if navigationController is UIImagePickerController {
+                return
+            }
+        
+        // 현재 뷰 컨트롤러(SetRateViewController)가 pop되는지 확인합니다.
+        let isPopping = !navigationController.viewControllers.contains(self)
+        
+        // 만약 pop이 발생하고, 리뷰 작성 중이라면
+        if isPopping {
             
             // 1. 리뷰 내용이 있는지 확인 (별점, 텍스트 등)
-            let isReviewStarted: Bool = rateView.currentStar > 0 || !userReviewTextView.text.isEmpty
+            let textHasContent = userReviewTextView.text != "메뉴에 대한 상세한 리뷰를 작성해주세요" && !userReviewTextView.text.isEmpty
+            let isReviewStarted: Bool = rateView.currentStar > 0 || textHasContent
             
-            // 2. 리뷰를 새로 작성 중이며 내용이 있을 경우
+            // 2. 리뷰를 새로 작성 중이며 (reviewId == nil) 내용이 있을 경우에만 다이얼로그 표시
             if reviewId == nil, isReviewStarted {
+                
+                // pop을 즉시 취소 (다이얼로그 결과를 기다림)
+                navigationController.viewControllers.append(self)
                 
                 let title = "작성 취소"
                 let message = "작성 중인 리뷰는 저장되지 않습니다. 정말 나가시겠습니까?"
                 let confirmButtonTitle = "나가기"
                 let cancelButtonTitle = "계속 작성"
                 
-                // pop을 바로 막고 다이얼로그 표시
                 showCustomDialog(
                     title: title,
                     message: message,
                     cancelButtonTitle: cancelButtonTitle,
                     confirmButtonTitle: confirmButtonTitle
                 ) { [weak self] in
-                    // "나가기" 확인 시, 명시적으로 pop
-                    self?.navigationController?.popViewController(animated: true)
+                    guard let self = self else { return }
+                    // "나가기" 확인 시, delegate를 nil로 설정하여 재귀 방지
+                    self.navigationController?.delegate = nil
+                    self.navigationController?.popViewController(animated: true)
+                    // pop 완료 후 다시 delegate 설정
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.navigationController?.delegate = self
+                    }
                 }
-                // 스와이프 동작을 취소합니다.
-                return false
             }
-            
-            // 내용이 없으면 기본 동작 (스와이프 가능)
-            return true
         }
+    }
+    
+    // 💡 스와이프 제스처가 시작될 때 호출됩니다.
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        // 1. 리뷰 내용이 있는지 확인 (별점, 텍스트 등)
+        let isReviewStarted: Bool = rateView.currentStar > 0 || !userReviewTextView.text.isEmpty
+        
+        // 2. 리뷰를 새로 작성 중이며 내용이 있을 경우
+        if reviewId == nil, isReviewStarted {
+            
+            let title = "작성 취소"
+            let message = "작성 중인 리뷰는 저장되지 않습니다. 정말 나가시겠습니까?"
+            let confirmButtonTitle = "나가기"
+            let cancelButtonTitle = "계속 작성"
+            
+            // pop을 바로 막고 다이얼로그 표시
+            showCustomDialog(
+                title: title,
+                message: message,
+                cancelButtonTitle: cancelButtonTitle,
+                confirmButtonTitle: confirmButtonTitle
+            ) { [weak self] in
+                // "나가기" 확인 시, 명시적으로 pop
+                self?.navigationController?.popViewController(animated: true)
+            }
+            // 스와이프 동작을 취소합니다.
+            return false
+        }
+        
+        // 내용이 없으면 기본 동작 (스와이프 가능)
+        return true
+    }
 }
 
 // MARK: - UITextViewDelegate
@@ -828,14 +856,14 @@ extension SetRateViewController: UITextViewDelegate {
         maximumWordLabel.text = "\(textToDisplay.count) / 300"
         return true
     }
-
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == "메뉴에 대한 상세한 리뷰를 작성해주세요" {
             textView.text = ""
             textView.textColor = .black
         }
     }
-
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = "메뉴에 대한 상세한 리뷰를 작성해주세요"
@@ -859,17 +887,17 @@ extension SetRateViewController {
             }
         }
     }
-
+    
     @objc func keyboardWillHide(_: NSNotification) {
         view.transform = .identity
         navigationController?.isNavigationBarHidden = false
     }
-
+    
     func addKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
+    
     func removeKeyboardNotifications() {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)

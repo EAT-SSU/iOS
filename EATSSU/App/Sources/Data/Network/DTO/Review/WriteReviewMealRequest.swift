@@ -17,4 +17,9 @@ struct WriteReviewMealRequest: Encodable {
 struct MenuLike: Encodable {
     let menuId: Int
     let isLike: Bool
+    
+    private enum CodingKeys: String, CodingKey {
+        case menuId
+        case isLike
+    }
 }

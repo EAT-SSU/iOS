@@ -147,6 +147,7 @@ final class ReviewTableCell: UITableViewCell {
         contentView.addSubview(profileStackView)
         contentView.addSubview(dateReportStackView)
         contentView.addSubview(contentStackView)
+        contentStackView.setCustomSpacing(8, after: reviewTextView)
         setLayout()
     }
     
@@ -193,7 +194,10 @@ final class ReviewTableCell: UITableViewCell {
         }
         
         foodImageView.snp.makeConstraints { make in
-            make.height.width.equalTo(358)
+//            make.height.width.equalTo(358)
+            make.top.equalTo(reviewTextView.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(foodImageView.snp.width).multipliedBy(0.75)
         }
         
         sideButton.snp.makeConstraints {
