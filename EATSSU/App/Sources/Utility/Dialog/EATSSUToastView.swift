@@ -20,39 +20,39 @@ enum ToastType {
     var backgroundColor: UIColor {
         switch self {
         case .danger:
-            return EATSSUDesignAsset.Color.dangerBg.color
+            return .dangerBg
         case .info:
-            return EATSSUDesignAsset.Color.infoBg.color
+            return .infoBg
         case .success:
-            return EATSSUDesignAsset.Color.successBg.color
+            return .successBg
         case .warning:
-            return EATSSUDesignAsset.Color.warningBg.color
+            return .warningBg
         }
     }
     
     var borderColor: UIColor {
         switch self {
         case .danger:
-            return EATSSUDesignAsset.Color.dangerBr.color
+            return .dangerBr
         case .info:
-            return EATSSUDesignAsset.Color.infoBr.color
+            return .infoBr
         case .success:
-            return EATSSUDesignAsset.Color.successBr.color
+            return .successBr
         case .warning:
-            return EATSSUDesignAsset.Color.warningBr.color
+            return .warningBr
         }
     }
     
     var mainColor: UIColor {
         switch self {
         case .danger:
-            return EATSSUDesignAsset.Color.danger.color
+            return .danger
         case .info:
-            return EATSSUDesignAsset.Color.info.color
+            return .info
         case .success:
-            return EATSSUDesignAsset.Color.success.color
+            return .success
         case .warning:
-            return EATSSUDesignAsset.Color.warning.color
+            return .warning
         }
     }
     
@@ -91,7 +91,7 @@ class EATSSUToastView: BaseUIView {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.font = .body2
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        label.textColor = .gray700
         label.numberOfLines = 0
         return label
     }()

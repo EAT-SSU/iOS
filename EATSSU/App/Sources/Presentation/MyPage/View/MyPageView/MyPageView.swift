@@ -48,7 +48,7 @@ final class MyPageView: BaseUIView {
         let label = UILabel()
         label.text = TextLiteral.MyPage.appVersion
         label.font = .caption2
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        label.textColor = .gray400
         return label
     }()
 
@@ -57,7 +57,7 @@ final class MyPageView: BaseUIView {
         let label = UILabel()
         label.text = MyPageRightItemData.version
         label.font = .caption2
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        label.textColor = .gray400
         return label
     }()
 
@@ -66,7 +66,7 @@ final class MyPageView: BaseUIView {
         let button = UIButton()
         button.setTitle(TextLiteral.MyPage.withdraw, for: .normal)
         button.setImage(EATSSUDesignAsset.Images.withdrawIcon.image, for: .normal)
-        button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray400.color, for: .normal)
+        button.setTitleColor(.gray400, for: .normal)
         button.titleLabel?.font = .caption2
         button.tintColor = .red
         return button
@@ -75,7 +75,7 @@ final class MyPageView: BaseUIView {
     /// "탈퇴하기" 레이블 underline
     private let underLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        view.backgroundColor = .gray400
         return view
     }()
 

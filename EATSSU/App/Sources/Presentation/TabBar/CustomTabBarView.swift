@@ -103,7 +103,7 @@ final class CustomTabBarView: BaseUIView {
     func setSelectedIndex(_ index: Int) {
         for (i, button) in buttons.enumerated() {
             let isSelected = i == index
-            let color: UIColor = isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray500
+            let color: UIColor = isSelected ? .primary : .gray500
             
             let image = isSelected ? Self.selectedImages[i] : Self.normalImages[i]
             let resizedImage = image.resized(to: Self.imageSizes[i])

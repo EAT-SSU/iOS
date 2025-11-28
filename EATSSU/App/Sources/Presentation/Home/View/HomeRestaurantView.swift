@@ -19,7 +19,7 @@ final class HomeRestaurantView: BaseUIView {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
-        tableView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        tableView.backgroundColor = .gray100
         return tableView
     }()
 

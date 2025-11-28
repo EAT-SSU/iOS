@@ -47,7 +47,7 @@ final class ReviewRateViewCell: UITableViewCell {
         button.setTitle("리뷰 작성하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .button2
-        button.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        button.backgroundColor = .primary
         button.layer.cornerRadius = 10
         return button
     }()
@@ -235,7 +235,7 @@ private final class ReviewCountView: UIView {
     private let countLabel: UILabel = {
         let label = UILabel()
         label.font = .caption1
-        label.textColor = EATSSUDesignAsset.Color.Main.primary.color
+        label.textColor = .primary
         return label
     }()
     

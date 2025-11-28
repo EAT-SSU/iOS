@@ -29,7 +29,7 @@ class EATSSUDialogView: BaseUIView {
         let label = UILabel()
         label.text = "제목을 입력해주세요"
         label.font = .header2
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        label.textColor = .gray700
         label.textAlignment = .center
         return label
     }()
@@ -38,7 +38,7 @@ class EATSSUDialogView: BaseUIView {
         let label = UILabel()
         label.text = "본문을 입력해주세요"
         label.font = .subtitle2
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.textColor = .gray600
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -55,9 +55,9 @@ class EATSSUDialogView: BaseUIView {
     let cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("취소", for: .normal)
-        button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray700.color, for: .normal)
+        button.setTitleColor(.gray700, for: .normal)
         button.titleLabel?.font = .subtitle2
-        button.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray200.color
+        button.backgroundColor = .gray200
         button.layer.cornerRadius = 12
         return button
     }()
@@ -67,7 +67,7 @@ class EATSSUDialogView: BaseUIView {
         button.setTitle("확인", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .subtitle2
-        button.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        button.backgroundColor = .primary
         button.layer.cornerRadius = 12
         return button
     }()

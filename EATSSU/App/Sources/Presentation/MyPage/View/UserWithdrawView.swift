@@ -96,7 +96,7 @@ final class UserWithdrawView: BaseUIView {
         subscription.text = TextLiteral.MyPage.withdrawalNotice
         subscription.numberOfLines = 2
         subscription.font = .caption2
-        subscription.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        subscription.textColor = .gray700
 
         inputNickNameTextField.font = .caption2
         inputNickNameTextField.textColor = .gray700Basic
@@ -104,10 +104,10 @@ final class UserWithdrawView: BaseUIView {
         inputNickNameTextField.addLeftPadding()
         inputNickNameTextField.clearButtonMode = .whileEditing
         inputNickNameTextField.layer.borderWidth = 1.0
-        inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
 
         nickNameStateGuideLabel.text = TextLiteral.inputNickName
-        nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        nickNameStateGuideLabel.textColor = .gray700
         nickNameStateGuideLabel.font = .caption3
 
         nickNameInputStackView.axis = .vertical
@@ -142,24 +142,24 @@ final class UserWithdrawView: BaseUIView {
         case .corrected:
             // 올바른 닉네임 입력 시 -> 회색
             nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
-            nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+            nickNameStateGuideLabel.textColor = .gray700
+            inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
             completeSignOutButton.isEnabled = true
 
         case .unCorrected:
             // 잘못된 닉네임 입력 시 -> 빨간색
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.MyPage.invalidNicknameMessage
-            nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.Main.primary.color
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.danger.color.cgColor
+            nickNameStateGuideLabel.textColor = .primary
+            inputNickNameTextField.layer.borderColor = UIColor.danger.cgColor
             completeSignOutButton.isEnabled = false
 
         case .pleaseEnter:
             // 비어있을 때 -> 회색
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.inputNickName
-            nickNameStateGuideLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+            nickNameStateGuideLabel.textColor = .gray700
+            inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
             completeSignOutButton.isEnabled = false
         }
     }
@@ -179,7 +179,7 @@ extension UserWithdrawView: UITextFieldDelegate {
 
     func textFieldShouldClear(_: UITextField) -> Bool {
         completeSignOutButton.isEnabled = false
-        inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
         return true
     }
 }

@@ -75,7 +75,7 @@ extension HomeCalendarView: FSCalendarDataSource, FSCalendarDelegate {
         calendar.weekdayHeight = 10
 
         // 달력의 맨 위의 년도, 월의 색깔
-        calendar.appearance.headerTitleColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        calendar.appearance.headerTitleColor = .gray500
         calendar.appearance.headerTitleFont = .header2
         // 달력의 년월 글자 바꾸기
         calendar.appearance.headerDateFormat = "YYYY. MM"
@@ -84,18 +84,18 @@ extension HomeCalendarView: FSCalendarDataSource, FSCalendarDelegate {
 
         // Day
         calendar.appearance.weekdayFont = .caption3
-        calendar.appearance.weekdayTextColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        calendar.appearance.weekdayTextColor = .gray500
 
         // Date
         calendar.appearance.titleFont = .subtitle1
         calendar.appearance.todayColor = .white
-        calendar.appearance.titleTodayColor = EATSSUDesignAsset.Color.Main.primary.color
+        calendar.appearance.titleTodayColor = .primary
 
         // Selection
         calendar.allowsSelection = true
         calendar.allowsMultipleSelection = false
         calendar.appearance.borderRadius = 20
-        calendar.appearance.selectionColor = EATSSUDesignAsset.Color.Main.primary.color
+        calendar.appearance.selectionColor = .primary
 
         // 오늘 날짜 Select
         calendar.select(Date())

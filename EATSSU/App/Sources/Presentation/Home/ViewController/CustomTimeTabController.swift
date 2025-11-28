@@ -52,7 +52,7 @@ final class CustomTimeTabController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        view.backgroundColor = .gray100
         setupDatePipeline()
     }
     
@@ -96,10 +96,10 @@ final class CustomTimeTabController: BaseViewController {
     }
 
     override func configureUI() {
-        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        view.backgroundColor = .gray100
 
         view.addSubview(tabShadowWrapperView)
-        tabShadowWrapperView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        tabShadowWrapperView.backgroundColor = .gray100
 
         tabShadowWrapperView.addSubview(tabContainerView)
         tabContainerView.backgroundColor = .white
@@ -120,7 +120,7 @@ final class CustomTimeTabController: BaseViewController {
         for (index, title) in tabTitles.enumerated() {
             let button = UIButton(type: .system)
             button.setTitle(title, for: .normal)
-            button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray700.color, for: .normal)
+            button.setTitleColor(.gray700, for: .normal)
             button.titleLabel?.font = UIFont.subtitle2
             button.tag = index
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
@@ -129,7 +129,7 @@ final class CustomTimeTabController: BaseViewController {
         }
 
         tabContainerView.addSubview(indicatorView)
-        indicatorView.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        indicatorView.backgroundColor = .primary
         indicatorView.layer.cornerRadius = 1
         indicatorView.layer.masksToBounds = true
     }
@@ -205,7 +205,7 @@ final class CustomTimeTabController: BaseViewController {
     private func updateTabSelection(animated: Bool) {
         for (index, button) in tabButtons.enumerated() {
             let isSelected = index == selectedIndex
-            button.setTitleColor(isSelected ? EATSSUDesignAsset.Color.Main.primary.color : EATSSUDesignAsset.Color.GrayScale.gray700.color, for: .normal)
+            button.setTitleColor(isSelected ? .primary : .gray700, for: .normal)
         }
 
         let tabWidth = view.frame.width / CGFloat(tabTitles.count)
