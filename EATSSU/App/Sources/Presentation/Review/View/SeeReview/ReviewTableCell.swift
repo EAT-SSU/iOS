@@ -121,7 +121,7 @@ final class ReviewTableCell: UITableViewCell {
     
     /// 메뉴 태그 컬렉션뷰
     private lazy var tagCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = LeftAlignedCollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.minimumInteritemSpacing = 8
@@ -359,5 +359,28 @@ extension ReviewTableCell: UICollectionViewDataSource {
         let tag = tags[indexPath.item]
         cell.configure(tagName: tag.name, isLiked: tag.isLiked)
         return cell
+    }
+}
+
+class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        let attributes = super.layoutAttributesForElements(in: rect)
+
+        var leftMargin = sectionInset.left
+        var maxY: CGFloat = -1.0
+
+        attributes?.forEach { layoutAttribute in
+            if layoutAttribute.representedElementCategory == .cell {
+                if layoutAttribute.frame.origin.y >= maxY {
+                    leftMargin = sectionInset.left
+                }
+                
+                layoutAttribute.frame.origin.x = leftMargin
+                
+                maxY = max(maxY, layoutAttribute.frame.maxY)
+                leftMargin = layoutAttribute.frame.maxX + minimumInteritemSpacing
+            }
+        }
+        return attributes
     }
 }
