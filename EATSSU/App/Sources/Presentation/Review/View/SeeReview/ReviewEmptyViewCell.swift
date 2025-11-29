@@ -26,6 +26,8 @@ final class ReviewEmptyViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "아직 작성된 리뷰가 없어요"
         label.font = .subtitle2
+        label.text = "아직 작성된 리뷰가 없어요!"
+        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textAlignment = .center
         return label
@@ -79,5 +81,10 @@ final class ReviewEmptyViewCell: UITableViewCell {
         } else {
             noReviewImageView.image = ImageLiteral.pleaseLogin
         }
+    }
+    
+    func configureForMyReview() {
+        mainLabel.text = "아직 작성한 리뷰가 없어요"
+        subLabel.text = "첫 리뷰를 남겨 주세요!"
     }
 }
