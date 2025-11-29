@@ -6,22 +6,32 @@
 //
 
 import UIKit
-
 import SnapKit
 
 import EATSSUDesign
 
-final class RateView: BaseUIView {
+final class RateView: UIView { // BaseUIView 대신 UIView 상속
+    
     // MARK: - Properties
     
+    /// 별 버튼 배열
     var buttons: [UIButton] = []
+    
+    /// 현재 선택된 별점 (1~5)
     var currentStar: Int = 0
-    var starNumber: Int = 5 {
-        didSet { bind() }
-    }
     
-    // MARK: - UI Component
+    /// 별의 개수 (기본값: 5)
+    private var starNumber: Int = 5 // 내부 프로퍼티로 변경
     
+    /// 채워진 별 이미지
+    private lazy var starFillImage: UIImage? = EATSSUDesignAsset.Images.icStarYellow.image
+    
+    /// 빈 별 이미지
+    private lazy var starEmptyImage: UIImage? = EATSSUDesignAsset.Images.icStarGray.image
+    
+    // MARK: - UI Components
+    
+    /// 별들을 가로로 배치하는 스택뷰
     lazy var starStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
@@ -30,13 +40,13 @@ final class RateView: BaseUIView {
         return view
     }()
     
-    lazy var starFillImage: UIImage? = EATSSUDesignAsset.Images.icStarYellow.image
-    
-    lazy var starEmptyImage: UIImage? = EATSSUDesignAsset.Images.icStarGray.image
+    // MARK: - Initialization
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        bind()
+        setupStars()
+        configureUI()
+        setLayout()
     }
     
     @available(*, unavailable)
@@ -44,49 +54,79 @@ final class RateView: BaseUIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Functions
+    // MARK: - UI Configuration
     
-    override func configureUI() {
+    /// UI 컴포넌트 설정
+    private func configureUI() {
         addSubview(starStackView)
     }
     
-    override func setLayout() {
+    /// 레이아웃 제약조건 설정
+    private func setLayout() {
         starStackView.snp.makeConstraints { make in
-            make.top.leading.bottom.trailing.equalToSuperview()
+            make.edges.equalToSuperview()
         }
     }
     
-    func bind() {
-        for i in 0 ..< 5 {
+    // MARK: - Private Methods
+    
+    /// 별 버튼들 생성 및 설정
+    private func setupStars() {
+        // 기존 버튼 제거
+        buttons.forEach { $0.removeFromSuperview() }
+        buttons.removeAll()
+        
+        // 5개의 별 버튼 생성 및 스택뷰에 추가
+        for i in 0..<starNumber {
             let button = UIButton()
             button.setImage(starEmptyImage, for: .normal)
-            button.tag = i
-            buttons += [button]
+            button.tag = i // 0부터 시작하는 인덱스
+            button.addTarget(self, action: #selector(didTappedStar(sender:)), for: .touchUpInside)
+            
+            // SetRateViewController에서 설정된 크기 제약을 위해 여기에 추가 (Controller에서 처리하는 것이 좋으나, View에서 크기 관련 제약은 자주 발생함)
+            button.snp.makeConstraints { make in
+                make.width.equalTo(29.3)
+            }
+            
+            buttons.append(button)
             starStackView.addArrangedSubview(button)
-            button.addTarget(self, action: #selector(didTappedTag(sender:)), for: .touchUpInside)
         }
     }
     
+    // MARK: - Actions
+    
+    /// 별 버튼 탭 처리
+    /// - Parameter sender: 탭된 버튼
     @objc
-    private func didTappedTag(sender: UIButton) {
-        let end = sender.tag
-        for i in 0 ... end {
+    private func didTappedStar(sender: UIButton) {
+        let selectedIndex = sender.tag
+        
+        // 현재 별점 업데이트 (인덱스 + 1)
+        currentStar = selectedIndex + 1
+        
+        // UI 업데이트
+        updateStars()
+    }
+    
+    /// 현재 currentStar 값에 따라 별 UI를 업데이트
+    private func updateStars() {
+        // 선택된 별까지 채우기
+        for i in 0..<currentStar {
             buttons[i].setImage(starFillImage, for: .normal)
         }
-        for i in end + 1 ..< starNumber {
+        
+        // 나머지 별 비우기
+        for i in currentStar..<starNumber {
             buttons[i].setImage(starEmptyImage, for: .normal)
         }
-        currentStar = end + 1
     }
     
+    // MARK: - Public Methods
+    
+    /// 리뷰 수정 시 기존 별점 설정 및 UI 업데이트
+    /// - Parameter currentStar: 설정할 별점 (1~5)
     func settingStarForFix(currentStar: Int) {
-        if currentStar > 0 {
-            for i in 0 ... currentStar - 1 {
-                buttons[i].setImage(starFillImage, for: .normal)
-            }
-        }
-        for i in currentStar ..< starNumber {
-            buttons[i].setImage(starEmptyImage, for: .normal)
-        }
+        self.currentStar = currentStar
+        updateStars()
     }
 }

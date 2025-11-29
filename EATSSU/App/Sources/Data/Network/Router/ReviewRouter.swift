@@ -21,6 +21,10 @@ enum ReviewRouter {
                        size: Int? = 20)
     case getFixedMenuStatistics(_ menuId: Int)
     case getMealStatistics(_ mealId: Int)
+    case getMyReviewList(lastReviewId: Int?,
+                             page: Int? = 0,
+                             size: Int? = 20,
+                             sort: String? = "date,DESC") // 기본값: date,DESC
 }
 
 extension ReviewRouter: TargetType {
@@ -50,12 +54,14 @@ extension ReviewRouter: TargetType {
             "/v2/reviews/statistics/menus/\(menuId)"
         case let .getMealStatistics(mealId):
             "/v2/reviews/statistics/meals/\(mealId)"
+        case .getMyReviewList:
+            "/v2/reviews/my"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics:
+        case .getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics, .getMyReviewList:
                 .get
         case .report:
                 .post
@@ -98,6 +104,23 @@ extension ReviewRouter: TargetType {
                 .requestPlain
         case .getMealStatistics:
                 .requestPlain
+        case let .getMyReviewList(lastReviewId, page, size, sort):
+                .requestParameters(
+                    parameters: {
+                        var dict: [String: Any] = [:]
+
+                        if let lastId = lastReviewId {
+                            dict["lastReviewId"] = lastId
+                        } else {
+                            dict["page"] = page ?? 0
+                        }
+
+                        dict["size"] = size ?? 20
+                        dict["sort"] = sort ?? "date,DESC"
+                        return dict
+                    }(),
+                    encoding: URLEncoding.queryString
+                )
         }
     }
     

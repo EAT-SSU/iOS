@@ -1,6 +1,6 @@
 //
 //  ReportView.swift
-//  EATSSU
+//  EatSSU-iOS
 //
 //  Created by Jiwoong CHOI on 8/30/24.
 //

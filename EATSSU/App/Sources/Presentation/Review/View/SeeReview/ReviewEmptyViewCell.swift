@@ -6,22 +6,29 @@
 //
 
 import UIKit
-
 import SnapKit
 
 import EATSSUDesign
 
+// MARK: - ReviewEmptyViewCell
+
+/// 리뷰가 없을 때 표시하는 빈 상태 셀
 final class ReviewEmptyViewCell: UITableViewCell {
+    
     // MARK: - Properties
+    
     static let identifier = "ReviewEmptyViewCell"
     
     // MARK: - UI Components
+    
+    /// 빈 상태 이미지
     private lazy var noReviewImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return imageView
     }()
     
+    /// 제목 레이블
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .subtitle2
@@ -31,6 +38,7 @@ final class ReviewEmptyViewCell: UITableViewCell {
         return label
     }()
     
+    /// 설명 레이블
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "메뉴에 가장 먼저 리뷰를 남겨주세요!"
@@ -40,18 +48,24 @@ final class ReviewEmptyViewCell: UITableViewCell {
         return label
     }()
     
+    /// 컴포넌트들을 세로로 배치하는 스택뷰
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [noReviewImageView, titleLabel, descriptionLabel])
+        let stack = UIStackView(arrangedSubviews: [
+            noReviewImageView,
+            titleLabel,
+            descriptionLabel
+        ])
         stack.axis = .vertical
         stack.alignment = .center
         stack.spacing = 16
         return stack
     }()
     
-    // MARK: - Init
+    // MARK: - Initialization
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(stackView)
+        setupUI()
         setLayout()
     }
     
@@ -60,17 +74,28 @@ final class ReviewEmptyViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Layout
+    // MARK: - UI Configuration
+    
+    /// UI 컴포넌트 추가
+    private func setupUI() {
+        contentView.addSubview(stackView)
+    }
+    
+    /// 레이아웃 제약조건 설정
     private func setLayout() {
         stackView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        
         noReviewImageView.snp.makeConstraints {
             $0.size.equalTo(48)
         }
     }
     
-    // MARK: - Configure
+    // MARK: - Public Methods
+    
+    /// 토큰 존재 여부에 따라 셀 구성
+    /// - Parameter isTokenExist: 로그인 토큰 존재 여부
     func configure(isTokenExist: Bool) {
         if isTokenExist {
             noReviewImageView.image = EATSSUDesignAsset.Images.noReview.image
@@ -81,6 +106,7 @@ final class ReviewEmptyViewCell: UITableViewCell {
         }
     }
     
+    /// 마이페이지용 빈 상태 구성
     func configureForMyReview() {
         titleLabel.text = "아직 작성한 리뷰가 없어요"
         descriptionLabel.text = "첫 리뷰를 남겨 주세요!"
