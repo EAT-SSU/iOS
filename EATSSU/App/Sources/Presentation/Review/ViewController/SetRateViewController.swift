@@ -2,7 +2,7 @@
 //  SetRateViewController.swift
 //  EatSSU-iOS
 //
-//  Created by 박윤빈 on 2023/03/23.
+//  Created by 한금준 on 29/11/25.
 //
 
 import UIKit
@@ -597,13 +597,11 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
         picker.dismiss(animated: true)
     }
     
-    // 뒤로가기 제스처 및 버튼 탭 시 리뷰 작성 여부 확인 로직
-    private func checkReviewStatusAndConfirmExit() -> Bool {
+    private func checkReviewStatusAndConfirmExit(completion: @escaping (Bool) -> Void) {
         let textHasContent = setRateView.userReviewTextView.text != placeholderText && !(setRateView.userReviewTextView.text ?? "").isEmpty
         let isReviewStarted: Bool = setRateView.rateView.currentStar > 0 || textHasContent
         
         if reviewId == nil, isReviewStarted {
-            
             let title = "작성 취소"
             let message = "작성 중인 리뷰는 저장되지 않습니다. 정말 나가시겠습니까?"
             let confirmButtonTitle = "나가기"
@@ -614,13 +612,13 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
                 message: message,
                 cancelButtonTitle: cancelButtonTitle,
                 confirmButtonTitle: confirmButtonTitle
-            ) { [weak self] in
-                // 다이얼로그에서 '나가기' 선택 시 실제로 pop
-                self?.navigationController?.popViewController(animated: true)
+            ) {
+                completion(true)
             }
-            return false // Pop 방지
+            completion(false)
+        } else {
+            completion(true)
         }
-        return true // Pop 허용
     }
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
@@ -628,21 +626,34 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
         if navigationController is UIImagePickerController { return }
         
         let isPopping = !navigationController.viewControllers.contains(self)
+        
         if isPopping {
-            navigationController.viewControllers.append(self)
+            navigationController.delegate = nil
             
-            if checkReviewStatusAndConfirmExit() {
-                navigationController.delegate = nil
-                navigationController.popViewController(animated: true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                    self?.navigationController?.delegate = self
+            var viewControllers = navigationController.viewControllers
+            viewControllers.append(self)
+            navigationController.setViewControllers(viewControllers, animated: false)
+            
+            checkReviewStatusAndConfirmExit { [weak self] shouldPop in
+                guard let self = self else { return }
+                
+                if shouldPop {
+                    var controllers = navigationController.viewControllers
+                    if let index = controllers.firstIndex(of: self) {
+                        controllers.remove(at: index)
+                        navigationController.setViewControllers(controllers, animated: true)
+                    }
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                    navigationController.delegate = self
                 }
             }
         }
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return checkReviewStatusAndConfirmExit()
+        return true
     }
 }
 
