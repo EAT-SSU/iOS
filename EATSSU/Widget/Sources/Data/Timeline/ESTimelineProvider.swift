@@ -7,7 +7,6 @@
 
 import Combine
 import WidgetKit
-
 import Moya
 
 // 위젯의 타임라인 데이터를 제공하는 프로바이더 구조체
@@ -24,16 +23,21 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         return ESEntry(
             date: currentDate,
             restaurantName: "학생식당",
+            menus: [["로딩 중..."]],
             timeSlot: timeSlot,
             isError: false
         )
     }
 
-    // 위젯 미리보기에서 사용할 샘플 데이터 제공
+    // 위젯 갤러리(미리보기)에서 사용할 샘플 데이터 제공
     func snapshot(for _: SelectRestaurant, in _: Context) async -> ESEntry {
-        let mockupMenus = ["스팸마요덮밥", "우동국물", "깍두기", "요거트",
-                           "불고기덮밥", "된장찌개", "참치김치볶음",
-                           "배추김치", "계란장조림", "사과"]
+        // 각 메뉴 세트별로 배열을 분리 (2차원 배열)
+        let mockupMenus = [
+            ["스팸마요덮밥", "우동국물", "깍두기", "요거트"],
+            ["불고기덮밥", "된장찌개", "참치김치볶음"],
+            ["배추김치", "계란장조림", "사과"]
+        ]
+        
         return ESEntry(
             date: Date(),
             restaurantName: "학생식당",
@@ -62,8 +66,8 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         var timeline: Timeline<ESEntry>
         
         do {
-            // 네트워크 요청을 통해 메뉴 데이터를 가져옴
             let menus = try await fetchMenu(provider: provider, date: formattedDate, restaurant: restaurant, time: timeSlot)
+            
             let updatedEntry = ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
@@ -82,12 +86,13 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
             let errorEntry = ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: ["네트워크 연결 실패"],
+                menus: [["네트워크 연결 실패"]],
                 timeSlot: timeSlot,
                 isError: true
             )
             let retryDate = currentDate.addingTimeInterval(300)
-            timeline = Timeline(entries: [errorEntry], policy: .after(retryDate))        }
+            timeline = Timeline(entries: [errorEntry], policy: .after(retryDate))
+        }
 
         return timeline
     }
@@ -107,10 +112,14 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
 
 
     // 서버에서 특정 날짜, 식당, 시간대의 메뉴 정보를 가져오는 함수
-    private func fetchMenu(provider: MoyaProvider<HomeRouter>, date: String, restaurant: String, time: String) async throws -> [String] {
+    private func fetchMenu(provider: MoyaProvider<HomeRouter>, date: String, restaurant: String, time: String) async throws -> [[String]] {
         let response = try await provider.request(.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time))
         let decoded = try response.map(BaseResponse<[ChangeMenuTableResponse]>.self)
-        return decoded.result.flatMap { $0.briefMenus.map(\.name) }
+        
+        // 결과: [ ["돈코츠", "튀김"], ["부대덮밥", "국물"] ]
+        return decoded.result.map { meal in
+            meal.briefMenus.map { $0.name }
+        }
     }
 
     // Date 객체를 "yyyyMMdd" 형식의 문자열로 변환하는 함수
@@ -136,13 +145,10 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
         let hour = calendar.component(.hour, from: date)
         
         if hour < 10 {
-            // 현재 아침(0-10시) → 10시에 점심으로 전환
             return calendar.date(bySettingHour: 10, minute: 0, second: 0, of: date) ?? date
         } else if hour < 16 {
-            // 현재 점심(10-16시) → 16시에 저녁으로 전환
             return calendar.date(bySettingHour: 16, minute: 0, second: 0, of: date) ?? date
         } else {
-            // 현재 저녁(16-24시) → 다음날 0시에 아침으로 전환
             if let tomorrow = calendar.date(byAdding: .day, value: 1, to: date) {
                 return calendar.startOfDay(for: tomorrow)
             }

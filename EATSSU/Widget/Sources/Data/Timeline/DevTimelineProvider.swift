@@ -6,6 +6,7 @@
 //
 
 import WidgetKit
+import SwiftUI
 
 // 개발용 목업 데이터를 제공하는 타임라인 프로바이더
 struct DevTimelineProvider: AppIntentTimelineProvider {
@@ -13,21 +14,21 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
     typealias Entry = ESEntry
 
     // 개발용 고정 메뉴 데이터
-    private let mockMenus = [
+    private let mockMenus: [String: [[String]]] = [
         "아침 메뉴": [
-            "현미밥", "된장찌개", "계란말이", "김치",
-            "두부조림", "시금치나물", "연근조림",
-            "미역국", "오이소박이", "콩자반",
+            ["현미밥", "된장찌개", "계란말이", "김치"],
+            ["두부조림", "시금치나물", "연근조림"],
+            ["미역국", "오이소박이", "콩자반"]
         ],
         "점심 메뉴": [
-            "스팸마요덮밥", "우동국물", "깍두기", "요거트",
-            "불고기덮밥", "된장찌개", "참치김치볶음",
-            "배추김치", "계란장조림", "사과",
+            ["스팸마요덮밥", "우동국물", "깍두기", "요거트"],
+            ["불고기덮밥", "된장찌개", "참치김치볶음"],
+            ["배추김치", "계란장조림", "사과"]
         ],
         "저녁 메뉴": [
-            "치킨텐더", "감자튀김", "콜슬로", "양상추샐러드",
-            "스테이크", "그릴드치즈", "토마토스프",
-            "브로콜리살라드", "마늘빵", "딸기요거트",
+            ["치킨텐더", "감자튀김", "콜슬로", "양상추샐러드"],
+            ["스테이크", "그릴드치즈", "토마토스프"],
+            ["브로콜리살라드", "마늘빵", "딸기요거트"]
         ],
     ]
 
@@ -37,7 +38,7 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
         return ESEntry(
             date: currentDate,
             restaurantName: "개발용 식당",
-            menus: ["로딩중..."],
+            menus: [["로딩중..."]],
             timeSlot: timeSlot
         )
     }
@@ -48,7 +49,7 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
         return ESEntry(
             date: currentDate,
             restaurantName: configuration.selectedRestaurant.displayName,
-            menus: ["샘플 메뉴 1", "샘플 메뉴 2"],
+            menus: [["샘플 메뉴 1", "반찬 A"], ["샘플 메뉴 2", "반찬 B"]],
             timeSlot: timeSlot
         )
     }
@@ -63,28 +64,28 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: mockMenus["아침 메뉴"] ?? [],
+                menus: mockMenus["아침 메뉴"] ?? [["정보 없음"]],
                 timeSlot: timeSlot
             )
         case "LUNCH":
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: mockMenus["점심 메뉴"] ?? [],
+                menus: mockMenus["점심 메뉴"] ?? [["정보 없음"]],
                 timeSlot: timeSlot
             )
         case "DINNER":
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: mockMenus["저녁 메뉴"] ?? [],
+                menus: mockMenus["저녁 메뉴"] ?? [["정보 없음"]],
                 timeSlot: timeSlot
             )
         default:
             ESEntry(
                 date: currentDate,
                 restaurantName: configuration.selectedRestaurant.displayName,
-                menus: ["영업시간이 아닙니다"],
+                menus: [["영업시간이 아닙니다"]],
                 timeSlot: timeSlot
             )
         }
@@ -94,7 +95,7 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
         return Timeline(entries: [entry], policy: .after(nextUpdate))
     }
 
-    // 시간대 계산 메서드 (ESTimelineProvider와 동일)
+    // 시간대 계산 메서드
     private func getTimeSlot(for date: Date) -> String {
         let hour = Calendar.current.component(.hour, from: date)
         switch hour {
@@ -106,9 +107,18 @@ struct DevTimelineProvider: AppIntentTimelineProvider {
     }
 }
 
-// 프리뷰용 확장
+// 프리뷰 코드
 #Preview(as: .systemSmall) {
     EATSSUWidget()
 } timeline: {
-    ESEntry(date: Date(), restaurantName: "개발용 식당", menus: ["메뉴1", "메뉴2", "메뉴3"], timeSlot: "DINNER")
+    ESEntry(
+        date: Date(),
+        restaurantName: "개발용 식당",
+        menus: [
+            ["돈코츠라멘", "튀김", "단무지"],
+            ["부대덮밥", "계란후라이", "김치"],
+            ["치즈돈까스", "쫄면"]
+        ],
+        timeSlot: "LUNCH"
+    )
 }

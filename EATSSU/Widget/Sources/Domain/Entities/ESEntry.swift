@@ -18,8 +18,8 @@ struct ESEntry: TimelineEntry {
     /// 제공되는 메뉴 목록.
     ///
     /// 기본값은 `["메뉴가 없습니다."]`로 설정됩니다.
-    let menus: [String]
-
+    let menus: [[String]]
+    
     /// 시간대 정보.
     let timeSlot: String
 
@@ -36,7 +36,7 @@ struct ESEntry: TimelineEntry {
     ///   - menus: 제공되는 메뉴 목록. 기본값은 `["메뉴가 없습니다."]`입니다.
     ///   - timeSlot: 해당 시간대.
     ///   - isError: 오류 여부. 기본값은 `false`입니다.
-    init(date: Date, restaurantName: String, menus: [String] = ["메뉴가 없습니다."], timeSlot: String, isError: Bool = false) {
+    init(date: Date, restaurantName: String, menus: [[String]] = [["메뉴가 없습니다."]], timeSlot: String, isError: Bool = false) {
         self.date = date
         self.restaurantName = restaurantName
         self.menus = menus
