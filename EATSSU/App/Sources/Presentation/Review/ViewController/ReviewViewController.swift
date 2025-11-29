@@ -60,9 +60,6 @@ final class ReviewViewController: BaseViewController {
     
     // MARK: - UI Components
     
-    /// 당겨서 새로고침 컨트롤
-    let refreshControl = UIRefreshControl()
-    
     /// 리뷰 목록 테이블뷰
     let reviewTableView: UITableView = {
         let tableView = UITableView()
@@ -109,7 +106,6 @@ final class ReviewViewController: BaseViewController {
         super.viewDidLoad()
         
         setTableView()
-        initRefresh()
         setFirebaseTask()
     }
     
@@ -219,16 +215,6 @@ final class ReviewViewController: BaseViewController {
         // 델리게이트 설정
         reviewTableView.delegate = self
         reviewTableView.dataSource = self
-    }
-    
-    /// 당겨서 새로고침 초기화
-    private func initRefresh() {
-        refreshControl.addTarget(
-            self,
-            action: #selector(refreshTable(refresh:)),
-            for: .valueChanged
-        )
-        reviewTableView.refreshControl = refreshControl
     }
     
     // MARK: - Actions
