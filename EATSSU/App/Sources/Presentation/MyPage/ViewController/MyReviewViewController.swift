@@ -15,7 +15,8 @@ final class MyReviewViewController: BaseViewController {
     override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
 
-    private var reviewList = [MyDataList]()
+    // DTO 변경에 따라 타입 수정: MyDataList -> MyReviewListItem
+    private var reviewList = [MyReviewListItem]()
     var nickname: String = .init()
     private var menuName: String = .init()
 
@@ -143,10 +144,17 @@ extension MyReviewViewController: UITableViewDataSource {
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: ReviewTableCell.identifier, for: indexPath) as? ReviewTableCell ?? ReviewTableCell()
-        cell.myPageDataBind(response: reviewList[indexPath.row], nickname: nickname)
+        
+        // DTO에 맞게 데이터 바인딩 로직 수정 필요 (ReviewTableCell의 myPageDataBind 함수도 수정되었다고 가정)
+        let reviewItem = reviewList[indexPath.row]
+        cell.myPageDataBind(response: reviewItem, nickname: nickname)
+        
         cell.handler = { [weak self] in
             guard let self else { return }
-            menuName = reviewList[indexPath.row].menuName
+            
+            // DTO 구조에 맞게 메뉴 이름을 reviewItem.menuList에서 가져옴
+            let menuName = reviewItem.menuList.first?.name ?? "알 수 없는 메뉴"
+            
             showFixOrDeleteAlert(reviewID: cell.reviewId,
                                  menuName: menuName)
         }
@@ -160,15 +168,15 @@ extension MyReviewViewController: UITableViewDataSource {
 extension MyReviewViewController {
     private func getMyReview() {
         NetworkService.shared.request(
-            MyRouter.myReview,
-            responseType: MyReviewResponse.self,
+            MyRouter.getMyReviewList(lastReviewId: nil, page: 0, size: 20),
+            responseType: MyReviewResponseDTO.self,
             useAuth: true
         ) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let response):
-                self.reviewList = response.dataList
+                self.reviewList = response.result.dataList
                 self.myReviewView.myReviewTableView.reloadData()
                 
             case .failure(let error):

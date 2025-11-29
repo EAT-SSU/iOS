@@ -24,7 +24,7 @@ enum ReviewRouter {
     case getMyReviewList(lastReviewId: Int?,
                              page: Int? = 0,
                              size: Int? = 20,
-                             sort: String? = "date,DESC") // 기본값: date,DESC
+                             sort: String? = "date,DESC")
 }
 
 extension ReviewRouter: TargetType {

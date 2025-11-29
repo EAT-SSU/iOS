@@ -306,31 +306,30 @@ final class ReviewTableCell: UITableViewCell {
     
     /// 마이페이지용 리뷰 데이터 바인딩
     /// - Parameters:
-    ///   - response: 마이페이지 데이터 리스트
+    ///   - response: MyReviewListItem DTO
     ///   - nickname: 사용자 닉네임
-    func myPageDataBind(response: MyDataList, nickname: String) {
+    func myPageDataBind(response: MyReviewListItem, nickname: String) { // 인자 타입 변경 (MyDataList -> MyReviewListItem)
         userNameLabel.text = "\(nickname)"
-        totalRateView.setRating(response.mainRating)
-        dateLabel.text = response.writeDate
+        totalRateView.setRating(Int(response.rating ?? 0))
+        dateLabel.text = response.writtenAt
+        
         reviewTextView.text = response.content
         
-        // 이미지 설정
-        if response.imgURLList.count != 0 {
-            if response.imgURLList[0] != "" {
-                foodImageView.isHidden = false
-                foodImageView.kfSetImage(url: response.imgURLList[0])
-            }
+        if let imageUrls = response.imageUrls,
+           let firstImageUrl = imageUrls.first(where: { !$0.isEmpty }) {
+            
+            foodImageView.isHidden = false
+            foodImageView.kfSetImage(url: firstImageUrl)
+            
         } else {
             foodImageView.isHidden = true
         }
         
-        // 더보기 버튼 설정
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.setTitle("", for: .normal)
-        reviewId = response.reviewID
         
-        // 마이페이지에서는 태그 숨김
+        reviewId = response.reviewId
         tags = []
         tagCollectionView.isHidden = true
     }
