@@ -34,6 +34,9 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 10, weight: .medium)
         label.textColor = .systemTeal
+        label.numberOfLines = 1
+        label.lineBreakMode = .byClipping
+        label.adjustsFontSizeToFitWidth = false
         return label
     }()
     
@@ -43,6 +46,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         sv.axis = .horizontal
         sv.spacing = 4
         sv.alignment = .center
+        sv.distribution = .fill
         return sv
     }()
     
@@ -64,6 +68,19 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         contentView.layer.cornerRadius = contentView.bounds.height / 2
     }
     
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        setNeedsLayout()
+        layoutIfNeeded()
+        
+        let size = contentView.systemLayoutSizeFitting(layoutAttributes.size)
+        var newFrame = layoutAttributes.frame
+        newFrame.size.width = ceil(size.width)
+        newFrame.size.height = ceil(size.height)
+        layoutAttributes.frame = newFrame
+        
+        return layoutAttributes
+    }
+    
     // MARK: - UI Configuration
     
     /// UI 컴포넌트 설정
@@ -72,6 +89,12 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.1)
         contentView.layer.borderColor = UIColor.systemTeal.cgColor
         contentView.layer.borderWidth = 1
+
+        titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+        
+        iconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        iconImageView.setContentHuggingPriority(.required, for: .horizontal)
         
         // 스택뷰 구성
         stackView.addArrangedSubview(iconImageView)
@@ -79,8 +102,6 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(stackView)
         
         // 레이아웃 설정
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
         iconImageView.snp.makeConstraints { make in
             make.width.height.equalTo(10)
         }
@@ -88,8 +109,8 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         stackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(8)
             make.trailing.equalToSuperview().inset(8)
-            make.top.equalToSuperview().offset(2)
-            make.bottom.equalToSuperview().inset(2)
+            make.top.equalToSuperview().offset(6)
+            make.bottom.equalToSuperview().inset(6)
         }
     }
     
@@ -108,5 +129,24 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         } else {
             iconImageView.isHidden = true
         }
+        
+        setNeedsLayout()
+        layoutIfNeeded()
+    }
+    
+    static func estimatedSize(for text: String, isLiked: Bool, maxWidth: CGFloat) -> CGSize {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 10, weight: .medium)
+        label.text = text
+        label.numberOfLines = 1
+        
+        let labelSize = label.sizeThatFits(CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
+        
+        // 아이콘(10) + spacing(4) + 여백(8+8) = 30
+        let iconWidth: CGFloat = isLiked ? 14 : 0
+        let totalWidth = labelSize.width + iconWidth + 16
+        let height: CGFloat = 26 // 고정 높이
+        
+        return CGSize(width: ceil(totalWidth), height: height)
     }
 }
