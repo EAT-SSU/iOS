@@ -19,7 +19,7 @@ final class SetRateView: UIView {
     
     // MARK: - UI Components
     
-    // ⭐️ Scroll View Container
+    // Scroll View Container
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         return scrollView
@@ -27,7 +27,7 @@ final class SetRateView: UIView {
     
     let contentView: UIView = UIView()
     
-    // ⭐️ Review Rate Section
+    // Review Rate Section
     let menuLabel: UILabel = {
         let label = UILabel()
         label.text = "오늘의 식사는 어떠셨나요?"
@@ -38,7 +38,7 @@ final class SetRateView: UIView {
     
     let rateView = RateView()
     
-    // ⭐️ Menu Like Section
+    // Menu Like Section
     let detailLabel: UILabel = {
         let label = UILabel()
         label.text = "추천하고 싶은 메뉴가 있나요?"
@@ -56,7 +56,7 @@ final class SetRateView: UIView {
         return tableView
     }()
     
-    // ⭐️ Review Text Section
+    // Review Text Section
     let userReviewTextView: UITextView = {
         let textView = UITextView()
         textView.font = .body1
@@ -76,7 +76,7 @@ final class SetRateView: UIView {
         return label
     }()
     
-    // ⭐️ Image Section
+    // Image Section
     let selectImageButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.plain()
@@ -125,7 +125,7 @@ final class SetRateView: UIView {
         return label
     }()
     
-    // ⭐️ Bottom Button Section
+    // Bottom Button Section
     let buttonContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -259,8 +259,7 @@ final class SetRateView: UIView {
         deleteMethodLabel.snp.makeConstraints {
             $0.top.equalTo(imageCountLabel.snp.bottom).offset(7)
             $0.leading.equalTo(selectImageButton)
-            // ContentView의 bottom에 연결하여 스크롤 가능하게 함
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-100)
+            $0.bottom.equalTo(contentView.snp.bottom).offset(-50)
         }
         
         closeButton.snp.makeConstraints {

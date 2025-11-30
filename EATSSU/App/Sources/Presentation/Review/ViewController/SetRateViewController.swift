@@ -14,9 +14,7 @@ import EATSSUDesign
 final class SetRateViewController: BaseViewController {
     
     // MARK: - Properties
-    override var shouldHideTabBar: Bool {
-        return true
-    }
+    override var shouldHideTabBar: Bool { true }
     
     // Data Model
     private var reviewType: ReviewType = .variable
@@ -32,6 +30,8 @@ final class SetRateViewController: BaseViewController {
     
     // State Flags
     private var isReviewSubmitted = false
+    
+    private weak var originalNavigationDelegate: UINavigationControllerDelegate?
     
     enum ReviewType {
         case fixed // 단일 메뉴 리뷰
@@ -73,6 +73,8 @@ final class SetRateViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        originalNavigationDelegate = navigationController?.delegate
+        
         setDelegates()
         setupInitialDataFetch()
     }
@@ -82,10 +84,16 @@ final class SetRateViewController: BaseViewController {
         if navigationController?.isNavigationBarHidden == true {
             navigationController?.isNavigationBarHidden = false
         }
+        
+        navigationController?.delegate = self
     }
     
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
+        
+        if isMovingFromParent {
+            navigationController?.delegate = originalNavigationDelegate
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -148,7 +156,7 @@ final class SetRateViewController: BaseViewController {
         imagePickerController.allowsEditing = false
         setRateView.userReviewTextView.delegate = self
         
-        self.navigationController?.delegate = self
+//        self.navigationController?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
@@ -621,15 +629,32 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
     }
     
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        originalNavigationDelegate?.navigationController?(
+            navigationController,
+            willShow: viewController,
+            animated: animated
+        )
+
         if isReviewSubmitted { return }
         if navigationController is UIImagePickerController { return }
         
         let isPopping = !navigationController.viewControllers.contains(self)
         
         if isPopping {
-            navigationController.delegate = nil
-            
+            let textHasContent = setRateView.userReviewTextView.text != placeholderText
+            && !(setRateView.userReviewTextView.text ?? "").isEmpty
+            let isReviewStarted = setRateView.rateView.currentStar > 0 || textHasContent
+
+            if reviewId != nil || !isReviewStarted {
+                navigationController.delegate = originalNavigationDelegate
+                return
+            }
+
             var viewControllers = navigationController.viewControllers
             viewControllers.append(self)
             navigationController.setViewControllers(viewControllers, animated: false)
@@ -641,12 +666,14 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
                     var controllers = navigationController.viewControllers
                     if let index = controllers.firstIndex(of: self) {
                         controllers.remove(at: index)
+                        
+                        navigationController.delegate = self.originalNavigationDelegate
                         navigationController.setViewControllers(controllers, animated: true)
                     }
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                    navigationController.delegate = self
+                } else {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                        navigationController.delegate = self
+                    }
                 }
             }
         }

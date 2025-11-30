@@ -16,10 +16,7 @@ import Moya
 final class ReviewViewController: BaseViewController {
     
     // MARK: - Properties
-    
-    override var shouldHideTabBar: Bool {
-        return true
-    }
+    override var shouldHideTabBar: Bool { true }
     
     // MARK: - Network
     
@@ -123,17 +120,6 @@ final class ReviewViewController: BaseViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        // 뒤로 가기 시 탭바 표시
-        if self.isMovingFromParent {
-            var parentVC = self.parent
-            while parentVC != nil {
-                if let customTabBar = parentVC as? CustomTabBarContainerController {
-                    customTabBar.setTabBarHidden(false, animated: false)
-                    break
-                }
-                parentVC = parentVC?.parent
-            }
-        }
     }
     
     // MARK: - UI Configuration
