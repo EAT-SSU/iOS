@@ -393,7 +393,7 @@ extension SetRateViewController {
                     rating: setRateView.rateView.currentStar,
                     menuLikes: menuLikes,
                     content: setRateView.userReviewTextView.text,
-                    imageUrls: imageUrl != nil ? [imageUrl!] : nil
+                    imageUrls: imageUrl != nil ? [imageUrl!] : []
                 )
                 try await postMealReview(request: request)
                 
@@ -434,7 +434,7 @@ extension SetRateViewController {
                     rating: setRateView.rateView.currentStar,
                     menuLike: menuLike,
                     content: setRateView.userReviewTextView.text,
-                    imageUrls: imageUrl != nil ? [imageUrl!] : nil
+                    imageUrls: imageUrl != nil ? [imageUrl!] : []
                 )
                 
                 try await postMenuReview(request: request)
