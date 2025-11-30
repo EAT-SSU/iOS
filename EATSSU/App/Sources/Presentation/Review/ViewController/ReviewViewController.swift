@@ -18,6 +18,8 @@ final class ReviewViewController: BaseViewController {
     // MARK: - Properties
     override var shouldHideTabBar: Bool { true }
     
+    private var shouldShowSuccessToast: Bool = false
+    
     // MARK: - Network
     
     /// 리뷰 API 프로바이더
@@ -115,6 +117,15 @@ final class ReviewViewController: BaseViewController {
             getValidMenusForReview()
         }
         getReviewList(type: type, menuId: menuID)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if shouldShowSuccessToast {
+            showToast(message: "리뷰가 성공적으로 등록되었습니다.")
+            shouldShowSuccessToast = false
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -288,6 +299,9 @@ final class ReviewViewController: BaseViewController {
     }
     
     // MARK: - Public Methods
+    func setReviewSubmittedSuccessfully() {
+        shouldShowSuccessToast = true
+    }
     
     /// 메뉴 ID 바인딩
     /// - Parameter id: 메뉴 ID

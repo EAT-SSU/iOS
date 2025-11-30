@@ -296,7 +296,9 @@ final class SetRateViewController: BaseViewController {
     
     /// 리뷰 작성/수정 완료 후 ReviewViewController로 돌아갑니다.
     private func moveToReviewVC() {
-        if let reviewVC = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) {
+        if let reviewVC = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) as? ReviewViewController {
+            
+            reviewVC.setReviewSubmittedSuccessfully()
             navigationController?.popToViewController(reviewVC, animated: true)
             
             if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
@@ -400,7 +402,6 @@ extension SetRateViewController {
                 await MainActor.run {
                     self.isReviewSubmitted = true
                     self.moveToReviewVC()
-                    self.showToast(message: "리뷰가 성공적으로 작성되었습니다.")
                 }
                 
             } catch {
@@ -442,7 +443,6 @@ extension SetRateViewController {
                 await MainActor.run {
                     self.isReviewSubmitted = true
                     self.moveToReviewVC()
-                    self.showToast(message: "리뷰가 성공적으로 작성되었습니다.")
                 }
                 
             } catch {

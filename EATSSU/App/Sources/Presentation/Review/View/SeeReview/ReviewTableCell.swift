@@ -137,7 +137,7 @@ final class ReviewTableCell: UITableViewCell {
     
     var foodImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.isHidden = true
         imageView.clipsToBounds = true
         return imageView
@@ -187,15 +187,7 @@ final class ReviewTableCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        // 컬렉션뷰의 contentSize가 계산된 후 높이 업데이트
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            let contentHeight = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-            
-            if contentHeight > 0 {
-                self.tagCollectionViewHeightConstraint?.update(offset: contentHeight)
-            }
-        }
+        // layoutSubviews에서 높이 업데이트 로직 제거 (dataBind로 이동)
     }
     
     // MARK: - UI Configuration
@@ -238,6 +230,7 @@ final class ReviewTableCell: UITableViewCell {
         // 태그 컬렉션뷰
         tagCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
+            // 높이 제약을 저장하고 기본 높이를 줍니다.
             tagCollectionViewHeightConstraint = make.height.equalTo(26).constraint
         }
         
@@ -258,6 +251,10 @@ final class ReviewTableCell: UITableViewCell {
     // MARK: - Public Methods
     
     func dataBind(response: ReviewListItem) {
+        
+        // 💡 1. 텍스트뷰의 너비가 계산되도록 레이아웃 업데이트 (시작)
+        self.layoutIfNeeded()
+        
         menuName = response.menu?.map { $0.name }.joined(separator: " + ") ?? ""
         
         userNameLabel.text = response.writerNickname
@@ -265,6 +262,11 @@ final class ReviewTableCell: UITableViewCell {
         dateLabel.text = response.writtenAt
         reviewTextView.text = response.content ?? ""
         reviewId = response.reviewId
+        
+        // 💡 2. 텍스트뷰 높이를 내용물에 맞게 계산하여 프레임 업데이트
+        let fixedWidth = reviewTextView.frame.size.width
+        let newSize = reviewTextView.sizeThatFits(CGSize(width: fixedWidth, height: .greatestFiniteMagnitude))
+        reviewTextView.frame.size.height = newSize.height
         
         if let firstImageUrl = response.imageUrls?.first(where: { !$0.isEmpty }) {
             foodImageView.isHidden = false
@@ -287,23 +289,35 @@ final class ReviewTableCell: UITableViewCell {
 
         tagCollectionView.layoutIfNeeded()
         
+        // 🚀 3. 컬렉션 뷰 높이 업데이트 및 셀 레이아웃 강제 업데이트 (비동기)
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            
             let contentHeight = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
             
             if contentHeight > 0 {
                 self.tagCollectionViewHeightConstraint?.update(offset: contentHeight)
-                self.layoutIfNeeded()
+                
+                // 텍스트뷰와 컬렉션뷰의 높이 변경을 스택뷰와 셀이 반영하도록 강제합니다.
+                self.contentView.layoutIfNeeded()
             }
         }
     }
     
     func myPageDataBind(response: MyReviewListItem, nickname: String) {
+        // 💡 1. 텍스트뷰의 너비가 계산되도록 레이아웃 업데이트 (시작)
+        self.layoutIfNeeded()
+        
         userNameLabel.text = "\(nickname)"
         totalRateView.setRating(Int(response.rating ?? 0))
         dateLabel.text = response.writtenAt
         
         reviewTextView.text = response.content
+        
+        // 💡 2. 텍스트뷰 높이를 내용물에 맞게 계산하여 프레임 업데이트
+        let fixedWidth = reviewTextView.frame.size.width
+        let newSize = reviewTextView.sizeThatFits(CGSize(width: fixedWidth, height: .greatestFiniteMagnitude))
+        reviewTextView.frame.size.height = newSize.height
         
         if let imageUrls = response.imageUrls,
            let firstImageUrl = imageUrls.first(where: { !$0.isEmpty }) {
@@ -322,6 +336,9 @@ final class ReviewTableCell: UITableViewCell {
         reviewId = response.reviewId
         tags = []
         tagCollectionView.isHidden = true
+        
+        // 🚀 3. 셀 레이아웃 강제 업데이트
+        self.contentView.layoutIfNeeded()
     }
 }
 
