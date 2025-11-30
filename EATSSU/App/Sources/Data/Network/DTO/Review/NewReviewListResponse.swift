@@ -15,7 +15,7 @@ struct NewReviewListResponse: Codable {
 struct ReviewListItem: Codable {
     let reviewId: Int
     var menu: [ReviewMenuInfo]?
-    let writerId: Int
+    let writerId: Int?
     let isWriter: Bool
     let writerNickname: String
     let rating: Double
