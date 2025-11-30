@@ -392,7 +392,7 @@ extension ReviewViewController: UITableViewDelegate {
         case 1:
             return 6
         case 2:
-            return 8
+            return 0
         default:
             return 0
         }

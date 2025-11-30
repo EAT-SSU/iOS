@@ -153,8 +153,9 @@ final class ReviewTableCell: UITableViewCell {
     /// 음식 이미지뷰
     var foodImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.isHidden = true
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -241,7 +242,7 @@ final class ReviewTableCell: UITableViewCell {
         contentStackView.snp.makeConstraints { make in
             make.top.equalTo(profileStackView.snp.bottom)
             make.leading.equalToSuperview().offset(16)
-            make.bottom.equalToSuperview().offset(-15)
+            make.bottom.equalToSuperview().offset(-7)
             make.trailing.equalToSuperview().offset(-16)
         }
         

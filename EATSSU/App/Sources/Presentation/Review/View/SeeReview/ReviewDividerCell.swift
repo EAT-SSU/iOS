@@ -67,7 +67,7 @@ final class ReviewDividerCell: UITableViewCell {
         label.snp.makeConstraints {
             $0.top.equalTo(divider.snp.bottom).offset(16)
             $0.leading.equalToSuperview().offset(16)
-            $0.bottom.equalToSuperview().inset(8)
+            $0.bottom.equalToSuperview()
         }
     }
     
