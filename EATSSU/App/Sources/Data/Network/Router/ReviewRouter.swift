@@ -107,23 +107,6 @@ extension ReviewRouter: TargetType {
                 .requestPlain
         case .getMealStatistics:
                 .requestPlain
-        case let .getMyReviewList(lastReviewId, page, size, sort):
-                .requestParameters(
-                    parameters: {
-                        var dict: [String: Any] = [:]
-
-                        if let lastId = lastReviewId {
-                            dict["lastReviewId"] = lastId
-                        } else {
-                            dict["page"] = page ?? 0
-                        }
-
-                        dict["size"] = size ?? 20
-                        dict["sort"] = sort ?? "date,DESC"
-                        return dict
-                    }(),
-                    encoding: URLEncoding.queryString
-                )
         }
     }
     
