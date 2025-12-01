@@ -83,12 +83,21 @@ extension ReviewRouter: TargetType {
         case let .newReviewList(type, id, lastReviewId, page, size):
             switch type {
             case "VARIABLE":
-                    .requestParameters(
-                        parameters: (lastReviewId != nil)
-                        ? ["mealId": id, "size": size ?? 20, "lastReviewId": lastReviewId!]
-                        : ["mealId": id, "size": size ?? 20],
-                        encoding: URLEncoding.queryString
-                    )
+                .requestParameters(
+                    parameters: {
+                        var dict: [String: Any] = [
+                            "mealId": id,
+                            "size": size ?? 20
+                        ]
+
+                        if let lastId = lastReviewId {
+                            dict["lastReviewId"] = lastId
+                        }
+                        
+                        return dict
+                    }(),
+                    encoding: URLEncoding.queryString
+                )
                 
             case "FIXED":
                     .requestParameters(
