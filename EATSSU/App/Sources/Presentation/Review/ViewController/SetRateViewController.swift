@@ -426,7 +426,7 @@ extension SetRateViewController {
                     imageUrl = try await uploadImage(image: image)
                 }
                 
-                let menuLike = MenuLikeItem(
+                let menuLike = MenuLike(
                     menuId: menuId,
                     isLike: likedStates.first ?? false
                 )
