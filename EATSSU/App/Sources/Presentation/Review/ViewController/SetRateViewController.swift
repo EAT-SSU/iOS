@@ -11,7 +11,7 @@ import Moya
 
 import EATSSUDesign
 
-final class SetRateViewController: BaseViewController {
+final class SetRateViewController: BaseViewController, UINavigationControllerDelegate {
     
     // MARK: - Properties
     override var shouldHideTabBar: Bool { true }
@@ -31,7 +31,6 @@ final class SetRateViewController: BaseViewController {
     // State Flags
     private var isReviewSubmitted = false
     
-    private weak var originalNavigationDelegate: UINavigationControllerDelegate?
     
     enum ReviewType {
         case fixed // 단일 메뉴 리뷰
@@ -73,8 +72,6 @@ final class SetRateViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        originalNavigationDelegate = navigationController?.delegate
-        
         setDelegates()
         setupInitialDataFetch()
     }
@@ -84,16 +81,11 @@ final class SetRateViewController: BaseViewController {
         if navigationController?.isNavigationBarHidden == true {
             navigationController?.isNavigationBarHidden = false
         }
-        
-        navigationController?.delegate = self
     }
     
     override func viewWillDisappear(_: Bool) {
         removeKeyboardNotifications()
         
-        if isMovingFromParent {
-            navigationController?.delegate = originalNavigationDelegate
-        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -128,6 +120,17 @@ final class SetRateViewController: BaseViewController {
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = reviewId != nil ? "리뷰 수정하기" : "리뷰 남기기"
+        
+        navigationItem.hidesBackButton = true
+
+        let backButton = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapCustomBackButton)
+        )
+        backButton.tintColor = .lightGray
+        navigationItem.leftBarButtonItem = backButton
     }
     
     // MARK: - Setup & Delegate
@@ -156,7 +159,6 @@ final class SetRateViewController: BaseViewController {
         imagePickerController.allowsEditing = false
         setRateView.userReviewTextView.delegate = self
         
-//        self.navigationController?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
@@ -248,20 +250,24 @@ final class SetRateViewController: BaseViewController {
     
     /// 이미지 선택 버튼 탭 시 ImagePicker를 표시합니다.
     @objc func didSelectedImage() {
-        let originalDelegate = self.navigationController?.delegate
-        self.navigationController?.delegate = nil
-        
-        present(imagePickerController, animated: true) { [weak self] in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                self?.navigationController?.delegate = originalDelegate
-            }
-        }
+        present(imagePickerController, animated: true)
     }
     
     /// 이미지 뷰 탭 또는 삭제 버튼 탭 시 이미지를 삭제합니다.
     @objc func didTappedImageView() {
         userPickedImage = nil
         setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
+    }
+    
+    // MARK: - Custom Back Button Action
+    @objc private func didTapCustomBackButton() {
+        checkReviewStatusAndConfirmExit { [weak self] shouldPop in
+            guard let self = self else { return }
+            
+            if shouldPop {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
     }
     
     // MARK: - Review Submission Logic
@@ -595,7 +601,7 @@ extension SetRateViewController: UITextViewDelegate {
 
 // MARK: - ImagePicker & Navigation Delegate
 
-extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
+extension SetRateViewController: UIImagePickerControllerDelegate, UIGestureRecognizerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let image = info[.originalImage] as? UIImage {
@@ -623,63 +629,29 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UINavigationCo
             ) {
                 completion(true)
             }
-            completion(false)
         } else {
             completion(true)
         }
     }
-    
-    func navigationController(
-        _ navigationController: UINavigationController,
-        willShow viewController: UIViewController,
-        animated: Bool
-    ) {
-        originalNavigationDelegate?.navigationController?(
-            navigationController,
-            willShow: viewController,
-            animated: animated
-        )
 
-        if isReviewSubmitted { return }
-        if navigationController is UIImagePickerController { return }
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard gestureRecognizer == navigationController?.interactivePopGestureRecognizer else {
+            return true
+        }
         
-        let isPopping = !navigationController.viewControllers.contains(self)
+        let textHasContent = setRateView.userReviewTextView.text != placeholderText
+        && !(setRateView.userReviewTextView.text ?? "").isEmpty
+        let isReviewStarted = setRateView.rateView.currentStar > 0 || textHasContent
         
-        if isPopping {
-            let textHasContent = setRateView.userReviewTextView.text != placeholderText
-            && !(setRateView.userReviewTextView.text ?? "").isEmpty
-            let isReviewStarted = setRateView.rateView.currentStar > 0 || textHasContent
-
-            if reviewId != nil || !isReviewStarted {
-                navigationController.delegate = originalNavigationDelegate
-                return
-            }
-
-            var viewControllers = navigationController.viewControllers
-            viewControllers.append(self)
-            navigationController.setViewControllers(viewControllers, animated: false)
-            
+        if reviewId == nil, isReviewStarted {
             checkReviewStatusAndConfirmExit { [weak self] shouldPop in
                 guard let self = self else { return }
-                
                 if shouldPop {
-                    var controllers = navigationController.viewControllers
-                    if let index = controllers.firstIndex(of: self) {
-                        controllers.remove(at: index)
-                        
-                        navigationController.delegate = self.originalNavigationDelegate
-                        navigationController.setViewControllers(controllers, animated: true)
-                    }
-                } else {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                        navigationController.delegate = self
-                    }
+                    self.navigationController?.popViewController(animated: true)
                 }
             }
+            return false
         }
-    }
-    
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 }
