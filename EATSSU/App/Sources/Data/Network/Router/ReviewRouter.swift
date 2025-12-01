@@ -21,10 +21,6 @@ enum ReviewRouter {
                        size: Int? = 20)
     case getFixedMenuStatistics(_ menuId: Int)
     case getMealStatistics(_ mealId: Int)
-    case getMyReviewList(lastReviewId: Int?,
-                             page: Int? = 0,
-                             size: Int? = 20,
-                             sort: String? = "date,DESC")
 }
 
 extension ReviewRouter: TargetType {
@@ -54,14 +50,12 @@ extension ReviewRouter: TargetType {
             "/v2/reviews/statistics/menus/\(menuId)"
         case let .getMealStatistics(mealId):
             "/v2/reviews/statistics/meals/\(mealId)"
-        case .getMyReviewList:
-            "/v2/reviews/my"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics, .getMyReviewList:
+        case .getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics:
                 .get
         case .report:
                 .post
