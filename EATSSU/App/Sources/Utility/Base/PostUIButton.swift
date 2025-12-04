@@ -43,11 +43,11 @@ class PostUIButton: UIButton {
         config.contentInsets = NSDirectionalEdgeInsets(top: 9, leading: 0, bottom: 9, trailing: 0)
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
-            outgoing.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)
+            outgoing.font = .button2
             outgoing.foregroundColor = .white
             return outgoing
         }
-        config.baseBackgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        config.baseBackgroundColor = .primary
         config.baseForegroundColor = .white
         configuration = config
         

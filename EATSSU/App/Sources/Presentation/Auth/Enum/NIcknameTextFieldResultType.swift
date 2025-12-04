@@ -69,7 +69,7 @@ enum NicknameTextFieldResultType {
     var textColor: UIColor {
         switch self {
         case .nicknameTextFieldValid:
-            EATSSUDesignAsset.Color.GrayScale.gray600.color
+            .gray600
         default:
             .primary
         }
@@ -78,9 +78,9 @@ enum NicknameTextFieldResultType {
     var borderColor: UIColor {
         switch self {
         case .nicknameTextFieldValid:
-            EATSSUDesignAsset.Color.Main.primary.color
+            .primary
         case .textFieldEmpty, .nicknameTextFieldDoubleCheck:
-            EATSSUDesignAsset.Color.GrayScale.gray100.color
+            .gray100
         default:
             .primary
         }

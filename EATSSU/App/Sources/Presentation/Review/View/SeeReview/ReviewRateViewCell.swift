@@ -24,7 +24,7 @@ final class ReviewRateViewCell: UITableViewCell {
     private let menuLabel: UILabel = {
         let label = UILabel()
         label.font = .header2
-        label.textColor = .black
+        label.textColor = .gray700Basic
         label.numberOfLines = 0
         label.textAlignment = .center
         return label
@@ -46,8 +46,8 @@ final class ReviewRateViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitle("리뷰 작성하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .bold(size: 14)
-        button.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        button.titleLabel?.font = .button2
+        button.backgroundColor = .primary
         button.layer.cornerRadius = 10
         return button
     }()
@@ -182,8 +182,8 @@ private final class MainRatingView: UIView {
     
     private let ratingLabel: UILabel = {
         let label = UILabel()
-        label.font = .bold(size: 36)
-        label.textColor = .black
+        label.font = .rate
+        label.textColor = .gray700Basic
         return label
     }()
     
@@ -228,14 +228,14 @@ private final class ReviewCountView: UIView {
         let label = UILabel()
         label.text = "총 리뷰 수"
         label.font = .caption2
-        label.textColor = .black
+        label.textColor = .gray700Basic
         return label
     }()
     
     private let countLabel: UILabel = {
         let label = UILabel()
         label.font = .caption1
-        label.textColor = EATSSUDesignAsset.Color.Main.primary.color
+        label.textColor = .primary
         return label
     }()
     
@@ -322,7 +322,7 @@ private final class ChartBarView: UIView {
     private let ratingLabel: UILabel = {
         let label = UILabel()
         label.font = .caption2
-        label.textColor = .black
+        label.textColor = .gray700Basic
         label.setContentHuggingPriority(.required, for: .horizontal)
         return label
     }()

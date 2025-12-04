@@ -35,11 +35,11 @@ final class MainMapView: BaseUIView {
         // 상단 버튼 배경 뷰 설정
         toggleBackgroundView.layer.cornerRadius = 20
         toggleBackgroundView.layer.borderWidth = 1
-        toggleBackgroundView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        toggleBackgroundView.layer.borderColor = UIColor.gray300.cgColor
         toggleBackgroundView.backgroundColor = .white
         addSubview(toggleBackgroundView)
 
-        let titleFont = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 14)
+        let titleFont = UIFont.button2
 
         // 전체 버튼
         wholeButton.setTitle("전체", for: .normal)
@@ -126,7 +126,7 @@ final class MainMapView: BaseUIView {
     
     func selectWhole(_ isSelected: Bool) {
         if isSelected {
-            wholeButton.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+            wholeButton.backgroundColor = .primary
             wholeButton.setTitleColor(.white, for: .normal)
 
             myOnlyButton.backgroundColor = .clear
@@ -135,7 +135,7 @@ final class MainMapView: BaseUIView {
             wholeButton.backgroundColor = .clear
             wholeButton.setTitleColor(.label, for: .normal)
 
-            myOnlyButton.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+            myOnlyButton.backgroundColor = .primary
             myOnlyButton.setTitleColor(.white, for: .normal)
         }
     }

@@ -64,7 +64,7 @@ final class ChoiceMenuViewController: BaseViewController {
 
         enjoyLabel.text = "식사는 맛있게 하셨나요?"
         enjoyLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
-        enjoyLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        enjoyLabel.textColor = .gray600
 
         choiceMenuTabelView.separatorStyle = .none
 

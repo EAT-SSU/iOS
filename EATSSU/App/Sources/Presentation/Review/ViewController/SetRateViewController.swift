@@ -68,7 +68,7 @@ final class SetRateViewController: BaseViewController {
         let label = UILabel()
         label.text = "해당 메뉴에 대한 상세한 평가를 남겨주세요."
         label.font = .body3
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.textColor = .gray600
         return label
     }()
 
@@ -108,9 +108,9 @@ final class SetRateViewController: BaseViewController {
         let textView = UITextView()
         textView.font = .body1
         textView.layer.cornerRadius = 10.adjusted
-        textView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        textView.backgroundColor = .gray100
         textView.layer.borderWidth = 1.adjusted
-        textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        textView.layer.borderColor = UIColor.gray300.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0.adjusted, left: 16.0.adjusted, bottom: 16.0.adjusted, right: 16.0.adjusted)
         textView.text = "3글자 이상 작성해주세요!"
         textView.textColor = .gray500
@@ -142,7 +142,7 @@ final class SetRateViewController: BaseViewController {
         button.configuration = config
         button.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
         button.layer.borderWidth = 1
-        button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
+        button.layer.borderColor = UIColor.gray500.cgColor
         button.layer.cornerRadius = 8
         button.clipsToBounds = true
         button.contentVerticalAlignment = .center
@@ -154,7 +154,7 @@ final class SetRateViewController: BaseViewController {
         let label = UILabel()
         label.text = "사진 0/1"
         label.font = .caption3
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        label.textColor = .gray500
         label.textAlignment = .center
         return label
     }()
@@ -163,7 +163,7 @@ final class SetRateViewController: BaseViewController {
         let label = UILabel()
         label.text = "사진 클릭 시, 삭제됩니다"
         label.font = .caption3
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        label.textColor = .gray500
         return label
     }()
 
@@ -171,7 +171,7 @@ final class SetRateViewController: BaseViewController {
         let label = UILabel()
         label.text = "0 / 300"
         label.font = .caption2
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.textColor = .gray600
         return label
     }()
 

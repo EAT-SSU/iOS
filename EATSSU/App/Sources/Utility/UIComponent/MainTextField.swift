@@ -9,6 +9,8 @@ import UIKit
 
 import SnapKit
 
+import EATSSUDesign
+
 class MainTextField: UITextField {
     private enum Size {
         static let width: CGFloat = 358.0
@@ -42,7 +44,7 @@ class MainTextField: UITextField {
         placeholder = placeHolder
         leftView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 10.0, height: 0.0))
         leftViewMode = .always
-        font = UIFont.regular(size: 16.0)
+        font = .body1
     }
 
     func setLayout() {

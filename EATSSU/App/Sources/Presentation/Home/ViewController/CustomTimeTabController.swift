@@ -52,7 +52,7 @@ final class CustomTimeTabController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        view.backgroundColor = .gray100
         setupDatePipeline()
     }
     
@@ -96,17 +96,17 @@ final class CustomTimeTabController: BaseViewController {
     }
 
     override func configureUI() {
-        view.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        view.backgroundColor = .gray100
 
         view.addSubview(tabShadowWrapperView)
-        tabShadowWrapperView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        tabShadowWrapperView.backgroundColor = .gray100
 
         tabShadowWrapperView.addSubview(tabContainerView)
         tabContainerView.backgroundColor = .white
         tabContainerView.layer.cornerRadius = 30
         tabContainerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         tabContainerView.layer.masksToBounds = false
-        tabContainerView.layer.shadowColor = UIColor.black.cgColor
+        tabContainerView.layer.shadowColor = UIColor.gray700Basic.cgColor
         tabContainerView.layer.shadowOpacity = 0.6
         tabContainerView.layer.shadowOffset = CGSize(width: 0, height: 0)
         tabContainerView.layer.shadowRadius = 7
@@ -121,7 +121,7 @@ final class CustomTimeTabController: BaseViewController {
             let button = UIButton(type: .system)
             button.setTitle(title, for: .normal)
             button.setTitleColor(.gray700, for: .normal)
-            button.titleLabel?.font = .semiBold(size: 16)
+            button.titleLabel?.font = UIFont.subtitle2
             button.tag = index
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
             tabStackView.addArrangedSubview(button)
@@ -129,7 +129,7 @@ final class CustomTimeTabController: BaseViewController {
         }
 
         tabContainerView.addSubview(indicatorView)
-        indicatorView.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        indicatorView.backgroundColor = .primary
         indicatorView.layer.cornerRadius = 1
         indicatorView.layer.masksToBounds = true
     }
@@ -205,7 +205,7 @@ final class CustomTimeTabController: BaseViewController {
     private func updateTabSelection(animated: Bool) {
         for (index, button) in tabButtons.enumerated() {
             let isSelected = index == selectedIndex
-            button.setTitleColor(isSelected ? EATSSUDesignAsset.Color.Main.primary.color : .gray700, for: .normal)
+            button.setTitleColor(isSelected ? .primary : .gray700, for: .normal)
         }
 
         let tabWidth = view.frame.width / CGFloat(tabTitles.count)

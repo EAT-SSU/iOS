@@ -237,8 +237,8 @@ final class SetNickNameViewController: BaseViewController {
         // 텍스트 변경 시 닉네임 체크 상태 초기화 및 UI 기본 상태로 리셋
         isNicknameChecked = false
         setNickNameView.inputNickNameTextField.layer.borderWidth = 1.0
-        setNickNameView.inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
-        setNickNameView.nicknameValidationMessageLabel.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        setNickNameView.inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
+        setNickNameView.nicknameValidationMessageLabel.textColor = .gray400
         
         // 원래 닉네임과 같으면 검증 스킵
         if nickname == originalNickname {

@@ -50,7 +50,7 @@ class CreatorsView: BaseUIView {
         let label = UILabel()
         label.text = "eatssu.official"
         label.textColor = .gray700Basic
-        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
+        label.font = .subtitle2
         return label
     }()
     

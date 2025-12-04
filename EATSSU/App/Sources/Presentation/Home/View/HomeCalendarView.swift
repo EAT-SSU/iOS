@@ -76,26 +76,26 @@ extension HomeCalendarView: FSCalendarDataSource, FSCalendarDelegate {
 
         // 달력의 맨 위의 년도, 월의 색깔
         calendar.appearance.headerTitleColor = .gray500
-        calendar.appearance.headerTitleFont = .bold(size: 18)
+        calendar.appearance.headerTitleFont = .header2
         // 달력의 년월 글자 바꾸기
         calendar.appearance.headerDateFormat = "YYYY. MM"
         // 년월에 흐릿하게 보이는 애들 없애기
         calendar.appearance.headerMinimumDissolvedAlpha = 0
 
         // Day
-        calendar.appearance.weekdayFont = .medium(size: 10)
+        calendar.appearance.weekdayFont = .caption3
         calendar.appearance.weekdayTextColor = .gray500
 
         // Date
-        calendar.appearance.titleFont = .bold(size: 16)
+        calendar.appearance.titleFont = .subtitle1
         calendar.appearance.todayColor = .white
-        calendar.appearance.titleTodayColor = EATSSUDesignAsset.Color.Main.primary.color
+        calendar.appearance.titleTodayColor = .primary
 
         // Selection
         calendar.allowsSelection = true
         calendar.allowsMultipleSelection = false
         calendar.appearance.borderRadius = 20
-        calendar.appearance.selectionColor = EATSSUDesignAsset.Color.Main.primary.color
+        calendar.appearance.selectionColor = .primary
 
         // 오늘 날짜 Select
         calendar.select(Date())

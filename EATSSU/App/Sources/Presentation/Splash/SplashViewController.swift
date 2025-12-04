@@ -25,7 +25,7 @@ class SplashViewController: BaseViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        view.backgroundColor = .primary
     }
     
     override func viewDidAppear(_ animated: Bool) {
