@@ -15,9 +15,17 @@ import EATSSUDesign
 /// 기본 스플래시 뷰
 class SplashViewController: BaseViewController {
     // MARK: - UI Components
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.splashChistmasBackground.image
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUDesignAsset.Images.splashLogo.image
+        imageView.image = EATSSUDesignAsset.Images.splashChristmasLogo.image
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -36,10 +44,15 @@ class SplashViewController: BaseViewController {
 
     // MARK: - UI Setup
     override func configureUI() {
+        view.addSubview(backgroundImageView)
         view.addSubview(logoImageView)
     }
 
     override func setLayout() {
+        backgroundImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
         logoImageView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.width.equalTo(230)

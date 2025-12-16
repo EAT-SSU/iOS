@@ -73,6 +73,9 @@ Tuist/.build
 *.xcconfig
 *.plist
 
+### Secrets folder ###
+EATSSU/App/Resources/Secrets/
+
 ### Fastlane ###
 fastlane/screenshots
 fastlane/test_output
