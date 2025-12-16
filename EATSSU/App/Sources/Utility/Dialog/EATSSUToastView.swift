@@ -191,7 +191,7 @@ class EATSSUToastView: BaseUIView {
         
         let superviewHeight = view.bounds.height
         
-        let bottomOffset = superviewHeight * 0.03
+        let bottomOffset = superviewHeight * 0.1
         
         self.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-bottomOffset)
