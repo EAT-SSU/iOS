@@ -13,6 +13,14 @@ import SnapKit
 
 final class CustomTabBarContainerController: UITabBarController {
 
+    // MARK: - Types
+
+    private enum Tab: Int {
+        case home = 0
+        case map = 1
+        case myPage = 2
+    }
+
     // MARK: - Properties
 
     private lazy var tabViewControllers: [UINavigationController] = [
@@ -162,36 +170,40 @@ final class CustomTabBarContainerController: UITabBarController {
 extension CustomTabBarContainerController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         guard let navController = viewController as? UINavigationController,
-              let index = tabViewControllers.firstIndex(of: navController) else {
+              let index = tabViewControllers.firstIndex(of: navController),
+              let selectedTab = Tab(rawValue: index) else {
             return true
         }
-        
+
         // 마이페이지와 지도는 로그인 필요
-        if (index == 1 || index == 2), RealmService.shared.isAccessTokenPresent() == false {
+        if (selectedTab == .map || selectedTab == .myPage), RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
             return false
         }
 
         // 지도 탭 클릭 시 Firebase 이벤트 호출 (로그인된 상태에서만)
-        if index == 1 {
+        if selectedTab == .map {
             MapAnalyticsManager.shared.logClickMap()
         }
-        
+
         // 같은 탭 다시 클릭 시 처리
         if index == selectedIndex {
-            if index == 0 {
+            switch selectedTab {
+            case .home:
                 // 학식 탭: 오늘이 아니면 오늘로 이동
                 if let homeVC = navController.viewControllers.first as? HomeViewController {
                     homeVC.resetToToday()
                 }
-            } else if index == 1 {
+            case .map:
                 // 지도 탭: 콘텐츠 리로드
                 if let mapVC = navController.viewControllers.first as? MainMapViewController {
                     mapVC.reloadContent()
                 }
+            case .myPage:
+                break
             }
         }
-        
+
         return true
     }
 }
