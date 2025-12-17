@@ -12,8 +12,8 @@ import EATSSUDesign
 final class CustomTabBarContainerController: UITabBarController {
 
     // MARK: - Properties
-    
-    private var tabViewControllers: [UINavigationController] = [
+
+    private lazy var tabViewControllers: [UINavigationController] = [
         UINavigationController(rootViewController: HomeViewController()),
         UINavigationController(rootViewController: MainMapViewController()),
         UINavigationController(rootViewController: MyPageViewController())
