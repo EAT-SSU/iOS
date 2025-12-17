@@ -9,4 +9,4 @@ type("development")
 # 관리할 앱의 Bundle Identifier
 app_identifier(["com.jiwoo.EatSSU", "com.jiwoo.EatSSU.EatSSUwidget2025"])
 
-api_key_path("api_key.json")
+api_key_path("fastlane/api_key.json")
