@@ -9,7 +9,7 @@ import UIKit
 
 extension UIButton {
     /// Button 상태에 따른 Color 지정
-    func setBackgroundColor(_ color: UIColor, for state: UIControl.State) {
+    public func setBackgroundColor(_ color: UIColor, for state: UIControl.State) {
         let minimumSize = CGSize(width: 1.0, height: 1.0)
 
         UIGraphicsBeginImageContext(minimumSize)
@@ -27,14 +27,14 @@ extension UIButton {
     }
 
     /// Button 타이틀 속성 지정
-    func addTitleAttribute(title: String, titleColor: UIColor, fontName: UIFont) {
+    public func addTitleAttribute(title: String, titleColor: UIColor, fontName: UIFont) {
         setTitle(title, for: .normal)
         setTitleColor(titleColor, for: .normal)
         titleLabel?.font = fontName
     }
 
     /// Button border 속성 지정
-    func setRoundBorder(borderColor: UIColor, borderWidth: CGFloat, cornerRadius: CGFloat) {
+    public func setRoundBorder(borderColor: UIColor, borderWidth: CGFloat, cornerRadius: CGFloat) {
         layer.masksToBounds = true
         layer.borderColor = borderColor.cgColor
         layer.borderWidth = borderWidth
@@ -42,7 +42,7 @@ extension UIButton {
     }
 
     /// title / image vertical align
-    func alignTextBelow(spacing _: CGFloat = 8.0) {
+    public func alignTextBelow(spacing _: CGFloat = 8.0) {
         guard (imageView?.image) != nil else {
             return
         }

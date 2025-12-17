@@ -47,7 +47,7 @@ final class SetNickNameView: BaseUIView {
     public var nicknameValidationMessageLabel: UILabel = {
         let label = UILabel()
         label.text = TextLiteral.hintInputNickName
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        label.textColor = .gray400
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         return label
     }()
@@ -89,7 +89,7 @@ final class SetNickNameView: BaseUIView {
     private let accountTypeLabel: UILabel = {
         let label = UILabel()
         label.text = "없음"
-        label.font = .bold(size: 14)
+        label.font = .button2
         return label
     }()
 

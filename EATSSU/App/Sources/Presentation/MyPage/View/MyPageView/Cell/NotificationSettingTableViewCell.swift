@@ -32,7 +32,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "매일 오전 11시에 알림을 보내드려요"
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        label.textColor = .gray400
         return label
     }()
 
@@ -44,7 +44,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
 
     let toggleSwitch: UISwitch = {
         let toggleSwitch = UISwitch()
-        toggleSwitch.onTintColor = EATSSUDesignAsset.Color.Main.primary.color
+        toggleSwitch.onTintColor = .primary
         toggleSwitch.isOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
         return toggleSwitch
     }()

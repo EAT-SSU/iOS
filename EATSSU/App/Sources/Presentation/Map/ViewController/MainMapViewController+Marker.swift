@@ -107,7 +107,7 @@ extension MainMapViewController {
     /// 원형 배경 그리기
     private func drawCircle(in context: UIGraphicsImageRendererContext, size: CGSize) {
         let circleRect = CGRect(origin: .zero, size: size)
-        EATSSUDesignAsset.Color.Main.primary.color.setFill()
+        UIColor.primary.setFill()
         context.cgContext.fillEllipse(in: circleRect)
     }
     

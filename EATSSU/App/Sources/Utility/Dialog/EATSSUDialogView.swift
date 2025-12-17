@@ -28,8 +28,8 @@ class EATSSUDialogView: BaseUIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "제목을 입력해주세요"
-        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        label.font = .header2
+        label.textColor = .gray700
         label.textAlignment = .center
         return label
     }()
@@ -37,8 +37,8 @@ class EATSSUDialogView: BaseUIView {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.text = "본문을 입력해주세요"
-        label.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.font = .subtitle2
+        label.textColor = .gray600
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -55,9 +55,9 @@ class EATSSUDialogView: BaseUIView {
     let cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("취소", for: .normal)
-        button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray700.color, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
-        button.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray200.color
+        button.setTitleColor(.gray700, for: .normal)
+        button.titleLabel?.font = .subtitle2
+        button.backgroundColor = .gray200
         button.layer.cornerRadius = 12
         return button
     }()
@@ -66,8 +66,8 @@ class EATSSUDialogView: BaseUIView {
         let button = UIButton()
         button.setTitle("확인", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = EATSSUDesignFontFamily.Pretendard.semiBold.font(size: 16)
-        button.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
+        button.titleLabel?.font = .subtitle2
+        button.backgroundColor = .primary
         button.layer.cornerRadius = 12
         return button
     }()

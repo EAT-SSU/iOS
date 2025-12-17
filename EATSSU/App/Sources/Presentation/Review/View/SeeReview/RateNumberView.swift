@@ -42,7 +42,7 @@ final class RateNumberView: BaseUIView {
 
         rateNumberLabel.text = "5"
         rateNumberLabel.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 14)
-        rateNumberLabel.textColor = EATSSUDesignAsset.Color.Main.primary.color
+        rateNumberLabel.textColor = .primary
 
         rateNumberStackView.axis = .horizontal
         rateNumberStackView.spacing = 3

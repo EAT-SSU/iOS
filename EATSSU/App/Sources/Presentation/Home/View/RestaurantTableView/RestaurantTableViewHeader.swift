@@ -35,7 +35,7 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
         titleLabel.text = "기숙사 식당"
 
         var configuration = UIButton.Configuration.plain()
-        configuration.baseForegroundColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        configuration.baseForegroundColor = .gray600
         configuration.image = EATSSUDesignAsset.Images.icInfo.image
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 4.0

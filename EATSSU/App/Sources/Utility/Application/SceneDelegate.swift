@@ -162,10 +162,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // MARK: - RootViewController & Update
 
     private func fetchNoticeAndConfigureRootViewController() {
+        let splashStartTime = Date()
+        let minimumSplashDuration: TimeInterval = 1.0
+
         FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
             guard let self = self else { return }
-            
-            DispatchQueue.main.async {
+
+            let elapsedTime = Date().timeIntervalSince(splashStartTime)
+            let remainingTime = max(0, minimumSplashDuration - elapsedTime)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
                 if let notice = result, !notice.isEmpty {
                     // 공지사항이 있으면 공지 화면으로
                     self.transitionToNotice(notice)
