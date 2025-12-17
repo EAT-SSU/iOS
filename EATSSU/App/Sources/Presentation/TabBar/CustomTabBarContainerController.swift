@@ -9,6 +9,8 @@ import UIKit
 
 import EATSSUDesign
 
+import SnapKit
+
 final class CustomTabBarContainerController: UITabBarController {
 
     // MARK: - Properties
@@ -45,51 +47,24 @@ final class CustomTabBarContainerController: UITabBarController {
     }
     
     private func setupViewControllers() {
-        // Home Tab
-        let homeNav = tabViewControllers[0]
-        let mealImage = EATSSUDesignAsset.Images.tabMeal.image
-            .resized(to: CGSize(width: 23, height: 23))
-            .withRenderingMode(.alwaysOriginal)
-        let mealSelectedImage = EATSSUDesignAsset.Images.tabMealSelected.image
-            .resized(to: CGSize(width: 23, height: 23))
-            .withRenderingMode(.alwaysOriginal)
-        
-        homeNav.tabBarItem = UITabBarItem(
-            title: "학식",
-            image: mealImage,
-            selectedImage: mealSelectedImage
-        )
-        
-        // Map Tab
-        let mapNav = tabViewControllers[1]
-        let mapImage = EATSSUDesignAsset.Images.tabMap.image
-            .resized(to: CGSize(width: 23, height: 23))
-            .withRenderingMode(.alwaysOriginal)
-        let mapSelectedImage = EATSSUDesignAsset.Images.tabMapSelected.image
-            .resized(to: CGSize(width: 23, height: 23))
-            .withRenderingMode(.alwaysOriginal)
-        
-        mapNav.tabBarItem = UITabBarItem(
-            title: "지도",
-            image: mapImage,
-            selectedImage: mapSelectedImage
-        )
-        
-        // MyPage Tab
-        let myPageNav = tabViewControllers[2]
-        let mypageImage = EATSSUDesignAsset.Images.tabMypage.image
-            .resized(to: CGSize(width: 44, height: 23))
-            .withRenderingMode(.alwaysOriginal)
-        let mypageSelectedImage = EATSSUDesignAsset.Images.tabMypageSelected.image
-            .resized(to: CGSize(width: 44, height: 23))
-            .withRenderingMode(.alwaysOriginal)
-        
-        myPageNav.tabBarItem = UITabBarItem(
-            title: "마이",
-            image: mypageImage,
-            selectedImage: mypageSelectedImage
-        )
-        
+        let tabConfigurations: [(title: String, normal: UIImage, selected: UIImage, size: CGSize)] = [
+            ("학식", EATSSUDesignAsset.Images.tabMeal.image, EATSSUDesignAsset.Images.tabMealSelected.image, CGSize(width: 23, height: 23)),
+            ("지도", EATSSUDesignAsset.Images.tabMap.image, EATSSUDesignAsset.Images.tabMapSelected.image, CGSize(width: 23, height: 23)),
+            ("마이", EATSSUDesignAsset.Images.tabMypage.image, EATSSUDesignAsset.Images.tabMypageSelected.image, CGSize(width: 44, height: 23))
+        ]
+
+        tabViewControllers.enumerated().forEach { index, navController in
+            let config = tabConfigurations[index]
+            let normalImage = config.normal.resized(to: config.size).withRenderingMode(.alwaysOriginal)
+            let selectedImage = config.selected.resized(to: config.size).withRenderingMode(.alwaysOriginal)
+
+            navController.tabBarItem = UITabBarItem(
+                title: config.title,
+                image: normalImage,
+                selectedImage: selectedImage
+            )
+        }
+
         // 폰트 설정
         let normalAttributes: [NSAttributedString.Key: Any] = [
             .font: EATSSUDesignFontFamily.Pretendard.regular.font(size: 11),
@@ -99,12 +74,12 @@ final class CustomTabBarContainerController: UITabBarController {
             .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 11),
             .foregroundColor: EATSSUDesignAsset.Color.Main.primary.color
         ]
-        
+
         tabViewControllers.forEach { nav in
             nav.tabBarItem.setTitleTextAttributes(normalAttributes, for: .normal)
             nav.tabBarItem.setTitleTextAttributes(selectedAttributes, for: .selected)
         }
-        
+
         self.viewControllers = tabViewControllers
     }
     
