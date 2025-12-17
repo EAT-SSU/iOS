@@ -191,15 +191,15 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
             return true
         }
         
-        // 지도 탭 클릭 시 Firebase 이벤트 호출
-        if index == 1 {
-            MapAnalyticsManager.shared.logClickMap()
-        }
-        
         // 마이페이지와 지도는 로그인 필요
         if (index == 1 || index == 2), RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
             return false
+        }
+
+        // 지도 탭 클릭 시 Firebase 이벤트 호출 (로그인된 상태에서만)
+        if index == 1 {
+            MapAnalyticsManager.shared.logClickMap()
         }
         
         // 같은 탭 다시 클릭 시 처리
