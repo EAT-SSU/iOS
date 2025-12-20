@@ -40,7 +40,7 @@ final class ReviewRateViewCell: UITableViewCell {
     var menuLabel: UILabel = {
         let label = UILabel()
         label.text = "김치볶음밥 & 계란국"
-        label.font = .header2
+        label.font = .body1
         label.textColor = .black
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -58,7 +58,7 @@ final class ReviewRateViewCell: UITableViewCell {
     private let menuTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "오늘의 메뉴"
-        label.font = .body1
+        label.font = .subtitle2
         label.textColor = .black
         return label
     }()
