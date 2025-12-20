@@ -81,11 +81,16 @@ final class SetRateView: UIView {
         let button = UIButton()
         var config = UIButton.Configuration.plain()
         config.image = EATSSUDesignAsset.Images.addImageButton.image
-        config.contentInsets = NSDirectionalEdgeInsets(top: -5, leading: 0, bottom: 5, trailing: 0)
+        config.imagePlacement = .top
+        config.imagePadding = 3.5
+        config.image?.withTintColor(EATSSUDesignAsset.Color.GrayScale.gray300.color)
+        // Leave space at bottom for "사진 0/1"
+        config.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 0, bottom: 19, trailing: 0)
         button.configuration = config
         button.layer.borderWidth = 1
         button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor
-        button.layer.cornerRadius = 8
+        button.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        button.layer.cornerRadius = 5
         button.clipsToBounds = true
         return button
     }()
@@ -94,7 +99,7 @@ final class SetRateView: UIView {
         let label = UILabel()
         label.text = "사진 0/1"
         label.font = .caption3
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         label.textAlignment = .center
         return label
     }()
@@ -174,11 +179,12 @@ final class SetRateView: UIView {
             userReviewTextView,
             maximumWordLabel,
             selectImageButton,
-            imageCountLabel,
             userReviewImageView,
             closeButton,
             deleteMethodLabel
         )
+        
+        selectImageButton.addSubview(imageCountLabel)
         
         // 1. ScrollView & ContentView
         scrollView.snp.makeConstraints {
@@ -246,8 +252,9 @@ final class SetRateView: UIView {
         }
         
         imageCountLabel.snp.makeConstraints {
-            $0.top.equalTo(selectImageButton.snp.bottom).offset(5)
-            $0.centerX.equalTo(selectImageButton)
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(4)
+            $0.bottom.equalToSuperview().inset(7)
         }
         
         userReviewImageView.snp.makeConstraints {
@@ -257,7 +264,7 @@ final class SetRateView: UIView {
         }
         
         deleteMethodLabel.snp.makeConstraints {
-            $0.top.equalTo(imageCountLabel.snp.bottom).offset(7)
+            $0.top.equalTo(selectImageButton.snp.bottom).offset(9)
             $0.leading.equalTo(selectImageButton)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-50)
         }
