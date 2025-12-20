@@ -44,7 +44,7 @@ final class DropDownView: BaseUIView {
 
     override func configureUI() {
         configureButton(title: placeholderTitle)
-        arrow.tintColor = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        arrow.tintColor = .gray700
         addSubviews(button, arrow)
     }
 
@@ -92,7 +92,7 @@ final class DropDownView: BaseUIView {
         let tableView = UITableView()
         tableView.layer.cornerRadius = 12
         tableView.layer.borderWidth = 1
-        tableView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        tableView.layer.borderColor = UIColor.gray300.cgColor
         tableView.layer.shadowColor = UIColor.black.cgColor
         tableView.layer.shadowOpacity = 0.1
         tableView.layer.shadowOffset = CGSize(width: 0, height: 2)
@@ -160,17 +160,17 @@ final class DropDownView: BaseUIView {
             title,
             attributes: AttributeContainer([
                 .font: EATSSUDesignFontFamily.Pretendard.regular.font(size: 14),
-                .foregroundColor: EATSSUDesignAsset.Color.GrayScale.gray700.color
+                .foregroundColor: UIColor.gray700
             ])
         )
-        config.baseBackgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        config.baseBackgroundColor = .gray100
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 32)
         config.titleAlignment = .leading
 
         button.configuration = config
         button.layer.cornerRadius = 12
         button.layer.borderWidth = 1
-        button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        button.layer.borderColor = UIColor.gray300.cgColor
         button.contentHorizontalAlignment = .leading
     }
 }
@@ -187,7 +187,7 @@ extension DropDownView: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         var config = cell.defaultContentConfiguration()
         config.text = items[indexPath.row]
-        config.textProperties.color = EATSSUDesignAsset.Color.GrayScale.gray700.color
+        config.textProperties.color = .gray700
         config.textProperties.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         cell.contentConfiguration = config
         return cell

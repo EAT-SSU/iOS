@@ -74,8 +74,8 @@ class CreatorViewController: BaseViewController {
         gradient.name = "gradientLayer"
         gradient.frame = view.bounds
         gradient.colors = [
-            EATSSUDesignAsset.Color.Gradation.highGradation.color.cgColor,
-            EATSSUDesignAsset.Color.Gradation.lowGradation.color.cgColor
+            UIColor.highGradation.cgColor,
+            UIColor.lowGradation.cgColor
         ]
         gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradient.endPoint = CGPoint(x: 0.5, y: 1.0)

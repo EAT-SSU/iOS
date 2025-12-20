@@ -91,24 +91,24 @@ final class UserWithdrawView: BaseUIView {
     
     private func setProperties() {
         nickNameLabel.text = TextLiteral.MyPage.confirmWithdrawal
-        nickNameLabel.font = .bold(size: 16)
+        nickNameLabel.font = .subtitle1
 
         subscription.text = TextLiteral.MyPage.withdrawalNotice
         subscription.numberOfLines = 2
-        subscription.font = .medium(size: 12)
+        subscription.font = .caption2
         subscription.textColor = .gray700
 
-        inputNickNameTextField.font = .regular(size: 12)
-        inputNickNameTextField.textColor = .black
+        inputNickNameTextField.font = .caption2
+        inputNickNameTextField.textColor = .gray700Basic
         inputNickNameTextField.setRoundBorder()
         inputNickNameTextField.addLeftPadding()
         inputNickNameTextField.clearButtonMode = .whileEditing
         inputNickNameTextField.layer.borderWidth = 1.0
-        inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
 
         nickNameStateGuideLabel.text = TextLiteral.inputNickName
         nickNameStateGuideLabel.textColor = .gray700
-        nickNameStateGuideLabel.font = .medium(size: 10)
+        nickNameStateGuideLabel.font = .caption3
 
         nickNameInputStackView.axis = .vertical
         nickNameInputStackView.spacing = 8.0
@@ -143,7 +143,7 @@ final class UserWithdrawView: BaseUIView {
             // 올바른 닉네임 입력 시 -> 회색
             nickNameStateGuideLabel.text = TextLiteral.MyPage.validInputMessage
             nickNameStateGuideLabel.textColor = .gray700
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+            inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
             completeSignOutButton.isEnabled = true
 
         case .unCorrected:
@@ -151,7 +151,7 @@ final class UserWithdrawView: BaseUIView {
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.MyPage.invalidNicknameMessage
             nickNameStateGuideLabel.textColor = .primary
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.danger.color.cgColor
+            inputNickNameTextField.layer.borderColor = UIColor.danger.cgColor
             completeSignOutButton.isEnabled = false
 
         case .pleaseEnter:
@@ -159,7 +159,7 @@ final class UserWithdrawView: BaseUIView {
             nickNameStateGuideLabel.isHidden = false
             nickNameStateGuideLabel.text = TextLiteral.inputNickName
             nickNameStateGuideLabel.textColor = .gray700
-            inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+            inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
             completeSignOutButton.isEnabled = false
         }
     }
@@ -179,7 +179,7 @@ extension UserWithdrawView: UITextFieldDelegate {
 
     func textFieldShouldClear(_: UITextField) -> Bool {
         completeSignOutButton.isEnabled = false
-        inputNickNameTextField.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
         return true
     }
 }

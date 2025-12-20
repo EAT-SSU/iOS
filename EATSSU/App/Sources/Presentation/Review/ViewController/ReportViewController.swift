@@ -128,7 +128,7 @@ final class ReportViewController: BaseViewController {
         navBarApperance.configureWithOpaqueBackground()
         
         navBarApperance.titleTextAttributes = [
-            .foregroundColor: EATSSUDesignAsset.Color.GrayScale.gray700.color,
+            .foregroundColor: UIColor.gray700,
             .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 18),
         ]
         navBarApperance.backgroundColor = .white

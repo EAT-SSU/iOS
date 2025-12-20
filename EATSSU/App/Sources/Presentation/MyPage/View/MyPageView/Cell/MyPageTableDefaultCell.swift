@@ -20,15 +20,15 @@ final class MyPageTableDefaultCell: UITableViewCell {
 
     let serviceLabel: UILabel = {
         let label = UILabel()
-        label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
-        label.textColor = .black
+        label.font = .body1
+        label.textColor = .gray700Basic
         return label
     }()
 
     let rigthChevronImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "chevron.right")
-        imageView.tintColor = EATSSUDesignAsset.Color.GrayScale.gray300.color
+        imageView.tintColor = .gray300
         return imageView
     }()
 

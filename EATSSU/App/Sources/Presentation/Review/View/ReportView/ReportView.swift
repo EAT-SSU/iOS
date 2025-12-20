@@ -28,7 +28,7 @@ final class ReportView: BaseUIView {
         let label = UILabel()
         label.text = "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다."
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.textColor = .gray600
         return label
     }()
 
@@ -55,9 +55,9 @@ final class ReportView: BaseUIView {
         let textView = UITextView()
         textView.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
         textView.layer.cornerRadius = 10
-        textView.backgroundColor = EATSSUDesignAsset.Color.GrayScale.gray100.color
+        textView.backgroundColor = .gray100
         textView.layer.borderWidth = 1
-        textView.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray200.color.cgColor
+        textView.layer.borderColor = UIColor.gray200.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
         textView.text = "리뷰 신고 사유를 작성해 주세요"
         textView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
@@ -69,7 +69,7 @@ final class ReportView: BaseUIView {
         let label = UILabel()
         label.text = "0 / 300"
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        label.textColor = .gray400
         return label
     }()
 

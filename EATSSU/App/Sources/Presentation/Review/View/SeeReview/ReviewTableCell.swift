@@ -82,13 +82,13 @@ final class ReviewTableCell: UITableViewCell {
         let label = UILabel()
         label.text = "2023.03.03"
         label.font = .caption3
-        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
+        label.textColor = .gray600
         return label
     }()
     
     private var sideButton: BaseButton = {
         let button = BaseButton()
-        button.setTitleColor(EATSSUDesignAsset.Color.GrayScale.gray400.color, for: .normal)
+        button.setTitleColor(.gray400, for: .normal)
         button.titleLabel?.font = .caption2
         button.configuration?.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 15)
         return button

@@ -35,7 +35,7 @@ class NoticeSplashViewController: BaseViewController {
         let label = UILabel()
         label.text = "긴급 서버 점검 안내"
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
-        label.textColor = EATSSUDesignAsset.Color.Main.primary.color
+        label.textColor = .primary
         label.textAlignment = .center
         return label
     }()
@@ -66,7 +66,7 @@ class NoticeSplashViewController: BaseViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+        view.backgroundColor = .secondary
     }
     
     override func viewDidAppear(_ animated: Bool) {

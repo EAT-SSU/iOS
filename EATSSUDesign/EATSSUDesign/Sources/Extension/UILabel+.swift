@@ -8,7 +8,7 @@
 import UIKit
 
 extension UILabel {
-    func addLineHeight(lineHeight: CGFloat) {
+    public func addLineHeight(lineHeight: CGFloat) {
         if let text {
             let style = NSMutableParagraphStyle()
             style.maximumLineHeight = lineHeight
