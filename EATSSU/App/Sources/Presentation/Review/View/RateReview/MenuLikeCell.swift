@@ -42,6 +42,7 @@ final class MenuLikeCell: UITableViewCell {
         button.tintColor = .gray
         button.backgroundColor = .clear
         button.isUserInteractionEnabled = false // Container가 이벤트를 받도록 설정
+        button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
     
@@ -100,7 +101,7 @@ final class MenuLikeCell: UITableViewCell {
         
         likeButton.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.size.equalTo(18)
+            $0.size.equalTo(CGSize(width: 18, height: 18))
         }
     }
     
@@ -140,7 +141,8 @@ final class MenuLikeCell: UITableViewCell {
         
         DispatchQueue.main.async {
             // 버튼 이미지 업데이트
-            self.likeButton.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
+            let resizedImage = image.withRenderingMode(.alwaysOriginal)
+            self.likeButton.setImage(resizedImage, for: .normal)
             
             // 컨테이너 스타일 업데이트
             if self.isLiked {
@@ -148,7 +150,7 @@ final class MenuLikeCell: UITableViewCell {
                 self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.Main.primary.color.cgColor // 테두리 색
             } else {
                 self.likeContainer.backgroundColor = .clear // 배경색 제거
-                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray500.color.cgColor // 테두리 색
+                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor // 테두리 색
             }
         }
     }
