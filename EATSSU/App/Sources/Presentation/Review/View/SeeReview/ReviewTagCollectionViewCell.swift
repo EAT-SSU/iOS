@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 
+import EATSSUDesign
+
 // MARK: - ReviewTagCollectionViewCell
 
 /// 리뷰의 메뉴 태그를 표시하는 컬렉션뷰 셀
@@ -22,8 +24,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
     /// 좋아요 아이콘
     private let iconImageView: UIImageView = {
         let iv = UIImageView()
-        iv.image = UIImage(systemName: "hand.thumbsup")
-        iv.tintColor = .systemTeal
+        iv.image = EATSSUDesignAsset.Images.thumbUp.image
         iv.isHidden = true
         iv.contentMode = .scaleAspectFit
         return iv
@@ -32,8 +33,8 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
     /// 태그 이름 레이블
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .medium)
-        label.textColor = .systemTeal
+        label.font = .caption3
+        label.textColor = .primary
         label.numberOfLines = 1
         label.lineBreakMode = .byClipping
         label.adjustsFontSizeToFitWidth = false
@@ -86,8 +87,8 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
     /// UI 컴포넌트 설정
     private func setupViews() {
         // 배경 및 테두리 설정
-        contentView.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.1)
-        contentView.layer.borderColor = UIColor.systemTeal.cgColor
+        contentView.backgroundColor = UIColor.secondary
+        contentView.layer.borderColor = UIColor.primary.cgColor
         contentView.layer.borderWidth = 1
 
         titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -103,14 +104,19 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         
         // 레이아웃 설정
         iconImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(10)
+            make.width.height.equalTo(12)
         }
-        
+
         stackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(8)
             make.trailing.equalToSuperview().inset(8)
-            make.top.equalToSuperview().offset(6)
-            make.bottom.equalToSuperview().inset(6)
+            make.top.equalToSuperview().offset(5)
+            make.bottom.equalToSuperview().inset(5)
+        }
+
+        // (Optional) Ensure cell height is fixed at 22pt in self-sizing contexts
+        contentView.snp.makeConstraints { make in
+            make.height.equalTo(22)
         }
     }
     
@@ -125,7 +131,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         
         if isLiked {
             iconImageView.isHidden = false
-            iconImageView.image = UIImage(systemName: "hand.thumbsup")
+            iconImageView.image = EATSSUDesignAsset.Images.thumbUp.image
         } else {
             iconImageView.isHidden = true
         }
@@ -136,17 +142,17 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
     
     static func estimatedSize(for text: String, isLiked: Bool, maxWidth: CGFloat) -> CGSize {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .medium)
+        label.font = .caption3
         label.text = text
         label.numberOfLines = 1
-        
+
         let labelSize = label.sizeThatFits(CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
-        
+
         // 아이콘(10) + spacing(4) + 여백(8+8) = 30
         let iconWidth: CGFloat = isLiked ? 14 : 0
         let totalWidth = labelSize.width + iconWidth + 16
-        let height: CGFloat = 26 // 고정 높이
-        
+        let height: CGFloat = 22 // 고정 높이
+
         return CGSize(width: ceil(totalWidth), height: height)
     }
 }

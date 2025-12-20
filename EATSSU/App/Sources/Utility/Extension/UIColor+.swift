@@ -33,7 +33,11 @@ extension UIColor {
     }
 
     static var primary: UIColor {
-        UIColor(hex: "#DF5757")
+        UIColor(hex: "#66D4C2")
+    }
+    
+    static var secondary: UIColor {
+        UIColor(hex: "#EEFBF8")
     }
 }
 

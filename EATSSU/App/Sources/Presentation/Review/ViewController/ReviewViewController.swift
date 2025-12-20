@@ -548,12 +548,9 @@ extension ReviewViewController: UITableViewDataSource {
                 for: indexPath
             ) as? ReviewTableCell ?? ReviewTableCell()
             
-            // 좋아요한 메뉴만 필터링
-            var filteredReviewItem = reviewList[indexPath.row]
-            let likedMenus = filteredReviewItem.menu?.filter { $0.isLike }
-            filteredReviewItem.menu = likedMenus
-            
-            cell.dataBind(response: filteredReviewItem)
+            // 좋아요 여부와 무관하게 모든 메뉴 태그 표시 (isLike == true 인 경우에만 thumbUp 아이콘 표시)
+            let reviewItem = reviewList[indexPath.row]
+            cell.dataBind(response: reviewItem)
             
             // 더보기 버튼 핸들러
             cell.handler = { [weak self] in
