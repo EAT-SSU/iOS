@@ -275,6 +275,7 @@ final class SetRateView: UIView {
     func setInitialTextViewState() {
         userReviewTextView.text = "메뉴에 대한 상세한 리뷰를 작성해주세요"
         userReviewTextView.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
+        userReviewTextView.font = .body2
     }
     
     /// 이미지 뷰와 관련 UI를 업데이트합니다.
