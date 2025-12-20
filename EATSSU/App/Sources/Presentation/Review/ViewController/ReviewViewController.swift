@@ -10,6 +10,8 @@ import SnapKit
 import FirebaseAnalytics
 import Moya
 
+import EATSSUDesign
+
 // MARK: - ReviewViewController
 
 /// 메뉴의 리뷰 목록과 통계를 표시하는 뷰 컨트롤러
@@ -67,18 +69,10 @@ final class ReviewViewController: BaseViewController {
         return tableView
     }()
     
-    /// 로딩 인디케이터
-    private var activityIndicatorView: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .large)
-        indicator.startAnimating()
-        indicator.isHidden = true
-        return indicator
-    }()
-    
     /// 빈 상태 이미지뷰
     private lazy var noReviewImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = ImageLiteral.noReview
+        imageView.image = EATSSUDesignAsset.Images.noReview.image
         imageView.isHidden = true
         return imageView
     }()
@@ -140,7 +134,6 @@ final class ReviewViewController: BaseViewController {
         
         view.addSubviews(
             reviewTableView,
-            activityIndicatorView,
             noReviewImageView,
             reviewTabBarContainer
         )
@@ -152,10 +145,6 @@ final class ReviewViewController: BaseViewController {
             make.top.equalToSuperview().offset(24)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(reviewTabBarContainer.snp.top)
-        }
-        
-        activityIndicatorView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
         }
         
         noReviewImageView.snp.makeConstraints { make in
@@ -312,17 +301,14 @@ final class ReviewViewController: BaseViewController {
     /// 리뷰 작성 버튼 탭 처리 (로그인 체크 포함)
     func userTapReviewButton() {
         if RealmService.shared.isAccessTokenPresent() {
-            activityIndicatorView.isHidden = false
             DispatchQueue.global().async {
                 DispatchQueue.main.async { [self] in
-                    
                     if type == "FIXED" {
                         let setRateViewController = SetRateViewController(menuId: menuID)
                         setRateViewController.dataBind(
                             list: menuNameList,
                             idList: menuIDList ?? []
                         )
-                        activityIndicatorView.stopAnimating()
                         navigationController?.pushViewController(
                             setRateViewController,
                             animated: true
@@ -333,7 +319,6 @@ final class ReviewViewController: BaseViewController {
                             list: validMenusForReview.map { $0.name },
                             idList: validMenusForReview.map { $0.menuId }
                         )
-                        activityIndicatorView.stopAnimating()
                         navigationController?.pushViewController(
                             setRateViewController,
                             animated: true

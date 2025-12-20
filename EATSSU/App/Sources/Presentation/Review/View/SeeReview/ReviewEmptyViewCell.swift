@@ -102,7 +102,8 @@ final class ReviewEmptyViewCell: UITableViewCell {
             titleLabel.text = "아직 작성된 리뷰가 없어요"
             descriptionLabel.text = "메뉴에 가장 먼저 리뷰를 남겨주세요!"
         } else {
-            noReviewImageView.image = ImageLiteral.pleaseLogin
+            titleLabel.text = "로그인이 필요합니다"
+            descriptionLabel.text = "로그인 후 리뷰를 확인하세요"
         }
     }
     

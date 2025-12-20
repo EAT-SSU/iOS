@@ -133,6 +133,42 @@ final class CustomTabBarContainerController: UITabBarController {
         }
     }
     
+    
+    /// 탭바를 숨기거나 표시합니다.
+    /// - Parameters:
+    ///   - hidden: true면 숨김, false면 표시
+    ///   - animated: 애니메이션 여부
+    public override func setTabBarHidden(_ hidden: Bool, animated: Bool) {
+        // 이미 원하는 상태라면 종료
+        if tabBar.isHidden == hidden, tabBar.alpha == (hidden ? 0 : 1) {
+            return
+        }
+
+        let tabBarHeight = tabBar.frame.height
+        let targetTransform: CGAffineTransform = hidden
+            ? CGAffineTransform(translationX: 0, y: tabBarHeight)
+            : .identity
+        let targetAlpha: CGFloat = hidden ? 0 : 1
+
+        // 표시로 전환 시에는 먼저 isHidden을 풀어야 애니메이션이 보임
+        if !hidden { tabBar.isHidden = false }
+
+        let animations = {
+            self.tabBar.transform = targetTransform
+            self.tabBar.alpha = targetAlpha
+        }
+
+        if animated {
+            UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: animations) { _ in
+                // 숨김 전환 완료 후 isHidden 처리
+                if hidden { self.tabBar.isHidden = true }
+            }
+        } else {
+            animations()
+            tabBar.isHidden = hidden
+        }
+    }
+    
     // MARK: - Private Helpers
     
     /// 로그인 필요 시 알림창 표시
