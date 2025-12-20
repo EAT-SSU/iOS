@@ -91,7 +91,7 @@ final class ReviewRateViewCell: UITableViewCell {
     var rateNumLabel: UILabel = {
         let label = UILabel()
         label.text = "4.3"
-        label.font = .bold(size: 36)
+        label.font = .rate
         label.textColor = .black
         return label
     }()
@@ -263,7 +263,8 @@ final class ReviewRateViewCell: UITableViewCell {
         // 별점 섹션
         rateSectionContainer.snp.makeConstraints { make in
             make.top.equalTo(menuLabel.snp.bottom).offset(40)
-            make.leading.trailing.equalToSuperview().inset(60)
+            make.centerX.equalToSuperview().offset(16)
+            make.width.equalToSuperview().inset(16)
         }
         
         totalRateStackView.snp.makeConstraints { make in
