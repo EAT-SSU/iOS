@@ -275,18 +275,12 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     /// 리뷰 작성/수정 버튼 탭 시 호출됩니다.
     @objc
     func tappedNextButton() {
-        
-        // 1. 유효성 검증
-        if setRateView.userReviewTextView.text == "메뉴에 대한 상세한 리뷰를 작성해주세요" || (setRateView.userReviewTextView.text ?? "").count < 3 {
-            showToast(message: "리뷰를 3글자 이상 작성해주세요!", type: .info)
-            return
-        }
-        
+        // 1. 유효성 검증 (별점만 필수)
         guard setRateView.rateView.currentStar != 0 else {
             showToast(message: "별점을 입력해주세요!", type: .info)
             return
         }
-        
+
         // 2. 리뷰 전송 분기
         if reviewId != nil {
             sendFixReview()
@@ -385,7 +379,12 @@ extension SetRateViewController {
             showToast(message: "식단 정보가 없습니다.")
             return
         }
-        
+
+        // Normalize review text: send nil if empty or placeholder
+        let rawText = setRateView.userReviewTextView.text ?? ""
+        let trimmedText = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let content = trimmedText.isEmpty || trimmedText == placeholderText ? nil : trimmedText
+
         _Concurrency.Task {
             do {
                 var imageUrl: String?
@@ -395,21 +394,21 @@ extension SetRateViewController {
                 let menuLikes = validMenuIDList.enumerated().map { (index, menuId) in
                     MenuLike(menuId: menuId, isLike: likedStates[index])
                 }
-                
+
                 let request = WriteReviewMealRequest(
                     mealId: mealId,
                     rating: setRateView.rateView.currentStar,
                     menuLikes: menuLikes,
-                    content: setRateView.userReviewTextView.text,
+                    content: content,
                     imageUrls: imageUrl != nil ? [imageUrl!] : []
                 )
                 try await postMealReview(request: request)
-                
+
                 await MainActor.run {
                     self.isReviewSubmitted = true
                     self.moveToReviewVC()
                 }
-                
+
             } catch {
                 await MainActor.run {
                     print("❌ Meal 리뷰 업로드 실패: \(error)")
@@ -424,33 +423,38 @@ extension SetRateViewController {
             showToast(message: "메뉴 정보가 없습니다.")
             return
         }
-        
+
+        // Normalize review text: send nil if empty or placeholder
+        let rawText = setRateView.userReviewTextView.text ?? ""
+        let trimmedText = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let content = trimmedText.isEmpty || trimmedText == placeholderText ? nil : trimmedText
+
         _Concurrency.Task {
             do {
                 var imageUrl: String?
                 if let image = userPickedImage {
                     imageUrl = try await uploadImage(image: image)
                 }
-                
+
                 let menuLike = MenuLike(
                     menuId: menuId,
                     isLike: likedStates.first ?? false
                 )
-                
+
                 let request = WriteReviewMenuRequest(
                     rating: setRateView.rateView.currentStar,
                     menuLike: menuLike,
-                    content: setRateView.userReviewTextView.text,
+                    content: content,
                     imageUrls: imageUrl != nil ? [imageUrl!] : []
                 )
-                
+
                 try await postMenuReview(request: request)
-                
+
                 await MainActor.run {
                     self.isReviewSubmitted = true
                     self.moveToReviewVC()
                 }
-                
+
             } catch {
                 await MainActor.run {
                     print("❌ Menu 리뷰 업로드 실패: \(error)")
