@@ -120,17 +120,28 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
         navigationItem.title = reviewId != nil ? "리뷰 수정하기" : "리뷰 남기기"
-        
-        navigationItem.hidesBackButton = true
 
-        let backButton = UIBarButtonItem(
-            image: UIImage(systemName: "chevron.backward"),
-            style: .plain,
-            target: self,
-            action: #selector(didTapCustomBackButton)
-        )
-        backButton.tintColor = .lightGray
-        navigationItem.leftBarButtonItem = backButton
+        navigationItem.hidesBackButton = true
+        navigationItem.leftBarButtonItem = nil
+
+        let closeImage = EATSSUDesignAsset.Images.icClose.image.withRenderingMode(.alwaysOriginal)
+
+        let closeUIButton = UIButton(type: .system)
+        closeUIButton.setImage(closeImage, for: .normal)
+        closeUIButton.tintColor = .clear
+        closeUIButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        closeUIButton.imageView?.contentMode = .scaleAspectFit
+
+        if let imageView = closeUIButton.imageView {
+            imageView.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(12)
+            }
+        }
+
+        closeUIButton.addTarget(self, action: #selector(didTapCustomBackButton), for: .touchUpInside)
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: closeUIButton)
     }
     
     // MARK: - Setup & Delegate
