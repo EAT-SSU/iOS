@@ -264,11 +264,6 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             reviewMenuTypeInfo.menuID = menus[menuIndex].menuId
             reviewMenuTypeInfo.changeMenuIDList = nil
         }
-
-//        let reviewViewController = ReviewViewController()
-//        delegate = reviewViewController
-//        navigationController?.pushViewController(reviewViewController, animated: true)
-//        delegate?.didDelegateReviewMenuTypeInfo(for: reviewMenuTypeInfo)
         
         let reviewViewController = ReviewViewController()
 
