@@ -10,7 +10,7 @@ import SnapKit
 
 import EATSSUDesign
 
-final class RateView: UIView { // BaseUIView 대신 UIView 상속
+final class RateView: BaseUIView { 
     
     // MARK: - Properties
     
@@ -57,12 +57,12 @@ final class RateView: UIView { // BaseUIView 대신 UIView 상속
     // MARK: - UI Configuration
     
     /// UI 컴포넌트 설정
-    private func configureUI() {
+    internal override func configureUI() {
         addSubview(starStackView)
     }
     
     /// 레이아웃 제약조건 설정
-    private func setLayout() {
+    internal override func setLayout() {
         starStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
