@@ -177,12 +177,12 @@ final class ReviewRateViewCell: UITableViewCell {
     private func makeChartBar() -> (container: UIView, foreground: UIView) {
         let container = UIView()
         container.backgroundColor = .gray200
-        container.layer.cornerRadius = 5
+        container.layer.cornerRadius = 2
         container.layer.masksToBounds = true
         
         let foreground = UIView()
         foreground.backgroundColor = EATSSUDesignAsset.Color.Main.primary.color
-        foreground.layer.cornerRadius = 5
+        foreground.layer.cornerRadius = 2
         foreground.layer.masksToBounds = true
         
         container.addSubview(foreground)
@@ -284,36 +284,36 @@ final class ReviewRateViewCell: UITableViewCell {
         oneChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(onePointLabel)
             make.leading.equalTo(onePointLabel.snp.trailing).offset(7)
-            make.height.equalTo(10)
-            make.width.equalTo(126)
+            make.height.equalTo(5)
+            make.width.equalTo(115)
         }
         
         twoChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(twoPointLabel)
             make.leading.equalTo(twoPointLabel.snp.trailing).offset(7)
-            make.height.equalTo(10)
-            make.width.equalTo(126)
+            make.height.equalTo(5)
+            make.width.equalTo(115)
         }
         
         threeChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(threePointLabel)
             make.leading.equalTo(threePointLabel.snp.trailing).offset(7)
-            make.height.equalTo(10)
-            make.width.equalTo(126)
+            make.height.equalTo(5)
+            make.width.equalTo(115)
         }
         
         fourChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(fourPointLabel)
             make.leading.equalTo(fourPointLabel.snp.trailing).offset(7)
-            make.height.equalTo(10)
-            make.width.equalTo(126)
+            make.height.equalTo(5)
+            make.width.equalTo(115)
         }
         
         fiveChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(fivePointLabel)
             make.leading.equalTo(fivePointLabel.snp.trailing).offset(7)
-            make.height.equalTo(10)
-            make.width.equalTo(126)
+            make.height.equalTo(5)
+            make.width.equalTo(115)
         }
         
         // 포인트 레이블 높이
