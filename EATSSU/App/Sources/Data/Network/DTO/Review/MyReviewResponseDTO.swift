@@ -7,15 +7,10 @@
 
 import Foundation
 
-// MARK: - API Response DTO
+// MARK: - Review List DTO
 
-/// 내가 쓴 리뷰 리스트 전체 응답 구조
+/// 리뷰 리스트 데이터 컨테이너 (NetworkService의 result로 전달됨)
 struct MyReviewResponseDTO: Codable {
-    let result: MyReviewList
-}
-
-/// 리뷰 리스트 데이터 컨테이너
-struct MyReviewList: Codable {
     let numberOfElements: Int
     let hasNext: Bool
     let dataList: [MyReviewListItem]
@@ -26,10 +21,10 @@ struct MyReviewList: Codable {
 /// 개별 리뷰 아이템 구조
 struct MyReviewListItem: Codable {
     let reviewId: Int
-    let rating: Double?
+    let rating: Int?
     let writtenAt: String
     let content: String?
-    let imageUrls: [String]?
+    let imageUrls: [String]
     let menuList: [ReviewMenu]
 }
 
@@ -37,5 +32,5 @@ struct MyReviewListItem: Codable {
 struct ReviewMenu: Codable {
     let id: Int
     let name: String
-    let isLike: Bool   
+    let isLike: Bool
 }

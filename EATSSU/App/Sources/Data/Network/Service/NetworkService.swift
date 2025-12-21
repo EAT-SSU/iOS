@@ -48,6 +48,15 @@ final class NetworkService {
             switch result {
             case .success(let response):
                 do {
+                    // 🔥 Raw JSON 출력 (디버깅용)
+                    print("------ Raw JSON ------")
+                    if let raw = String(data: response.data, encoding: .utf8) {
+                        print(raw)
+                    } else {
+                        print("❌ Raw JSON 출력 실패: 인코딩 불가")
+                    }
+                    print("-----------------------")
+                    
                     let baseResponse = try response.map(BaseResponse<R>.self)
                     
                     if baseResponse.isSuccess {

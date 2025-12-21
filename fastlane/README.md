@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios setup_development
 ```
 
-개발 환경 세팅
+개발 환경 인증서 세팅
 
 ### ios setup_appstore
 
@@ -29,7 +29,15 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios setup_appstore
 ```
 
-App Store 배포 환경 세팅
+배포 환경 인증서 세팅
+
+### ios release
+
+```sh
+[bundle exec] fastlane ios release
+```
+
+TestFlight에 앱 배포
 
 ----
 

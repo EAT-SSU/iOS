@@ -176,7 +176,7 @@ extension MyReviewViewController {
             
             switch result {
             case .success(let response):
-                self.reviewList = response.result.dataList
+                self.reviewList = response.dataList
                 self.myReviewView.myReviewTableView.reloadData()
                 
             case .failure(let error):

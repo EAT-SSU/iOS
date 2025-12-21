@@ -5,12 +5,47 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000179">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000144">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: match" time="3.565135">
+      <testcase classname="fastlane.lanes" name="1: latest_testflight_build_number" time="1.47503">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: cd .. &amp;&amp; tuist install" time="0.548605">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: cd .. &amp;&amp; tuist generate --no-open" time="3.018387">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: match" time="3.604265">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: gym" time="59.964613">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: pilot" time="66.56414">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="7: clean_build_artifacts" time="0.001794">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="8: clean_build_artifacts" time="0.000167">
         
       </testcase>
     
