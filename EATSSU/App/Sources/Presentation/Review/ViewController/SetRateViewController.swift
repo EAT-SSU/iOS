@@ -215,6 +215,68 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         setRateView.nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
     }
     
+    /// ✅ 새로운 dataBindForFix 메서드 (MyReviewViewController에서 사용)
+    func dataBindForFix(
+        list: [String],
+        reviewId: Int,
+        rating: Int?,
+        content: String?,
+        imageUrls: [String],
+        menuIds: [Int],
+        likedMenuIds: [Int]
+    ) {
+        // 1. 기본 정보 설정
+        self.selectedList = list
+        self.reviewId = reviewId
+        self.validMenuIDList = menuIds
+        
+        // 2. 리뷰 타입 결정
+        if menuIds.count == 1 {
+            self.reviewType = .fixed
+            self.menuID = menuIds.first
+        } else {
+            self.reviewType = .variable
+        }
+        
+        // 3. 좋아요 상태 복원
+        self.likedStates = menuIds.map { menuId in
+            likedMenuIds.contains(menuId)
+        }
+        
+        // 4. UI 업데이트
+        setRateView.menuLabel.text = list.count == 1
+            ? "\(list[0]) 를/을 추천하시겠어요?"
+            : "메뉴를 추천하시겠어요?"
+        
+        // 5. 별점 설정
+        if let rating = rating {
+            setRateView.rateView.currentStar = rating
+            setRateView.rateView.settingStarForFix(currentStar: rating)
+        }
+        
+        // 6. 리뷰 텍스트 설정
+        if let content = content, !content.isEmpty {
+            setRateView.userReviewTextView.text = content
+            setRateView.userReviewTextView.textColor = .black
+            setRateView.maximumWordLabel.text = "\(content.count) / 300"
+        }
+        
+        // 7. 이미지 설정
+        if let firstImageUrl = imageUrls.first, !firstImageUrl.isEmpty {
+            setRateView.userReviewImageView.kfSetImage(url: firstImageUrl)
+            setRateView.updateImageViewState(image: setRateView.userReviewImageView.image, count: 1, isHidden: false)
+        } else {
+            setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
+        }
+        
+        // 8. 버튼 텍스트 변경
+        setRateView.nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
+        
+        // 9. 테이블뷰 리로드
+        setRateView.menuTableView.reloadData()
+        view.setNeedsLayout()
+    }
+    
     /// 수정할 리뷰의 기존 내용을 화면에 표시합니다.
     func settingForReviewFix(data: ReviewListItem) {
         // 별점 설정

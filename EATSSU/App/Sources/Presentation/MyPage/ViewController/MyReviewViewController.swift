@@ -83,7 +83,7 @@ final class MyReviewViewController: BaseViewController {
         self.nickname = nickname
     }
 
-    private func showFixOrDeleteAlert(reviewID: Int, menuName: String) {
+    private func showFixOrDeleteAlert(reviewID: Int, reviewItem: MyReviewListItem) {
         let alert = UIAlertController(
             title: "리뷰 수정 혹은 삭제",
             message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
@@ -95,7 +95,22 @@ final class MyReviewViewController: BaseViewController {
             style: .default,
             handler: { _ in
                 let setRateViewController = SetRateViewController()
-                setRateViewController.dataBindForFix(list: [menuName], reviewId: reviewID)
+                
+                // ✅ 모든 메뉴 정보 전달
+                let menuNames = reviewItem.menuList.map { $0.name }
+                let menuIds = reviewItem.menuList.map { $0.id }
+                let likedMenuIds = reviewItem.menuList.filter { $0.isLike }.map { $0.id }
+                
+                setRateViewController.dataBindForFix(
+                    list: menuNames,
+                    reviewId: reviewID,
+                    rating: reviewItem.rating,
+                    content: reviewItem.content,
+                    imageUrls: reviewItem.imageUrls,
+                    menuIds: menuIds,
+                    likedMenuIds: likedMenuIds
+                )
+                
                 self.navigationController?.pushViewController(setRateViewController, animated: true)
             }
         )
@@ -171,11 +186,10 @@ extension MyReviewViewController: UITableViewDataSource {
         cell.handler = { [weak self] in
             guard let self else { return }
             
-            let menuName = reviewItem.menuList.first?.name ?? "알 수 없는 메뉴"
-            
-            showFixOrDeleteAlert(
-                reviewID: cell.reviewId,
-                menuName: menuName
+            // ✅ reviewItem 전체를 전달
+            self.showFixOrDeleteAlert(
+                reviewID: reviewItem.reviewId,
+                reviewItem: reviewItem
             )
         }
         cell.selectionStyle = .none
