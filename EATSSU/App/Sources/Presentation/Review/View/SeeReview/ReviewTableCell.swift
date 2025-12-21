@@ -319,6 +319,7 @@ final class ReviewTableCell: UITableViewCell {
         let newSize = reviewTextView.sizeThatFits(CGSize(width: fixedWidth, height: .greatestFiniteMagnitude))
         reviewTextView.frame.size.height = newSize.height
         
+        // 이미지 처리
         let firstImageUrl = response.imageUrls.first(where: { !$0.isEmpty })
 
         if let firstImageUrl {
@@ -333,8 +334,31 @@ final class ReviewTableCell: UITableViewCell {
         sideButton.setTitle("", for: .normal)
         
         reviewId = response.reviewId
-        tags = []
-        tagCollectionView.isHidden = true
+        
+        // ✅ 태그(메뉴 리스트) 처리 추가
+        if !response.menuList.isEmpty {
+            tags = response.menuList.map { ($0.name, $0.isLike) }
+            tagCollectionView.isHidden = false
+            tagCollectionView.reloadData()
+            tagCollectionView.layoutIfNeeded()
+            
+            // 🚀 컬렉션 뷰 높이 업데이트 및 셀 레이아웃 강제 업데이트 (비동기)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                
+                let contentHeight = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+                
+                if contentHeight > 0 {
+                    self.tagCollectionViewHeightConstraint?.update(offset: contentHeight)
+                    
+                    // 텍스트뷰와 컬렉션뷰의 높이 변경을 스택뷰와 셀이 반영하도록 강제합니다.
+                    self.contentView.layoutIfNeeded()
+                }
+            }
+        } else {
+            tags = []
+            tagCollectionView.isHidden = true
+        }
         
         // 🚀 3. 셀 레이아웃 강제 업데이트
         self.contentView.layoutIfNeeded()

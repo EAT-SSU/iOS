@@ -13,12 +13,11 @@ import FirebaseAnalytics
 
 final class MyReviewViewController: BaseViewController {
     override var shouldHideTabBar: Bool { true }
+    
     // MARK: - Properties
 
-    // DTO 변경에 따라 타입 수정: MyDataList -> MyReviewListItem
     private var reviewList = [MyReviewListItem]()
     var nickname: String = .init()
-    private var menuName: String = .init()
 
     // MARK: - UI Components
 
@@ -57,6 +56,7 @@ final class MyReviewViewController: BaseViewController {
     }
 
     override func configureUI() {
+        view.backgroundColor = .white
         view.addSubviews(myReviewView)
     }
 
@@ -67,8 +67,14 @@ final class MyReviewViewController: BaseViewController {
     }
 
     private func setDelegate() {
-        myReviewView.myReviewTableView.register(ReviewTableCell.self, forCellReuseIdentifier: ReviewTableCell.identifier)
-        myReviewView.myReviewTableView.register(ReviewEmptyViewCell.self, forCellReuseIdentifier: ReviewEmptyViewCell.identifier)
+        myReviewView.myReviewTableView.register(
+            ReviewTableCell.self,
+            forCellReuseIdentifier: ReviewTableCell.identifier
+        )
+        myReviewView.myReviewTableView.register(
+            ReviewEmptyViewCell.self,
+            forCellReuseIdentifier: ReviewEmptyViewCell.identifier
+        )
         myReviewView.myReviewTableView.delegate = self
         myReviewView.myReviewTableView.dataSource = self
     }
@@ -78,27 +84,35 @@ final class MyReviewViewController: BaseViewController {
     }
 
     private func showFixOrDeleteAlert(reviewID: Int, menuName: String) {
-        let alert = UIAlertController(title: "리뷰 수정 혹은 삭제",
-                                      message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
-                                      preferredStyle: UIAlertController.Style.actionSheet)
+        let alert = UIAlertController(
+            title: "리뷰 수정 혹은 삭제",
+            message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
+            preferredStyle: UIAlertController.Style.actionSheet
+        )
 
-        let fixAction = UIAlertAction(title: "수정하기",
-                                      style: .default,
-                                      handler: { _ in
-                                          let setRateViewController = SetRateViewController()
-            setRateViewController.dataBindForFix(list: [menuName], reviewId: reviewID)
-                                          self.navigationController?.pushViewController(setRateViewController, animated: true)
-                                      })
+        let fixAction = UIAlertAction(
+            title: "수정하기",
+            style: .default,
+            handler: { _ in
+                let setRateViewController = SetRateViewController()
+                setRateViewController.dataBindForFix(list: [menuName], reviewId: reviewID)
+                self.navigationController?.pushViewController(setRateViewController, animated: true)
+            }
+        )
 
-        let deleteAction = UIAlertAction(title: "삭제하기",
-                                         style: .default,
-                                         handler: { _ in
-                                             self.deleteReview(reviewID: reviewID)
-                                         })
+        let deleteAction = UIAlertAction(
+            title: "삭제하기",
+            style: .default,
+            handler: { _ in
+                self.deleteReview(reviewID: reviewID)
+            }
+        )
 
-        let cancelAction = UIAlertAction(title: "취소하기",
-                                         style: .cancel,
-                                         handler: nil)
+        let cancelAction = UIAlertAction(
+            title: "취소하기",
+            style: .cancel,
+            handler: nil
+        )
 
         alert.addAction(fixAction)
         alert.addAction(deleteAction)
@@ -137,26 +151,32 @@ extension MyReviewViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if reviewList.isEmpty {
-            let cell = tableView.dequeueReusableCell(withIdentifier: ReviewEmptyViewCell.identifier, for: indexPath) as? ReviewEmptyViewCell ?? ReviewEmptyViewCell()
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: ReviewEmptyViewCell.identifier,
+                for: indexPath
+            ) as? ReviewEmptyViewCell ?? ReviewEmptyViewCell()
             cell.configureForMyReview()
             cell.selectionStyle = .none
             return cell
         }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: ReviewTableCell.identifier, for: indexPath) as? ReviewTableCell ?? ReviewTableCell()
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: ReviewTableCell.identifier,
+            for: indexPath
+        ) as? ReviewTableCell ?? ReviewTableCell()
         
-        // DTO에 맞게 데이터 바인딩 로직 수정 필요 (ReviewTableCell의 myPageDataBind 함수도 수정되었다고 가정)
         let reviewItem = reviewList[indexPath.row]
         cell.myPageDataBind(response: reviewItem, nickname: nickname)
         
         cell.handler = { [weak self] in
             guard let self else { return }
             
-            // DTO 구조에 맞게 메뉴 이름을 reviewItem.menuList에서 가져옴
             let menuName = reviewItem.menuList.first?.name ?? "알 수 없는 메뉴"
             
-            showFixOrDeleteAlert(reviewID: cell.reviewId,
-                                 menuName: menuName)
+            showFixOrDeleteAlert(
+                reviewID: cell.reviewId,
+                menuName: menuName
+            )
         }
         cell.selectionStyle = .none
         return cell
@@ -179,6 +199,9 @@ extension MyReviewViewController {
                 self.reviewList = response.dataList
                 self.myReviewView.myReviewTableView.reloadData()
                 
+                // 빈 상태 이미지 표시 여부
+                self.myReviewView.noReviewImageView.isHidden = !self.reviewList.isEmpty
+                
             case .failure(let error):
                 print("내 리뷰 조회 실패: \(error.localizedDescription)")
                 RealmService.shared.resetDB()
@@ -187,7 +210,6 @@ extension MyReviewViewController {
         }
     }
     
-    // 리뷰 삭제 알람 추가
     func deleteReview(reviewID: Int) {
         showCustomDialog(
             title: "리뷰 삭제하기",
@@ -205,6 +227,7 @@ extension MyReviewViewController {
                 switch result {
                 case .success:
                     self.getMyReview()
+                    self.showToast(message: "리뷰가 성공적으로 삭제되었습니다.")
                 case .failure(let error):
                     print("리뷰 삭제 실패: \(error.localizedDescription)")
                     RealmService.shared.resetDB()
