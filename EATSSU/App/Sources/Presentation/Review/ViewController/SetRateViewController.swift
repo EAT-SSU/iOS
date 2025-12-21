@@ -203,7 +203,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         view.setNeedsLayout()
     }
     
-    /// 리뷰 수정 모드 시작 시 설정합니다. (리뷰 ID 바인딩)
+    /// 리뷰 수정 모드 시작 시 설정합니다. (리뷰 ID 바인딩) - 기존 방식
     func dataBindForFix(list: [String], reviewId: Int) {
         self.selectedList = list
         self.reviewId = reviewId
@@ -269,7 +269,9 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
             setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
         }
         
-        // 8. 버튼 텍스트 변경
+        // 8. 버튼 및 이미지 선택 UI 설정
+        setRateView.selectImageButton.isHidden = true
+        setRateView.deleteMethodLabel.isHidden = true
         setRateView.nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
         
         // 9. 테이블뷰 리로드
@@ -367,17 +369,28 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
     }
     
-    /// 리뷰 작성/수정 완료 후 ReviewViewController로 돌아갑니다.
+    /// ✅ 리뷰 작성/수정 완료 후 이전 화면으로 돌아갑니다.
     private func moveToReviewVC() {
+        // 1. MyReviewViewController가 네비게이션 스택에 있는지 확인
+        if let myReviewVC = navigationController?.viewControllers.first(where: { $0 is MyReviewViewController }) as? MyReviewViewController {
+            navigationController?.popToViewController(myReviewVC, animated: true)
+            return
+        }
+        
+        // 2. ReviewViewController가 네비게이션 스택에 있는지 확인
         if let reviewVC = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) as? ReviewViewController {
-            
             reviewVC.setReviewSubmittedSuccessfully()
             navigationController?.popToViewController(reviewVC, animated: true)
             
+            // HomeViewController 새로고침
             if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
                 homeVC.refreshAfterReview()
             }
+            return
         }
+        
+        // 3. 어느 것도 없으면 그냥 이전 화면으로
+        navigationController?.popViewController(animated: true)
     }
 }
 
@@ -434,8 +447,8 @@ extension SetRateViewController {
                 
                 await MainActor.run {
                     self.isReviewSubmitted = true
-                    self.moveToReviewVC()
                     self.showToast(message: "리뷰가 성공적으로 수정되었습니다.")
+                    self.moveToReviewVC()
                 }
                 
             } catch {
