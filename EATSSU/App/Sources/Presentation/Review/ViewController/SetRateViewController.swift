@@ -270,9 +270,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
         
         // 8. 버튼 및 이미지 선택 UI 설정
-        setRateView.selectImageButton.isHidden = true
-        setRateView.deleteMethodLabel.isHidden = true
-        setRateView.nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
+        setRateView.nextButton.setTitle("완료하기", for: .normal)
         
         // 9. 테이블뷰 리로드
         setRateView.menuTableView.reloadData()
