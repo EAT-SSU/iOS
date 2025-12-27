@@ -268,7 +268,7 @@ final class ReviewTableCell: UITableViewCell {
         let newSize = reviewTextView.sizeThatFits(CGSize(width: fixedWidth, height: .greatestFiniteMagnitude))
         reviewTextView.frame.size.height = newSize.height
         
-        if let firstImageUrl = response.imageUrls?.first(where: { !$0.isEmpty }) {
+        if let firstImageUrl = response.imageUrls.first(where: { !$0.isEmpty }) {
             foodImageView.isHidden = false
             foodImageView.kfSetImage(url: firstImageUrl)
         } else {

@@ -289,7 +289,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         setRateView.maximumWordLabel.text = "\(data.content?.count ?? 0) / 300"
         
         // 이미지 설정 (kfSetImage는 Kingfisher 확장 가정)
-        if let imageUrl = data.imageUrls?.first, !imageUrl.isEmpty {
+        if let imageUrl = data.imageUrls.first, !imageUrl.isEmpty {
             setRateView.userReviewImageView.kfSetImage(url: imageUrl)
             setRateView.updateImageViewState(image: setRateView.userReviewImageView.image, count: 1, isHidden: false)
         } else {

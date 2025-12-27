@@ -18,10 +18,8 @@ platform :ios do
     target_type = options[:type] || "dev" 
     target_version = options[:version] || "3.2.0"
     
-    # Project.swift에 정의된 Scheme 선택
     target_scheme = (target_type == "prod") ? "EATSSU-PROD" : "EATSSU-DEV"
     
-    # App Store Connect에서 최신 빌드 번호를 가져와 1을 더함 
     build_num = latest_testflight_build_number(
       api_key_path: "fastlane/api_key.json",
       app_identifier: "com.jiwoo.EatSSU"
@@ -30,16 +28,17 @@ platform :ios do
     UI.message("📦 배포 타겟: #{target_type} (Scheme: #{target_scheme})")
     UI.message("🚀 버전 주입: #{target_version} (Build: #{build_num})")
 
-    # 상위 폴더(루트)로 이동하여 Tuist 실행
     sh("cd .. && tuist install") 
     sh("cd .. && tuist generate --no-open")
 
-    # 인증서 동기화
-    match(type: "appstore")
+    # 인증서 동기화 (Matchfile 및 API Key 연결)
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key_path: "fastlane/api_key.json"
+    )
     
-    # 앱 빌드 및 버전/빌드번호 강제 주입
     gym(
-      # workspace가 프로젝트 루트에 있으므로 상위 경로 지정
       workspace: "EATSSU_WORKSPACE.xcworkspace",
       scheme: target_scheme,
       export_method: "app-store",
@@ -47,10 +46,9 @@ platform :ios do
       xcargs: "MARKETING_VERSION=#{target_version} CURRENT_PROJECT_VERSION=#{build_num}"
     )
     
-    # TestFlight 업로드
     pilot(
       api_key_path: "fastlane/api_key.json",
-      skip_waiting_for_build_processing: true # 업로드만 성공하면 바로 터미널 종료
+      skip_waiting_for_build_processing: true
     )
 
     clean_build_artifacts
