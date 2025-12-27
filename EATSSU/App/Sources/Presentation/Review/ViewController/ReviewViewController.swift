@@ -348,6 +348,15 @@ final class ReviewViewController: BaseViewController {
         Analytics.logEvent("ReviewViewControllerLoad", parameters: nil)
 #endif
     }
+    
+    /// 작성 후의 새로고침 함수
+    func refreshAllData() {
+        getStatistics()
+        if type == "VARIABLE" {
+            getValidMenusForReview()
+        }
+        getReviewList(type: type, menuId: menuID)
+    }
 }
 
 // MARK: - UITableViewDelegate

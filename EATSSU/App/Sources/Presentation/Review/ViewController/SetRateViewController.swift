@@ -348,6 +348,10 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
             reviewVC.setReviewSubmittedSuccessfully()
             navigationController?.popToViewController(reviewVC, animated: true)
 
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                reviewVC.refreshAllData()
+            }
+            
             if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
                 homeVC.refreshAfterReview()
             }
