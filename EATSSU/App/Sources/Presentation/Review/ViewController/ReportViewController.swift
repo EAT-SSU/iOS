@@ -301,7 +301,8 @@ extension ReportViewController {
         
         NetworkService.shared.request(
             ReviewRouter.report(param: param),
-            responseType: Bool.self
+            responseType: Bool.self,
+            useAuth: true
         ) { [weak self] result in
             switch result {
             case .success:
