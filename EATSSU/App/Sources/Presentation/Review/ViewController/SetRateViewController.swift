@@ -666,8 +666,8 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UIGestureRecog
         let isReviewStarted: Bool = setRateView.rateView.currentStar > 0 || textHasContent
         
         if reviewId == nil, isReviewStarted {
-            let title = "작성 취소"
-            let message = "작성 중인 리뷰는 저장되지 않습니다. 정말 나가시겠습니까?"
+            let title = "나가시겠어요?"
+            let message = "지금 나가면 작성한 내용이 저장되지 않습니다."
             let confirmButtonTitle = "나가기"
             let cancelButtonTitle = "계속 작성"
             
