@@ -2,20 +2,12 @@
 //  ReviewTableCell.swift
 //  EatSSU-iOS
 //
-//  Created by 한금준 on 20/11/25.
-//
 
 import UIKit
 import SnapKit
-
 import EATSSUDesign
 
-// MARK: - ReviewTableCell
-
-/// 개별 리뷰를 표시하는 테이블뷰 셀
 final class ReviewTableCell: UITableViewCell {
-    
-    // MARK: - Properties
     
     static let identifier = "ReviewTableCell"
     
@@ -23,7 +15,6 @@ final class ReviewTableCell: UITableViewCell {
     var reviewId: Int = 0
     var menuName: String = ""
     private var tags: [(name: String, isLiked: Bool)] = []
-
     private var tagCollectionViewHeightConstraint: Constraint?
     
     // MARK: - UI Components - Profile Section
@@ -31,6 +22,7 @@ final class ReviewTableCell: UITableViewCell {
     private let userProfileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = EATSSUDesignAsset.Images.profile.image
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -104,7 +96,6 @@ final class ReviewTableCell: UITableViewCell {
     
     // MARK: - UI Components - Content Section
     
-    /// 메뉴 태그 컬렉션뷰
     private lazy var tagCollectionView: UICollectionView = {
         let layout = LeftAlignedCollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -132,6 +123,8 @@ final class ReviewTableCell: UITableViewCell {
         textView.backgroundColor = .systemBackground
         textView.font = .body1
         textView.text = "여기 계란국 맛집임... 김치볶음밥에 계란후라이 없어서 아쉽 다음에 또 먹어야지"
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
         return textView
     }()
     
@@ -183,12 +176,6 @@ final class ReviewTableCell: UITableViewCell {
         dateLabel.text = ""
         userNameLabel.text = ""
     }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        // layoutSubviews에서 높이 업데이트 로직 제거 (dataBind로 이동)
-    }
     
     // MARK: - UI Configuration
     
@@ -201,14 +188,15 @@ final class ReviewTableCell: UITableViewCell {
     }
     
     func setLayout() {
+        // 🔧 우선순위 조정: 프로필 이미지 크기
         userProfileImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
+            make.width.height.equalTo(30).priority(.high)
         }
         
+        // 🔧 우선순위 조정: 프로필 스택뷰
         profileStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15)
+            make.top.equalToSuperview().offset(15).priority(.high)
             make.leading.equalToSuperview().offset(16)
-            make.height.equalTo(50)
         }
         
         dateReportStackView.snp.makeConstraints { make in
@@ -220,18 +208,19 @@ final class ReviewTableCell: UITableViewCell {
             $0.height.equalTo(12.adjusted)
         }
         
+        // 🔧 우선순위 조정: 컨텐츠 스택뷰
         contentStackView.snp.makeConstraints { make in
-            make.top.equalTo(profileStackView.snp.bottom)
+            make.top.equalTo(profileStackView.snp.bottom).priority(.high)
             make.leading.equalToSuperview().offset(16)
-            make.bottom.equalToSuperview().offset(-16)
+            make.bottom.equalToSuperview().offset(-16).priority(.high)
             make.trailing.equalToSuperview().offset(-16)
         }
         
-        // 태그 컬렉션뷰
+        // 🔧 우선순위 조정: 태그 컬렉션뷰 높이
         tagCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            // 높이 제약을 저장하고 기본 높이를 줍니다.
-            tagCollectionViewHeightConstraint = make.height.equalTo(26).constraint
+            // 낮은 우선순위로 설정하여 초기 렌더링 시 충돌 방지
+            tagCollectionViewHeightConstraint = make.height.equalTo(26).priority(.medium).constraint
         }
         
         foodImageView.snp.makeConstraints { make in
@@ -251,8 +240,7 @@ final class ReviewTableCell: UITableViewCell {
     // MARK: - Public Methods
     
     func dataBind(response: ReviewListItem) {
-        
-        // 💡 1. 텍스트뷰의 너비가 계산되도록 레이아웃 업데이트 (시작)
+        // 레이아웃 업데이트
         self.layoutIfNeeded()
         
         menuName = response.menu?.map { $0.name }.joined(separator: " + ") ?? ""
@@ -263,7 +251,7 @@ final class ReviewTableCell: UITableViewCell {
         reviewTextView.text = response.content ?? ""
         reviewId = response.reviewId
         
-        // 💡 2. 텍스트뷰 높이를 내용물에 맞게 계산하여 프레임 업데이트
+        // 텍스트뷰 높이 계산
         let fixedWidth = reviewTextView.frame.size.width
         let newSize = reviewTextView.sizeThatFits(CGSize(width: fixedWidth, height: .greatestFiniteMagnitude))
         reviewTextView.frame.size.height = newSize.height
@@ -286,26 +274,25 @@ final class ReviewTableCell: UITableViewCell {
         
         tagCollectionView.isHidden = tags.isEmpty
         tagCollectionView.reloadData()
-
         tagCollectionView.layoutIfNeeded()
         
-        // 🚀 3. 컬렉션 뷰 높이 업데이트 및 셀 레이아웃 강제 업데이트 (비동기)
+        // 컬렉션뷰 높이 업데이트
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
             let contentHeight = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
             
             if contentHeight > 0 {
+                // 🔧 우선순위를 높여서 업데이트
                 self.tagCollectionViewHeightConstraint?.update(offset: contentHeight)
+                self.tagCollectionViewHeightConstraint?.layoutConstraints.first?.priority = .required
                 
-                // 텍스트뷰와 컬렉션뷰의 높이 변경을 스택뷰와 셀이 반영하도록 강제합니다.
                 self.contentView.layoutIfNeeded()
             }
         }
     }
     
     func myPageDataBind(response: MyReviewListItem, nickname: String) {
-        // 💡 1. 텍스트뷰의 너비가 계산되도록 레이아웃 업데이트 (시작)
         self.layoutIfNeeded()
         
         userNameLabel.text = "\(nickname)"
@@ -314,12 +301,11 @@ final class ReviewTableCell: UITableViewCell {
         
         reviewTextView.text = response.content
         
-        // 💡 2. 텍스트뷰 높이를 내용물에 맞게 계산하여 프레임 업데이트
+        // 텍스트뷰 높이 계산
         let fixedWidth = reviewTextView.frame.size.width
         let newSize = reviewTextView.sizeThatFits(CGSize(width: fixedWidth, height: .greatestFiniteMagnitude))
         reviewTextView.frame.size.height = newSize.height
         
-        // 이미지 처리
         let firstImageUrl = response.imageUrls.first(where: { !$0.isEmpty })
 
         if let firstImageUrl {
@@ -335,14 +321,12 @@ final class ReviewTableCell: UITableViewCell {
         
         reviewId = response.reviewId
         
-        // ✅ 태그(메뉴 리스트) 처리 추가
         if !response.menuList.isEmpty {
             tags = response.menuList.map { ($0.name, $0.isLike) }
             tagCollectionView.isHidden = false
             tagCollectionView.reloadData()
             tagCollectionView.layoutIfNeeded()
             
-            // 🚀 컬렉션 뷰 높이 업데이트 및 셀 레이아웃 강제 업데이트 (비동기)
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 
@@ -350,8 +334,8 @@ final class ReviewTableCell: UITableViewCell {
                 
                 if contentHeight > 0 {
                     self.tagCollectionViewHeightConstraint?.update(offset: contentHeight)
+                    self.tagCollectionViewHeightConstraint?.layoutConstraints.first?.priority = .required
                     
-                    // 텍스트뷰와 컬렉션뷰의 높이 변경을 스택뷰와 셀이 반영하도록 강제합니다.
                     self.contentView.layoutIfNeeded()
                 }
             }
@@ -360,7 +344,6 @@ final class ReviewTableCell: UITableViewCell {
             tagCollectionView.isHidden = true
         }
         
-        // 🚀 3. 셀 레이아웃 강제 업데이트
         self.contentView.layoutIfNeeded()
     }
 }
