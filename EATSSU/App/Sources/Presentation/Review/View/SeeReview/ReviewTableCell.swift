@@ -1,10 +1,12 @@
 //
 //  ReviewTableCell.swift
 //  EatSSU-iOS
+//  Created by 한금준 on 20/11/25.
 //
 
 import UIKit
 import SnapKit
+
 import EATSSUDesign
 
 final class ReviewTableCell: UITableViewCell {
@@ -218,6 +220,7 @@ final class ReviewTableCell: UITableViewCell {
         
         // 🔧 우선순위 조정: 태그 컬렉션뷰 높이
         tagCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(profileStackView.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview()
             // 낮은 우선순위로 설정하여 초기 렌더링 시 충돌 방지
             tagCollectionViewHeightConstraint = make.height.equalTo(26).priority(.medium).constraint

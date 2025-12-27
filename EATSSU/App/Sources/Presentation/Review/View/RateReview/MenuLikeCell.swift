@@ -33,6 +33,8 @@ final class MenuLikeCell: UITableViewCell {
         let label = UILabel()
         label.font = .body3
         label.textColor = .black
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return label
     }()
     
@@ -41,7 +43,7 @@ final class MenuLikeCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.tintColor = .gray
         button.backgroundColor = .clear
-        button.isUserInteractionEnabled = false // Container가 이벤트를 받도록 설정
+        button.isUserInteractionEnabled = false
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
@@ -52,6 +54,8 @@ final class MenuLikeCell: UITableViewCell {
         view.layer.cornerRadius = 14
         view.layer.borderWidth = 1
         view.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
+        view.setContentHuggingPriority(.required, for: .horizontal)
+        view.setContentCompressionResistancePriority(.required, for: .horizontal)
         return view
     }()
     
@@ -61,6 +65,7 @@ final class MenuLikeCell: UITableViewCell {
         stack.axis = .horizontal
         stack.spacing = 12
         stack.alignment = .center
+        stack.distribution = .fill
         return stack
     }()
     
@@ -90,13 +95,13 @@ final class MenuLikeCell: UITableViewCell {
     /// 레이아웃 제약조건 설정
     private func setLayout() {
         hStack.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(12)
-            $0.horizontalEdges.equalToSuperview() // TableView에서 inset 처리
+            $0.verticalEdges.equalToSuperview().inset(12).priority(.high)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         likeContainer.snp.makeConstraints {
-            $0.height.equalTo(28)
-            $0.width.equalTo(58)
+            $0.height.equalTo(28).priority(.high)
+            $0.width.equalTo(58).priority(.required)
         }
         
         likeButton.snp.makeConstraints {
@@ -136,21 +141,20 @@ final class MenuLikeCell: UITableViewCell {
     private func updateLikeState() {
         
         let image = isLiked
-            ? EATSSUDesignAsset.Images.thumbUp.image // 채워진 좋아요
-            : EATSSUDesignAsset.Images.thumbUpGray.image // 빈 좋아요
+            ? EATSSUDesignAsset.Images.thumbUp.image
+            : EATSSUDesignAsset.Images.thumbUpGray.image
         
         DispatchQueue.main.async {
             // 버튼 이미지 업데이트
             let resizedImage = image.withRenderingMode(.alwaysOriginal)
             self.likeButton.setImage(resizedImage, for: .normal)
             
-            // 컨테이너 스타일 업데이트
             if self.isLiked {
-                self.likeContainer.backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color // 배경색
-                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.Main.primary.color.cgColor // 테두리 색
+                self.likeContainer.backgroundColor = EATSSUDesignAsset.Color.Main.secondary.color
+                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.Main.primary.color.cgColor
             } else {
-                self.likeContainer.backgroundColor = .clear // 배경색 제거
-                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor // 테두리 색
+                self.likeContainer.backgroundColor = .clear
+                self.likeContainer.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
             }
         }
     }
