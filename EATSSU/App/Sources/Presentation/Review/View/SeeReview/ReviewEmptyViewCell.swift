@@ -2,7 +2,7 @@
 //  ReviewEmptyViewCell.swift
 //  EatSSU-iOS
 //
-//  Created by 박윤빈 on 2023/11/26.
+//  Created by 한금준 on 10/4/25.
 //
 
 import UIKit
@@ -10,9 +10,6 @@ import SnapKit
 
 import EATSSUDesign
 
-// MARK: - ReviewEmptyViewCell
-
-/// 리뷰가 없을 때 표시하는 빈 상태 셀
 final class ReviewEmptyViewCell: UITableViewCell {
     
     // MARK: - Properties
@@ -75,13 +72,11 @@ final class ReviewEmptyViewCell: UITableViewCell {
     }
     
     // MARK: - UI Configuration
-    
-    /// UI 컴포넌트 추가
+
     private func setupUI() {
         contentView.addSubview(stackView)
     }
-    
-    /// 레이아웃 제약조건 설정
+
     private func setLayout() {
         stackView.snp.makeConstraints {
             $0.center.equalToSuperview()

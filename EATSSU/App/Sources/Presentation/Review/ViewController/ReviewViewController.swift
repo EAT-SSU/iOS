@@ -12,9 +12,6 @@ import Moya
 
 import EATSSUDesign
 
-// MARK: - ReviewViewController
-
-/// 메뉴의 리뷰 목록과 통계를 표시하는 뷰 컨트롤러
 final class ReviewViewController: BaseViewController {
     
     // MARK: - Properties
@@ -105,7 +102,6 @@ final class ReviewViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // 데이터 로드
         getStatistics()
         if type == "VARIABLE" {
             getValidMenusForReview()
@@ -178,9 +174,7 @@ final class ReviewViewController: BaseViewController {
     
     // MARK: - TableView Setup
     
-    /// 테이블뷰 설정
     private func setTableView() {
-        // 셀 등록
         reviewTableView.register(
             ReviewTableCell.self,
             forCellReuseIdentifier: ReviewTableCell.identifier
@@ -198,7 +192,6 @@ final class ReviewViewController: BaseViewController {
             forCellReuseIdentifier: ReviewDividerCell.identifier
         )
         
-        // 델리게이트 설정
         reviewTableView.delegate = self
         reviewTableView.dataSource = self
     }
@@ -208,7 +201,6 @@ final class ReviewViewController: BaseViewController {
     /// 리뷰 작성 버튼 탭 처리
     @objc private func handleAddReviewButtonTap() {
         if type == "VARIABLE" {
-            // 가변 메뉴 (식사)
             let reviewVC = SetRateViewController(mealId: menuID)
             reviewVC.dataBind(
                 list: validMenusForReview.map { $0.name },
@@ -217,7 +209,6 @@ final class ReviewViewController: BaseViewController {
             navigationController?.pushViewController(reviewVC, animated: true)
             
         } else {
-            // 고정 메뉴
             let reviewVC = SetRateViewController(menuId: menuID)
             reviewVC.dataBind(
                 list: menuNameList,
@@ -244,7 +235,6 @@ final class ReviewViewController: BaseViewController {
     /// 리뷰 삭제 확인 알림 표시
     /// - Parameter data: 리뷰 데이터
     private func showDeleteAlert(data: ReviewListItem) {
-        // 작성자가 아니면 신고 알림 표시
         if !data.isWriter {
             self.showReportAlert(reviewID: data.reviewId)
             return
@@ -425,9 +415,9 @@ extension ReviewViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1  // 통계 셀
+            return 1
         case 1:
-            return 1  // 구분선 셀
+            return 1
         case 2:
             return reviewList.count == 0 ? 1 : reviewList.count  // 리뷰 목록 또는 빈 상태
         default:
@@ -442,15 +432,12 @@ extension ReviewViewController: UITableViewDataSource {
     ) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            // 통계 셀
             return configureStatisticsCell(tableView, indexPath: indexPath)
             
         case 1:
-            // 구분선 셀
             return configureDividerCell(tableView, indexPath: indexPath)
             
         case 2:
-            // 리뷰 목록 또는 빈 상태 셀
             return configureReviewCell(tableView, indexPath: indexPath)
             
         default:
@@ -512,7 +499,6 @@ extension ReviewViewController: UITableViewDataSource {
         indexPath: IndexPath
     ) -> UITableViewCell {
         if reviewList.count == 0 {
-            // 빈 상태 셀
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: ReviewEmptyViewCell.identifier,
                 for: indexPath
@@ -527,23 +513,20 @@ extension ReviewViewController: UITableViewDataSource {
             return cell
             
         } else {
-            // 리뷰 셀
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: ReviewTableCell.identifier,
                 for: indexPath
             ) as? ReviewTableCell ?? ReviewTableCell()
             
-            // 좋아요 여부와 무관하게 모든 메뉴 태그 표시 (isLike == true 인 경우에만 thumbUp 아이콘 표시)
             let reviewItem = reviewList[indexPath.row]
             cell.dataBind(response: reviewItem)
             
-            // 더보기 버튼 핸들러
             cell.handler = { [weak self] in
                 guard let self else { return }
                 
                 reviewList[indexPath.row].isWriter
-                    ? self.showDeleteAlert(data: reviewList[indexPath.row])
-                    : self.showReportAlert(reviewID: reviewList[indexPath.row].reviewId)
+                ? self.showDeleteAlert(data: reviewList[indexPath.row])
+                : self.showReportAlert(reviewID: reviewList[indexPath.row].reviewId)
             }
             
             cell.selectionStyle = .none
@@ -704,7 +687,6 @@ extension ReviewViewController {
             case .success:
                 print("✅ Review 삭제 성공")
                 
-                // 데이터 새로고침
                 self.getStatistics()
                 if self.type == "VARIABLE" {
                     self.getValidMenusForReview()

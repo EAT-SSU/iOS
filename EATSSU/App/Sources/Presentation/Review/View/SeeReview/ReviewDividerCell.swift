@@ -10,9 +10,6 @@ import SnapKit
 
 import EATSSUDesign
 
-// MARK: - ReviewDividerCell
-
-/// 리뷰 섹션을 구분하고 리뷰 개수를 표시하는 셀
 final class ReviewDividerCell: UITableViewCell {
     
     // MARK: - Properties
@@ -50,14 +47,12 @@ final class ReviewDividerCell: UITableViewCell {
     }
     
     // MARK: - UI Configuration
-    
-    /// UI 컴포넌트 추가
+
     private func setupUI() {
         contentView.addSubview(divider)
         contentView.addSubview(label)
     }
-    
-    /// 레이아웃 제약조건 설정
+
     private func setLayout() {
         divider.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()

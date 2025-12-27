@@ -15,31 +15,27 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     
     // MARK: - Properties
     override var shouldHideTabBar: Bool { true }
-    
-    // Data Model
+
     private var reviewType: ReviewType = .variable
     private var mealID: Int?
     private var menuID: Int?
-    private var reviewId: Int? // 수정 시 사용되는 리뷰 ID
-    
-    // Review Data State
+    private var reviewId: Int?
+
     private var validMenuIDList: [Int] = []
     private var selectedList: [String] = []
     private var likedStates: [Bool] = []
     private var userPickedImage: UIImage?
-    
-    // State Flags
+
     private var isReviewSubmitted = false
     
     
     enum ReviewType {
-        case fixed // 단일 메뉴 리뷰
-        case variable // 식단 리뷰 (여러 메뉴)
+        case fixed
+        case variable
     }
     
     // MARK: - UI Components
-    
-    // Root View
+
     private let setRateView = SetRateView()
     private let imagePickerController = UIImagePickerController()
     
@@ -47,7 +43,6 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        // 리뷰 수정 모드에서는 이 초기화를 사용하며, reviewType 등은 dataBindForFix에서 설정됩니다.
     }
     
     init(mealId: Int) {
@@ -90,7 +85,6 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // 테이블뷰 content size에 따라 높이 제약조건 업데이트
         setRateView.menuTableViewHeightConstraint?.update(offset: setRateView.menuTableView.contentSize.height)
     }
     
@@ -111,8 +105,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         setRateView.nextButton.addTarget(self, action: #selector(tappedNextButton), for: .touchUpInside)
         setRateView.selectImageButton.addTarget(self, action: #selector(didSelectedImage), for: .touchUpInside)
         setRateView.closeButton.addTarget(self, action: #selector(didTappedImageView), for: .touchUpInside)
-        
-        // 이미지 뷰 탭 제스처
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTappedImageView))
         setRateView.userReviewImageView.addGestureRecognizer(tapGesture)
     }
@@ -145,21 +138,18 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     }
     
     // MARK: - Setup & Delegate
-    
-    /// 초기 데이터 (유효 메뉴 목록)를 가져오거나 기본 설정을 합니다.
+
     private func setupInitialDataFetch() {
         if reviewId == nil {
             if reviewType == .variable, let mealId = mealID {
                 fetchValidMenus(mealId: mealId)
             } else if reviewType == .fixed {
-                // Fixed 메뉴는 초기 좋아요 상태만 설정 (메뉴명은 DataBind에서 처리)
                 likedStates = [false]
                 setRateView.menuTableView.reloadData()
             }
         }
     }
-    
-    /// Delegate 및 DataSource를 설정합니다.
+
     private func setDelegates() {
         setRateView.menuTableView.register(MenuLikeCell.self, forCellReuseIdentifier: MenuLikeCell.identifier)
         setRateView.menuTableView.dataSource = self
@@ -174,8 +164,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     }
     
     // MARK: - Data Binding
-    
-    /// 일반 리뷰 작성 시 메뉴 목록 데이터를 바인딩합니다.
+
     func dataBind(list: [String], idList: [Int]) {
         self.selectedList = list
         self.validMenuIDList = idList
@@ -190,8 +179,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         
         setRateView.menuTableView.reloadData()
     }
-    
-    /// 리뷰 수정 (Fixed 타입) 시 데이터를 바인딩합니다. (사용되지 않으나 원본 유지)
+
     func dataBindForFix(menuNames: [String], menuIds: [Int], likedStates: [Bool]) {
         self.selectedList = menuNames
         self.validMenuIDList = menuIds
@@ -202,8 +190,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         setRateView.menuTableView.reloadData()
         view.setNeedsLayout()
     }
-    
-    /// 리뷰 수정 모드 시작 시 설정합니다. (리뷰 ID 바인딩) - 기존 방식
+
     func dataBindForFix(list: [String], reviewId: Int) {
         self.selectedList = list
         self.reviewId = reviewId
@@ -214,8 +201,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         setRateView.deleteMethodLabel.isHidden = true
         setRateView.nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
     }
-    
-    /// ✅ 새로운 dataBindForFix 메서드 (MyReviewViewController에서 사용)
+
     func dataBindForFix(
         list: [String],
         reviewId: Int,
@@ -225,59 +211,49 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         menuIds: [Int],
         likedMenuIds: [Int]
     ) {
-        // 1. 기본 정보 설정
         self.selectedList = list
         self.reviewId = reviewId
         self.validMenuIDList = menuIds
-        
-        // 2. 리뷰 타입 결정
+
         if menuIds.count == 1 {
             self.reviewType = .fixed
             self.menuID = menuIds.first
         } else {
             self.reviewType = .variable
         }
-        
-        // 3. 좋아요 상태 복원
+ 
         self.likedStates = menuIds.map { menuId in
             likedMenuIds.contains(menuId)
         }
-        
-        // 4. UI 업데이트
+
         setRateView.menuLabel.text = list.count == 1
             ? "\(list[0]) 를/을 추천하시겠어요?"
             : "메뉴를 추천하시겠어요?"
-        
-        // 5. 별점 설정
+
         if let rating = rating {
             setRateView.rateView.currentStar = rating
             setRateView.rateView.settingStarForFix(currentStar: rating)
         }
-        
-        // 6. 리뷰 텍스트 설정
+
         if let content = content, !content.isEmpty {
             setRateView.userReviewTextView.text = content
             setRateView.userReviewTextView.textColor = .black
             setRateView.maximumWordLabel.text = "\(content.count) / 300"
         }
-        
-        // 7. 이미지 설정
+
         if let firstImageUrl = imageUrls.first, !firstImageUrl.isEmpty {
             setRateView.userReviewImageView.kfSetImage(url: firstImageUrl)
             setRateView.updateImageViewState(image: setRateView.userReviewImageView.image, count: 1, isHidden: false)
         } else {
             setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
         }
-        
-        // 8. 버튼 및 이미지 선택 UI 설정
+   
         setRateView.nextButton.setTitle("완료하기", for: .normal)
-        
-        // 9. 테이블뷰 리로드
         setRateView.menuTableView.reloadData()
         view.setNeedsLayout()
     }
     
-    /// 수정할 리뷰의 기존 내용을 화면에 표시합니다.
+    /// 수정할 리뷰의 기존 내용을 화면에 표시
     func settingForReviewFix(data: ReviewListItem) {
         // 별점 설정
         setRateView.rateView.currentStar = Int(data.rating)
@@ -287,16 +263,14 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         setRateView.userReviewTextView.text = data.content ?? ""
         setRateView.userReviewTextView.textColor = .black
         setRateView.maximumWordLabel.text = "\(data.content?.count ?? 0) / 300"
-        
-        // 이미지 설정 (kfSetImage는 Kingfisher 확장 가정)
+
         if let imageUrl = data.imageUrls.first, !imageUrl.isEmpty {
             setRateView.userReviewImageView.kfSetImage(url: imageUrl)
             setRateView.updateImageViewState(image: setRateView.userReviewImageView.image, count: 1, isHidden: false)
         } else {
             setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
         }
-        
-        // 좋아요 상태 복원
+
         if let menuLikes = data.menu {
             self.likedStates = validMenuIDList.map { menuId in
                 return menuLikes.first(where: { $0.menuId == menuId })?.isLike ?? false
@@ -307,7 +281,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     
     // MARK: - Menu Like Logic
     
-    /// 리뷰 좋아요/취소 상태를 토글합니다.
+    /// 리뷰 좋아요/취소 상태를 토글
     private func toggleLike(for index: Int) {
         likedStates[index].toggle()
         let idx = IndexPath(row: index, section: 0)
@@ -320,19 +294,18 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     }
     
     // MARK: - Image Handling Actions
-    
-    /// 이미지 선택 버튼 탭 시 ImagePicker를 표시합니다.
+
     @objc func didSelectedImage() {
         present(imagePickerController, animated: true)
     }
-    
-    /// 이미지 뷰 탭 또는 삭제 버튼 탭 시 이미지를 삭제합니다.
+
     @objc func didTappedImageView() {
         userPickedImage = nil
         setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
     }
     
     // MARK: - Custom Back Button Action
+    
     @objc private func didTapCustomBackButton() {
         checkReviewStatusAndConfirmExit { [weak self] shouldPop in
             guard let self = self else { return }
@@ -344,17 +317,14 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     }
     
     // MARK: - Review Submission Logic
-    
-    /// 리뷰 작성/수정 버튼 탭 시 호출됩니다.
+
     @objc
     func tappedNextButton() {
-        // 1. 유효성 검증 (별점만 필수)
         guard setRateView.rateView.currentStar != 0 else {
             showToast(message: "별점을 입력해주세요!", type: .info)
             return
         }
 
-        // 2. 리뷰 전송 분기
         if reviewId != nil {
             sendFixReview()
         } else {
@@ -367,27 +337,23 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
     }
     
-    /// ✅ 리뷰 작성/수정 완료 후 이전 화면으로 돌아갑니다.
+    /// 리뷰 작성/수정 완료 후 이전 화면
     private func moveToReviewVC() {
-        // 1. MyReviewViewController가 네비게이션 스택에 있는지 확인
         if let myReviewVC = navigationController?.viewControllers.first(where: { $0 is MyReviewViewController }) as? MyReviewViewController {
             navigationController?.popToViewController(myReviewVC, animated: true)
             return
         }
-        
-        // 2. ReviewViewController가 네비게이션 스택에 있는지 확인
+
         if let reviewVC = navigationController?.viewControllers.first(where: { $0 is ReviewViewController }) as? ReviewViewController {
             reviewVC.setReviewSubmittedSuccessfully()
             navigationController?.popToViewController(reviewVC, animated: true)
-            
-            // HomeViewController 새로고침
+
             if let homeVC = navigationController?.viewControllers.first as? HomeViewController {
                 homeVC.refreshAfterReview()
             }
             return
         }
-        
-        // 3. 어느 것도 없으면 그냥 이전 화면으로
+
         navigationController?.popViewController(animated: true)
     }
 }
@@ -396,7 +362,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
 
 extension SetRateViewController {
     
-    /// Meal(Variable) 리뷰 작성을 위한 유효 메뉴 목록을 요청합니다.
+    /// Meal(Variable) 리뷰 작성을 위한 유효 메뉴 목록을 요청
     private func fetchValidMenus(mealId: Int) {
         NetworkService.shared.request(
             ReviewRouter.getValidMenusForReview(mealId),
@@ -464,7 +430,6 @@ extension SetRateViewController {
             return
         }
 
-        // Normalize review text: send nil if empty or placeholder
         let rawText = setRateView.userReviewTextView.text ?? ""
         let trimmedText = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
         let content = trimmedText.isEmpty || trimmedText == placeholderText ? nil : trimmedText
@@ -508,7 +473,6 @@ extension SetRateViewController {
             return
         }
 
-        // Normalize review text: send nil if empty or placeholder
         let rawText = setRateView.userReviewTextView.text ?? ""
         let trimmedText = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
         let content = trimmedText.isEmpty || trimmedText == placeholderText ? nil : trimmedText
@@ -632,8 +596,7 @@ extension SetRateViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         cell.dataBind(menu: selectedList[indexPath.row], isLiked: likedStates[indexPath.row])
-        
-        // Controller가 Cell의 좋아요 탭 이벤트를 처리합니다.
+
         cell.onLikeTapped = { [weak self] in
             guard let self else { return }
             self.toggleLike(for: indexPath.row)
@@ -651,8 +614,7 @@ extension SetRateViewController: UITableViewDataSource, UITableViewDelegate {
 // MARK: - UITextViewDelegate
 
 extension SetRateViewController: UITextViewDelegate {
-    
-    // 플레이스홀더 텍스트
+
     private var placeholderText: String {
         return "메뉴에 대한 상세한 리뷰를 작성해주세요"
     }
@@ -747,7 +709,6 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UIGestureRecog
 // MARK: - Keyboard Handling
 
 extension SetRateViewController {
-    // 키보드 등장 시 View를 위로 올립니다.
     @objc func keyboardWillShow(_ noti: NSNotification) {
         if let keyboardFrame: NSValue = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
@@ -757,8 +718,7 @@ extension SetRateViewController {
             }
         }
     }
-    
-    // 키보드 사라질 때 View를 원래 위치로 되돌립니다.
+
     @objc func keyboardWillHide(_: NSNotification) {
         view.transform = .identity
         navigationController?.isNavigationBarHidden = false

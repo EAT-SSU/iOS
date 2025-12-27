@@ -2,7 +2,7 @@
 //  RateNumberView.swift
 //  EatSSU-iOS
 //
-//  Created by 박윤빈 on 2023/06/29.
+//  Created by 한금준 on 2025/10/04.
 //
 
 import UIKit
@@ -10,9 +10,6 @@ import SnapKit
 
 import EATSSUDesign
 
-// MARK: - RateNumberView
-
-/// 별점을 시각적으로 표시하는 커스텀 뷰
 final class RateNumberView: BaseUIView {
     
     // MARK: - Properties
@@ -52,41 +49,34 @@ final class RateNumberView: BaseUIView {
     }
     
     // MARK: - UI Configuration
-    
-    /// UI 컴포넌트 설정
+
     override func configureUI() {
         addSubviews(rateNumberStackView)
-        
-        // 5개의 별 이미지뷰 생성
+  
         starImageViews = (0..<5).map { _ in
             let imageView = UIImageView()
             imageView.image = emptyStarImage
             return imageView
         }
-        
-        // 별 스택뷰 설정
+ 
         starsStackView.axis = .horizontal
         starsStackView.spacing = 3
         starsStackView.alignment = .bottom
         starImageViews.forEach { starsStackView.addArrangedSubview($0) }
-        
-        // 전체 레이팅 스택뷰 설정
+
         rateNumberStackView.axis = .horizontal
         rateNumberStackView.spacing = 6
         rateNumberStackView.alignment = .bottom
     }
-    
-    /// 레이아웃 제약조건 설정
+
     override func setLayout() {
-        // 각 별의 크기 설정
         starImageViews.forEach {
             $0.snp.makeConstraints {
                 $0.height.equalTo(12.adjusted)
                 $0.width.equalTo(12.adjusted)
             }
         }
-        
-        // 전체 스택뷰 제약조건
+
         rateNumberStackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

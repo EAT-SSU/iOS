@@ -2,7 +2,7 @@
 //  ReviewRateViewCell.swift
 //  EatSSU-iOS
 //
-//  Created by 박윤빈 on 2023/11/26.
+//  Created by 한금준 on 10/4/25.
 //
 
 import UIKit
@@ -10,9 +10,6 @@ import SnapKit
 
 import EATSSUDesign
 
-// MARK: - ReviewRateViewCell
-
-/// 메뉴 정보와 별점 통계를 표시하는 셀
 final class ReviewRateViewCell: UITableViewCell {
     
     // MARK: - Properties
@@ -195,8 +192,7 @@ final class ReviewRateViewCell: UITableViewCell {
     }
     
     // MARK: - UI Configuration
-    
-    /// UI 컴포넌트 설정
+
     func configureUI() {
         backgroundColor = .white
         
@@ -220,8 +216,7 @@ final class ReviewRateViewCell: UITableViewCell {
         let fiveBar = makeChartBar()
         fiveChartBar = fiveBar.container
         fiveForeground = fiveBar.foreground
-        
-        // 서브뷰 추가
+
         contentView.addSubviews(menuContainer, rateSectionContainer)
         menuContainer.addSubviews(menuTitleStackView, menuLabel)
         rateSectionContainer.addSubviews(
@@ -234,10 +229,8 @@ final class ReviewRateViewCell: UITableViewCell {
             fiveChartBar
         )
     }
-    
-    /// 레이아웃 제약조건 설정
+
     func setLayout() {
-        // 메뉴 컨테이너
         menuContainer.snp.makeConstraints { make in
             make.top.equalTo(contentView.snp.top).offset(0)
             make.centerX.equalToSuperview()
@@ -259,8 +252,7 @@ final class ReviewRateViewCell: UITableViewCell {
             make.leading.trailing.equalToSuperview().inset(28)
             make.bottom.equalToSuperview().inset(16)
         }
-        
-        // 별점 섹션
+
         rateSectionContainer.snp.makeConstraints { make in
             make.top.equalTo(menuLabel.snp.bottom).offset(40)
             make.centerX.equalToSuperview().offset(16)
@@ -280,8 +272,7 @@ final class ReviewRateViewCell: UITableViewCell {
             make.leading.equalTo(totalRateStackView.snp.trailing).offset(36)
             make.centerY.equalTo(totalRateStackView)
         }
-        
-        // 차트 바들
+
         oneChartBar.snp.makeConstraints { make in
             make.centerY.equalTo(onePointLabel)
             make.leading.equalTo(onePointLabel.snp.trailing).offset(7)
@@ -316,8 +307,7 @@ final class ReviewRateViewCell: UITableViewCell {
             make.height.equalTo(5)
             make.width.equalTo(115)
         }
-        
-        // 포인트 레이블 높이
+
         for item in [onePointLabel, twoPointLabel, threePointLabel, fourPointLabel, fivePointLabel] {
             item.snp.makeConstraints {
                 $0.height.equalTo(18.adjusted)

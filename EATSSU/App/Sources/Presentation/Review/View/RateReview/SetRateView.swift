@@ -13,21 +13,18 @@ import EATSSUDesign
 final class SetRateView: UIView {
     
     // MARK: - Properties
-    
-    /// 메뉴 테이블뷰 높이 제약조건 (Controller에서 content size에 따라 업데이트)
+
     var menuTableViewHeightConstraint: Constraint?
     
     // MARK: - UI Components
-    
-    // Scroll View Container
+
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         return scrollView
     }()
     
     let contentView: UIView = UIView()
-    
-    // Review Rate Section
+
     let menuLabel: UILabel = {
         let label = UILabel()
         label.text = "오늘의 식사는 어떠셨나요?"
@@ -37,8 +34,7 @@ final class SetRateView: UIView {
     }()
     
     let rateView = RateView()
-    
-    // Menu Like Section
+
     let detailLabel: UILabel = {
         let label = UILabel()
         label.text = "추천하고 싶은 메뉴가 있나요?"
@@ -51,12 +47,11 @@ final class SetRateView: UIView {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
-        tableView.isScrollEnabled = false // 높이를 content size에 맞춤
-        tableView.rowHeight = 48.adjusted // Cell height
+        tableView.isScrollEnabled = false
+        tableView.rowHeight = 48.adjusted
         return tableView
     }()
-    
-    // Review Text Section
+
     let userReviewTextView: UITextView = {
         let textView = UITextView()
         textView.font = .body1
@@ -75,8 +70,7 @@ final class SetRateView: UIView {
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         return label
     }()
-    
-    // Image Section
+
     let selectImageButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.plain()
@@ -84,7 +78,6 @@ final class SetRateView: UIView {
         config.imagePlacement = .top
         config.imagePadding = 3.5
         config.image?.withTintColor(EATSSUDesignAsset.Color.GrayScale.gray300.color)
-        // Leave space at bottom for "사진 0/1"
         config.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 0, bottom: 19, trailing: 0)
         button.configuration = config
         button.layer.borderWidth = 1
@@ -108,9 +101,9 @@ final class SetRateView: UIView {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
-        imageView.isUserInteractionEnabled = true // Controller에서 제스처 추가
+        imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
-        imageView.isHidden = true // 초기 상태 숨김
+        imageView.isHidden = true
         return imageView
     }()
     
@@ -129,8 +122,7 @@ final class SetRateView: UIView {
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         return label
     }()
-    
-    // Bottom Button Section
+
     let buttonContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -152,7 +144,7 @@ final class SetRateView: UIView {
         
         setupUI()
         setupLayout()
-        // 뷰 초기 상태 설정
+  
         setInitialTextViewState()
     }
     
@@ -185,8 +177,7 @@ final class SetRateView: UIView {
         )
         
         selectImageButton.addSubview(imageCountLabel)
-        
-        // 1. ScrollView & ContentView
+
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(buttonContainer.snp.top)
@@ -196,8 +187,7 @@ final class SetRateView: UIView {
             make.edges.equalToSuperview()
             make.width.equalTo(scrollView)
         }
-        
-        // 2. Bottom Button
+
         buttonContainer.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(safeAreaLayoutGuide)
@@ -208,8 +198,7 @@ final class SetRateView: UIView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.top.equalToSuperview().offset(12)
         }
-        
-        // 3. Main Content
+
         menuLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.centerX.equalToSuperview()
@@ -230,7 +219,7 @@ final class SetRateView: UIView {
             $0.top.equalTo(detailLabel.snp.bottom).offset(20)
             $0.leading.equalToSuperview().offset(32)
             $0.trailing.equalToSuperview().offset(-32)
-            // 초기 높이 제약조건 설정 (Controller에서 업데이트)
+
             self.menuTableViewHeightConstraint = $0.height.equalTo(0).constraint
         }
         
@@ -277,15 +266,13 @@ final class SetRateView: UIView {
     }
     
     // MARK: - Public Methods
-    
-    /// 리뷰 텍스트뷰의 초기 상태를 설정합니다.
+
     func setInitialTextViewState() {
         userReviewTextView.text = "메뉴에 대한 상세한 리뷰를 작성해주세요"
         userReviewTextView.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         userReviewTextView.font = .body2
     }
-    
-    /// 이미지 뷰와 관련 UI를 업데이트합니다.
+
     func updateImageViewState(image: UIImage?, count: Int, isHidden: Bool) {
         userReviewImageView.image = image
         userReviewImageView.isHidden = isHidden

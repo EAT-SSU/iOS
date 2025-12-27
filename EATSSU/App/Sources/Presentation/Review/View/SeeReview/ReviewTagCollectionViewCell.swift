@@ -10,9 +10,6 @@ import SnapKit
 
 import EATSSUDesign
 
-// MARK: - ReviewTagCollectionViewCell
-
-/// 리뷰의 메뉴 태그를 표시하는 컬렉션뷰 셀
 final class ReviewTagCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
@@ -83,10 +80,8 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - UI Configuration
-    
-    /// UI 컴포넌트 설정
+
     private func setupViews() {
-        // 배경 및 테두리 설정
         contentView.backgroundColor = UIColor.secondary
         contentView.layer.borderColor = UIColor.primary.cgColor
         contentView.layer.borderWidth = 1
@@ -96,13 +91,11 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         
         iconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
         iconImageView.setContentHuggingPriority(.required, for: .horizontal)
-        
-        // 스택뷰 구성
+
         stackView.addArrangedSubview(iconImageView)
         stackView.addArrangedSubview(titleLabel)
         contentView.addSubview(stackView)
-        
-        // 레이아웃 설정
+
         iconImageView.snp.makeConstraints { make in
             make.width.height.equalTo(12)
         }
@@ -114,7 +107,6 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
             make.bottom.equalToSuperview().inset(5)
         }
 
-        // (Optional) Ensure cell height is fixed at 22pt in self-sizing contexts
         contentView.snp.makeConstraints { make in
             make.height.equalTo(22)
         }
@@ -148,10 +140,9 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
 
         let labelSize = label.sizeThatFits(CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
 
-        // 아이콘(10) + spacing(4) + 여백(8+8) = 30
         let iconWidth: CGFloat = isLiked ? 14 : 0
         let totalWidth = labelSize.width + iconWidth + 16
-        let height: CGFloat = 22 // 고정 높이
+        let height: CGFloat = 22 
 
         return CGSize(width: ceil(totalWidth), height: height)
     }

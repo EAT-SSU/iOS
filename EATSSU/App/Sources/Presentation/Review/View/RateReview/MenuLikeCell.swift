@@ -16,10 +16,7 @@ final class MenuLikeCell: UITableViewCell {
     
     static let identifier = "MenuLikeCell"
     
-    /// 좋아요 버튼 탭 핸들러 (Controller에게 이벤트 전달)
     var onLikeTapped: (() -> Void)?
-    
-    /// 좋아요 상태
     var isLiked: Bool = false {
         didSet {
             updateLikeState()
@@ -48,7 +45,7 @@ final class MenuLikeCell: UITableViewCell {
         return button
     }()
     
-    /// 좋아요 버튼 컨테이너 (탭 제스처 인식 영역)
+    /// 좋아요 버튼 컨테이너
     private let likeContainer: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 14
@@ -59,7 +56,7 @@ final class MenuLikeCell: UITableViewCell {
         return view
     }()
     
-    /// 가로 스택뷰 (메뉴 레이블 + 좋아요 컨테이너)
+    /// 스택뷰 (메뉴 레이블 + 좋아요 컨테이너)
     private lazy var hStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [menuLabel, likeContainer])
         stack.axis = .horizontal
@@ -83,16 +80,14 @@ final class MenuLikeCell: UITableViewCell {
     }
     
     // MARK: - Configuration
-    
-    /// UI 컴포넌트 설정
+
     private func setupUI() {
         selectionStyle = .none
         
         contentView.addSubview(hStack)
         likeContainer.addSubview(likeButton)
     }
-    
-    /// 레이아웃 제약조건 설정
+
     private func setLayout() {
         hStack.snp.makeConstraints {
             $0.verticalEdges.equalToSuperview().inset(12).priority(.high)
@@ -109,8 +104,7 @@ final class MenuLikeCell: UITableViewCell {
             $0.size.equalTo(CGSize(width: 18, height: 18))
         }
     }
-    
-    /// 제스처 설정
+
     private func setupGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(likeTapped))
         likeContainer.isUserInteractionEnabled = true
@@ -119,7 +113,7 @@ final class MenuLikeCell: UITableViewCell {
     
     // MARK: - Actions
     
-    /// 좋아요 버튼 탭 처리 (Controller에게 이벤트 전달)
+    /// 좋아요 버튼 탭 처리
     @objc private func likeTapped() {
         onLikeTapped?()
     }
@@ -137,7 +131,7 @@ final class MenuLikeCell: UITableViewCell {
     
     // MARK: - Private Methods
     
-    /// 좋아요 상태에 따라 UI 업데이트
+    /// 좋아요 상태에 따른 UI 업데이트
     private func updateLikeState() {
         
         let image = isLiked
@@ -145,7 +139,6 @@ final class MenuLikeCell: UITableViewCell {
             : EATSSUDesignAsset.Images.thumbUpGray.image
         
         DispatchQueue.main.async {
-            // 버튼 이미지 업데이트
             let resizedImage = image.withRenderingMode(.alwaysOriginal)
             self.likeButton.setImage(resizedImage, for: .normal)
             
