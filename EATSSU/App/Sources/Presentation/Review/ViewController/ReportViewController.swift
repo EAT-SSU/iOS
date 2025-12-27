@@ -76,7 +76,7 @@ final class ReportViewController: BaseViewController {
         
         sendToEATSSUButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(view).inset(24)
-            make.height.equalTo(52)
+//            make.height.equalTo(52)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(24)
         }
         
