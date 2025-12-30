@@ -2,26 +2,28 @@
 //  RateView.swift
 //  EatSSU-iOS
 //
-//  Created by 박윤빈 on 2023/03/24.
+//  Created by 한금준 on 2025/09/28.
 //
 
 import UIKit
-
 import SnapKit
 
 import EATSSUDesign
 
-final class RateView: BaseUIView {
+final class RateView: BaseUIView { 
+    
     // MARK: - Properties
 
     var buttons: [UIButton] = []
     var currentStar: Int = 0
-    var starNumber: Int = 5 {
-        didSet { bind() } /// 초기화할 별의 개수 (button의 개수)
-    }
+    private var starNumber: Int = 5 // 내부 프로퍼티로 변경
 
-    // MARK: - UI Component
-
+    private lazy var starFillImage: UIImage? = EATSSUDesignAsset.Images.icStarYellow.image
+    private lazy var starEmptyImage: UIImage? = EATSSUDesignAsset.Images.icStarGray.image
+    
+    // MARK: - UI Components
+    
+    /// 별들을 가로로 배치하는 스택뷰
     lazy var starStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
@@ -29,64 +31,82 @@ final class RateView: BaseUIView {
         view.backgroundColor = .white
         return view
     }()
-
-    lazy var starFillImage: UIImage? = EATSSUDesignAsset.Images.icStarYellow.image
-
-    lazy var starEmptyImage: UIImage? = EATSSUDesignAsset.Images.icStarGray.image
-
+    
+    // MARK: - Initialization
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        bind()
+        setupStars()
+        configureUI()
+        setLayout()
     }
-
+    
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - UI Configuration
 
-    // MARK: - Functions
-
-    override func configureUI() {
+    internal override func configureUI() {
         addSubview(starStackView)
     }
 
-    override func setLayout() {
+    internal override func setLayout() {
         starStackView.snp.makeConstraints { make in
-            make.top.leading.bottom.trailing.equalToSuperview()
+            make.edges.equalToSuperview()
         }
     }
+    
+    // MARK: - Private Methods
 
-    /// 별점 버튼 초기화. tag 생성이 핵심
-    func bind() {
-        for i in 0 ..< 5 {
+    private func setupStars() {
+        buttons.forEach { $0.removeFromSuperview() }
+        buttons.removeAll()
+
+        for i in 0..<starNumber {
             let button = UIButton()
             button.setImage(starEmptyImage, for: .normal)
             button.tag = i
-            buttons += [button]
+            button.addTarget(self, action: #selector(didTappedStar(sender:)), for: .touchUpInside)
+            button.snp.makeConstraints { make in
+                make.width.equalTo(29.3)
+            }
+            
+            buttons.append(button)
             starStackView.addArrangedSubview(button)
-            button.addTarget(self, action: #selector(didTappedTag(sender:)), for: .touchUpInside)
         }
     }
-
-    /// tag를 이용한 선택처리
+    
+    // MARK: - Actions
+    
+    /// 별 버튼 탭 처리
+    /// - Parameter sender: 탭된 버튼
     @objc
-    private func didTappedTag(sender: UIButton) {
-        let end = sender.tag
-        for i in 0 ... end {
-            buttons[i].setImage(starFillImage, for: .normal)
-        }
-        for i in end + 1 ..< starNumber {
-            buttons[i].setImage(starEmptyImage, for: .normal)
-        }
-        currentStar = end + 1
-    }
+    private func didTappedStar(sender: UIButton) {
+        let selectedIndex = sender.tag
+        currentStar = selectedIndex + 1
 
-    func settingStarForFix(currentStar: Int) {
-        for i in 0 ... currentStar - 1 {
+        updateStars()
+    }
+    
+    /// 현재 currentStar 값에 따라 별 UI를 업데이트
+    private func updateStars() {
+        for i in 0..<currentStar {
             buttons[i].setImage(starFillImage, for: .normal)
         }
-        for i in currentStar ..< starNumber {
+
+        for i in currentStar..<starNumber {
             buttons[i].setImage(starEmptyImage, for: .normal)
         }
+    }
+    
+    // MARK: - Public Methods
+    
+    /// 리뷰 수정 시 기존 별점 설정 및 UI 업데이트
+    /// - Parameter currentStar: 설정할 별점 (1~5)
+    func settingStarForFix(currentStar: Int) {
+        self.currentStar = currentStar
+        updateStars()
     }
 }

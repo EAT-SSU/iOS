@@ -10,7 +10,10 @@ import UIKit
 import Moya
 
 enum MyRouter {
-    case myReview
+    case getMyReviewList(lastReviewId: Int?,
+                             page: Int? = 0,
+                             size: Int? = 20,
+                             sort: String? = "date,DESC")
     case myInfo
     case signOut
     case inquiry(param: InquiryRequest)
@@ -27,8 +30,8 @@ extension MyRouter: TargetType {
 
     var path: String {
         switch self {
-        case .myReview:
-            "/users/reviews"
+        case .getMyReviewList:
+            "users/v2/reviews"
         case .myInfo:
             "/users/mypage"
         case .signOut:
@@ -48,7 +51,7 @@ extension MyRouter: TargetType {
 
     var method: Moya.Method {
         switch self {
-        case .myReview, .departments, .colleges:
+        case .getMyReviewList, .departments, .colleges:
             .get
         case .myInfo, .getDepartment, .getMyPartnerships:
             .get
@@ -61,11 +64,23 @@ extension MyRouter: TargetType {
 
     var task: Moya.Task {
         switch self {
-        case .myReview:
-                .requestParameters(parameters: ["page": 0,
-                                                "size": 20,
-                                                "sort": "date,DESC"],
-                                   encoding: URLEncoding.queryString)
+        case let .getMyReviewList(lastReviewId, page, size, sort):
+                .requestParameters(
+                    parameters: {
+                        var dict: [String: Any] = [:]
+
+                        if let lastId = lastReviewId {
+                            dict["lastReviewId"] = lastId
+                        } else {
+                            dict["page"] = page ?? 0
+                        }
+
+                        dict["size"] = size ?? 20
+                        dict["sort"] = sort ?? "date,DESC"
+                        return dict
+                    }(),
+                    encoding: URLEncoding.queryString
+                )
         case .myInfo:
                 .requestPlain
         case .signOut:

@@ -59,6 +59,8 @@ final class HomeViewController: BaseViewController {
         navigationController?.setNavigationBarHidden(true, animated: animated)
         
         addNewDayObserver()
+        
+        self.tabBarController?.tabBar.isHidden = false
     }
 
     override func viewWillDisappear(_ animated: Bool) {
