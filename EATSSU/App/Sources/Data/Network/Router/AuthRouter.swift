@@ -22,9 +22,9 @@ extension AuthRouter: TargetType {
     var path: String {
         switch self {
         case .kakaoLogin:
-            "/oauths/kakao"
+            "/oauths/v2/kakao"
         case .appleLogin:
-            "/oauths/apple"
+            "/oauths/v2/apple"
         }
     }
 

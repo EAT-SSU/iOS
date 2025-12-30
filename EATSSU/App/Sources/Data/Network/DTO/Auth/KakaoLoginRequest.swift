@@ -10,4 +10,5 @@ import Foundation
 struct KakaoLoginRequest: Codable {
     let email: String
     let providerId: String
+    let deviceType: String
 }
