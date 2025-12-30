@@ -209,7 +209,7 @@ extension LoginViewController {
     /// 카카오 로그인을 위해 서버에 이메일/아이디를 보내는 요청
     private func postKakaoLoginRequest(email: String, id: String) {
         NetworkService.shared.request(
-            AuthRouter.kakaoLogin(param: KakaoLoginRequest(email: email, providerId: id)),
+            AuthRouter.kakaoLogin(param: KakaoLoginRequest(email: email, providerId: id, deviceType: "IOS")),
             responseType: SignResponse.self,
             useAuth: true
         ) { [weak self] result in
@@ -237,7 +237,7 @@ extension LoginViewController {
     /// 전달받은 identity token으로 Apple 로그인 요청
     private func postAppleLoginRequest(token: String) {
         NetworkService.shared.request(
-            AuthRouter.appleLogin(param: AppleLoginRequest(identityToken: token)),
+            AuthRouter.appleLogin(param: AppleLoginRequest(identityToken: token, deviceType: "IOS")),
             responseType: SignResponse.self,
             useAuth: true
         ) { [weak self] result in
