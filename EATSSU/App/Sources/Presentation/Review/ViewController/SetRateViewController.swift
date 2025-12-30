@@ -398,17 +398,21 @@ extension SetRateViewController {
             showToast(message: "수정할 리뷰 정보가 없습니다.")
             return
         }
-        
+
         _Concurrency.Task {
             do {
                 let menuLikes: [MenuLike] = validMenuIDList.enumerated().map { (index, menuId) in
                     MenuLike(menuId: menuId, isLike: likedStates[index])
                 }
-                
+
+                let rawText = setRateView.userReviewTextView.text ?? ""
+                let trimmedText = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+                let content = trimmedText.isEmpty || trimmedText == placeholderText ? nil : trimmedText
+
                 let request = FixedReviewRequestDTO(
                     rating: setRateView.rateView.currentStar,
                     menuLikes: menuLikes,
-                    content: setRateView.userReviewTextView.text
+                    content: content ?? ""
                 )
                 
                 try await postFixReview(reviewId: reviewId, request: request)
