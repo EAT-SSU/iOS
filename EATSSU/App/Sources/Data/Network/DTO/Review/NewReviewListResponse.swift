@@ -14,7 +14,7 @@ struct NewReviewListResponse: Codable {
 
 struct ReviewListItem: Codable {
     let reviewId: Int
-    var menu: [ReviewMenuInfo]?
+    var menu: [ReviewMenuInfo]?  // 항상 배열로 저장
     let writerId: Int?
     let isWriter: Bool
     let writerNickname: String
@@ -26,7 +26,8 @@ struct ReviewListItem: Codable {
 
     enum CodingKeys: String, CodingKey {
         case reviewId
-        case menu = "menuList"
+        case menu
+        case menuList
         case writerId
         case isWriter
         case writerNickname
@@ -40,7 +41,6 @@ struct ReviewListItem: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         reviewId = try container.decode(Int.self, forKey: .reviewId)
-        menu = try container.decodeIfPresent([ReviewMenuInfo].self, forKey: .menu)
         writerId = try container.decodeIfPresent(Int.self, forKey: .writerId)
         isWriter = try container.decode(Bool.self, forKey: .isWriter)
         writerNickname = try container.decode(String.self, forKey: .writerNickname)
@@ -48,12 +48,37 @@ struct ReviewListItem: Codable {
         writtenAt = try container.decode(String.self, forKey: .writtenAt)
         content = try container.decodeIfPresent(String.self, forKey: .content)
 
+        // menu 처리: Fixed 메뉴(객체)와 Variable 메뉴(배열) 모두 처리
+        if let menuArray = try? container.decodeIfPresent([ReviewMenuInfo].self, forKey: .menuList) {
+            // Variable 메뉴: menuList가 배열로 들어오는 경우
+            menu = menuArray
+        } else if let singleMenu = try? container.decodeIfPresent(ReviewMenuInfo.self, forKey: .menu) {
+            // Fixed 메뉴: menu가 단일 객체로 들어오는 경우 -> 배열로 변환
+            menu = [singleMenu]
+        } else {
+            menu = nil
+        }
+
         // imageUrls: [String?] 형태로 받아서 nil / 빈 문자열을 제거해 [String]으로 정제
         let rawImageUrls = try container.decodeIfPresent([String?].self, forKey: .imageUrls) ?? []
         imageUrls = rawImageUrls.compactMap { url in
             guard let url, url.isEmpty == false else { return nil }
             return url
         }
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(reviewId, forKey: .reviewId)
+        try container.encodeIfPresent(menu, forKey: .menuList)
+        try container.encodeIfPresent(writerId, forKey: .writerId)
+        try container.encode(isWriter, forKey: .isWriter)
+        try container.encode(writerNickname, forKey: .writerNickname)
+        try container.encode(rating, forKey: .rating)
+        try container.encode(writtenAt, forKey: .writtenAt)
+        try container.encodeIfPresent(content, forKey: .content)
+        try container.encode(imageUrls, forKey: .imageUrls)
     }
 }
 

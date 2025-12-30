@@ -321,7 +321,7 @@ final class ReviewRateViewCell: UITableViewCell {
     /// - Parameter data: 식사 통계 응답 데이터
     func configureWithMealStatistics(_ data: ReviewMealStatisticsResponse) {
         let menuNames = data.menuList.map { $0.name }
-        menuLabel.text = menuNames.joined(separator: " + ")
+        menuLabel.text = menuNames.joined(separator: ", ")
         setRating(data.rating ?? 0)
         updateRatingChart(with: data.reviewRatingCount, totalCount: data.totalReviewCount)
     }
