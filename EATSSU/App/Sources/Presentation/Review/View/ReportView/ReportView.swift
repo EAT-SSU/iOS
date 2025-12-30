@@ -1,6 +1,6 @@
 //
 //  ReportView.swift
-//  EATSSU
+//  EatSSU-iOS
 //
 //  Created by Jiwoong CHOI on 8/30/24.
 //
@@ -59,11 +59,12 @@ final class ReportView: BaseUIView {
         textView.layer.borderWidth = 1
         textView.layer.borderColor = UIColor.gray200.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
+        textView.text = "리뷰 신고 사유를 작성해 주세요"
+        textView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         textView.isEditable = false
         return textView
     }()
 
-    /// 0 / 300 와 같이 현재 작성된 글자 수 상태 레이블
     var characterCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0 / 300"
@@ -72,12 +73,23 @@ final class ReportView: BaseUIView {
         return label
     }()
 
-    /// "EAT SSU 팀에게 보내기" 버튼
-    let sendToEATSSUButton = ESButton(size: .big, title: "EAT SSU 팀에게 보내기")
-
     // MARK: - Functions
 
+    func enableTextView() {
+        reviewReportReasonTextView.isEditable = true
+    }
+
+    func disableTextView() {
+        reviewReportReasonTextView.isEditable = false
+        reviewReportReasonTextView.text = "리뷰 신고 사유를 작성해 주세요"
+        reviewReportReasonTextView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+        reviewReportReasonTextView.resignFirstResponder()
+        characterCountLabel.text = "0 / 300"
+    }
+
     override func configureUI() {
+        reviewReportReasonTextView.delegate = self
+        
         addSubviews(
             reviewReportReasonLabel,
             singleReportPerDayLabel,
@@ -88,15 +100,14 @@ final class ReportView: BaseUIView {
             copyrightInfringementButton,
             otherReasonButton,
             reviewReportReasonTextView,
-            characterCountLabel,
-            sendToEATSSUButton
+            characterCountLabel
         )
     }
 
     override func setLayout() {
         reviewReportReasonLabel.snp.makeConstraints { make in
             make.leading.equalTo(self).inset(24)
-            make.top.equalTo(safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(12)
         }
 
         singleReportPerDayLabel.snp.makeConstraints { make in
@@ -149,12 +160,38 @@ final class ReportView: BaseUIView {
         characterCountLabel.snp.makeConstraints { make in
             make.trailing.equalTo(reviewReportReasonTextView)
             make.top.equalTo(reviewReportReasonTextView.snp.bottom).offset(6)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(24)
         }
+    }
+}
 
-        sendToEATSSUButton.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(self).inset(24)
-            make.height.equalTo(52)
-            make.top.equalTo(reviewReportReasonTextView.snp.bottom).offset(56)
+extension ReportView: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let currentText = textView.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let newLength = currentText.count + text.count - range.length
+        
+        if newLength > 300 { return false }
+        
+        let textToDisplay = currentText.replacingCharacters(in: stringRange, with: text)
+        characterCountLabel.text = "\(textToDisplay.count) / 300"
+        return true
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == EATSSUDesignAsset.Color.GrayScale.gray400.color {
+            textView.text = ""
+            textView.textColor = .black
+        }
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            textView.text = "리뷰 신고 사유를 작성해 주세요"
+            textView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
+            characterCountLabel.text = "0 / 300"
+        } else {
+            characterCountLabel.text = "\(textView.text.count) / 300"
         }
     }
 }

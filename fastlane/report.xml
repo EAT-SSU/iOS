@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000182">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: latest_testflight_build_number" time="1.479239">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: cd .. &amp;&amp; tuist install" time="15.679251">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: cd .. &amp;&amp; tuist generate --no-open" time="6.089033">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: match" time="1.435493">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: gym" time="59.543767">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: pilot" time="62.631273">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="7: clean_build_artifacts" time="0.002172">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="8: clean_build_artifacts" time="0.000183">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

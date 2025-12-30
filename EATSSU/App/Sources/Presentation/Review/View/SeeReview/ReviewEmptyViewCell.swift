@@ -2,90 +2,109 @@
 //  ReviewEmptyViewCell.swift
 //  EatSSU-iOS
 //
-//  Created by 박윤빈 on 2023/11/26.
+//  Created by 한금준 on 10/4/25.
 //
 
 import UIKit
-
 import SnapKit
 
 import EATSSUDesign
 
 final class ReviewEmptyViewCell: UITableViewCell {
+    
     // MARK: - Properties
-
+    
     static let identifier = "ReviewEmptyViewCell"
-
+    
     // MARK: - UI Components
-
-    private lazy var reviewIconImageView: UIImageView = {
+    
+    /// 빈 상태 이미지
+    private lazy var noReviewImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUDesignAsset.Images.reviewIcon.image
-        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         return imageView
     }()
     
-    private lazy var mainLabel: UILabel = {
+    /// 제목 레이블
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "아직 작성된 리뷰가 없어요!"
         label.font = .subtitle2
-        label.textColor = .gray600
+        label.text = "아직 작성된 리뷰가 없어요!"
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textAlignment = .center
         return label
     }()
     
-    private lazy var subLabel: UILabel = {
+    /// 설명 레이블
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "메뉴에 가장 먼저 리뷰를 남겨주세요"
+        label.text = "메뉴에 가장 먼저 리뷰를 남겨주세요!"
         label.font = .caption2
-        label.textColor = .gray600
+        label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textAlignment = .center
         return label
     }()
     
-    private lazy var contentStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [reviewIconImageView, mainLabel, subLabel])
-        stackView.axis = .vertical
-        stackView.spacing = 12
-        stackView.alignment = .center
-        return stackView
+    /// 컴포넌트들을 세로로 배치하는 스택뷰
+    private lazy var stackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [
+            noReviewImageView,
+            titleLabel,
+            descriptionLabel
+        ])
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 16
+        return stack
     }()
-
-    // MARK: - Functions
-
+    
+    // MARK: - Initialization
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(contentStackView)
+        setupUI()
         setLayout()
     }
-
+    
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - UI Configuration
 
-    func setLayout() {
-        reviewIconImageView.snp.makeConstraints {
-            $0.width.height.equalTo(48)
-        }
-        
-        contentStackView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
+    private func setupUI() {
+        contentView.addSubview(stackView)
     }
 
-    func configure(isTokenExist: Bool) {
-        if isTokenExist {
-            mainLabel.text = "아직 작성된 리뷰가 없어요!"
-            subLabel.text = "메뉴에 가장 먼저 리뷰를 남겨주세요"
-        } else {
-            mainLabel.text = "로그인이 필요합니다"
-            subLabel.text = "로그인 후 리뷰를 확인하세요"
+    private func setLayout() {
+        stackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        noReviewImageView.snp.makeConstraints {
+            $0.size.equalTo(48)
         }
     }
     
+    // MARK: - Public Methods
+    
+    /// 토큰 존재 여부에 따라 셀 구성
+    /// - Parameter isTokenExist: 로그인 토큰 존재 여부
+    func configure(isTokenExist: Bool) {
+        if isTokenExist {
+            noReviewImageView.image = EATSSUDesignAsset.Images.noReview.image
+            titleLabel.text = "아직 작성된 리뷰가 없어요"
+            descriptionLabel.text = "메뉴에 가장 먼저 리뷰를 남겨주세요!"
+        } else {
+            titleLabel.text = "로그인이 필요합니다"
+            descriptionLabel.text = "로그인 후 리뷰를 확인하세요"
+        }
+    }
+    
+    /// 마이페이지용 빈 상태 구성
     func configureForMyReview() {
-        mainLabel.text = "아직 작성한 리뷰가 없어요"
-        subLabel.text = "첫 리뷰를 남겨 주세요!"
+        titleLabel.text = "아직 작성한 리뷰가 없어요"
+        descriptionLabel.text = "첫 리뷰를 남겨 주세요!"
     }
 }

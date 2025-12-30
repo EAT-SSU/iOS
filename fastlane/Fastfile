@@ -1,16 +1,64 @@
-# fastlane/Fastfile
 default_platform(:ios)
 
 platform :ios do
-  desc "개발 환경 세팅"
+  desc "개발 환경 인증서 세팅"
   lane :setup_development do
     match(type: "development")
     UI.success("🎉 개발 환경 설정 완료!")
   end
 
-  desc "App Store 배포 환경 세팅"
+  desc "배포 환경 인증서 세팅"
   lane :setup_appstore do
     match(type: "appstore")
-    UI.success("🚀 App Store 배포 환경 설정 완료!")
+    UI.success("🚀 배포 환경 설정 완료!")
+  end
+
+  desc "TestFlight에 앱 배포"
+  lane :release do |options|
+    target_type = options[:type] || "dev" 
+    target_version = options[:version] || "3.2.0"
+    
+    target_scheme = (target_type == "prod") ? "EATSSU-PROD" : "EATSSU-DEV"
+    
+    build_num = latest_testflight_build_number(
+      api_key_path: "fastlane/api_key.json",
+      app_identifier: "com.jiwoo.EatSSU"
+    ) + 1
+
+    UI.message("📦 배포 타겟: #{target_type} (Scheme: #{target_scheme})")
+    UI.message("🚀 버전 주입: #{target_version} (Build: #{build_num})")
+
+    sh("cd .. && tuist install") 
+    sh("cd .. && tuist generate --no-open")
+
+    # 인증서 동기화 (Matchfile 및 API Key 연결)
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key_path: "fastlane/api_key.json"
+    )
+    
+    gym(
+      workspace: "EATSSU_WORKSPACE.xcworkspace",
+      scheme: target_scheme,
+      export_method: "app-store",
+      clean: true,
+      xcargs: "MARKETING_VERSION=#{target_version} CURRENT_PROJECT_VERSION=#{build_num}"
+    )
+    
+    pilot(
+      api_key_path: "fastlane/api_key.json",
+      skip_waiting_for_build_processing: true
+    )
+
+    clean_build_artifacts
+  end
+
+  after_all do |lane|
+    clean_build_artifacts
+  end
+
+  error do |lane, exception|
+    clean_build_artifacts
   end
 end
