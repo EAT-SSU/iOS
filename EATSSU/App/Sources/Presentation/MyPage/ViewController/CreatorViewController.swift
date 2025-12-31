@@ -31,12 +31,8 @@ class CreatorViewController: BaseViewController {
         super.viewDidLoad()
         
         setUpAction()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        logScreenView(screenID: FirebaseScreenID.MyPage.mypage5)
+        applyGradientBackground()
+        view.layoutIfNeeded()
     }
 
     // MARK: - Methods
@@ -59,11 +55,6 @@ class CreatorViewController: BaseViewController {
         navigationItem.title = "만든 사람들"
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        applyGradientBackground()
-    }
-
     private func applyGradientBackground() {
         if let existing = view.layer.sublayers?.first(where: { $0.name == "gradientLayer" }) {
             existing.frame = view.bounds

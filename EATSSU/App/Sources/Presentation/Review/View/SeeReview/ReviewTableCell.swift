@@ -293,15 +293,9 @@ final class ReviewTableCell: UITableViewCell {
         userNameLabel.text = "\(nickname)"
         totalRateView.setRating(Int(response.rating ?? 0))
         dateLabel.text = response.writtenAt
-        
         reviewTextView.text = response.content
-
-        let fixedWidth = reviewTextView.frame.size.width
-        let newSize = reviewTextView.sizeThatFits(CGSize(width: fixedWidth, height: .greatestFiniteMagnitude))
-        reviewTextView.frame.size.height = newSize.height
         
         let firstImageUrl = response.imageUrls.first(where: { !$0.isEmpty })
-
         if let firstImageUrl {
             foodImageView.isHidden = false
             foodImageView.kfSetImage(url: firstImageUrl)
@@ -312,7 +306,6 @@ final class ReviewTableCell: UITableViewCell {
         sideButton.addTarget(self, action: #selector(touchedSideButtonEvent), for: .touchUpInside)
         sideButton.setImage(EATSSUDesignAsset.Images.icMenu.image, for: .normal)
         sideButton.setTitle("", for: .normal)
-        
         reviewId = response.reviewId
         
         if !response.menuList.isEmpty {
@@ -321,24 +314,15 @@ final class ReviewTableCell: UITableViewCell {
             tagCollectionView.reloadData()
             tagCollectionView.layoutIfNeeded()
             
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                
-                let contentHeight = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-                
-                if contentHeight > 0 {
-                    self.tagCollectionViewHeightConstraint?.update(offset: contentHeight)
-                    self.tagCollectionViewHeightConstraint?.layoutConstraints.first?.priority = .required
-                    
-                    self.contentView.layoutIfNeeded()
-                }
-            }
+            let contentHeight = self.tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+            self.tagCollectionViewHeightConstraint?.update(offset: contentHeight)
+            self.tagCollectionViewHeightConstraint?.layoutConstraints.first?.priority = .required
         } else {
             tags = []
             tagCollectionView.isHidden = true
+            self.tagCollectionViewHeightConstraint?.update(offset: 0) 
+            self.tagCollectionViewHeightConstraint?.layoutConstraints.first?.priority = .required
         }
-        
-        self.contentView.layoutIfNeeded()
     }
 }
 

@@ -42,6 +42,7 @@ final class SetNickNameViewController: BaseViewController {
         dismissKeyboard()
         bindUI()
         fetchColleges()
+        view.layoutIfNeeded()
     }
 
     override func viewWillAppear(_ animated: Bool) {
