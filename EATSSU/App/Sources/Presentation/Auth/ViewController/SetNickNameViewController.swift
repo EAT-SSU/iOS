@@ -337,6 +337,9 @@ extension SetNickNameViewController {
                             let errorResponse = try JSONDecoder().decode(BaseResponse<Bool>.self, from: response.data)
                             DispatchQueue.main.async {
                                 self.showToast(message: errorResponse.message, type: .danger)
+                                self.setNickNameView.inputNickNameTextField.layer.borderColor = UIColor.error.cgColor
+                                self.setNickNameView.nicknameValidationMessageLabel.text = errorResponse.message
+                                self.setNickNameView.nicknameValidationMessageLabel.textColor = UIColor.error
                             }
                         } catch {
                             // Decoding error is not handled here.

@@ -71,7 +71,7 @@ enum NicknameTextFieldResultType {
         case .nicknameTextFieldValid:
             .gray600
         default:
-            .primary
+            .error
         }
     }
 
