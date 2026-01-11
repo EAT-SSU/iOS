@@ -65,7 +65,7 @@ final class SetRateView: UIView {
     
     let maximumWordLabel: UILabel = {
         let label = UILabel()
-        label.text = "0 / 300"
+        label.text = TextLiteral.Review.characterCount(current: 0, max: 300)
         label.font = .caption3
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         return label

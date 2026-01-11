@@ -67,7 +67,7 @@ final class ReportView: BaseUIView {
 
     var characterCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "0 / 300"
+        label.text = TextLiteral.Review.characterCount(current: 0, max: 300)
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = .gray400
         return label
@@ -84,7 +84,7 @@ final class ReportView: BaseUIView {
         reviewReportReasonTextView.text = TextLiteral.Review.inputReportReason
         reviewReportReasonTextView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         reviewReportReasonTextView.resignFirstResponder()
-        characterCountLabel.text = "0 / 300"
+        characterCountLabel.text = TextLiteral.Review.characterCount(current: 0, max: 300)
     }
 
     override func configureUI() {
@@ -174,7 +174,7 @@ extension ReportView: UITextViewDelegate {
         if newLength > 300 { return false }
         
         let textToDisplay = currentText.replacingCharacters(in: stringRange, with: text)
-        characterCountLabel.text = "\(textToDisplay.count) / 300"
+        characterCountLabel.text = TextLiteral.Review.characterCount(current: textToDisplay.count, max: 300)
         return true
     }
     
@@ -189,9 +189,9 @@ extension ReportView: UITextViewDelegate {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = TextLiteral.Review.inputReportReason
             textView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
-            characterCountLabel.text = "0 / 300"
+            characterCountLabel.text = TextLiteral.Review.characterCount(current: 0, max: 300)
         } else {
-            characterCountLabel.text = "\(textView.text.count) / 300"
+            characterCountLabel.text = TextLiteral.Review.characterCount(current: textView.text.count, max: 300)
         }
     }
 }

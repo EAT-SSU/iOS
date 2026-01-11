@@ -116,7 +116,6 @@ final class UserWithdrawView: BaseUIView {
         completeSignOutButton.isEnabled = false
     }
 
-
     private func bindTextField() {
         NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: inputNickNameTextField)
             .compactMap { ($0.object as? UITextField)?.text }
