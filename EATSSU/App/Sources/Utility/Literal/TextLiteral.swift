@@ -118,6 +118,9 @@ enum TextLiteral {
 
         /// SetNickNameView - "카카오"
         static let kakao: String = "카카오"
+
+        /// SetNickNameView - "APPLE"
+        static let apple: String = "APPLE"
         
         /// SetNickNameVC - "변경된 정보가 없습니다."
         static let noChanges: String = "변경된 정보가 없습니다."
@@ -332,6 +335,9 @@ enum TextLiteral {
         
         /// MyPageView - "탈퇴하기"
         static let withdrawButton: String = "탈퇴하기"
+
+        /// MyPageView - "알 수 없음"
+        static let unknownUser: String = "알 수 없음"
         
         /// NotificationSettingTableViewCell - "푸시 알림 설정"
         static let pushNotificationSetting: String = "푸시 알림 설정"
@@ -442,14 +448,26 @@ enum TextLiteral {
         /// SetRateVC - "리뷰 남기기"
         static let leaveReview: String = "리뷰 남기기"
 
-        /// SetRateVC - "%@ 을/를 추천하시겠어요?"
-        static func recommendMenu(menu: String) -> String {
-            return "\(menu) 을/를 추천하시겠어요?"
-        }
-        
-        /// SetRateVC - "%@ 를/을 추천하시겠어요?"
-        static func recommendMenuWithParticle(menu: String) -> String {
-            return "\(menu) 를/을 추천하시겠어요?"
+        /// 메뉴 이름의 받침 유무에 따라 '을/를'을 동적으로 붙여 추천 문장을 생성합니다.
+        static func recommendMenu(name: String) -> String {
+            guard let lastChar = name.last,
+                  let lastScalar = lastChar.unicodeScalars.first else {
+                return "\(name)을(를) 추천하시겠어요?" // 예외 처리
+            }
+            
+            // '가' ~ '힣' 사이의 한글 유니코드 범위
+            let hangulStart: UInt32 = 0xAC00
+            let hangulEnd: UInt32 = 0xD7A3
+            
+            // 받침이 있는지 계산 (종성 코드 확인)
+            if lastScalar.value >= hangulStart && lastScalar.value <= hangulEnd {
+                let hasJongseong = (lastScalar.value - hangulStart) % 28 != 0
+                if hasJongseong {
+                    return "\(name)을 추천하시겠어요?" // 받침 있음
+                }
+            }
+            
+            return "\(name)를 추천하시겠어요?" // 받침 없음
         }
         
         /// SetRateVC - "메뉴를 추천하시겠어요?"
@@ -556,6 +574,11 @@ enum TextLiteral {
         /// SetRateView - "사진 \(%d)/1"
         static func photoCount(count: Int) -> String {
             return "사진 \(count)/1"
+        }
+
+        /// character count
+        static func characterCount(current: Int, max: Int) -> String {
+            return "\(current) / \(max)"
         }
     }
     

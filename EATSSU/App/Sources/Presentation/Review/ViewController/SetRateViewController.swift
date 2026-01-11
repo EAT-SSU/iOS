@@ -186,7 +186,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         self.likedStates = likedStates
         self.reviewType = .fixed
         
-        setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(menu: menuNames.first ?? "")
+        setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(name: menuNames.first ?? "")
         setRateView.menuTableView.reloadData()
         view.setNeedsLayout()
     }
@@ -196,7 +196,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         self.reviewId = reviewId
         self.likedStates = Array(repeating: false, count: list.count)
         
-        setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(menu: list[0])
+        setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(name: list[0])
         setRateView.selectImageButton.isHidden = true
         setRateView.deleteMethodLabel.isHidden = true
         setRateView.nextButton.setTitle(TextLiteral.Review.fixReviewComplete, for: .normal)
@@ -227,7 +227,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
 
         setRateView.menuLabel.text = list.count == 1
-            ? TextLiteral.Review.recommendMenuWithParticle(menu: list[0])
+            ? TextLiteral.Review.recommendMenu(name: list[0])
             : TextLiteral.Review.recommendMenuTitle
 
         if let rating = rating {
@@ -238,7 +238,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         if let content = content, !content.isEmpty {
             setRateView.userReviewTextView.text = content
             setRateView.userReviewTextView.textColor = .black
-            setRateView.maximumWordLabel.text = "\(content.count) / 300"
+            setRateView.maximumWordLabel.text = TextLiteral.Review.characterCount(current: content.count, max: 300)
         }
 
         if let firstImageUrl = imageUrls.first, !firstImageUrl.isEmpty {
@@ -468,6 +468,7 @@ extension SetRateViewController {
 
             } catch {
                 await MainActor.run {
+                    print("❌ Meal 리뷰 업로드 실패: \(error)")
                     self.showToast(message: TextLiteral.Review.uploadReviewFail)
                 }
             }

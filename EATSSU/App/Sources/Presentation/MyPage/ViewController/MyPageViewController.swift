@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Foundation
 import WebKit
 
 import FirebaseAnalytics
@@ -45,7 +44,7 @@ final class MyPageViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? ""
+        nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? TextLiteral.MyPage.unknownUser
         mypageView.setUserInfo(nickname: nickName)
     }
 

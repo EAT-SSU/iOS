@@ -235,7 +235,7 @@ final class SetNickNameView: BaseUIView {
         if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
             switch accountType {
             case .apple:
-                accountTypeLabel.text = "APPLE"
+                accountTypeLabel.text = TextLiteral.Auth.apple
                 accountTypeImage.image = EATSSUDesignAsset.Images.signWithApple.image
             case .kakao:
                 accountTypeLabel.text = TextLiteral.Auth.kakao
