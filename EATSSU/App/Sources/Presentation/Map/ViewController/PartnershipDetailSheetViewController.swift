@@ -112,13 +112,13 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         switch restaurantType {
         case "RESTAURANT":
             typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
-            typeTextLabel.text = "음식점"
+            typeTextLabel.text = TextLiteral.Map.restaurant
         case "CAFE":
             typeIconImageView.image = EATSSUDesignAsset.Images.cafePin.image
-            typeTextLabel.text = "카페"
+            typeTextLabel.text = TextLiteral.Map.cafe
         case "PUB":
             typeIconImageView.image = EATSSUDesignAsset.Images.pubPin.image
-            typeTextLabel.text = "주점"
+            typeTextLabel.text = TextLiteral.Map.pub
         default:
             typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
             typeTextLabel.text = restaurantType
@@ -144,7 +144,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     
     /// 제휴 정보 카드 뷰 생성
     private func makeInfoCard(info: PartnershipInfoDTO, isLast: Bool) -> UIView {
-        let labelText = info.collegeName ?? info.departmentName ?? "학과 정보 없음"
+        let labelText = info.collegeName ?? info.departmentName ?? TextLiteral.Map.noDepartmentInfo
         
         let start = String(info.startDate.dropFirst(2))
         let end = String(info.endDate.dropFirst(2))

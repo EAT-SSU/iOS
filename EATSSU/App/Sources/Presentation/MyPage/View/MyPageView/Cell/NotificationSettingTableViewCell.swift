@@ -21,7 +21,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
     // "푸시 알림 설정"
     private let pushNotificationTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "푸시 알림 설정"
+        label.text = TextLiteral.MyPage.pushNotificationSetting
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 16)
         label.textColor = .black
         return label
@@ -30,7 +30,7 @@ class NotificationSettingTableViewCell: UITableViewCell {
     // "매일 오전 11시에 알림을 보내드려요"
     private let dailyNotificationInfoLabel: UILabel = {
         let label = UILabel()
-        label.text = "매일 오전 11시에 알림을 보내드려요"
+        label.text = TextLiteral.MyPage.pushNotificationDescription
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = .gray400
         return label

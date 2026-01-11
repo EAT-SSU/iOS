@@ -86,7 +86,7 @@ final class ReviewViewController: BaseViewController {
     /// 리뷰 작성 버튼
     private let reviewTabBarView: MainButton = {
         let button = MainButton()
-        button.title = "리뷰 작성하기"
+        button.title = TextLiteral.Review.writeReview
         return button
     }()
     
@@ -113,7 +113,7 @@ final class ReviewViewController: BaseViewController {
         super.viewDidAppear(animated)
         
         if shouldShowSuccessToast {
-            showToast(message: "리뷰가 성공적으로 등록되었습니다.")
+            showToast(message: TextLiteral.Review.registerReviewSuccess)
             shouldShowSuccessToast = false
         }
     }
@@ -161,7 +161,7 @@ final class ReviewViewController: BaseViewController {
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = "리뷰"
+        navigationItem.title = TextLiteral.Review.review
     }
     
     override func setButtonEvent() {
@@ -240,10 +240,10 @@ final class ReviewViewController: BaseViewController {
             return
         }
         
-        let title = "리뷰 삭제"
-        let message = "해당 리뷰를 삭제할까요?"
-        let confirmButtonTitle = "삭제하기"
-        let cancelButtonTitle = "취소하기"
+        let title = TextLiteral.Review.deleteReview
+        let message = TextLiteral.Review.askDeleteReview
+        let confirmButtonTitle = TextLiteral.Common.delete
+        let cancelButtonTitle = TextLiteral.Common.cancelDark
         
         self.showCustomDialog(
             title: title,
@@ -260,10 +260,10 @@ final class ReviewViewController: BaseViewController {
     /// - Parameter reviewID: 신고할 리뷰 ID
     private func showReportAlert(reviewID: Int) {
         showCustomDialog(
-            title: "리뷰 신고하기",
-            message: "해당 리뷰를 신고하시겠습니까?",
-            cancelButtonTitle: "취소하기",
-            confirmButtonTitle: "신고하기"
+            title: TextLiteral.Review.reportReview,
+            message: TextLiteral.Review.askReportReview,
+            cancelButtonTitle: TextLiteral.Common.cancelDark,
+            confirmButtonTitle: TextLiteral.Review.report
         ) { [weak self] in
             let reportViewController = ReportViewController()
             reportViewController.bindData(reviewID: reviewID)
@@ -318,8 +318,8 @@ final class ReviewViewController: BaseViewController {
             }
         } else {
             showAlertControllerWithCancel(
-                title: "로그인이 필요한 서비스입니다",
-                message: "로그인 하시겠습니까?",
+                title: TextLiteral.Common.needLogin,
+                message: TextLiteral.Common.askLogin,
                 confirmStyle: .default
             ) {
                 self.pushToLoginVC()
@@ -701,11 +701,11 @@ extension ReviewViewController {
                     self.getValidMenusForReview()
                 }
                 self.getReviewList(type: self.type, menuId: self.menuID)
-                self.showToast(message: "리뷰가 성공적으로 삭제되었습니다.")
+                self.showToast(message: TextLiteral.Review.deleteReviewSuccess)
                 
             case let .failure(error):
                 print("❌ Delete Review Error: \(error.localizedDescription)")
-                self.showToast(message: "리뷰 삭제에 실패했습니다.")
+                self.showToast(message: TextLiteral.Review.deleteReviewFail)
             }
         }
     }

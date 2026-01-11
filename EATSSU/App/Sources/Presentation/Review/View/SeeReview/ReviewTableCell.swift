@@ -125,7 +125,7 @@ final class ReviewTableCell: UITableViewCell {
         textView.isScrollEnabled = false
         textView.backgroundColor = .systemBackground
         textView.font = .body1
-        textView.text = "여기 계란국 맛집임... 김치볶음밥에 계란후라이 없어서 아쉽 다음에 또 먹어야지"
+        textView.text = ""
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
         return textView

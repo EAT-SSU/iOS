@@ -27,7 +27,7 @@ final class SetRateView: UIView {
 
     let menuLabel: UILabel = {
         let label = UILabel()
-        label.text = "오늘의 식사는 어떠셨나요?"
+        label.text = TextLiteral.Review.rateTodayMeal
         label.font = .subtitle1
         label.textColor = .black
         return label
@@ -37,7 +37,7 @@ final class SetRateView: UIView {
 
     let detailLabel: UILabel = {
         let label = UILabel()
-        label.text = "추천하고 싶은 메뉴가 있나요?"
+        label.text = TextLiteral.Review.recommendMenu
         label.font = .subtitle1
         label.textColor = .black
         return label
@@ -65,7 +65,7 @@ final class SetRateView: UIView {
     
     let maximumWordLabel: UILabel = {
         let label = UILabel()
-        label.text = "0 / 300"
+        label.text = TextLiteral.Review.characterCount(current: 0, max: 300)
         label.font = .caption3
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         return label
@@ -90,7 +90,7 @@ final class SetRateView: UIView {
     
     let imageCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "사진 0/1"
+        label.text = TextLiteral.Review.photoCount
         label.font = .caption3
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         label.textAlignment = .center
@@ -117,7 +117,7 @@ final class SetRateView: UIView {
     
     let deleteMethodLabel: UILabel = {
         let label = UILabel()
-        label.text = "사진 클릭 시, 삭제됩니다"
+        label.text = TextLiteral.Review.deletePhoto
         label.font = .caption3
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         return label
@@ -133,7 +133,7 @@ final class SetRateView: UIView {
     
     let nextButton: MainButton = {
         let button = MainButton()
-        button.title = "리뷰 남기기"
+        button.title = TextLiteral.Review.leaveReview
         return button
     }()
     
@@ -268,7 +268,7 @@ final class SetRateView: UIView {
     // MARK: - Public Methods
 
     func setInitialTextViewState() {
-        userReviewTextView.text = "메뉴에 대한 상세한 리뷰를 작성해주세요"
+        userReviewTextView.text = TextLiteral.Review.inputDetailReview
         userReviewTextView.textColor = EATSSUDesignAsset.Color.GrayScale.gray500.color
         userReviewTextView.font = .body2
     }
@@ -277,6 +277,6 @@ final class SetRateView: UIView {
         userReviewImageView.image = image
         userReviewImageView.isHidden = isHidden
         closeButton.isHidden = isHidden || (image == nil)
-        imageCountLabel.text = "사진 \(count)/1"
+        imageCountLabel.text = TextLiteral.Review.photoCount(count: count)
     }
 }

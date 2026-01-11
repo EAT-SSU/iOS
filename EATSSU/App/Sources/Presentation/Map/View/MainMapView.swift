@@ -42,7 +42,7 @@ final class MainMapView: BaseUIView {
         let titleFont = UIFont.button2
 
         // 전체 버튼
-        wholeButton.setTitle("전체", for: .normal)
+        wholeButton.setTitle(TextLiteral.Map.all, for: .normal)
         wholeButton.titleLabel?.font = titleFont
         wholeButton.layer.cornerRadius = 14
         wholeButton.clipsToBounds = true
@@ -50,7 +50,7 @@ final class MainMapView: BaseUIView {
         wholeButton.setTitleColor(.label, for: .normal)
         if #available(iOS 15.0, *) {
             var cfg = wholeButton.configuration ?? .plain()
-            cfg.title = "전체"
+            cfg.title = TextLiteral.Map.all
             cfg.baseForegroundColor = .label
             cfg.baseBackgroundColor = .clear
             cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
@@ -65,7 +65,7 @@ final class MainMapView: BaseUIView {
         }
 
         // 내 제휴 버튼
-        myOnlyButton.setTitle("내 제휴", for: .normal)
+        myOnlyButton.setTitle(TextLiteral.Map.myPartner, for: .normal)
         myOnlyButton.titleLabel?.font = titleFont
         myOnlyButton.layer.cornerRadius = 14
         myOnlyButton.clipsToBounds = true
@@ -73,7 +73,7 @@ final class MainMapView: BaseUIView {
         myOnlyButton.setTitleColor(.label, for: .normal)
         if #available(iOS 15.0, *) {
             var cfg = myOnlyButton.configuration ?? .plain()
-            cfg.title = "내 제휴"
+            cfg.title = TextLiteral.Map.myPartner
             cfg.baseForegroundColor = .label
             cfg.baseBackgroundColor = .clear
             cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)

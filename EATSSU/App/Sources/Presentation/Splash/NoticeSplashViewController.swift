@@ -33,7 +33,7 @@ class NoticeSplashViewController: BaseViewController {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "긴급 서버 점검 안내"
+        label.text = TextLiteral.Splash.serverInspection
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
         label.textColor = .primary
         label.textAlignment = .center

@@ -17,7 +17,7 @@ final class ReportView: BaseUIView {
     /// "리뷰 신고 사유를 알려주세요" 레이블
     private let reviewReportReasonLabel: UILabel = {
         let label = UILabel()
-        label.text = "리뷰 신고 사유를 알려주세요"
+        label.text = TextLiteral.Review.reportReason
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         label.textColor = .black
         return label
@@ -26,29 +26,29 @@ final class ReportView: BaseUIView {
     /// "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다." 레이블
     private let singleReportPerDayLabel: UILabel = {
         let label = UILabel()
-        label.text = "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다."
+        label.text = TextLiteral.Review.reportGuide
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = .gray600
         return label
     }()
 
     /// "메뉴와 관련없는 내용" 버튼
-    let unrelatedToMenuButton = ESReportButton(title: "메뉴와 관련없는 내용")
+    let unrelatedToMenuButton = ESReportButton(title: TextLiteral.Review.unrelatedMenu)
 
     /// "음란성, 욕설 등 부적절한 내용" 버튼
-    let inappropriateContentButton = ESReportButton(title: "음란성, 욕설 등 부적절한 내용")
+    let inappropriateContentButton = ESReportButton(title: TextLiteral.Review.inappropriateContent)
 
     /// " 부적절한 홍보 또는 광고" 버튼
-    let inappropriatePromotionButton = ESReportButton(title: "부적절한 홍보 또는 광고")
+    let inappropriatePromotionButton = ESReportButton(title: TextLiteral.Review.inappropriateAd)
 
     /// "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)" 버튼
-    let offTopicContentButton = ESReportButton(title: "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)")
+    let offTopicContentButton = ESReportButton(title: TextLiteral.Review.notReviewFormat)
 
     /// "저작권 도용 의심 (사진 등)" 버튼
-    let copyrightInfringementButton = ESReportButton(title: "저작권 도용 의심 (사진 등)")
+    let copyrightInfringementButton = ESReportButton(title: TextLiteral.Review.copyright)
 
     /// "기타 (하단 내용 작성)" 버튼
-    let otherReasonButton = ESReportButton(title: "기타 (하단 내용 작성)")
+    let otherReasonButton = ESReportButton(title: TextLiteral.Review.etc)
 
     /// "리뷰 신고 사유를 작성해 주세요" 텍스트필드
     var reviewReportReasonTextView: UITextView = {
@@ -59,7 +59,7 @@ final class ReportView: BaseUIView {
         textView.layer.borderWidth = 1
         textView.layer.borderColor = UIColor.gray200.cgColor
         textView.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
-        textView.text = "리뷰 신고 사유를 작성해 주세요"
+        textView.text = TextLiteral.Review.inputReportReason
         textView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         textView.isEditable = false
         return textView
@@ -67,7 +67,7 @@ final class ReportView: BaseUIView {
 
     var characterCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "0 / 300"
+        label.text = TextLiteral.Review.characterCount(current: 0, max: 300)
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = .gray400
         return label
@@ -81,10 +81,10 @@ final class ReportView: BaseUIView {
 
     func disableTextView() {
         reviewReportReasonTextView.isEditable = false
-        reviewReportReasonTextView.text = "리뷰 신고 사유를 작성해 주세요"
+        reviewReportReasonTextView.text = TextLiteral.Review.inputReportReason
         reviewReportReasonTextView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
         reviewReportReasonTextView.resignFirstResponder()
-        characterCountLabel.text = "0 / 300"
+        characterCountLabel.text = TextLiteral.Review.characterCount(current: 0, max: 300)
     }
 
     override func configureUI() {
@@ -174,7 +174,7 @@ extension ReportView: UITextViewDelegate {
         if newLength > 300 { return false }
         
         let textToDisplay = currentText.replacingCharacters(in: stringRange, with: text)
-        characterCountLabel.text = "\(textToDisplay.count) / 300"
+        characterCountLabel.text = TextLiteral.Review.characterCount(current: textToDisplay.count, max: 300)
         return true
     }
     
@@ -187,11 +187,11 @@ extension ReportView: UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            textView.text = "리뷰 신고 사유를 작성해 주세요"
+            textView.text = TextLiteral.Review.inputReportReason
             textView.textColor = EATSSUDesignAsset.Color.GrayScale.gray400.color
-            characterCountLabel.text = "0 / 300"
+            characterCountLabel.text = TextLiteral.Review.characterCount(current: 0, max: 300)
         } else {
-            characterCountLabel.text = "\(textView.text.count) / 300"
+            characterCountLabel.text = TextLiteral.Review.characterCount(current: textView.text.count, max: 300)
         }
     }
 }

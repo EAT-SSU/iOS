@@ -82,7 +82,7 @@ final class SetNickNameViewController: BaseViewController {
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = TextLiteral.setNickName
+        navigationItem.title = TextLiteral.Auth.setNickname
     }
     
     private func bindUI() {
@@ -110,7 +110,7 @@ final class SetNickNameViewController: BaseViewController {
         let departmentChanged = isDepartmentChanged()
         
         guard hasNicknameChanged || departmentChanged else {
-            print("변경된 정보가 없습니다.")
+            print(TextLiteral.Auth.noChanges)
             return
         }
 
@@ -129,7 +129,7 @@ final class SetNickNameViewController: BaseViewController {
         if departmentChanged {
             guard let departmentName = setNickNameView.departmentDropDownView.getSelectedTitle(),
                   let departmentId = self.departments.first(where: { $0.name == departmentName })?.id else {
-                print("유효하지 않은 학과 정보입니다.")
+                print(TextLiteral.Auth.invalidDepartment)
                 return
             }
             let collegeName = setNickNameView.collegeDropDownView.getSelectedTitle()
@@ -147,7 +147,7 @@ final class SetNickNameViewController: BaseViewController {
             if isNicknameUpdateSuccess && isDepartmentUpdateSuccess {
                 self.navigateToMyPageWithToast()
             } else {
-                self.showToast(message: "정보 업데이트 중 오류가 발생했습니다.", type: .danger)
+                self.showToast(message: TextLiteral.Auth.updateError, type: .danger)
             }
         }
     }
@@ -160,7 +160,7 @@ final class SetNickNameViewController: BaseViewController {
             self.navigationController?.popToViewController(myPageVC, animated: true)
             
             DispatchQueue.main.asyncAfter(deadline: .now()) {
-                myPageVC.showToast(message: "내 정보가 수정되었어요.", type: .success)
+                myPageVC.showToast(message: TextLiteral.Auth.updateSuccess, type: .success)
             }
         } else {
             let homeVC = HomeViewController()
@@ -183,7 +183,7 @@ final class SetNickNameViewController: BaseViewController {
     /// 학과 변경 여부를 명확하게 판단하는 헬퍼 메서드
     private func isDepartmentChanged() -> Bool {
         guard let selectedDepartment = setNickNameView.departmentDropDownView.getSelectedTitle(),
-              selectedDepartment != "학과"
+              selectedDepartment != TextLiteral.Auth.department
         else {
             return false
         }
@@ -269,7 +269,7 @@ final class SetNickNameViewController: BaseViewController {
     
     private func navigateToLogin() {
         let loginVC = LoginViewController()
-        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastMessage = TextLiteral.Common.sessionExpired
         loginVC.toastType = .info
         
         DispatchQueue.main.async {

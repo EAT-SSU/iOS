@@ -15,8 +15,8 @@ final class SetNickNameView: BaseUIView {
     // MARK: - Properties
 
     private var userNickname: String = ""
-    public let collegeDropDownView = DropDownView(title: "단과대", items: [])
-    public let departmentDropDownView = DropDownView(title: "학과", items: [])
+    public let collegeDropDownView = DropDownView(title: TextLiteral.Auth.college, items: [])
+    public let departmentDropDownView = DropDownView(title: TextLiteral.Auth.department, items: [])
     private var isNicknameChecked = false
     private var selectedCollege: String?
     private var selectedDepartment: String?
@@ -28,25 +28,25 @@ final class SetNickNameView: BaseUIView {
 
     private let nickNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "닉네임 설정"
+        label.text = TextLiteral.Auth.setNickname
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         return label
     }()
 
     public let inputNickNameTextField: ESTextField = {
-        let textField = ESTextField(placeholder: TextLiteral.inputNickName)
+        let textField = ESTextField(placeholder: TextLiteral.Auth.inputNickName)
         return textField
     }()
 
     public var nicknameDoubleCheckButton: ESButton = {
-        let button = ESButton(size: .small, title: "중복 확인")
+        let button = ESButton(size: .small, title: TextLiteral.Auth.checkDuplicate)
         button.isEnabled = false
         return button
     }()
 
     public var nicknameValidationMessageLabel: UILabel = {
         let label = UILabel()
-        label.text = TextLiteral.hintInputNickName
+        label.text = TextLiteral.Auth.nicknameLength
         label.textColor = .gray400
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         return label
@@ -64,7 +64,7 @@ final class SetNickNameView: BaseUIView {
 
     private let affiliationLabel: UILabel = {
         let label = UILabel()
-        label.text = "소속 설정"
+        label.text = TextLiteral.Auth.setCollege
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         return label
     }()
@@ -81,14 +81,14 @@ final class SetNickNameView: BaseUIView {
 
     private let connectedAccountLabel: UILabel = {
         let label = UILabel()
-        label.text = "연결된 계정"
+        label.text = TextLiteral.Auth.linkedAccount
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
         return label
     }()
 
     private let accountTypeLabel: UILabel = {
         let label = UILabel()
-        label.text = "없음"
+        label.text = TextLiteral.Auth.empty
         label.font = .button2
         return label
     }()
@@ -122,7 +122,7 @@ final class SetNickNameView: BaseUIView {
     }()
 
     public var completeSettingNickNameButton: ESButton = {
-        let button = ESButton(size: .big, title: "저장하기")
+        let button = ESButton(size: .big, title: TextLiteral.Auth.save)
         button.isEnabled = false
         return button
     }()
@@ -205,7 +205,7 @@ final class SetNickNameView: BaseUIView {
             selectedCollege = college
 
             departmentDropDownView.updateItems([])
-            departmentDropDownView.setTitle("학과")
+            departmentDropDownView.setTitle(TextLiteral.Auth.department)
             selectedDepartment = nil
             updateCompleteButtonState()
 
@@ -221,8 +221,8 @@ final class SetNickNameView: BaseUIView {
     }
 
     private func updateCompleteButtonState() {
-        let isCollegeSelected = selectedCollege != nil && selectedCollege != "단과대"
-        let isDepartmentSelected = selectedDepartment != nil && selectedDepartment != "학과"
+        let isCollegeSelected = selectedCollege != nil && selectedCollege != TextLiteral.Auth.college
+        let isDepartmentSelected = selectedDepartment != nil && selectedDepartment != TextLiteral.Auth.department
         completeSettingNickNameButton.isEnabled = isNicknameChecked && isCollegeSelected && isDepartmentSelected
     }
 
@@ -235,10 +235,10 @@ final class SetNickNameView: BaseUIView {
         if let accountType = UserInfoManager.shared.getCurrentUserInfo()?.accountType {
             switch accountType {
             case .apple:
-                accountTypeLabel.text = "APPLE"
+                accountTypeLabel.text = TextLiteral.Auth.apple
                 accountTypeImage.image = EATSSUDesignAsset.Images.signWithApple.image
             case .kakao:
-                accountTypeLabel.text = "카카오"
+                accountTypeLabel.text = TextLiteral.Auth.kakao
                 accountTypeImage.image = EATSSUDesignAsset.Images.signWithKakao.image
             }
         }

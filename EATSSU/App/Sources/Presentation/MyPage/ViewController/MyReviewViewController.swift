@@ -85,13 +85,13 @@ final class MyReviewViewController: BaseViewController {
 
     private func showFixOrDeleteAlert(reviewID: Int, reviewItem: MyReviewListItem) {
         let alert = UIAlertController(
-            title: "리뷰 수정 혹은 삭제",
-            message: "작성하신 리뷰를 수정 또는 삭제하시겠습니까?",
+            title: TextLiteral.MyPage.fixOrDeleteReview,
+            message: TextLiteral.MyPage.askFixOrDeleteReview,
             preferredStyle: UIAlertController.Style.actionSheet
         )
 
         let fixAction = UIAlertAction(
-            title: "수정하기",
+            title: TextLiteral.Common.fix,
             style: .default,
             handler: { _ in
                 let setRateViewController = SetRateViewController()
@@ -116,7 +116,7 @@ final class MyReviewViewController: BaseViewController {
         )
 
         let deleteAction = UIAlertAction(
-            title: "삭제하기",
+            title: TextLiteral.Common.delete,
             style: .default,
             handler: { _ in
                 self.deleteReview(reviewID: reviewID)
@@ -124,7 +124,7 @@ final class MyReviewViewController: BaseViewController {
         )
 
         let cancelAction = UIAlertAction(
-            title: "취소하기",
+            title: TextLiteral.Common.cancelDark,
             style: .cancel,
             handler: nil
         )
@@ -137,7 +137,7 @@ final class MyReviewViewController: BaseViewController {
     
     private func navigateToLogin() {
         let loginVC = LoginViewController()
-        loginVC.toastMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+        loginVC.toastMessage = TextLiteral.Common.sessionExpired
         loginVC.toastType = .info
         
         DispatchQueue.main.async {
@@ -226,10 +226,10 @@ extension MyReviewViewController {
     
     func deleteReview(reviewID: Int) {
         showCustomDialog(
-            title: "리뷰 삭제하기",
-            message: "해당 리뷰를 삭제할까요?",
-            cancelButtonTitle: "취소하기",
-            confirmButtonTitle: "삭제하기"
+            title: TextLiteral.MyPage.deleteMyReview,
+            message: TextLiteral.MyPage.askDeleteMyReview,
+            cancelButtonTitle: TextLiteral.Common.cancelDark,
+            confirmButtonTitle: TextLiteral.Common.delete
         ) { [weak self] in
             guard let self = self else { return }
             
@@ -241,7 +241,7 @@ extension MyReviewViewController {
                 switch result {
                 case .success:
                     self.getMyReview()
-                    self.showToast(message: "리뷰가 성공적으로 삭제되었습니다.")
+                    self.showToast(message: TextLiteral.MyPage.deleteMyReviewSuccess)
                 case .failure(let error):
                     print("리뷰 삭제 실패: \(error.localizedDescription)")
                     RealmService.shared.resetDB()

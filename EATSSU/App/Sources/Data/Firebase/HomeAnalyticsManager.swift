@@ -35,17 +35,17 @@ final class HomeAnalyticsManager {
         
     // 식당 이름(한글) -> 영문 소문자 파라미터로 변환
     private let restaurantNameMap: [String: String] = [
-        TextLiteral.studentRestaurant: "haksik",
-        TextLiteral.dodamRestaurant: "dodam",
-        TextLiteral.dormitoryRestaurant: "dormitory",
-        TextLiteral.facultyRestaurant: "faculty"
+        TextLiteral.Restaurant.studentRestaurant: "haksik",
+        TextLiteral.Restaurant.dodamRestaurant: "dodam",
+        TextLiteral.Restaurant.dormitoryRestaurant: "dormitory",
+        TextLiteral.Restaurant.facultyRestaurant: "faculty"
     ]
     
     // 식사 유형(한글) -> 영문 소문자 파라미터로 변환
     private let mealTimeMap: [String: String] = [
-        TextLiteral.morning: "breakfast",
-        TextLiteral.lunch: "lunch",
-        TextLiteral.dinner: "dinner"
+        TextLiteral.Home.morning: "breakfast",
+        TextLiteral.Home.lunch: "lunch",
+        TextLiteral.Home.dinner: "dinner"
     ]
     
     // Date 객체 -> 요일(영문 소문자) 문자열로 변환

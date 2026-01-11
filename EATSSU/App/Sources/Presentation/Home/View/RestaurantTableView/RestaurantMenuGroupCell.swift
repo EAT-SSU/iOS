@@ -34,7 +34,7 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
 
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = "영업 시간이 아니에요."
+        label.text = TextLiteral.Home.notBusinessHour
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)
         label.textColor = .black
         label.textAlignment = .center

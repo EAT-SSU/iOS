@@ -15,7 +15,7 @@ import EATSSUDesign
 final class CustomTimeTabController: BaseViewController {
     // MARK: - Properties
 
-    private let tabTitles = ["아침", "점심", "저녁"]
+    private let tabTitles = [TextLiteral.Home.morning, TextLiteral.Home.lunch, TextLiteral.Home.dinner]
     private var selectedIndex: Int = 0 {
         didSet {
             updateTabSelection(animated: true)

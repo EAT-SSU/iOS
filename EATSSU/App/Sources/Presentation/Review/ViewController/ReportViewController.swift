@@ -14,13 +14,23 @@ import FirebaseAnalytics
 import EATSSUDesign
 
 final class ReportViewController: BaseViewController {
+    
+    private enum ReportType: String {
+        case noAssociateContent = "NO_ASSOCIATE_CONTENT"
+        case improperContent = "IMPROPER_CONTENT"
+        case improperAdvertisement = "IMPROPER_ADVERTISEMENT"
+        case copy = "COPY"
+        case copyright = "COPYRIGHT"
+        case extra = "EXTRA"
+    }
+
     // MARK: - Properties
     
     // View Properties
     private let reportView = ReportView()
     private let scrollView = UIScrollView()
     
-    private let sendToEATSSUButton = ESButton(size: .big, title: "EAT SSU 팀에게 보내기")
+    private let sendToEATSSUButton = ESButton(size: .big, title: TextLiteral.Review.sendToTeam)
     
     // Variable Properties
     private var isChecked = false
@@ -122,7 +132,7 @@ final class ReportViewController: BaseViewController {
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        title = "신고하기"
+        title = TextLiteral.Review.report
         
         let navBarApperance = UINavigationBarAppearance()
         navBarApperance.configureWithOpaqueBackground()
@@ -170,7 +180,7 @@ final class ReportViewController: BaseViewController {
         if isReasonSelected {
             postReport(reviewID: reviewID, content: contentArray[status] ?? "")
         } else {
-            showToast(message: "사유를 선택해주세요!", type: .info)
+            showToast(message: TextLiteral.Review.selectReason, type: .info)
         }
     }
     
@@ -259,7 +269,7 @@ final class ReportViewController: BaseViewController {
         self.navigationController?.popViewController(animated: true)
         
         navigationController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
-            previousVC.showToast(message: "신고가 성공적으로 접수되었어요!", type: .success)
+            previousVC.showToast(message: TextLiteral.Review.reportSuccess, type: .success)
         })
     }
 }
@@ -272,23 +282,23 @@ extension ReportViewController {
         var reportContent = String()
         
         switch content {
-        case "메뉴와 관련없는 내용":
-            reportType = "NO_ASSOCIATE_CONTENT"
+        case TextLiteral.Review.unrelatedMenu:
+            reportType = ReportType.noAssociateContent.rawValue
             reportContent = content
-        case "음란성, 욕설 등 부적절한 내용":
-            reportType = "IMPROPER_CONTENT"
+        case TextLiteral.Review.inappropriateContent:
+            reportType = ReportType.improperContent.rawValue
             reportContent = content
-        case "부적절한 홍보 또는 광고":
-            reportType = "IMPROPER_ADVERTISEMENT"
+        case TextLiteral.Review.inappropriateAd:
+            reportType = ReportType.improperAdvertisement.rawValue
             reportContent = content
-        case "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)":
-            reportType = "COPY"
+        case TextLiteral.Review.notReviewFormat:
+            reportType = ReportType.copy.rawValue
             reportContent = content
-        case "저작권 도용 의심 (사진 등)":
-            reportType = "COPYRIGHT"
+        case TextLiteral.Review.copyright:
+            reportType = ReportType.copyright.rawValue
             reportContent = content
-        case "기타 (하단 내용 작성)":
-            reportType = "EXTRA"
+        case TextLiteral.Review.etc:
+            reportType = ReportType.extra.rawValue
             reportContent = reportView.reviewReportReasonTextView.text
         default:
             reportType = ""
@@ -310,7 +320,7 @@ extension ReportViewController {
                 
             case .failure(let error):
                 print("신고 실패: \(error.localizedDescription)")
-                self?.showToast(message: "잠시 후 다시 시도해주세요.", type: .danger)
+                self?.showToast(message: TextLiteral.Common.tryAgain, type: .danger)
             }
         }
     }

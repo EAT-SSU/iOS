@@ -19,35 +19,35 @@ final class RestaurantInfoView: BaseUIView {
 
     var restaurantNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "학생 식당"
+        label.text = TextLiteral.Home.studentRestaurant
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 20)
         return label
     }()
 
     private let locationTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "식당 위치"
+        label.text = TextLiteral.Home.restaurantLocation
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         return label
     }()
 
     private let imageTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "식당 사진"
+        label.text = TextLiteral.Home.restaurantPicture
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         return label
     }()
 
     private var locationLabel: UILabel = {
         let label = UILabel()
-        label.text = "숭실대학교"
+        label.text = TextLiteral.Home.soongsilUniversity
         label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
         return label
     }()
 
     private let openingTimeTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "영업 시간"
+        label.text = TextLiteral.Home.businessHour
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         return label
     }()
@@ -68,7 +68,7 @@ final class RestaurantInfoView: BaseUIView {
 
     private let ectTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "비고"
+        label.text = TextLiteral.Home.note
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         return label
     }()
@@ -78,7 +78,7 @@ final class RestaurantInfoView: BaseUIView {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10
         label.attributedText = NSAttributedString(
-            string: "아시안푸드, 돈까스, 샐러드, 국밥 등\n카페",
+            string: TextLiteral.Home.dodamEtc,
             attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
         )
         label.numberOfLines = 0

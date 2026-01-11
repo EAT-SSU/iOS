@@ -78,7 +78,7 @@ final class UserWithdrawViewController: BaseViewController {
 
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = "회원탈퇴"
+        navigationItem.title = TextLiteral.MyPage.withdraw
     }
 
     override func setButtonEvent() {
@@ -148,7 +148,7 @@ extension UserWithdrawViewController {
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
                 {
-                    loginViewController.toastMessage = "탈퇴 처리가 완료되었습니다."
+                    loginViewController.toastMessage = TextLiteral.Common.withdrawComplete
                     keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
                 }
                 
