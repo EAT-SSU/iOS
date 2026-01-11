@@ -23,6 +23,21 @@ protocol RestaurantInfoDelegate: AnyObject {
 }
 
 final class HomeRestaurantViewController: BaseViewController {
+    
+    private enum RestaurantIdentifier: String, CaseIterable {
+        case haksik = "HAKSIK"
+        case dodam = "DODAM"
+        case dormitory = "DORMITORY"
+        case faculty = "FACULTY"
+        case snackCorner = "SNACK_CORNER"
+    }
+
+    private enum MealTime: String {
+        case morning = "MORNING"
+        case lunch = "LUNCH"
+        case dinner = "DINNER"
+    }
+    
     // MARK: - Properties
     
     // Combine 요청을 관리하기 위한 Set
@@ -51,17 +66,17 @@ final class HomeRestaurantViewController: BaseViewController {
                                            TextLiteral.Restaurant.snackCorner]
 
     // 버튼에 표시되는 타이틀을 백엔드 식당 이름으로 매핑
-    let restaurantButtonTitleToName = [TextLiteral.Restaurant.studentRestaurant: "HAKSIK",
-                                       TextLiteral.Restaurant.dodamRestaurant: "DODAM",
-                                       TextLiteral.Restaurant.dormitoryRestaurant: "DORMITORY",
-                                       TextLiteral.Restaurant.facultyRestaurant: "FACULTY",
-                                       TextLiteral.Restaurant.snackCorner: "SNACK_CORNER"]
+    let restaurantButtonTitleToName = [TextLiteral.Restaurant.studentRestaurant: RestaurantIdentifier.haksik.rawValue,
+                                       TextLiteral.Restaurant.dodamRestaurant: RestaurantIdentifier.dodam.rawValue,
+                                       TextLiteral.Restaurant.dormitoryRestaurant: RestaurantIdentifier.dormitory.rawValue,
+                                       TextLiteral.Restaurant.facultyRestaurant: RestaurantIdentifier.faculty.rawValue,
+                                       TextLiteral.Restaurant.snackCorner: RestaurantIdentifier.snackCorner.rawValue]
     
     // 변경 메뉴를 가져올 식당 식별자 목록(스낵 제외)
     private var changeRestaurantIDs: [String] {
-        sectionHeaderRestaurant
-            .compactMap { restaurantButtonTitleToName[$0] }
-            .filter { $0 != Restaurant.snackCorner.identifier }
+        RestaurantIdentifier.allCases
+            .map { $0.rawValue }
+            .filter { $0 != RestaurantIdentifier.snackCorner.rawValue }
     }
     
     // info 버튼 UIAction 고정 식별자
@@ -165,17 +180,17 @@ final class HomeRestaurantViewController: BaseViewController {
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend
 
-        if time == "LUNCH" {
+        if time == MealTime.lunch.rawValue {
             // 학기 중 평일 점심에만 스낵 고정 메뉴 요청
             if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
                 isSelectable = true
                 let fixTask = _Concurrency.Task {
-                    await self.fetchFixedMenuData(restaurant: Restaurant.snackCorner.identifier)
+                    await self.fetchFixedMenuData(restaurant: RestaurantIdentifier.snackCorner.rawValue)
                 }
                 cancellables.insert(AnyCancellable { fixTask.cancel() })
             } else {
                 // 방학/주말 더미
-                fixMenuTableViewData[Restaurant.snackCorner.identifier] = []
+                fixMenuTableViewData[RestaurantIdentifier.snackCorner.rawValue] = []
             }
         }
     }
@@ -209,7 +224,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         ) as! RestaurantMenuGroupCell
 
         let sectionKey = getSectionKey(for: indexPath.section)
-        let isSnackCorner = (sectionKey == Restaurant.snackCorner.identifier)
+        let isSnackCorner = (sectionKey == RestaurantIdentifier.snackCorner.rawValue)
 
         let menuList: [MenuTypeInfo] = isSnackCorner
             ? (fixMenuTableViewData[sectionKey]?.map { .fix($0) } ?? [])
@@ -235,7 +250,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             HomeAnalyticsManager.shared.logClickMenu(restaurantName: restaurantName)
         }
         
-        let isSnackCorner = (restaurant == Restaurant.snackCorner.identifier)
+        let isSnackCorner = (restaurant == RestaurantIdentifier.snackCorner.rawValue)
 
         var reviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
 

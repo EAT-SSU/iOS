@@ -14,6 +14,16 @@ import FirebaseAnalytics
 import EATSSUDesign
 
 final class ReportViewController: BaseViewController {
+    
+    private enum ReportType: String {
+        case noAssociateContent = "NO_ASSOCIATE_CONTENT"
+        case improperContent = "IMPROPER_CONTENT"
+        case improperAdvertisement = "IMPROPER_ADVERTISEMENT"
+        case copy = "COPY"
+        case copyright = "COPYRIGHT"
+        case extra = "EXTRA"
+    }
+
     // MARK: - Properties
     
     // View Properties
@@ -273,22 +283,22 @@ extension ReportViewController {
         
         switch content {
         case TextLiteral.Review.unrelatedMenu:
-            reportType = "NO_ASSOCIATE_CONTENT"
+            reportType = ReportType.noAssociateContent.rawValue
             reportContent = content
         case TextLiteral.Review.inappropriateContent:
-            reportType = "IMPROPER_CONTENT"
+            reportType = ReportType.improperContent.rawValue
             reportContent = content
         case TextLiteral.Review.inappropriateAd:
-            reportType = "IMPROPER_ADVERTISEMENT"
+            reportType = ReportType.improperAdvertisement.rawValue
             reportContent = content
         case TextLiteral.Review.notReviewFormat:
-            reportType = "COPY"
+            reportType = ReportType.copy.rawValue
             reportContent = content
         case TextLiteral.Review.copyright:
-            reportType = "COPYRIGHT"
+            reportType = ReportType.copyright.rawValue
             reportContent = content
         case TextLiteral.Review.etc:
-            reportType = "EXTRA"
+            reportType = ReportType.extra.rawValue
             reportContent = reportView.reviewReportReasonTextView.text
         default:
             reportType = ""
