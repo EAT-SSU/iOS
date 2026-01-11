@@ -322,9 +322,29 @@ extension SetNickNameViewController {
                 self.updateSaveButtonState()
                 
             case .failure(let error):
-                print("닉네임 중복 확인 실패: \(error.localizedDescription)")
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
+                // 닉네임 중복 확인 실패 시 Error Handling
+                if let networkError = error as? NetworkError,
+                   case .underlying(let moyaError) = networkError,
+                   let response = (moyaError as? MoyaError)?.response,
+                   response.statusCode == 400 {
+                    do {
+                        let errorResponse = try JSONDecoder().decode(BaseResponse<Bool>.self, from: response.data)
+                        DispatchQueue.main.async {
+                            self.showToast(message: errorResponse.message, type: .danger)
+                            self.setNickNameView.inputNickNameTextField.layer.borderColor = UIColor.error.cgColor
+                            self.setNickNameView.nicknameValidationMessageLabel.text = errorResponse.message
+                            self.setNickNameView.nicknameValidationMessageLabel.textColor = UIColor.error
+                        }
+                    } catch {
+                        print("닉네임 에러 응답 디코딩 실패: \(error.localizedDescription)")
+                        RealmService.shared.resetDB()
+                        self.navigateToLogin()
+                    }
+                } else {
+                    // 그 외 모든 에러 처리
+                    RealmService.shared.resetDB()
+                    self.navigateToLogin()
+                }
             }
         }
     }
