@@ -19,7 +19,7 @@ extension MyPageLocalData {
         MyPageLocalData(titleLabel: TextLiteral.MyPage.pushNotificationSetting),
 
         // "내 정보"
-        MyPageLocalData(titleLabel: TextLiteral.MyPage.MyInfo),
+        MyPageLocalData(titleLabel: TextLiteral.MyPage.myInfo),
         
         // "내 리뷰"
         MyPageLocalData(titleLabel: TextLiteral.MyPage.myReview),

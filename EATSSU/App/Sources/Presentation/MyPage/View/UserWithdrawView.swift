@@ -106,7 +106,7 @@ final class UserWithdrawView: BaseUIView {
         inputNickNameTextField.layer.borderWidth = 1.0
         inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
 
-        nickNameStateGuideLabel.text = TextLiteral.inputNickName
+        nickNameStateGuideLabel.text = TextLiteral.Auth.inputNickName
         nickNameStateGuideLabel.textColor = .gray700
         nickNameStateGuideLabel.font = .caption3
 
@@ -115,6 +115,7 @@ final class UserWithdrawView: BaseUIView {
         
         completeSignOutButton.isEnabled = false
     }
+
 
     private func bindTextField() {
         NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: inputNickNameTextField)
@@ -157,7 +158,7 @@ final class UserWithdrawView: BaseUIView {
         case .pleaseEnter:
             // 비어있을 때 -> 회색
             nickNameStateGuideLabel.isHidden = false
-            nickNameStateGuideLabel.text = TextLiteral.inputNickName
+            nickNameStateGuideLabel.text = TextLiteral.Auth.inputNickName
             nickNameStateGuideLabel.textColor = .gray700
             inputNickNameTextField.layer.borderColor = UIColor.gray300.cgColor
             completeSignOutButton.isEnabled = false

@@ -5,6 +5,7 @@
 //  Created by 최지우 on 2023/05/22.
 //
 
+import UIKit
 import Foundation
 import WebKit
 
@@ -14,7 +15,6 @@ import KakaoSDKTalk
 import Moya
 import Realm
 import SnapKit
-import UIKit
 
 final class MyPageViewController: BaseViewController {
     // MARK: - Properties
@@ -45,7 +45,7 @@ final class MyPageViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? "실패"
+        nickName = UserInfoManager.shared.getCurrentUserInfo()?.nickname ?? ""
         mypageView.setUserInfo(nickname: nickName)
     }
 
@@ -89,15 +89,15 @@ final class MyPageViewController: BaseViewController {
 
     /// 로그아웃 Alert를 스크린에 표시하는 메소드
     private func logoutShowAlert() {
-        let alert = UIAlertController(title: "로그아웃",
-                                      message: "정말 로그아웃 하시겠습니까?",
+        let alert = UIAlertController(title: TextLiteral.MyPage.logout,
+                                      message: TextLiteral.MyPage.askLogout,
                                       preferredStyle: UIAlertController.Style.alert)
 
-        let cancelAction = UIAlertAction(title: "취소하기",
+        let cancelAction = UIAlertAction(title: TextLiteral.Common.cancelDark,
                                          style: .default,
                                          handler: nil)
 
-        let fixAction = UIAlertAction(title: "로그아웃",
+        let fixAction = UIAlertAction(title: TextLiteral.MyPage.logout,
                                       style: .default,
                                       handler: { _ in
                                           RealmService.shared.resetDB()
@@ -207,8 +207,8 @@ extension MyPageViewController: UITableViewDelegate {
                         UIApplication.shared.open(kakaoChannelLink)
                     } else {
                         self?.showAlertController(
-                            title: "다시 시도하세요",
-                            message: "에러가 발생했습니다",
+                            title: TextLiteral.Common.retry,
+                            message: TextLiteral.Common.errorOccured,
                             style: .default
                         )
                     }
@@ -266,8 +266,8 @@ extension MyPageViewController: UITableViewDelegate {
                     let formattedDate = dateFormatter.string(from: Date())
                     
                     let message = newState
-                        ? "EAT-SSU 수신 동의 (\(formattedDate))"
-                        : "EAT-SSU 수신 거절 (\(formattedDate))"
+                        ? TextLiteral.MyPage.agreeNoti(date: formattedDate)
+                        : TextLiteral.MyPage.disagreeNoti(date: formattedDate)
                     
                     self.showToast(message: message, type: .info)
                 }
@@ -278,7 +278,7 @@ extension MyPageViewController: UITableViewDelegate {
                     case .permissionDenied:
                         self.showNotificationPermissionAlert()
                     case .unknown:
-                        self.showToast(message: "알림 설정 중 오류가 발생했습니다.", type: .danger)
+                        self.showToast(message: TextLiteral.MyPage.notiSettingError, type: .danger)
                     }
                 }
             }
@@ -295,11 +295,11 @@ extension MyPageViewController: UITableViewDelegate {
             preferredStyle: .alert
         )
         
-        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+        let settingsAction = UIAlertAction(title: TextLiteral.Common.moveToSetting, style: .default) { _ in
             NotificationManager.shared.openNotificationSettings() 
         }
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        let cancelAction = UIAlertAction(title: TextLiteral.Common.cancel, style: .cancel)
         
         alert.addAction(settingsAction)
         alert.addAction(cancelAction)

@@ -42,7 +42,7 @@ extension MainMapViewController {
                 self.currentDepartmentId = department.departmentId
                 self.currentCollegeId = department.collegeId
                 
-                let buttonTitle = departmentName.isEmpty ? "내 제휴" : departmentName
+                let buttonTitle = departmentName.isEmpty ? TextLiteral.Map.myPartner : departmentName
                 self.root.myOnlyButton.setTitle(buttonTitle, for: .normal)
                 
             case .failure(let error):
@@ -50,7 +50,7 @@ extension MainMapViewController {
                 self.currentDepartmentName = nil
                 self.currentDepartmentId = nil
                 self.currentCollegeId = nil
-                self.root.myOnlyButton.setTitle("내 제휴", for: .normal)
+                self.root.myOnlyButton.setTitle(TextLiteral.Map.myPartner, for: .normal)
             }
             
             completion?()

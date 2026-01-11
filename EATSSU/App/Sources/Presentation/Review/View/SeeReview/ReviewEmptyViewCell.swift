@@ -29,7 +29,7 @@ final class ReviewEmptyViewCell: UITableViewCell {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .subtitle2
-        label.text = "아직 작성된 리뷰가 없어요!"
+        label.text = TextLiteral.Review.noReview
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textAlignment = .center
         return label
@@ -38,7 +38,7 @@ final class ReviewEmptyViewCell: UITableViewCell {
     /// 설명 레이블
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "메뉴에 가장 먼저 리뷰를 남겨주세요!"
+        label.text = TextLiteral.Review.beFirstReviewer
         label.font = .caption2
         label.textColor = EATSSUDesignAsset.Color.GrayScale.gray600.color
         label.textAlignment = .center
@@ -94,17 +94,17 @@ final class ReviewEmptyViewCell: UITableViewCell {
     func configure(isTokenExist: Bool) {
         if isTokenExist {
             noReviewImageView.image = EATSSUDesignAsset.Images.noReview.image
-            titleLabel.text = "아직 작성된 리뷰가 없어요"
-            descriptionLabel.text = "메뉴에 가장 먼저 리뷰를 남겨주세요!"
+            titleLabel.text = TextLiteral.Review.noWrittenReview
+            descriptionLabel.text = TextLiteral.Review.beFirstReviewer
         } else {
-            titleLabel.text = "로그인이 필요합니다"
-            descriptionLabel.text = "로그인 후 리뷰를 확인하세요"
+            titleLabel.text = TextLiteral.Review.needLogin
+            descriptionLabel.text = TextLiteral.Review.checkReviewAfterLogin
         }
     }
     
     /// 마이페이지용 빈 상태 구성
     func configureForMyReview() {
-        titleLabel.text = "아직 작성한 리뷰가 없어요"
-        descriptionLabel.text = "첫 리뷰를 남겨 주세요!"
+        titleLabel.text = TextLiteral.Review.noWrittenReview
+        descriptionLabel.text = TextLiteral.Review.writeFirstReview
     }
 }

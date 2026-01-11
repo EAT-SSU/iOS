@@ -32,7 +32,7 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
 
     func setViewProperties() {
         titleLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
-        titleLabel.text = "기숙사 식당"
+        titleLabel.text = TextLiteral.Home.dormitoryRestaurant
 
         var configuration = UIButton.Configuration.plain()
         configuration.baseForegroundColor = .gray600

@@ -95,7 +95,7 @@ final class MainMapViewController: BaseViewController {
     // MARK: - Configuration
     
     private func configureNavigationBar() {
-        title = "제휴 지도"
+        title = TextLiteral.Map.map
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.backgroundColor = .white
@@ -201,7 +201,7 @@ final class MainMapViewController: BaseViewController {
         if let departmentName = currentDepartmentName, !departmentName.isEmpty {
             root.myOnlyButton.setTitle(departmentName, for: .normal)
         } else {
-            root.myOnlyButton.setTitle("내 제휴", for: .normal)
+            root.myOnlyButton.setTitle(TextLiteral.Map.myPartner, for: .normal)
         }
     }
 }

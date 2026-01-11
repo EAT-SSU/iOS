@@ -28,7 +28,6 @@ final class ReviewDividerCell: UITableViewCell {
     /// 리뷰 개수 표시 레이블
     private let label: UILabel = {
         let label = UILabel()
-        label.text = "리뷰 15"
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
         label.textColor = .black
         return label
@@ -71,7 +70,7 @@ final class ReviewDividerCell: UITableViewCell {
     /// 리뷰 개수로 셀 구성
     /// - Parameter reviewCount: 표시할 리뷰 개수
     func configure(reviewCount: Int) {
-        let text = "리뷰 \(reviewCount)"
+        let text = TextLiteral.Review.reviewCount(reviewCount)
         let attributed = NSMutableAttributedString(string: text)
         let range = (text as NSString).range(of: "\(reviewCount)")
         attributed.addAttribute(

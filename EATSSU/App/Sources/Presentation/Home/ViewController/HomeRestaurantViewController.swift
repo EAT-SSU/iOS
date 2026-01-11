@@ -44,18 +44,18 @@ final class HomeRestaurantViewController: BaseViewController {
     private let fixedDummy = FixedMenuInfoData.Dummy()
 
     // 섹션 헤더에 들어갈 식당명 문자열 배열
-    private let sectionHeaderRestaurant = [TextLiteral.studentRestaurant,
-                                           TextLiteral.dodamRestaurant,
-                                           TextLiteral.dormitoryRestaurant,
-                                           TextLiteral.facultyRestaurant,
-                                           TextLiteral.snackCorner]
+    private let sectionHeaderRestaurant = [TextLiteral.Restaurant.studentRestaurant,
+                                           TextLiteral.Restaurant.dodamRestaurant,
+                                           TextLiteral.Restaurant.dormitoryRestaurant,
+                                           TextLiteral.Restaurant.facultyRestaurant,
+                                           TextLiteral.Restaurant.snackCorner]
 
     // 버튼에 표시되는 타이틀을 백엔드 식당 이름으로 매핑
-    let restaurantButtonTitleToName = [TextLiteral.studentRestaurant: "HAKSIK",
-                                       TextLiteral.dodamRestaurant: "DODAM",
-                                       TextLiteral.dormitoryRestaurant: "DORMITORY",
-                                       TextLiteral.facultyRestaurant: "FACULTY",
-                                       TextLiteral.snackCorner: "SNACK_CORNER"]
+    let restaurantButtonTitleToName = [TextLiteral.Restaurant.studentRestaurant: "HAKSIK",
+                                       TextLiteral.Restaurant.dodamRestaurant: "DODAM",
+                                       TextLiteral.Restaurant.dormitoryRestaurant: "DORMITORY",
+                                       TextLiteral.Restaurant.facultyRestaurant: "FACULTY",
+                                       TextLiteral.Restaurant.snackCorner: "SNACK_CORNER"]
     
     // 변경 메뉴를 가져올 식당 식별자 목록(스낵 제외)
     private var changeRestaurantIDs: [String] {
@@ -165,7 +165,7 @@ final class HomeRestaurantViewController: BaseViewController {
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend
 
-        if time == TextLiteral.lunchRawValue {
+        if time == "LUNCH" {
             // 학기 중 평일 점심에만 스낵 고정 메뉴 요청
             if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
                 isSelectable = true
@@ -286,10 +286,10 @@ extension HomeRestaurantViewController: UITableViewDataSource {
     }
     
     private func presentLoginAlert() {
-        let alert = UIAlertController(title: "로그인이 필요한 서비스입니다",
-                                      message: "로그인 하시겠습니까?",
+        let alert = UIAlertController(title: TextLiteral.Common.needLogin,
+                                      message: TextLiteral.Common.askLogin,
                                       preferredStyle: .alert)
-        let confirm = UIAlertAction(title: "확인", style: .default) { _ in
+        let confirm = UIAlertAction(title: TextLiteral.Common.confirm, style: .default) { _ in
             let loginVC = LoginViewController()
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let sceneDelegate = windowScene.delegate as? SceneDelegate,
@@ -298,7 +298,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             }
         }
         alert.addAction(confirm)
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: TextLiteral.Common.cancel, style: .cancel))
         present(alert, animated: true)
     }
 

@@ -112,7 +112,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = reviewId != nil ? "리뷰 수정하기" : "리뷰 남기기"
+        navigationItem.title = reviewId != nil ? TextLiteral.Review.fixReview : TextLiteral.Review.leaveReview
 
         navigationItem.hidesBackButton = true
         navigationItem.leftBarButtonItem = nil
@@ -186,7 +186,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         self.likedStates = likedStates
         self.reviewType = .fixed
         
-        setRateView.menuLabel.text = "\(menuNames.first ?? "") 을/를 추천하시겠어요?"
+        setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(menu: menuNames.first ?? "")
         setRateView.menuTableView.reloadData()
         view.setNeedsLayout()
     }
@@ -196,10 +196,10 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         self.reviewId = reviewId
         self.likedStates = Array(repeating: false, count: list.count)
         
-        setRateView.menuLabel.text = "\(list[0]) 을/를 추천하시겠어요?"
+        setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(menu: list[0])
         setRateView.selectImageButton.isHidden = true
         setRateView.deleteMethodLabel.isHidden = true
-        setRateView.nextButton.setTitle("리뷰 수정 완료하기", for: .normal)
+        setRateView.nextButton.setTitle(TextLiteral.Review.fixReviewComplete, for: .normal)
     }
 
     func dataBindForFix(
@@ -227,8 +227,8 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
 
         setRateView.menuLabel.text = list.count == 1
-            ? "\(list[0]) 를/을 추천하시겠어요?"
-            : "메뉴를 추천하시겠어요?"
+            ? TextLiteral.Review.recommendMenuWithParticle(menu: list[0])
+            : TextLiteral.Review.recommendMenuTitle
 
         if let rating = rating {
             setRateView.rateView.currentStar = rating
@@ -248,7 +248,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
             setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
         }
    
-        setRateView.nextButton.setTitle("완료하기", for: .normal)
+        setRateView.nextButton.setTitle(TextLiteral.Review.complete, for: .normal)
         setRateView.menuTableView.reloadData()
         view.setNeedsLayout()
     }
@@ -321,7 +321,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     @objc
     func tappedNextButton() {
         guard setRateView.rateView.currentStar != 0 else {
-            showToast(message: "별점을 입력해주세요!", type: .info)
+            showToast(message: TextLiteral.Review.inputRating, type: .info)
             return
         }
 
@@ -387,7 +387,7 @@ extension SetRateViewController {
                     
                 case .failure(let error):
                     print("❌ Error fetching valid menus: \(error)")
-                    self.showToast(message: "메뉴 목록 조회에 실패했습니다.")
+                    self.showToast(message: TextLiteral.Review.loadMenuListFail)
                 }
             }
         }
@@ -395,7 +395,7 @@ extension SetRateViewController {
     
     private func sendFixReview() {
         guard let reviewId = reviewId else {
-            showToast(message: "수정할 리뷰 정보가 없습니다.")
+            showToast(message: TextLiteral.Review.noReviewInfoForFix)
             return
         }
 
@@ -419,14 +419,14 @@ extension SetRateViewController {
                 
                 await MainActor.run {
                     self.isReviewSubmitted = true
-                    self.showToast(message: "리뷰가 성공적으로 수정되었습니다.")
+                    self.showToast(message: TextLiteral.Review.fixReviewSuccess)
                     self.moveToReviewVC()
                 }
                 
             } catch {
                 await MainActor.run {
                     print("❌ Review 수정 업로드 실패: \(error)")
-                    self.showToast(message: "리뷰 수정에 실패했습니다.")
+                    self.showToast(message: TextLiteral.Review.fixReviewFail)
                 }
             }
         }
@@ -434,7 +434,7 @@ extension SetRateViewController {
     
     private func sendMealReview() {
         guard let mealId = mealID else {
-            showToast(message: "식단 정보가 없습니다.")
+            showToast(message: TextLiteral.Review.noMealInfo)
             return
         }
 
@@ -468,8 +468,7 @@ extension SetRateViewController {
 
             } catch {
                 await MainActor.run {
-                    print("❌ Meal 리뷰 업로드 실패: \(error)")
-                    self.showToast(message: "리뷰 업로드에 실패했습니다.")
+                    self.showToast(message: TextLiteral.Review.uploadReviewFail)
                 }
             }
         }
@@ -477,7 +476,7 @@ extension SetRateViewController {
     
     private func sendMenuReview() {
         guard let menuId = menuID ?? validMenuIDList.first else {
-            showToast(message: "메뉴 정보가 없습니다.")
+            showToast(message: TextLiteral.Review.noMenuInfo)
             return
         }
 
@@ -514,7 +513,7 @@ extension SetRateViewController {
             } catch {
                 await MainActor.run {
                     print("❌ Menu 리뷰 업로드 실패: \(error)")
-                    self.showToast(message: "리뷰 업로드에 실패했습니다.")
+                    self.showToast(message: TextLiteral.Review.uploadReviewFail)
                 }
             }
         }
@@ -624,7 +623,7 @@ extension SetRateViewController: UITableViewDataSource, UITableViewDelegate {
 extension SetRateViewController: UITextViewDelegate {
 
     private var placeholderText: String {
-        return "메뉴에 대한 상세한 리뷰를 작성해주세요"
+        return TextLiteral.Review.inputDetailReview
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -674,10 +673,10 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UIGestureRecog
         let isReviewStarted: Bool = setRateView.rateView.currentStar > 0 || textHasContent
         
         if reviewId == nil, isReviewStarted {
-            let title = "나가시겠어요?"
-            let message = "지금 나가면 작성한 내용이 저장되지 않습니다."
-            let confirmButtonTitle = "나가기"
-            let cancelButtonTitle = "계속 작성"
+            let title = TextLiteral.Review.askLeave
+            let message = TextLiteral.Review.leaveWarning
+            let confirmButtonTitle = TextLiteral.Review.leave
+            let cancelButtonTitle = TextLiteral.Review.continueWriting
             
             self.showCustomDialog(
                 title: title,

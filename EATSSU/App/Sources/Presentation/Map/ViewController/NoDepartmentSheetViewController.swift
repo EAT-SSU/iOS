@@ -18,7 +18,7 @@ final class NoDepartmentSheetViewController: BaseViewController {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "학과를 입력하고\n나만의 제휴를 확인해보세요!"
+        label.text = TextLiteral.Map.inputDepartment
         label.numberOfLines = 2
         label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         label.textColor = .label
@@ -41,7 +41,7 @@ final class NoDepartmentSheetViewController: BaseViewController {
     }()
 
     private let inputButton: ESButton = {
-        let button = ESButton(size: .big, title: "학과 입력하기")
+        let button = ESButton(size: .big, title: TextLiteral.Map.inputDepartmentButton)
         button.isEnabled = true
         return button
     }()

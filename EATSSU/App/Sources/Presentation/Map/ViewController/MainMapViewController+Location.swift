@@ -76,18 +76,18 @@ extension MainMapViewController: CLLocationManagerDelegate {
     
     func showLocationPermissionAlert() {
         let alert = UIAlertController(
-            title: "위치 권한 필요",
-            message: "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요.",
+            title: TextLiteral.Map.needLocationAuth,
+            message: TextLiteral.Map.locationAuthDescription,
             preferredStyle: .alert
         )
         
-        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+        let settingsAction = UIAlertAction(title: TextLiteral.Common.moveToSetting, style: .default) { _ in
             if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(settingsURL)
             }
         }
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        let cancelAction = UIAlertAction(title: TextLiteral.Common.cancel, style: .cancel)
         
         alert.addAction(settingsAction)
         alert.addAction(cancelAction)

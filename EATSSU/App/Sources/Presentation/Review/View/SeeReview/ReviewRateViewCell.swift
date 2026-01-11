@@ -36,7 +36,7 @@ final class ReviewRateViewCell: UITableViewCell {
     /// 메뉴 이름 레이블
     var menuLabel: UILabel = {
         let label = UILabel()
-        label.text = "김치볶음밥 & 계란국"
+        label.text = ""
         label.font = .body1
         label.textColor = .black
         label.numberOfLines = 0
@@ -54,7 +54,7 @@ final class ReviewRateViewCell: UITableViewCell {
     /// "오늘의 메뉴" 타이틀 레이블
     private let menuTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "오늘의 메뉴"
+        label.text = TextLiteral.Review.todayMenu
         label.font = .subtitle2
         label.textColor = .black
         return label
@@ -96,11 +96,11 @@ final class ReviewRateViewCell: UITableViewCell {
     // MARK: - UI Components - Rating Chart
     
     /// 별점별 레이블들
-    private let fivePointLabel = ReviewRateViewCell.makePointLabel("5점")
-    private let fourPointLabel = ReviewRateViewCell.makePointLabel("4점")
-    private let threePointLabel = ReviewRateViewCell.makePointLabel("3점")
-    private let twoPointLabel = ReviewRateViewCell.makePointLabel("2점")
-    private let onePointLabel = ReviewRateViewCell.makePointLabel("1점")
+    private let fivePointLabel = ReviewRateViewCell.makePointLabel(TextLiteral.Review.fiveStars)
+    private let fourPointLabel = ReviewRateViewCell.makePointLabel(TextLiteral.Review.fourStars)
+    private let threePointLabel = ReviewRateViewCell.makePointLabel(TextLiteral.Review.threeStars)
+    private let twoPointLabel = ReviewRateViewCell.makePointLabel(TextLiteral.Review.twoStars)
+    private let onePointLabel = ReviewRateViewCell.makePointLabel(TextLiteral.Review.oneStar)
     
     /// 차트 바 컨테이너들
     var oneChartBar: UIView!

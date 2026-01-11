@@ -30,7 +30,7 @@ final class MyPageView: BaseUIView {
     // 닉네임이 들어간 닉네임 변경 버튼
     var userNicknameLabel: UILabel = {
         let label = UILabel()
-        label.text = "다시 시도해주세요"
+        label.text = TextLiteral.MyPage.retry
         label.textColor = .gray700Basic
         label.font = .header1
         return label
@@ -64,7 +64,7 @@ final class MyPageView: BaseUIView {
     /// "탈퇴하기" 레이블과 탈퇴하기 아이콘
     let userWithdrawButton: UIButton = {
         let button = UIButton()
-        button.setTitle(TextLiteral.MyPage.withdraw, for: .normal)
+        button.setTitle(TextLiteral.MyPage.withdrawButton, for: .normal)
         button.setImage(EATSSUDesignAsset.Images.withdrawIcon.image, for: .normal)
         button.setTitleColor(.gray400, for: .normal)
         button.titleLabel?.font = .caption2

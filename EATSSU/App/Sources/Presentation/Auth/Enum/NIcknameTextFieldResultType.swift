@@ -32,37 +32,37 @@ enum NicknameTextFieldResultType {
     var hintMessage: String {
         switch self {
         case .textFieldEmpty:
-            "필수 입력 사항입니다"
+            TextLiteral.Auth.requiredInput
         case .nicknameTextFieldDoubleCheck:
-            "중복 확인을 진행해주세요."
+            TextLiteral.Auth.needCheckDuplicate
         case .nicknameTextFieldDuplicated:
-            "이미 사용 중인 닉네임이에요."
+            TextLiteral.Auth.duplicatedNickname
         case .nicknameTextFieldValid:
-            "사용가능한 닉네임이에요"
+            TextLiteral.Auth.availableNickname
         case .invalidLength:
-            "2~16글자를 입력해 주세요."
+            TextLiteral.Auth.nicknameLength
         case .invalidStartOrEnd:
-            "특수문자로 시작/끝나는 닉네임은 사용할 수 없어요."
+            TextLiteral.Auth.specialCharNickname
         case .consecutiveSpecialChars:
-            "연속된 특수문자(--, __)는 사용할 수 없어요."
+            TextLiteral.Auth.continuousSpecialChar
         case .onlyNumbers:
-            "숫자만으로 된 닉네임은 사용할 수 없어요."
+            TextLiteral.Auth.numberOnlyNickname
         case .invalidCharacters:
-            "허용 문자(한글/영문/숫자)만 사용할 수 있어요."
+            TextLiteral.Auth.allowedChar
         case .bannedWord:
-            "사용할 수 없는 단어가 포함되어 있어요."
+            TextLiteral.Auth.bannedWord
         case .whitespaceAtStartOrEnd:
-            "띄어쓰기로 시작/끝나는 닉네임은 사용할 수 없어요."
+            TextLiteral.Auth.spaceNickname
         case .consecutiveWhitespace:
-            "연속된 띄어쓰기는 사용할 수 없어요."
+            TextLiteral.Auth.continuousSpace
         case .emojiOrSpecialChar:
-            "이모지, 특수문자는 사용할 수 없어요."
+            TextLiteral.Auth.emojiSpecialChar
         case .adminRelatedWord:
-            "관리자로 혼동될 수 있는 닉네임은 사용할 수 없어요."
+            TextLiteral.Auth.adminNickname
         case .serviceNameWord:
-            "서비스명 단독 닉네임은 사용할 수 없어요."
+            TextLiteral.Auth.serviceNameNickname
         case .profanityWord:
-            "욕설, 비속어 등의 표현이 포함된 닉네임은 사용할 수 없어요."
+            TextLiteral.Auth.slangNickname
         }
     }
 

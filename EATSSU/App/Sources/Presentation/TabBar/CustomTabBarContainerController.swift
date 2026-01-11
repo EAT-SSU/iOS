@@ -56,9 +56,9 @@ final class CustomTabBarContainerController: UITabBarController {
     
     private func setupViewControllers() {
         let tabConfigurations: [(title: String, normal: UIImage, selected: UIImage, size: CGSize)] = [
-            ("학식", EATSSUDesignAsset.Images.tabMeal.image, EATSSUDesignAsset.Images.tabMealSelected.image, CGSize(width: 23, height: 23)),
-            ("지도", EATSSUDesignAsset.Images.tabMap.image, EATSSUDesignAsset.Images.tabMapSelected.image, CGSize(width: 23, height: 23)),
-            ("마이", EATSSUDesignAsset.Images.tabMypage.image, EATSSUDesignAsset.Images.tabMypageSelected.image, CGSize(width: 44, height: 23))
+            (TextLiteral.TabBar.meal, EATSSUDesignAsset.Images.tabMeal.image, EATSSUDesignAsset.Images.tabMealSelected.image, CGSize(width: 23, height: 23)),
+            (TextLiteral.TabBar.map, EATSSUDesignAsset.Images.tabMap.image, EATSSUDesignAsset.Images.tabMapSelected.image, CGSize(width: 23, height: 23)),
+            (TextLiteral.TabBar.my, EATSSUDesignAsset.Images.tabMypage.image, EATSSUDesignAsset.Images.tabMypageSelected.image, CGSize(width: 44, height: 23))
         ]
 
         tabViewControllers.enumerated().forEach { index, navController in
@@ -109,8 +109,8 @@ final class CustomTabBarContainerController: UITabBarController {
     public func showDialog(
         title: String,
         message: String,
-        cancelButtonTitle: String = "취소하기",
-        confirmButtonTitle: String = "확인",
+        cancelButtonTitle: String = TextLiteral.Common.cancelDark,
+        confirmButtonTitle: String = TextLiteral.Common.confirm,
         confirmAction: @escaping () -> Void
     ) {
         let dialogView = EATSSUDialogView()
@@ -174,15 +174,15 @@ final class CustomTabBarContainerController: UITabBarController {
     /// 로그인 필요 시 알림창 표시
     private func presentLoginAlert() {
         let alert = UIAlertController(
-            title: "로그인이 필요한 서비스입니다",
-            message: "로그인 하시겠습니까?",
+            title: TextLiteral.Common.needLogin,
+            message: TextLiteral.Common.askLogin,
             preferredStyle: .alert
         )
 
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+        let confirmAction = UIAlertAction(title: TextLiteral.Common.confirm, style: .default) { [weak self] _ in
             self?.navigateToLogin()
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        let cancelAction = UIAlertAction(title: TextLiteral.Common.cancel, style: .cancel)
 
         alert.addAction(confirmAction)
         alert.addAction(cancelAction)
