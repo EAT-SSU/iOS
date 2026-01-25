@@ -34,6 +34,10 @@ final class LoginViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // 로그인 화면 진입 시 로컬 데이터 초기화 (데이터 불일치 방지)
+        RealmService.shared.resetDB()
+        
         configureFirebaseRemoteConfig()
     }
     
