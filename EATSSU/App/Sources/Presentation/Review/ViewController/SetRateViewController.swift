@@ -128,7 +128,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         if let imageView = closeUIButton.imageView {
             imageView.snp.makeConstraints { make in
                 make.center.equalToSuperview()
-                make.width.height.equalTo(12)
+                make.width.height.equalTo(12).priority(.high)
             }
         }
 
@@ -197,8 +197,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         self.likedStates = Array(repeating: false, count: list.count)
         
         setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(name: list[0])
-        setRateView.selectImageButton.isHidden = true
-        setRateView.deleteMethodLabel.isHidden = true
+        setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
         setRateView.nextButton.setTitle(TextLiteral.Review.fixReviewComplete, for: .normal)
     }
 
@@ -320,10 +319,15 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
 
     @objc
     func tappedNextButton() {
+        guard !isReviewSubmitted else { return }
+
         guard setRateView.rateView.currentStar != 0 else {
             showToast(message: TextLiteral.Review.inputRating, type: .info)
             return
         }
+
+        isReviewSubmitted = true
+        setRateView.nextButton.isEnabled = false
 
         if reviewId != nil {
             sendFixReview()
@@ -426,6 +430,8 @@ extension SetRateViewController {
             } catch {
                 await MainActor.run {
                     print("❌ Review 수정 업로드 실패: \(error)")
+                    self.isReviewSubmitted = false
+                    self.setRateView.nextButton.isEnabled = true
                     self.showToast(message: TextLiteral.Review.fixReviewFail)
                 }
             }
@@ -469,12 +475,14 @@ extension SetRateViewController {
             } catch {
                 await MainActor.run {
                     print("❌ Meal 리뷰 업로드 실패: \(error)")
+                    self.isReviewSubmitted = false
+                    self.setRateView.nextButton.isEnabled = true
                     self.showToast(message: TextLiteral.Review.uploadReviewFail)
                 }
             }
         }
     }
-    
+
     private func sendMenuReview() {
         guard let menuId = menuID ?? validMenuIDList.first else {
             showToast(message: TextLiteral.Review.noMenuInfo)
@@ -514,6 +522,8 @@ extension SetRateViewController {
             } catch {
                 await MainActor.run {
                     print("❌ Menu 리뷰 업로드 실패: \(error)")
+                    self.isReviewSubmitted = false
+                    self.setRateView.nextButton.isEnabled = true
                     self.showToast(message: TextLiteral.Review.uploadReviewFail)
                 }
             }
@@ -676,17 +686,16 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UIGestureRecog
         if reviewId == nil, isReviewStarted {
             let title = TextLiteral.Review.askLeave
             let message = TextLiteral.Review.leaveWarning
-            let confirmButtonTitle = TextLiteral.Review.leave
-            let cancelButtonTitle = TextLiteral.Review.continueWriting
-            
             self.showCustomDialog(
                 title: title,
                 message: message,
-                cancelButtonTitle: cancelButtonTitle,
-                confirmButtonTitle: confirmButtonTitle
-            ) {
-                completion(true)
-            }
+                cancelButtonTitle: TextLiteral.Review.leave,
+                confirmButtonTitle: TextLiteral.Review.continueWriting,
+                cancelAction: {
+                    completion(true)
+                },
+                confirmAction: { }
+            )
         } else {
             completion(true)
         }

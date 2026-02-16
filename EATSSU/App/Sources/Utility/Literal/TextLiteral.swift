@@ -565,15 +565,9 @@ enum TextLiteral {
         /// SetRateView - "추천하고 싶은 메뉴가 있나요?"
         static let recommendMenu: String = "추천하고 싶은 메뉴가 있나요?"
         
-        /// SetRateView - "사진 0/1"
-        static let photoCount: String = "사진 0/1"
-        
-        /// SetRateView - "사진 클릭 시, 삭제됩니다"
-        static let deletePhoto: String = "사진 클릭 시, 삭제됩니다"
-
-        /// SetRateView - "사진 \(%d)/1"
-        static func photoCount(count: Int) -> String {
-            return "사진 \(count)/1"
+        /// SetRateView - "사진 추가 (0/1)"
+        static func addPhoto(count: Int) -> String {
+            return "사진 추가 (\(count)/1)"
         }
 
         /// character count

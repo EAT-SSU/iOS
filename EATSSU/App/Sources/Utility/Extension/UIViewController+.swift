@@ -35,14 +35,15 @@ extension UIViewController {
         message: String,
         cancelButtonTitle: String = "취소하기",
         confirmButtonTitle: String = "확인",
+        cancelAction: (() -> Void)? = nil,
         confirmAction: @escaping () -> Void
     ) {
-        // tabBarContainer를 통해 최상위 뷰에 다이얼로그를 띄우도록 요청합니다.
         tabBarContainer?.showDialog(
             title: title,
             message: message,
             cancelButtonTitle: cancelButtonTitle,
             confirmButtonTitle: confirmButtonTitle,
+            cancelAction: cancelAction,
             confirmAction: confirmAction
         )
     }
