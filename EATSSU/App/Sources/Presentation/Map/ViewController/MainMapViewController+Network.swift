@@ -45,6 +45,17 @@ extension MainMapViewController {
                 let buttonTitle = departmentName.isEmpty ? TextLiteral.Map.myPartner : departmentName
                 self.root.myOnlyButton.setTitle(buttonTitle, for: .normal)
 
+                // Realm 데이터도 함께 동기화하여 서버-클라이언트 불일치 방지
+                if let userInfo = UserInfoManager.shared.getCurrentUserInfo() {
+                    UserInfoManager.shared.updateDepartment(
+                        for: userInfo,
+                        collegeId: department.collegeId,
+                        collegeName: department.collegeName,
+                        departmentId: department.departmentId,
+                        departmentName: department.departmentName
+                    )
+                }
+
             case .failure(let error):
                 print("학과 조회 실패: \(error.localizedDescription)")
                 self.currentDepartmentName = nil
@@ -88,6 +99,7 @@ extension MainMapViewController {
 
             case .failure(let error):
                 print("내 제휴 조회 실패: \(error.localizedDescription)")
+                self?.displayMarkers([])
             }
         }
     }
