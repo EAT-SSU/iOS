@@ -36,7 +36,7 @@ extension UIViewController {
         cancelButtonTitle: String = "취소하기",
         confirmButtonTitle: String = "확인",
         cancelAction: (() -> Void)? = nil,
-        confirmAction: @escaping () -> Void = {}
+        confirmAction: @escaping () -> Void
     ) {
         tabBarContainer?.showDialog(
             title: title,

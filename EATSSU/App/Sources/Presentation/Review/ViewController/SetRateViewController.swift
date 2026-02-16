@@ -693,7 +693,8 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UIGestureRecog
                 confirmButtonTitle: TextLiteral.Review.continueWriting,
                 cancelAction: {
                     completion(true)
-                }
+                },
+                confirmAction: { }
             )
         } else {
             completion(true)
