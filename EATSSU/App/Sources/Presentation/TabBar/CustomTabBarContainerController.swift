@@ -111,17 +111,19 @@ final class CustomTabBarContainerController: UITabBarController {
         message: String,
         cancelButtonTitle: String = TextLiteral.Common.cancelDark,
         confirmButtonTitle: String = TextLiteral.Common.confirm,
+        cancelAction: (() -> Void)? = nil,
         confirmAction: @escaping () -> Void
     ) {
         let dialogView = EATSSUDialogView()
-        
+
         dialogView.configure(title: title, message: message)
         dialogView.setButtonTitles(cancel: cancelButtonTitle, confirm: confirmButtonTitle)
-        
+
         dialogView.cancelButton.addAction(UIAction { _ in
+            cancelAction?()
             dialogView.removeFromSuperview()
         }, for: .touchUpInside)
-        
+
         dialogView.confirmButton.addAction(UIAction { _ in
             confirmAction()
             dialogView.removeFromSuperview()

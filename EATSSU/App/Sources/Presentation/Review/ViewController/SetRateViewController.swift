@@ -198,7 +198,6 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         
         setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(name: list[0])
         setRateView.selectImageButton.isHidden = true
-        setRateView.deleteMethodLabel.isHidden = true
         setRateView.nextButton.setTitle(TextLiteral.Review.fixReviewComplete, for: .normal)
     }
 
@@ -687,17 +686,15 @@ extension SetRateViewController: UIImagePickerControllerDelegate, UIGestureRecog
         if reviewId == nil, isReviewStarted {
             let title = TextLiteral.Review.askLeave
             let message = TextLiteral.Review.leaveWarning
-            let confirmButtonTitle = TextLiteral.Review.leave
-            let cancelButtonTitle = TextLiteral.Review.continueWriting
-            
             self.showCustomDialog(
                 title: title,
                 message: message,
-                cancelButtonTitle: cancelButtonTitle,
-                confirmButtonTitle: confirmButtonTitle
-            ) {
-                completion(true)
-            }
+                cancelButtonTitle: TextLiteral.Review.leave,
+                confirmButtonTitle: TextLiteral.Review.continueWriting,
+                cancelAction: {
+                    completion(true)
+                }
+            )
         } else {
             completion(true)
         }
