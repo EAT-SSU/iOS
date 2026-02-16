@@ -320,10 +320,15 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
 
     @objc
     func tappedNextButton() {
+        guard !isReviewSubmitted else { return }
+
         guard setRateView.rateView.currentStar != 0 else {
             showToast(message: TextLiteral.Review.inputRating, type: .info)
             return
         }
+
+        isReviewSubmitted = true
+        setRateView.nextButton.isEnabled = false
 
         if reviewId != nil {
             sendFixReview()
@@ -426,6 +431,8 @@ extension SetRateViewController {
             } catch {
                 await MainActor.run {
                     print("❌ Review 수정 업로드 실패: \(error)")
+                    self.isReviewSubmitted = false
+                    self.setRateView.nextButton.isEnabled = true
                     self.showToast(message: TextLiteral.Review.fixReviewFail)
                 }
             }
@@ -469,12 +476,14 @@ extension SetRateViewController {
             } catch {
                 await MainActor.run {
                     print("❌ Meal 리뷰 업로드 실패: \(error)")
+                    self.isReviewSubmitted = false
+                    self.setRateView.nextButton.isEnabled = true
                     self.showToast(message: TextLiteral.Review.uploadReviewFail)
                 }
             }
         }
     }
-    
+
     private func sendMenuReview() {
         guard let menuId = menuID ?? validMenuIDList.first else {
             showToast(message: TextLiteral.Review.noMenuInfo)
@@ -514,6 +523,8 @@ extension SetRateViewController {
             } catch {
                 await MainActor.run {
                     print("❌ Menu 리뷰 업로드 실패: \(error)")
+                    self.isReviewSubmitted = false
+                    self.setRateView.nextButton.isEnabled = true
                     self.showToast(message: TextLiteral.Review.uploadReviewFail)
                 }
             }
