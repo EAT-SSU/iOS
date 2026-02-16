@@ -15,7 +15,8 @@ final class SetRateView: UIView {
     // MARK: - Properties
 
     var menuTableViewHeightConstraint: Constraint?
-    private var contentBottomConstraint: Constraint?
+    private var buttonBottomConstraint: Constraint?
+    private var imageBottomConstraint: Constraint?
 
     // MARK: - UI Components
 
@@ -80,10 +81,12 @@ final class SetRateView: UIView {
         )
         config.imagePlacement = .leading
         config.imagePadding = 8
-        config.title = TextLiteral.Review.addPhoto(count: 0)
+        config.attributedTitle = AttributedString(
+            TextLiteral.Review.addPhoto(count: 0),
+            attributes: AttributeContainer([.font: UIFont.body2, .foregroundColor: UIColor.black])
+        )
         config.baseForegroundColor = .black
         button.configuration = config
-        button.titleLabel?.font = .body2
         button.layer.borderWidth = 1
         button.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         button.backgroundColor = .white
@@ -226,35 +229,28 @@ final class SetRateView: UIView {
             $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(60)
+            self.buttonBottomConstraint = $0.bottom.equalTo(contentView.snp.bottom).offset(-50).constraint
         }
 
         userReviewImageView.snp.makeConstraints {
             $0.top.equalTo(maximumWordLabel.snp.bottom).offset(15)
             $0.leading.equalToSuperview().offset(16)
             $0.width.height.equalTo(80)
+            self.imageBottomConstraint = $0.bottom.equalTo(contentView.snp.bottom).offset(-50).constraint
         }
+        imageBottomConstraint?.deactivate()
 
         closeButton.snp.makeConstraints {
             $0.top.equalTo(userReviewImageView.snp.top).offset(-6)
             $0.trailing.equalTo(userReviewImageView.snp.trailing).offset(6)
             $0.size.equalTo(24)
         }
-
-        updateContentBottomConstraint()
     }
 
     private func updateContentBottomConstraint() {
-        contentBottomConstraint?.deactivate()
-
-        if !selectImageButton.isHidden {
-            selectImageButton.snp.makeConstraints {
-                self.contentBottomConstraint = $0.bottom.equalTo(contentView.snp.bottom).offset(-50).constraint
-            }
-        } else {
-            userReviewImageView.snp.makeConstraints {
-                self.contentBottomConstraint = $0.bottom.equalTo(contentView.snp.bottom).offset(-50).constraint
-            }
-        }
+        let hasImage = !userReviewImageView.isHidden
+        buttonBottomConstraint?.isActive = !hasImage
+        imageBottomConstraint?.isActive = hasImage
     }
 
     // MARK: - Public Methods
@@ -274,7 +270,10 @@ final class SetRateView: UIView {
         selectImageButton.isHidden = hasImage
 
         var config = selectImageButton.configuration
-        config?.title = TextLiteral.Review.addPhoto(count: count)
+        config?.attributedTitle = AttributedString(
+            TextLiteral.Review.addPhoto(count: count),
+            attributes: AttributeContainer([.font: UIFont.body2, .foregroundColor: UIColor.black])
+        )
         selectImageButton.configuration = config
 
         updateContentBottomConstraint()

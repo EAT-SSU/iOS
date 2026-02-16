@@ -128,7 +128,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         if let imageView = closeUIButton.imageView {
             imageView.snp.makeConstraints { make in
                 make.center.equalToSuperview()
-                make.width.height.equalTo(12)
+                make.width.height.equalTo(12).priority(.high)
             }
         }
 
@@ -197,7 +197,7 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         self.likedStates = Array(repeating: false, count: list.count)
         
         setRateView.menuLabel.text = TextLiteral.Review.recommendMenu(name: list[0])
-        setRateView.selectImageButton.isHidden = true
+        setRateView.updateImageViewState(image: nil, count: 0, isHidden: true)
         setRateView.nextButton.setTitle(TextLiteral.Review.fixReviewComplete, for: .normal)
     }
 
