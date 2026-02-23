@@ -27,7 +27,7 @@ final class CustomTabBarContainerController: UITabBarController {
     private lazy var tabViewControllers: [UINavigationController] = [
         UINavigationController(rootViewController: HomeViewController()),
         UINavigationController(rootViewController: MainMapViewController()),
-        UINavigationController(rootViewController: CoffeeWebViewController()),
+        UINavigationController(rootViewController: UIViewController()),
         UINavigationController(rootViewController: MyPageViewController())
     ]
     
@@ -194,6 +194,13 @@ final class CustomTabBarContainerController: UITabBarController {
         present(alert, animated: true)
     }
 
+    /// 커피 웹뷰를 전체화면 모달로 표시
+    private func presentCoffeeWebView() {
+        let coffeeVC = CoffeeWebViewController()
+        coffeeVC.modalPresentationStyle = .overFullScreen
+        present(coffeeVC, animated: true)
+    }
+
     /// 로그인 화면으로 전환
     private func navigateToLogin() {
         let loginVC = LoginViewController()
@@ -216,8 +223,14 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
             return true
         }
 
-        // 마이페이지, 지도, 커피는 로그인 필요
-        if (selectedTab == .coffee || selectedTab == .map || selectedTab == .myPage), RealmService.shared.isAccessTokenPresent() == false {
+        // 커피 탭: 전체화면 모달로 웹뷰 표시
+        if selectedTab == .coffee {
+            presentCoffeeWebView()
+            return false
+        }
+
+        // 마이페이지와 지도는 로그인 필요
+        if (selectedTab == .map || selectedTab == .myPage), RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
             return false
         }
