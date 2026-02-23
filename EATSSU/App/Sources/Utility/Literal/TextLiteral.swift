@@ -67,6 +67,9 @@ enum TextLiteral {
         /// "지도"
         static let map: String = "지도"
         
+        /// "나만아니면돼~"
+        static let coffee: String = "나만아니면돼~"
+
         /// "마이"
         static let my: String = "마이"
     }

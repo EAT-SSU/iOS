@@ -18,7 +18,8 @@ final class CustomTabBarContainerController: UITabBarController {
     private enum Tab: Int {
         case home = 0
         case map = 1
-        case myPage = 2
+        case coffee = 2
+        case myPage = 3
     }
 
     // MARK: - Properties
@@ -26,6 +27,7 @@ final class CustomTabBarContainerController: UITabBarController {
     private lazy var tabViewControllers: [UINavigationController] = [
         UINavigationController(rootViewController: HomeViewController()),
         UINavigationController(rootViewController: MainMapViewController()),
+        UINavigationController(rootViewController: CoffeeWebViewController()),
         UINavigationController(rootViewController: MyPageViewController())
     ]
     
@@ -58,6 +60,7 @@ final class CustomTabBarContainerController: UITabBarController {
         let tabConfigurations: [(title: String, normal: UIImage, selected: UIImage, size: CGSize)] = [
             (TextLiteral.TabBar.meal, EATSSUDesignAsset.Images.tabMeal.image, EATSSUDesignAsset.Images.tabMealSelected.image, CGSize(width: 23, height: 23)),
             (TextLiteral.TabBar.map, EATSSUDesignAsset.Images.tabMap.image, EATSSUDesignAsset.Images.tabMapSelected.image, CGSize(width: 23, height: 23)),
+            (TextLiteral.TabBar.coffee, EATSSUDesignAsset.Images.coffee.image, EATSSUDesignAsset.Images.coffeeSelected.image, CGSize(width: 23, height: 23)),
             (TextLiteral.TabBar.my, EATSSUDesignAsset.Images.tabMypage.image, EATSSUDesignAsset.Images.tabMypageSelected.image, CGSize(width: 44, height: 23))
         ]
 
@@ -213,8 +216,8 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
             return true
         }
 
-        // 마이페이지와 지도는 로그인 필요
-        if (selectedTab == .map || selectedTab == .myPage), RealmService.shared.isAccessTokenPresent() == false {
+        // 마이페이지, 지도, 커피는 로그인 필요
+        if (selectedTab == .coffee || selectedTab == .map || selectedTab == .myPage), RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
             return false
         }
@@ -232,6 +235,8 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
                 if let homeVC = navController.viewControllers.first as? HomeViewController {
                     homeVC.resetToToday()
                 }
+            case .coffee:
+                break
             case .map:
                 // 지도 탭: 콘텐츠 리로드
                 if let mapVC = navController.viewControllers.first as? MainMapViewController {
