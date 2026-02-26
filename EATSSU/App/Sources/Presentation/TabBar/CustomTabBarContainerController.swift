@@ -24,10 +24,10 @@ final class CustomTabBarContainerController: UITabBarController {
 
     // MARK: - Properties
 
-    private lazy var tabViewControllers: [UINavigationController] = [
+    private lazy var tabViewControllers: [UIViewController] = [
         UINavigationController(rootViewController: HomeViewController()),
         UINavigationController(rootViewController: MainMapViewController()),
-        UINavigationController(rootViewController: UIViewController()),
+        UIViewController(),
         UINavigationController(rootViewController: MyPageViewController())
     ]
     
@@ -99,13 +99,19 @@ final class CustomTabBarContainerController: UITabBarController {
     /// 외부에서 탭 전환 요청 시 사용
     public func setTab(index: Int) {
         guard index < tabViewControllers.count else { return }
+
+        if Tab(rawValue: index) == .coffee {
+            presentCoffeeWebView()
+            return
+        }
+
         selectedIndex = index
     }
     
     /// 특정 인덱스의 네비게이션 컨트롤러를 반환
     public func getNavController(at index: Int) -> UINavigationController? {
         guard index < tabViewControllers.count else { return nil }
-        return tabViewControllers[index]
+        return tabViewControllers[index] as? UINavigationController
     }
     
     /// 공용 다이얼로그(팝업)를 표시하는 함수
@@ -196,6 +202,7 @@ final class CustomTabBarContainerController: UITabBarController {
 
     /// 커피 웹뷰를 전체화면 모달로 표시
     private func presentCoffeeWebView() {
+        guard presentedViewController == nil else { return }
         let coffeeVC = CoffeeWebViewController()
         coffeeVC.modalPresentationStyle = .overFullScreen
         present(coffeeVC, animated: true)
@@ -217,8 +224,7 @@ final class CustomTabBarContainerController: UITabBarController {
 
 extension CustomTabBarContainerController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        guard let navController = viewController as? UINavigationController,
-              let index = tabViewControllers.firstIndex(of: navController),
+        guard let index = tabViewControllers.firstIndex(of: viewController),
               let selectedTab = Tab(rawValue: index) else {
             return true
         }
@@ -241,21 +247,17 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
         }
 
         // 같은 탭 다시 클릭 시 처리
-        if index == selectedIndex {
+        if let navController = viewController as? UINavigationController, index == selectedIndex {
             switch selectedTab {
             case .home:
-                // 학식 탭: 오늘이 아니면 오늘로 이동
                 if let homeVC = navController.viewControllers.first as? HomeViewController {
                     homeVC.resetToToday()
                 }
-            case .coffee:
-                break
             case .map:
-                // 지도 탭: 콘텐츠 리로드
                 if let mapVC = navController.viewControllers.first as? MainMapViewController {
                     mapVC.reloadContent()
                 }
-            case .myPage:
+            case .coffee, .myPage:
                 break
             }
         }

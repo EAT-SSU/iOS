@@ -579,6 +579,22 @@ enum TextLiteral {
         }
     }
     
+    // MARK: - Coffee
+
+    enum Coffee {
+        /// "나가시겠어요?"
+        static let askLeave: String = "나가시겠어요?"
+
+        /// "지금 나가면 진행 상황이\n저장되지 않습니다."
+        static let leaveWarning: String = "지금 나가면 진행 상황이\n저장되지 않습니다."
+
+        /// "나가기"
+        static let leave: String = "나가기"
+
+        /// "계속하기"
+        static let continueEvent: String = "계속하기"
+    }
+
     // MARK: - Splash
     
     enum Splash {

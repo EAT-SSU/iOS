@@ -69,13 +69,14 @@ final class CoffeeWebViewController: BaseViewController {
     @objc private func closeTapped() {
         let dialogView = EATSSUDialogView()
         dialogView.configure(
-            title: "나가시겠어요?",
-            message: "지금 나가면 진행 상황이\n저장되지 않습니다."
+            title: TextLiteral.Coffee.askLeave,
+            message: TextLiteral.Coffee.leaveWarning
         )
-        dialogView.setButtonTitles(cancel: "나가기", confirm: "계속하기")
-        dialogView.frame = view.bounds
-        dialogView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        dialogView.setButtonTitles(cancel: TextLiteral.Coffee.leave, confirm: TextLiteral.Coffee.continueEvent)
         view.addSubview(dialogView)
+        dialogView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
 
         dialogView.cancelButton.addAction(UIAction { [weak self] _ in
             dialogView.removeFromSuperview()
