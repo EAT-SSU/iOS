@@ -39,6 +39,7 @@ final class CoffeeWebViewController: BaseViewController {
         super.viewDidLoad()
 
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+        logScreenView(screenID: FirebaseScreenID.AnyoneButMeActivity.abm1)
         loadWebPage()
     }
 
