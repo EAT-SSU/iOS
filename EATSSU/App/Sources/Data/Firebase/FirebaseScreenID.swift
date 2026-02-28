@@ -51,6 +51,11 @@ enum FirebaseScreenID {
             static let map4 = "MAP_002000"
     }
     
+    /// 나만아니면돼~ (커피 이벤트)
+    enum AnyoneButMeActivity {
+            static let abm1 = "ABM_001000"
+    }
+
     /// 마이페이지
     enum MyPage {
             static let mypage1 = "MYP_001000"
