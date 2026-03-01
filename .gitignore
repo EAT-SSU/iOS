@@ -89,5 +89,8 @@ fastlane/.env
 fastlane/api_key.json
 fastlane/AuthKey_*.p8
 *.p8
+fastlane/report.xml
+*.ipa
+*.dSYM.zip
 
 

@@ -1,6 +1,8 @@
 import ProjectDescription
 
 let appInfoPlist: InfoPlist = .extendingDefault(with: [
+    "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+    "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
@@ -47,6 +49,8 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
 ])
 
 let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
+    "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+    "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
     "CFBundleDisplayName": "$(PRODUCT_NAME)",
     "NSExtension": [
         "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
