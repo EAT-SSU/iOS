@@ -6,6 +6,7 @@
 //
 
 import FirebaseAnalytics
+import PostHog
 
 /// 지도 화면에서 발생하는 주요 이벤트를 Firebase Analytics에 로깅하는 담당자
 final class MapAnalyticsManager {
@@ -36,6 +37,7 @@ final class MapAnalyticsManager {
      */
     func logClickMap() {
         Analytics.logEvent(Event.clickMap, parameters: nil)
+        PostHogSDK.shared.capture(Event.clickMap)
     }
     
     /**
@@ -49,6 +51,7 @@ final class MapAnalyticsManager {
             Parameter.major: majorId
         ]
         Analytics.logEvent(Event.clickMapMine, parameters: parameters)
+        PostHogSDK.shared.capture(Event.clickMapMine, properties: parameters)
     }
 
     /**
@@ -71,5 +74,6 @@ final class MapAnalyticsManager {
         }
         
         Analytics.logEvent(Event.clickPartnerRestaurant, parameters: parameters)
+        PostHogSDK.shared.capture(Event.clickPartnerRestaurant, properties: parameters)
     }
 }

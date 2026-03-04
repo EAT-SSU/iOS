@@ -6,6 +6,7 @@
 //
 
 import FirebaseAnalytics
+import PostHog
 
 /// 리뷰 화면에서 발생하는 주요 이벤트를 Firebase Analytics에 로깅하는 담당자
 final class ReviewAnalyticsManager {
@@ -35,6 +36,7 @@ final class ReviewAnalyticsManager {
      */
     func logWriteReviewV1() {
         Analytics.logEvent(Event.writeReview, parameters: nil)
+        PostHogSDK.shared.capture(Event.writeReview)
     }
     
     /**
@@ -51,5 +53,6 @@ final class ReviewAnalyticsManager {
         ]
         
         Analytics.logEvent(Event.completeReview, parameters: parameters)
+        PostHogSDK.shared.capture(Event.completeReview, properties: parameters)
     }
 }

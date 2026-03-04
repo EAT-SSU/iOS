@@ -9,6 +9,7 @@ import UIKit.UIViewController
 
 import EATSSUDesign
 import FirebaseAnalytics
+import PostHog
 import SwiftUI // Keep SwiftUI import in case other parts of the app uses it for things unrelated to the removed toPreview function
 
 extension UIViewController {
@@ -16,6 +17,9 @@ extension UIViewController {
         Analytics.logEvent(AnalyticsEventScreenView,
                            parameters: [AnalyticsParameterScreenName: screenID,
                                        AnalyticsParameterScreenClass: String(describing: type(of: self))])
+        PostHogSDK.shared.screen(screenID, properties: [
+            "screen_class": String(describing: type(of: self))
+        ])
     }
     
     // MARK: - Custom Dialog

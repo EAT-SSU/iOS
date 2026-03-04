@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseAnalytics
+import PostHog
 
 /// 위젯에서 발생하는 이벤트를 Firebase Analytics에 로깅하는 담당자
 final class WidgetAnalyticsManager {
@@ -77,6 +78,7 @@ final class WidgetAnalyticsManager {
         // 1. 위젯 추가 이벤트 전송
         if userDefaults?.bool(forKey: UserDefaultsKey.widgetAdded) == true {
             Analytics.logEvent(Event.addWidget, parameters: nil)
+            PostHogSDK.shared.capture(Event.addWidget)
             userDefaults?.removeObject(forKey: UserDefaultsKey.widgetAdded) // 중복 전송 방지를 위해 기록 삭제
             print("Analytics: Logged add_widget_ios")
         }
@@ -84,6 +86,7 @@ final class WidgetAnalyticsManager {
         // 2. 위젯 변경 이벤트 전송
         if let changeInfo = userDefaults?.dictionary(forKey: UserDefaultsKey.widgetChanged) as? [String: String] {
             Analytics.logEvent(Event.changeWidget, parameters: changeInfo)
+            PostHogSDK.shared.capture(Event.changeWidget, properties: changeInfo)
             userDefaults?.removeObject(forKey: UserDefaultsKey.widgetChanged) // 중복 전송 방지를 위해 기록 삭제
             print("Analytics: Logged change_widget_ios with params \(changeInfo)")
         }

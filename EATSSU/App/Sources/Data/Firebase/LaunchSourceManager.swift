@@ -8,6 +8,7 @@
 import UIKit
 
 import FirebaseAnalytics
+import PostHog
 
 enum LaunchSource: String {
     case icon
@@ -76,6 +77,7 @@ final class LaunchSourceManager {
         // 아직 로깅하지 않았으면 로깅 수행
         if !hasLogged {
             Analytics.logEvent("app_launch", parameters: ["launch_path": source.rawValue])
+            PostHogSDK.shared.capture("app_launch", properties: ["launch_path": source.rawValue])
             hasLogged = true
             
             print("App launch logged: \(source.rawValue) (New session: \(isNewSession))")

@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseAnalytics
+import PostHog
 
 /// 홈 화면에서 발생하는 주요 이벤트를 Firebase Analytics에 로깅하는 담당자
 final class HomeAnalyticsManager {
@@ -71,6 +72,9 @@ final class HomeAnalyticsManager {
         Analytics.logEvent(Event.clickRestaurantInfo, parameters: [
             Parameter.restaurants: parameterValue
         ])
+        PostHogSDK.shared.capture(Event.clickRestaurantInfo, properties: [
+            Parameter.restaurants: parameterValue
+        ])
     }
     
     /**
@@ -86,6 +90,9 @@ final class HomeAnalyticsManager {
         Analytics.logEvent(Event.selectMealTime, parameters: [
             Parameter.mealTime: parameterValue
         ])
+        PostHogSDK.shared.capture(Event.selectMealTime, properties: [
+            Parameter.mealTime: parameterValue
+        ])
     }
     
     /**
@@ -96,6 +103,9 @@ final class HomeAnalyticsManager {
         let parameterValue = dayFormatter.string(from: date).lowercased()
         
         Analytics.logEvent(Event.selectDay, parameters: [
+            Parameter.day: parameterValue
+        ])
+        PostHogSDK.shared.capture(Event.selectDay, properties: [
             Parameter.day: parameterValue
         ])
     }
@@ -111,6 +121,9 @@ final class HomeAnalyticsManager {
         }
 
         Analytics.logEvent(Event.clickMenu, parameters: [
+            Parameter.restaurants: parameterValue
+        ])
+        PostHogSDK.shared.capture(Event.clickMenu, properties: [
             Parameter.restaurants: parameterValue
         ])
     }
