@@ -66,7 +66,8 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_2)
         setDelegates()
         setupInitialDataFetch()
     }
