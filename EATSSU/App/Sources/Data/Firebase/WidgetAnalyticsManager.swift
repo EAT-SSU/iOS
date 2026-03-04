@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseAnalytics
 
 /// 위젯에서 발생하는 이벤트를 Firebase Analytics에 로깅하는 담당자
 final class WidgetAnalyticsManager {
@@ -16,11 +15,11 @@ final class WidgetAnalyticsManager {
     // MARK: - App Group UserDefaults
 
     /// 위젯과 메인 앱이 데이터를 공유하기 위한 공간
-    private let userDefaults = UserDefaults(suiteName: Bundle.main.infoDictionary?["AppGroupID"] as? String)
+    let userDefaults = UserDefaults(suiteName: Bundle.main.infoDictionary?["AppGroupID"] as? String)
 
     // MARK: - Event & Parameter Keys
 
-    private enum Event {
+    enum Event {
         static let addWidget = "add_widget_ios"
         static let changeWidget = "change_widget_ios"
     }
@@ -30,7 +29,7 @@ final class WidgetAnalyticsManager {
         static let restaurantAfter = "restaurant_after"
     }
 
-    private enum UserDefaultsKey {
+    enum UserDefaultsKey {
         static let widgetAdded = "pendingWidgetAddedEvent"
         static let widgetChanged = "pendingWidgetChangedEvent"
     }
@@ -68,25 +67,5 @@ final class WidgetAnalyticsManager {
         ]
 
         userDefaults?.set(changeInfo, forKey: UserDefaultsKey.widgetChanged)
-    }
-
-    // MARK: - Method to be Called from Main App
-
-    /// (메인 앱에서 호출) 기록된 위젯 이벤트가 있다면 Firebase로 전송하고 기록을 삭제합니다.
-    /// 이 파일은 위젯 타겟에도 포함되므로, PostHog 의존성 없이 Firebase만 직접 호출합니다.
-    func sendPendingEvents() {
-        // 1. 위젯 추가 이벤트 전송
-        if userDefaults?.bool(forKey: UserDefaultsKey.widgetAdded) == true {
-            Analytics.logEvent(Event.addWidget, parameters: nil)
-            userDefaults?.removeObject(forKey: UserDefaultsKey.widgetAdded)
-            print("Analytics: Logged add_widget_ios")
-        }
-
-        // 2. 위젯 변경 이벤트 전송
-        if let changeInfo = userDefaults?.dictionary(forKey: UserDefaultsKey.widgetChanged) as? [String: String] {
-            Analytics.logEvent(Event.changeWidget, parameters: changeInfo)
-            userDefaults?.removeObject(forKey: UserDefaultsKey.widgetChanged)
-            print("Analytics: Logged change_widget_ios with params \(changeInfo)")
-        }
     }
 }
