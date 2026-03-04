@@ -66,7 +66,9 @@ let projectSettings: Settings = .settings(
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
-        "CODE_SIGN_STYLE": "Manual"
+        "CODE_SIGN_STYLE": "Manual",
+        "MARKETING_VERSION": "3.5.0",
+        "CURRENT_PROJECT_VERSION": "1"
     ],
     configurations: [
         .debug(
