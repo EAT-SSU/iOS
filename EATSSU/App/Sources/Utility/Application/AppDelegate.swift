@@ -12,6 +12,7 @@ import Firebase
 import FirebaseMessaging
 import KakaoSDKCommon
 import NMapsMap
+import PostHog
 import RealmSwift
 
 @main
@@ -28,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         initializeKakaoSDK()
         setupDebugConfigurations()
         configureNaverMapAuth()
+        configurePostHog()
         TokenManager.refreshIfNeededAsync()
         UNUserNotificationCenter.current().delegate = self
 
@@ -77,6 +79,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         } else {
             print("NAVER_CLIENT_ID 못 찾음")
         }
+    }
+
+    /// PostHog Analytics를 구성합니다.
+    private func configurePostHog() {
+        guard let apiKey = Bundle.main.infoDictionary?["POSTHOG_API_KEY"] as? String,
+              !apiKey.isEmpty else {
+            print("PostHog API Key를 찾을 수 없습니다.")
+            return
+        }
+
+        let config = PostHogConfig(apiKey: apiKey)
+        config.host = "https://us.i.posthog.com"
+        config.captureApplicationLifecycleEvents = true
+        config.captureScreenViews = false
+
+        #if DEBUG
+        config.debug = true
+        #endif
+
+        PostHogSDK.shared.setup(config)
     }
 
     // MARK: - Private Methods
