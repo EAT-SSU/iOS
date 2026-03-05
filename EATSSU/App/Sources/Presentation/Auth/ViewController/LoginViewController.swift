@@ -41,6 +41,7 @@ final class LoginViewController: BaseViewController {
         RealmService.shared.resetDB()
 
         configureFirebaseRemoteConfig()
+        showLastLoginTooltipIfNeeded()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -84,6 +85,21 @@ final class LoginViewController: BaseViewController {
 
     private func configureFirebaseRemoteConfig() {
         FirebaseRemoteConfig.shared.fetchIsVacationPeriod()
+    }
+
+    private func showLastLoginTooltipIfNeeded() {
+        let defaults = UserDefaults.standard
+        let key = TextLiteral.Auth.lastLoginProviderKey
+
+        guard let providerRaw = defaults.string(forKey: key) else {
+            return
+        }
+
+        if let provider = UserInfo.AccountType(rawValue: providerRaw) {
+            loginView.showLastLoginTooltip(provider: provider)
+        } else {
+            defaults.removeObject(forKey: key)
+        }
     }
 
     private func hasStoredToken() -> Bool {
@@ -229,6 +245,7 @@ extension LoginViewController {
                 storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
                                             refreshToken: signData.refreshToken)
                 _ = UserInfoManager.shared.createUserInfo(accountType: .kakao)
+                UserDefaults.standard.set(UserInfo.AccountType.kakao.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
                 getMyInfo()
                 
             case .failure(let error):
@@ -257,6 +274,7 @@ extension LoginViewController {
                 storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
                                             refreshToken: signData.refreshToken)
                 _ = UserInfoManager.shared.createUserInfo(accountType: .apple)
+                UserDefaults.standard.set(UserInfo.AccountType.apple.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
                 getMyInfo()
                 
             case .failure(let error):

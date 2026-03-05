@@ -44,6 +44,8 @@ final class LoginView: BaseUIView {
         return button
     }()
 
+    private var lastLoginTooltipView: LastLoginTooltipView?
+
     override func configureUI() {
         addSubviews(
             logoImage,
@@ -79,5 +81,46 @@ final class LoginView: BaseUIView {
             $0.centerX.equalToSuperview()
             $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(30)
         }
+    }
+
+    // MARK: - Tooltip
+
+    /// 마지막 로그인 제공자에 따라 말풍선 툴팁을 표시한다.
+    func showLastLoginTooltip(provider: UserInfo.AccountType) {
+        lastLoginTooltipView?.removeFromSuperview()
+
+        let tooltipSpacing: CGFloat = 4
+
+        switch provider {
+        case .apple:
+            let tooltip = LastLoginTooltipView(arrowDirection: .down)
+            addSubview(tooltip)
+            tooltip.snp.makeConstraints {
+                $0.centerX.equalTo(appleLoginButton)
+                $0.bottom.equalTo(appleLoginButton.snp.top).offset(-tooltipSpacing)
+            }
+            lastLoginTooltipView = tooltip
+
+        case .kakao:
+            let tooltip = LastLoginTooltipView(arrowDirection: .up)
+            addSubview(tooltip)
+            tooltip.snp.makeConstraints {
+                $0.centerX.equalTo(kakaoLoginButton)
+                $0.top.equalTo(kakaoLoginButton.snp.bottom).offset(tooltipSpacing)
+            }
+            lastLoginTooltipView = tooltip
+        }
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissTooltip))
+        lastLoginTooltipView?.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissTooltip() {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.lastLoginTooltipView?.alpha = 0
+        }, completion: { _ in
+            self.lastLoginTooltipView?.removeFromSuperview()
+            self.lastLoginTooltipView = nil
+        })
     }
 }
