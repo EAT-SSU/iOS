@@ -86,13 +86,13 @@ final class LoginView: BaseUIView {
     // MARK: - Tooltip
 
     /// 마지막 로그인 제공자에 따라 말풍선 툴팁을 표시한다.
-    func showLastLoginTooltip(provider: String) {
+    func showLastLoginTooltip(provider: UserInfo.AccountType) {
         lastLoginTooltipView?.removeFromSuperview()
 
         let tooltipSpacing: CGFloat = 4
 
         switch provider {
-        case "Apple":
+        case .apple:
             let tooltip = LastLoginTooltipView(arrowDirection: .down)
             addSubview(tooltip)
             tooltip.snp.makeConstraints {
@@ -101,7 +101,7 @@ final class LoginView: BaseUIView {
             }
             lastLoginTooltipView = tooltip
 
-        case "Kakao":
+        case .kakao:
             let tooltip = LastLoginTooltipView(arrowDirection: .up)
             addSubview(tooltip)
             tooltip.snp.makeConstraints {
@@ -109,9 +109,6 @@ final class LoginView: BaseUIView {
                 $0.top.equalTo(kakaoLoginButton.snp.bottom).offset(tooltipSpacing)
             }
             lastLoginTooltipView = tooltip
-
-        default:
-            break
         }
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissTooltip))

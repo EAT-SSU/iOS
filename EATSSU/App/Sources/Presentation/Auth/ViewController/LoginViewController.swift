@@ -88,7 +88,8 @@ final class LoginViewController: BaseViewController {
     }
 
     private func showLastLoginTooltipIfNeeded() {
-        guard let provider = UserDefaults.standard.string(forKey: TextLiteral.Auth.lastLoginProviderKey) else {
+        guard let providerRaw = UserDefaults.standard.string(forKey: TextLiteral.Auth.lastLoginProviderKey),
+              let provider = UserInfo.AccountType(rawValue: providerRaw) else {
             return
         }
         loginView.showLastLoginTooltip(provider: provider)
@@ -237,7 +238,7 @@ extension LoginViewController {
                 storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
                                             refreshToken: signData.refreshToken)
                 _ = UserInfoManager.shared.createUserInfo(accountType: .kakao)
-                UserDefaults.standard.set("Kakao", forKey: TextLiteral.Auth.lastLoginProviderKey)
+                UserDefaults.standard.set(UserInfo.AccountType.kakao.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
                 getMyInfo()
                 
             case .failure(let error):
@@ -266,7 +267,7 @@ extension LoginViewController {
                 storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
                                             refreshToken: signData.refreshToken)
                 _ = UserInfoManager.shared.createUserInfo(accountType: .apple)
-                UserDefaults.standard.set("Apple", forKey: TextLiteral.Auth.lastLoginProviderKey)
+                UserDefaults.standard.set(UserInfo.AccountType.apple.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
                 getMyInfo()
                 
             case .failure(let error):
