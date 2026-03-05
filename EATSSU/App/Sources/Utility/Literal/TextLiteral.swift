@@ -89,6 +89,12 @@ enum TextLiteral {
         /// "둘러보기"
         static let lookingWithNoSignIn: String = "둘러보기"
 
+        /// UserDefaults key for last login provider
+        static let lastLoginProviderKey: String = "lastLoginProvider"
+
+        /// "최근에 로그인했어요"
+        static let lastLoginTooltip: String = "최근에 로그인했어요"
+
         /// LoginVC - "카카오톡으로 생성된 계정입니다."
         static let kakaoAccount: String = "카카오톡으로 생성된 계정입니다."
 
