@@ -94,7 +94,8 @@ final class ReviewViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        logScreenView(screenID: FirebaseScreenID.Review.V1.review_v1_1)
         setTableView()
         setFirebaseTask()
     }

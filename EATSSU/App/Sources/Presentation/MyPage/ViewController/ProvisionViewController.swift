@@ -32,6 +32,12 @@ final class ProvisionViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        logScreenView(screenID: FirebaseScreenID.MyPage.mypage5)
+    }
+
     // MARK: - Functions
 
     override func setCustomNavigationBar() {

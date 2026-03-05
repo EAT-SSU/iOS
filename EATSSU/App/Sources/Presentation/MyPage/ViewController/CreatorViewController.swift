@@ -29,7 +29,8 @@ class CreatorViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        logScreenView(screenID: FirebaseScreenID.MyPage.mypage2)
         setUpAction()
         applyGradientBackground()
         view.layoutIfNeeded()

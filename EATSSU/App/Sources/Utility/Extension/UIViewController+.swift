@@ -8,14 +8,11 @@
 import UIKit.UIViewController
 
 import EATSSUDesign
-import FirebaseAnalytics
 import SwiftUI // Keep SwiftUI import in case other parts of the app uses it for things unrelated to the removed toPreview function
 
 extension UIViewController {
     func logScreenView(screenID: String) {
-        Analytics.logEvent(AnalyticsEventScreenView,
-                           parameters: [AnalyticsParameterScreenName: screenID,
-                                       AnalyticsParameterScreenClass: String(describing: type(of: self))])
+        AnalyticsService.logScreen(screenID, screenClass: String(describing: type(of: self)))
     }
     
     // MARK: - Custom Dialog

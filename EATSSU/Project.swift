@@ -46,6 +46,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     // 사용 국가 지정
     "CFBundleDevelopmentRegion": "ko",
     "NAVER_CLIENT_ID": "$(NAVER_CLIENT_ID)",
+    "POSTHOG_API_KEY": "$(POSTHOG_API_KEY)",
 ])
 
 let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
@@ -65,7 +66,9 @@ let projectSettings: Settings = .settings(
         "DEVELOPMENT_LANGUAGE": "ko",
         "DEVELOPMENT_TEAM": "BBVZV8T99P",
         "SWIFT_CONCURRENCY": "complete",
-        "CODE_SIGN_STYLE": "Manual"
+        "CODE_SIGN_STYLE": "Manual",
+        "MARKETING_VERSION": "3.5.0",
+        "CURRENT_PROJECT_VERSION": "1"
     ],
     configurations: [
         .debug(
@@ -130,7 +133,8 @@ let project = Project(
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
                 .external(name: "NMapsMap"),
-                
+                .external(name: "PostHog"),
+
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
@@ -184,7 +188,8 @@ let project = Project(
                 .external(name: "KakaoSDKCommon"),
                 .external(name: "KakaoSDKTalk"),
                 .external(name: "NMapsMap"),
-                
+                .external(name: "PostHog"),
+
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
             ],
