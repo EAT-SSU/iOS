@@ -15,7 +15,18 @@ final class WidgetAnalyticsManager {
     // MARK: - App Group UserDefaults
 
     /// 위젯과 메인 앱이 데이터를 공유하기 위한 공간
-    let userDefaults = UserDefaults(suiteName: Bundle.main.infoDictionary?["AppGroupID"] as? String)
+    let userDefaults: UserDefaults? = {
+        guard let groupID = Bundle.main.infoDictionary?["AppGroupID"] as? String,
+              !groupID.isEmpty else {
+            assertionFailure("AppGroupID가 Info.plist에 설정되어 있지 않습니다.")
+            return nil
+        }
+        guard let defaults = UserDefaults(suiteName: groupID) else {
+            assertionFailure("UserDefaults 초기화 실패: \(groupID)")
+            return nil
+        }
+        return defaults
+    }()
 
     // MARK: - Event & Parameter Keys
 

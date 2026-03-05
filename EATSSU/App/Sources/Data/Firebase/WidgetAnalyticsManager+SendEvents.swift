@@ -13,14 +13,18 @@ extension WidgetAnalyticsManager {
         if userDefaults?.bool(forKey: UserDefaultsKey.widgetAdded) == true {
             AnalyticsService.logEvent(Event.addWidget)
             userDefaults?.removeObject(forKey: UserDefaultsKey.widgetAdded)
+            #if DEBUG
             print("Analytics: Logged add_widget_ios")
+            #endif
         }
 
         // 2. 위젯 변경 이벤트 전송
         if let changeInfo = userDefaults?.dictionary(forKey: UserDefaultsKey.widgetChanged) as? [String: String] {
             AnalyticsService.logEvent(Event.changeWidget, parameters: changeInfo)
             userDefaults?.removeObject(forKey: UserDefaultsKey.widgetChanged)
+            #if DEBUG
             print("Analytics: Logged change_widget_ios with params \(changeInfo)")
+            #endif
         }
     }
 }

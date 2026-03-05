@@ -84,9 +84,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     /// PostHog Analytics를 구성합니다.
     private func configurePostHog() {
         #if !DEBUG
-        guard let apiKey = Bundle.main.infoDictionary?["POSTHOG_API_KEY"] as? String,
-              !apiKey.isEmpty else {
+        guard let rawValue = Bundle.main.infoDictionary?["POSTHOG_API_KEY"] as? String else {
             print("PostHog API Key를 찾을 수 없습니다.")
+            return
+        }
+
+        let apiKey = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !apiKey.isEmpty, !apiKey.contains("$(") else {
+            print("PostHog API Key가 비어 있거나 유효하지 않습니다.")
             return
         }
 

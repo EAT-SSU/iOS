@@ -25,7 +25,7 @@ enum AnalyticsService {
         ])
         #if !DEBUG
         PostHogSDK.shared.screen(name, properties: [
-            "screen_class": screenClass
+            AnalyticsParameterScreenClass: screenClass
         ])
         #endif
     }
