@@ -88,11 +88,18 @@ final class LoginViewController: BaseViewController {
     }
 
     private func showLastLoginTooltipIfNeeded() {
-        guard let providerRaw = UserDefaults.standard.string(forKey: TextLiteral.Auth.lastLoginProviderKey),
-              let provider = UserInfo.AccountType(rawValue: providerRaw) else {
+        let defaults = UserDefaults.standard
+        let key = TextLiteral.Auth.lastLoginProviderKey
+
+        guard let providerRaw = defaults.string(forKey: key) else {
             return
         }
-        loginView.showLastLoginTooltip(provider: provider)
+
+        if let provider = UserInfo.AccountType(rawValue: providerRaw) {
+            loginView.showLastLoginTooltip(provider: provider)
+        } else {
+            defaults.removeObject(forKey: key)
+        }
     }
 
     private func hasStoredToken() -> Bool {

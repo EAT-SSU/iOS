@@ -48,6 +48,8 @@ final class LastLoginTooltipView: UIView {
         self.arrowDirection = arrowDirection
         super.init(frame: .zero)
         backgroundColor = .clear
+        isOpaque = false
+        contentMode = .redraw
         addSubview(label)
     }
 
