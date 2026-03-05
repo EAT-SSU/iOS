@@ -28,6 +28,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
 
+        #if DEBUG
+        setupDebugBanner(in: windowScene)
+        #endif
+
         fetchNoticeAndConfigureRootViewController()
         checkForAppUpdate()
         setupSessionExpirationObserver()
@@ -72,6 +76,76 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             LaunchSourceManager.shared.setSource(.icon)
         }
     }
+
+    // MARK: - Debug Banner
+
+    #if DEBUG
+    private var debugWindow: UIWindow?
+
+    private func setupDebugBanner(in windowScene: UIWindowScene) {
+        let debugWindow = UIWindow(windowScene: windowScene)
+        debugWindow.windowLevel = .statusBar + 1
+        debugWindow.backgroundColor = .clear
+        debugWindow.isUserInteractionEnabled = false
+
+        let container = UIView()
+        container.backgroundColor = UIColor.black.withAlphaComponent(0.88)
+        container.layer.cornerRadius = 6
+        container.clipsToBounds = true
+        container.layer.borderWidth = 0.5
+        container.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+
+        let dot = UIView()
+        dot.backgroundColor = UIColor(red: 0.2, green: 0.9, blue: 0.4, alpha: 1.0)
+        dot.layer.cornerRadius = 3
+
+        let debugText = UILabel()
+        debugText.text = "DEBUG"
+        debugText.font = .monospacedSystemFont(ofSize: 9, weight: .bold)
+        debugText.textColor = UIColor(red: 0.2, green: 0.9, blue: 0.4, alpha: 1.0)
+
+        let separator = UILabel()
+        separator.text = "|"
+        separator.font = .monospacedSystemFont(ofSize: 9, weight: .regular)
+        separator.textColor = UIColor.white.withAlphaComponent(0.3)
+
+        let envText = UILabel()
+        envText.text = "dev.eat-ssu"
+        envText.font = .monospacedSystemFont(ofSize: 9, weight: .medium)
+        envText.textColor = UIColor.white.withAlphaComponent(0.7)
+
+        let stack = UIStackView(arrangedSubviews: [dot, debugText, separator, envText])
+        stack.axis = .horizontal
+        stack.spacing = 5
+        stack.alignment = .center
+
+        container.addSubview(stack)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        dot.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            dot.widthAnchor.constraint(equalToConstant: 6),
+            dot.heightAnchor.constraint(equalToConstant: 6),
+            stack.topAnchor.constraint(equalTo: container.topAnchor, constant: 4),
+            stack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -4),
+            stack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 8),
+            stack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8),
+        ])
+
+        let vc = UIViewController()
+        vc.view.backgroundColor = .clear
+        vc.view.addSubview(container)
+
+        container.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            container.topAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor),
+            container.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: 8)
+        ])
+
+        debugWindow.rootViewController = vc
+        debugWindow.isHidden = false
+        self.debugWindow = debugWindow
+    }
+    #endif
 
     // MARK: - Launch Source Helpers
 
