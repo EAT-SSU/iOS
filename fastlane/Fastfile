@@ -15,8 +15,8 @@ platform :ios do
 
   desc "TestFlight에 앱 배포"
   lane :release do |options|
-    target_type = options[:type] || "dev" 
-    target_version = options[:version] || "3.2.0"
+    target_type = options[:type] || UI.user_error!("❌ 배포 타입을 입력해주세요! (예: bundle exec fastlane release type:\"dev\" 또는 type:\"prod\")")
+    target_version = options[:version] || UI.user_error!("❌ 버전을 입력해주세요! (예: bundle exec fastlane release version:\"3.3.0\")")
     
     target_scheme = (target_type == "prod") ? "EATSSU-PROD" : "EATSSU-DEV"
     
