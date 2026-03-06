@@ -1,5 +1,7 @@
 default_platform(:ios)
 
+ENV["DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS"] = "-t Aspera"
+
 platform :ios do
   desc "개발 환경 인증서 세팅"
   lane :setup_development do
@@ -46,6 +48,8 @@ platform :ios do
       xcargs: "MARKETING_VERSION=#{target_version} CURRENT_PROJECT_VERSION=#{build_num}"
     )
     
+    sh("rm -rf ~/Library/Application\\ Support/com.apple.itunes.altool/CDUploads/")
+
     pilot(
       api_key_path: "fastlane/api_key.json",
       skip_waiting_for_build_processing: true
