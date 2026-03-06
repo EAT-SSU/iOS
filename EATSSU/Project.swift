@@ -321,7 +321,7 @@ let project = Project(
             buildAction: .buildAction(targets: [.target("EATSSU-DEV")]),
             testAction: .targets(["EATSSU-DEV"]),
             runAction: .runAction(configuration: "Debug"),
-            archiveAction: .archiveAction(configuration: "Release"),
+            archiveAction: .archiveAction(configuration: "Debug"),
             profileAction: .profileAction(configuration: "Debug"),
             analyzeAction: .analyzeAction(configuration: "Debug")
         ),
@@ -339,7 +339,7 @@ let project = Project(
             buildAction: .buildAction(targets: [.target("EATSSUWidget-DEV")]),
             testAction: .targets(["EATSSUWidget-DEV"]),
             runAction: .runAction(configuration: "Debug"),
-            archiveAction: .archiveAction(configuration: "Release"),
+            archiveAction: .archiveAction(configuration: "Debug"),
             profileAction: .profileAction(configuration: "Debug"),
             analyzeAction: .analyzeAction(configuration: "Debug")
         ),
