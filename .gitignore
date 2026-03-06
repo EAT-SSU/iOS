@@ -91,6 +91,7 @@ fastlane/AuthKey_*.p8
 *.p8
 fastlane/report.xml
 *.ipa
+*.xcarchive
 *.dSYM.zip
 
 
