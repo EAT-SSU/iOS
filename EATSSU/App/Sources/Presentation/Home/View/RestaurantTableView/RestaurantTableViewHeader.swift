@@ -54,7 +54,7 @@ class RestaurantTableViewHeader: BaseTableViewHeaderView {
 
     func setLayout() {
         stackView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.horizontalEdges.equalToSuperview().inset(22)
             $0.centerY.equalToSuperview()
         }
         titleLabel.snp.makeConstraints {
