@@ -56,6 +56,7 @@ final class CustomTabBarContainerController: UITabBarController {
         super.viewDidLayoutSubviews()
 
         setupEventBadgeIfNeeded()
+        updateEventBadgePosition()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -317,36 +318,65 @@ extension CustomTabBarContainerController {
         return result
     }
     
+    private func allSubviews(of view: UIView) -> [UIView] {
+        view.subviews + view.subviews.flatMap { allSubviews(of: $0) }
+    }
+
+    private func tabBarButtons() -> [UIView] {
+        let topLevelButtons = tabBar.subviews.filter {
+            let className = String(describing: type(of: $0))
+            return className == "UITabBarButton" || className == "_UITabButton"
+        }
+        
+        if !topLevelButtons.isEmpty {
+            return topLevelButtons
+        }
+        
+        return allSubviews(of: tabBar).filter {
+            let className = String(describing: type(of: $0))
+            return className == "UITabBarButton" || className == "_UITabButton"
+        }
+    }
+
+    private func coffeeTabButton() -> UIView? {
+        tabBarButtons().first { button in
+            allSubviews(of: button).contains {
+                guard let label = $0 as? UILabel else { return false }
+                return label.text == TextLiteral.TabBar.coffee
+            }
+        }
+    }
+
     /// coffee 탭 위치 위에 말풍선 배치
     private func updateEventBadgePosition() {
-        guard let platterView = tabBar.subviews.first(
-            where: { String(describing: type(of: $0)).contains("PlatterView") }
-        ) else { return }
-        
-        guard let contentView = platterView.subviews.first(
-            where: { String(describing: type(of: $0)) == "ContentView" }
-        ) else { return }
-        
-        let tabButtons = allSubviewsIterative(of: contentView)
-            .filter { String(describing: type(of: $0)) == "_UITabButton" }
-            .sorted { $0.frame.minX < $1.frame.minX }
-        
-        guard Tab.coffee.rawValue < tabButtons.count else { return }
-        
-        let coffeeButton = tabButtons[Tab.coffee.rawValue]
-        
-        guard let iconView = coffeeButton.subviews.first(where: { $0 is UIImageView }) else { return }
-        
-        let iconFrameInTabBar = iconView.superview?.convert(iconView.frame, to: tabBar) ?? iconView.frame
+        guard let coffeeButton = coffeeTabButton() else { return }
         
         let badgeSize = CGSize(width: 66, height: 32)
         
-        eventBadgeImageView.frame = CGRect(
-            x: iconFrameInTabBar.midX - badgeSize.width / 2,
-            y: iconFrameInTabBar.minY - badgeSize.height - 1,
-            width: badgeSize.width,
-            height: badgeSize.height
-        )
+        let iconView = allSubviews(of: coffeeButton).first {
+            let className = String(describing: type(of: $0))
+            return className == "UITabBarSwappableImageView" || $0 is UIImageView
+        }
+        
+        if let iconView {
+            let iconFrameInTabBar = iconView.superview?.convert(iconView.frame, to: tabBar) ?? iconView.frame
+            
+            eventBadgeImageView.frame = CGRect(
+                x: iconFrameInTabBar.midX - badgeSize.width / 2,
+                y: iconFrameInTabBar.minY - badgeSize.height - 1,
+                width: badgeSize.width,
+                height: badgeSize.height
+            )
+        } else {
+            let coffeeButtonFrameInTabBar = coffeeButton.superview?.convert(coffeeButton.frame, to: tabBar) ?? coffeeButton.frame
+            
+            eventBadgeImageView.frame = CGRect(
+                x: coffeeButtonFrameInTabBar.midX - badgeSize.width / 2,
+                y: coffeeButtonFrameInTabBar.minY - badgeSize.height - 1,
+                width: badgeSize.width,
+                height: badgeSize.height
+            )
+        }
     }
 }
 
