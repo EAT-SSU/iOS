@@ -41,8 +41,6 @@ final class CustomTabBarContainerController: UITabBarController {
     
     /// 이벤트 배지 뷰를 이미 화면에 추가했는지 여부
     private var didSetupEventBadge = false
-    /// 이번 앱 실행 세션 동안 커피 탭을 한 번이라도 눌렀는지 여부
-    private var hasTappedCoffeeTabInCurrentSession = false
     
     // MARK: - Life Cycle
 
@@ -58,7 +56,6 @@ final class CustomTabBarContainerController: UITabBarController {
         super.viewDidLayoutSubviews()
 
         setupEventBadgeIfNeeded()
-        updateEventBadgeVisibility()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -127,14 +124,11 @@ final class CustomTabBarContainerController: UITabBarController {
         guard index < tabViewControllers.count else { return }
         
         if Tab(rawValue: index) == .coffee {
-            hasTappedCoffeeTabInCurrentSession = true
-            updateEventBadgeVisibility()
             presentCoffeeWebView()
             return
         }
         
         selectedIndex = index
-        updateEventBadgeVisibility()
     }
     
     /// 특정 인덱스의 네비게이션 컨트롤러를 반환
@@ -260,8 +254,6 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
         
         // 커피 탭: 전체화면 모달로 웹뷰 표시
         if selectedTab == .coffee {
-            hasTappedCoffeeTabInCurrentSession = true
-            updateEventBadgeVisibility()
             presentCoffeeWebView()
             return false
         }
@@ -351,17 +343,11 @@ extension CustomTabBarContainerController {
         
         eventBadgeImageView.frame = CGRect(
             x: iconFrameInTabBar.midX - badgeSize.width / 2,
-            y: -18,
+            y: iconFrameInTabBar.minY - badgeSize.height - 1,
             width: badgeSize.width,
             height: badgeSize.height
         )
     }
-    
-    /// 배지 표시 여부 업데이트
-    private func updateEventBadgeVisibility() {
-        eventBadgeImageView.isHidden = hasTappedCoffeeTabInCurrentSession
-    }
-    
 }
 
 extension UIImage {
