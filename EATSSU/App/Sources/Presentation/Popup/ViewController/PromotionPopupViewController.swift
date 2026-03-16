@@ -20,18 +20,18 @@ final class PromotionPopupViewController: BaseViewController {
     // MARK: - Properties
     
     /// 잇슈 인스타그램 바로가기 버튼 클릭 시 이동
-    private let nabatdaePostURL = URL(string: "https://www.instagram.com/p/DVu1n6SEs5b/?igsh=Y2lmOXV0OTAzeHZy")!
+    private let nabatdaePostURL: URL = {
+        guard let url = URL(string: "https://www.instagram.com/p/DVu1n6SEs5b/?igsh=Y2lmOXV0OTAzeHZy") else {
+            fatalError("Invalid URL string for nabatdaePostURL")
+        }
+        return url
+    }()
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        logScreenView(screenID: FirebaseScreenID.Login.log2)
     }
     
     // MARK: - UI Configuration
