@@ -31,7 +31,7 @@ final class PromotionPopupView: BaseUIView {
     
     let posterImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = EATSSUDesignAsset.Images.coffePromotionPhoto.image
+        imageView.image = EATSSUDesignAsset.Images.coffeePromotionPhoto.image
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
