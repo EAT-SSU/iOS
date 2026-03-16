@@ -69,7 +69,9 @@ final class PromotionPopupViewController: BaseViewController {
             target: self,
             action: #selector(didTapPopupContent)
         )
-        popupView.contentTapView.addGestureRecognizer(contentTapGesture)
+        contentTapGesture.delegate = self
+        contentTapGesture.cancelsTouchesInView = false
+        popupView.containerView.addGestureRecognizer(contentTapGesture)
     }
     
     // MARK: - Private Functions
@@ -77,6 +79,7 @@ final class PromotionPopupViewController: BaseViewController {
     /// 잇슈 인스타그램 바로가기 버튼 클릭 -> 나받돼 게시물로 이동
     @objc
     private func didTapInstagramLinkButton() {
+        print("클릭됨")
         UIApplication.shared.open(nabatdaePostURL)
     }
     
@@ -98,5 +101,19 @@ final class PromotionPopupViewController: BaseViewController {
     @objc
     private func didTapCloseButton() {
         dismiss(animated: true)
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+
+extension PromotionPopupViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let location = touch.location(in: popupView.containerView)
+        
+        if popupView.instagramLinkButton.frame.contains(location) {
+            return false
+        }
+        
+        return true
     }
 }

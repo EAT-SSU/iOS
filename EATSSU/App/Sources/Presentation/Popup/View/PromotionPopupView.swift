@@ -14,18 +14,11 @@ final class PromotionPopupView: BaseUIView {
     
     // MARK: - UI Components
     
-    private let containerView: UIView = {
+    let containerView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
-        return view
-    }()
-    
-    /// 버튼 이외의 공간 클릭할 경우 클릭 인식할 뷰
-    let contentTapView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
         return view
     }()
     
@@ -62,12 +55,14 @@ final class PromotionPopupView: BaseUIView {
         label.font = .body2
         label.textColor = .white
         label.textAlignment = .right
+        label.isUserInteractionEnabled = false
         return label
     }()
 
     private let arrowImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = EATSSUDesignAsset.Images.iconArrowRight.image
+        imageView.isUserInteractionEnabled = false
         return imageView
     }()
 
@@ -76,6 +71,7 @@ final class PromotionPopupView: BaseUIView {
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = 4
+        stackView.isUserInteractionEnabled = false
         return stackView
     }()
     
@@ -142,16 +138,15 @@ final class PromotionPopupView: BaseUIView {
             posterImageView,
             periodLabel,
             instagramLinkButton,
-            guideLabel,
-            contentTapView
+            guideLabel
         ].forEach {
             containerView.addSubview($0)
         }
-        
         instagramLinkButton.addSubview(instagramButtonStackView)
-        
         instagramButtonStackView.addArrangedSubview(instagramButtonTitleLabel)
         instagramButtonStackView.addArrangedSubview(arrowImageView)
+        
+        containerView.bringSubviewToFront(instagramLinkButton)
     }
     
     override func setLayout() {
@@ -204,10 +199,6 @@ final class PromotionPopupView: BaseUIView {
             $0.top.equalTo(containerView.snp.bottom).offset(11)
             $0.trailing.equalToSuperview().inset(35)
             $0.height.equalTo(20)
-        }
-        
-        contentTapView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
         }
     }
 }
