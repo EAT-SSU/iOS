@@ -106,9 +106,9 @@ final class NoDepartmentSheetViewController: BaseViewController {
         }
 
         // "내 정보" 탭으로 전환
-        tabContainer.setTab(index: 2)
+        tabContainer.setTab(index: 3)
 
-        guard let myNav = tabContainer.getNavController(at: 2) else {
+        guard let myNav = tabContainer.getNavController(at: 3) else {
             dismiss(animated: true)
             return
         }
