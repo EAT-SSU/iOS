@@ -90,7 +90,7 @@ final class DropDownView: BaseUIView {
 
         // 드롭다운 테이블 생성
         let tableView = UITableView()
-        tableView.layer.cornerRadius = 12
+        tableView.layer.cornerRadius = 10
         tableView.layer.borderWidth = 1
         tableView.layer.borderColor = UIColor.gray300.cgColor
         tableView.layer.shadowColor = UIColor.black.cgColor
@@ -168,7 +168,7 @@ final class DropDownView: BaseUIView {
         config.titleAlignment = .leading
 
         button.configuration = config
-        button.layer.cornerRadius = 12
+        button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.gray300.cgColor
         button.contentHorizontalAlignment = .leading

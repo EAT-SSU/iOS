@@ -20,6 +20,7 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
         view.layer.cornerRadius = 12
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.gray200.cgColor
+        view.layer.masksToBounds = true
         view.backgroundColor = .white
         return view
     }()
@@ -51,6 +52,8 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
     override func configureUI() {
         self.selectionStyle = .none
         self.selectedBackgroundView = UIView()
+        self.backgroundColor = .clear
+        contentView.backgroundColor = .clear
         contentView.addSubview(wrapperView)
         wrapperView.addSubviews(titleView, emptyLabel, menuStackView)
 
@@ -60,7 +63,8 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
     // 오토레이아웃 설정
     override func setLayout() {
         wrapperView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().priority(UILayoutPriority.defaultHigh) 
         }
 
@@ -70,8 +74,8 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
 
         emptyLabel.snp.makeConstraints {
             $0.top.equalTo(titleView.snp.bottom).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(12)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(22)
         }
 
         menuStackView.snp.makeConstraints {

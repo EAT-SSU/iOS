@@ -16,7 +16,7 @@ final class HomeRestaurantView: BaseUIView {
     // MARK: - UI Components
 
     lazy var restaurantTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         tableView.backgroundColor = .gray100
