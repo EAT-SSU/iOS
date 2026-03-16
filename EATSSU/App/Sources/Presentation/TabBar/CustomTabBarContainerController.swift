@@ -303,21 +303,6 @@ extension CustomTabBarContainerController {
         eventBadgeImageView.frame = CGRect(x: 0, y: 0, width: 66, height: 32)
     }
     
-    private func allSubviewsIterative(of view: UIView) -> [UIView] {
-        var result: [UIView] = []
-        var stack: [UIView] = [view]
-        
-        while !stack.isEmpty {
-            let current = stack.removeLast()
-            for subview in current.subviews {
-                result.append(subview)
-                stack.append(subview)
-            }
-        }
-        
-        return result
-    }
-    
     private func allSubviews(of view: UIView) -> [UIView] {
         view.subviews + view.subviews.flatMap { allSubviews(of: $0) }
     }
