@@ -26,6 +26,7 @@ final class HomeViewController: BaseViewController {
     }
     
     private var cancellables = Set<AnyCancellable>()
+    private var hasCheckedPromotionPopup = false
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView(image: EATSSUDesignAsset.Images.mainLogoSmall.image)
@@ -52,6 +53,7 @@ final class HomeViewController: BaseViewController {
         logFirebaseEvent()
         
         logScreenView(screenID: FirebaseScreenID.Home.home1)
+        presentPromotionPopupIfNeeded()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -135,6 +137,21 @@ final class HomeViewController: BaseViewController {
         currentDate = today
         homeCalendarView.setSelected(date: today)
         tabmanController.updateDate(to: today)
+    }
+    
+    // MARK: - Private Functions
+
+    private func presentPromotionPopupIfNeeded() {
+        guard !hasCheckedPromotionPopup else { return }
+        hasCheckedPromotionPopup = true
+        
+        guard HomePromotionPopupDisplayData.shouldShow else { return }
+        guard presentedViewController == nil else { return }
+        
+        let popupVC = PromotionPopupViewController()
+        popupVC.modalPresentationStyle = .overFullScreen
+        popupVC.modalTransitionStyle = .crossDissolve
+        present(popupVC, animated: true)
     }
 
     // MARK: - Firebase

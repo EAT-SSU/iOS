@@ -607,6 +607,25 @@ enum TextLiteral {
         /// NoticeSplashVC - "긴급 서버 점검 안내"
         static let serverInspection: String = "긴급 서버 점검 안내"
     }
+    
+    // MARK: - PromotionPopup
+    
+    enum PromotionPopup {
+        /// 03. 16(월)~03. 27(금)
+        static let period: String = "03. 16(월)~03. 27(금)"
+        
+        /// EAT-SSU 인스타그램 바로가기
+        static let instagramButtonTitle: String = "EAT-SSU 인스타그램 바로가기"
+        
+        /// 자세한 내용은 EAT-SSU 인스타그램을 확인해 주세요
+        static let guideMessage: String = "자세한 내용은 EAT-SSU 인스타그램을 확인해 주세요"
+        
+        /// 다시 보지 않기
+        static let neverShowAgain: String = "다시 보지 않기"
+        
+        /// 닫기
+        static let close: String = "닫기"
+    }
 
     // MARK: - Notification
     

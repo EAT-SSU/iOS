@@ -31,6 +31,17 @@ final class CustomTabBarContainerController: UITabBarController {
         UINavigationController(rootViewController: MyPageViewController())
     ]
     
+    private let eventBadgeImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = EATSSUDesignAsset.Images.iconEventTooltip.image
+        imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = false
+        return imageView
+    }()
+    
+    /// 이벤트 배지 뷰를 이미 화면에 추가했는지 여부
+    private var didSetupEventBadge = false
+    
     // MARK: - Life Cycle
 
     override func viewDidLoad() {
@@ -39,6 +50,19 @@ final class CustomTabBarContainerController: UITabBarController {
         setupTabBar()
         setupViewControllers()
         delegate = self
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        setupEventBadgeIfNeeded()
+        updateEventBadgePosition()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+            
+        updateEventBadgePosition()
     }
     
     // MARK: - Setup
@@ -99,12 +123,12 @@ final class CustomTabBarContainerController: UITabBarController {
     /// 외부에서 탭 전환 요청 시 사용
     public func setTab(index: Int) {
         guard index < tabViewControllers.count else { return }
-
+        
         if Tab(rawValue: index) == .coffee {
             presentCoffeeWebView()
             return
         }
-
+        
         selectedIndex = index
     }
     
@@ -154,21 +178,21 @@ final class CustomTabBarContainerController: UITabBarController {
         if tabBar.isHidden == hidden, tabBar.alpha == (hidden ? 0 : 1) {
             return
         }
-
+        
         let tabBarHeight = tabBar.frame.height
         let targetTransform: CGAffineTransform = hidden
-            ? CGAffineTransform(translationX: 0, y: tabBarHeight)
-            : .identity
+        ? CGAffineTransform(translationX: 0, y: tabBarHeight)
+        : .identity
         let targetAlpha: CGFloat = hidden ? 0 : 1
-
+        
         // 표시로 전환 시에는 먼저 isHidden을 풀어야 애니메이션이 보임
         if !hidden { tabBar.isHidden = false }
-
+        
         let animations = {
             self.tabBar.transform = targetTransform
             self.tabBar.alpha = targetAlpha
         }
-
+        
         if animated {
             UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: animations) { _ in
                 // 숨김 전환 완료 후 isHidden 처리
@@ -207,11 +231,11 @@ final class CustomTabBarContainerController: UITabBarController {
         coffeeVC.modalPresentationStyle = .overFullScreen
         present(coffeeVC, animated: true)
     }
-
+    
     /// 로그인 화면으로 전환
     private func navigateToLogin() {
         let loginVC = LoginViewController()
-
+        
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let sceneDelegate = windowScene.delegate as? SceneDelegate,
            let window = sceneDelegate.window {
@@ -228,24 +252,24 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
               let selectedTab = Tab(rawValue: index) else {
             return true
         }
-
+        
         // 커피 탭: 전체화면 모달로 웹뷰 표시
         if selectedTab == .coffee {
             presentCoffeeWebView()
             return false
         }
-
+        
         // 마이페이지와 지도는 로그인 필요
         if (selectedTab == .map || selectedTab == .myPage), RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
             return false
         }
-
+        
         // 지도 탭 클릭 시 Firebase 이벤트 호출 (로그인된 상태에서만)
         if selectedTab == .map {
             MapAnalyticsManager.shared.logClickMap()
         }
-
+        
         // 같은 탭 다시 클릭 시 처리
         if let navController = viewController as? UINavigationController, index == selectedIndex {
             switch selectedTab {
@@ -261,8 +285,83 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
                 break
             }
         }
-
+        
         return true
+    }
+}
+
+// MARK: - Event Badge
+
+extension CustomTabBarContainerController {
+    private func setupEventBadgeIfNeeded() {
+        guard !didSetupEventBadge else { return }
+        didSetupEventBadge = true
+        
+        tabBar.addSubview(eventBadgeImageView)
+        tabBar.bringSubviewToFront(eventBadgeImageView)
+        
+        eventBadgeImageView.frame = CGRect(x: 0, y: 0, width: 66, height: 32)
+    }
+    
+    private func allSubviews(of view: UIView) -> [UIView] {
+        view.subviews + view.subviews.flatMap { allSubviews(of: $0) }
+    }
+
+    private func tabBarButtons() -> [UIView] {
+        let topLevelButtons = tabBar.subviews.filter {
+            let className = String(describing: type(of: $0))
+            return className == "UITabBarButton" || className == "_UITabButton"
+        }
+        
+        if !topLevelButtons.isEmpty {
+            return topLevelButtons
+        }
+        
+        return allSubviews(of: tabBar).filter {
+            let className = String(describing: type(of: $0))
+            return className == "UITabBarButton" || className == "_UITabButton"
+        }
+    }
+
+    private func coffeeTabButton() -> UIView? {
+        tabBarButtons().first { button in
+            allSubviews(of: button).contains {
+                guard let label = $0 as? UILabel else { return false }
+                return label.text == TextLiteral.TabBar.coffee
+            }
+        }
+    }
+
+    /// coffee 탭 위치 위에 말풍선 배치
+    private func updateEventBadgePosition() {
+        guard let coffeeButton = coffeeTabButton() else { return }
+        
+        let badgeSize = CGSize(width: 66, height: 32)
+        
+        let iconView = allSubviews(of: coffeeButton).first {
+            let className = String(describing: type(of: $0))
+            return className == "UITabBarSwappableImageView" || $0 is UIImageView
+        }
+        
+        if let iconView {
+            let iconFrameInTabBar = iconView.superview?.convert(iconView.frame, to: tabBar) ?? iconView.frame
+            
+            eventBadgeImageView.frame = CGRect(
+                x: iconFrameInTabBar.midX - badgeSize.width / 2,
+                y: iconFrameInTabBar.minY - badgeSize.height - 1,
+                width: badgeSize.width,
+                height: badgeSize.height
+            )
+        } else {
+            let coffeeButtonFrameInTabBar = coffeeButton.superview?.convert(coffeeButton.frame, to: tabBar) ?? coffeeButton.frame
+            
+            eventBadgeImageView.frame = CGRect(
+                x: coffeeButtonFrameInTabBar.midX - badgeSize.width / 2,
+                y: coffeeButtonFrameInTabBar.minY - badgeSize.height - 1,
+                width: badgeSize.width,
+                height: badgeSize.height
+            )
+        }
     }
 }
 
