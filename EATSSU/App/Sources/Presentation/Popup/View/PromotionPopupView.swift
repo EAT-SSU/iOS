@@ -156,14 +156,14 @@ final class PromotionPopupView: BaseUIView {
         }
         
         posterImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(30.5)
+            $0.top.equalToSuperview().inset(30)
             $0.horizontalEdges.equalToSuperview().inset(24)
             $0.height.equalTo(posterImageView.snp.width).multipliedBy(281.0 / 272.0)
         }
         
         periodLabel.snp.makeConstraints {
-            $0.trailing.equalTo(posterImageView).inset(7.2)
-            $0.bottom.equalTo(posterImageView).inset(39.9)
+            $0.trailing.equalTo(posterImageView).inset(7)
+            $0.bottom.equalTo(posterImageView).inset(40)
         }
         
         
@@ -171,7 +171,7 @@ final class PromotionPopupView: BaseUIView {
             $0.centerX.equalToSuperview()
             $0.leading.greaterThanOrEqualToSuperview().inset(47)
             $0.trailing.lessThanOrEqualToSuperview().inset(47)
-            $0.bottom.equalTo(posterImageView.snp.bottom).offset(8.5)
+            $0.bottom.equalTo(posterImageView.snp.bottom).offset(8)
         }
 
         instagramButtonStackView.snp.makeConstraints {
