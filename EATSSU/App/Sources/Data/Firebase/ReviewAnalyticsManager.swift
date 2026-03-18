@@ -16,8 +16,8 @@ final class ReviewAnalyticsManager {
     // MARK: - Event & Parameter Keys
 
     private enum Event {
-        static let writeReview = "write_review_v1"
-        static let completeReview = "complete_review_v1"
+        static let writeReview = "write_review_v2"
+        static let completeReview = "complete_review_v2"
     }
 
     private enum Parameter {
