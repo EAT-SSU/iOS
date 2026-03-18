@@ -424,8 +424,9 @@ extension SetRateViewController {
 
                 await MainActor.run {
                     self.isReviewSubmitted = true
+                    let hasPhoto = self.userPickedImage != nil || self.setRateView.userReviewImageView.image != nil
                     ReviewAnalyticsManager.shared.logCompleteReviewV1(
-                        photoAttached: 0,
+                        photoAttached: hasPhoto ? 1 : 0,
                         rating: self.setRateView.rateView.currentStar,
                         selection: self.validMenuIDList.count
                     )
