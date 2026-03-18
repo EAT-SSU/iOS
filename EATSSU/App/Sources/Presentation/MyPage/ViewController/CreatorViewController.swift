@@ -10,7 +10,6 @@ import UIKit
 
 // External Module
 import SnapKit
-import FirebaseAnalytics
 
 import EATSSUDesign
 
@@ -93,11 +92,13 @@ class CreatorViewController: BaseViewController {
 
     /// @eatssu_official 인스타그램 연결 동작
     @objc private func openInstagram() {
+        AnalyticsService.logEvent("click_creator_link", parameters: ["type": "instagram"])
         open(urlString: URLConstants.instagram)
     }
 
     /// eatssu 랜딩페이지 연결 동작
     @objc private func nextCreatorsImageTapped() {
+        AnalyticsService.logEvent("click_creator_link", parameters: ["type": "landing_page"])
         open(urlString: URLConstants.landingPage)
     }
 }

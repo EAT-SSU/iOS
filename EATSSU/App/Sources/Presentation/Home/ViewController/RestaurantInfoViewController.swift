@@ -8,7 +8,6 @@
 import SnapKit
 
 import Moya
-import FirebaseAnalytics
 
 final class RestaurantInfoViewController: BaseViewController {
     // MARK: - UI Components
