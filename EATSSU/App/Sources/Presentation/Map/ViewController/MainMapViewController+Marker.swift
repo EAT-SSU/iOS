@@ -147,14 +147,11 @@ extension MainMapViewController {
     
     /// 제휴점 상세 바텀시트 표시
     func showPartnershipDetail(for partnership: PartnershipDTO) {
-        let partnerId = partnership.partnershipInfos.first?.id
-        if let partnerId = partnerId {
-            MapAnalyticsManager.shared.logClickPartnerRestaurant(
-                collegeId: currentCollegeId,
-                majorId: currentDepartmentId,
-                partnerId: partnerId
-            )
-        }
+        MapAnalyticsManager.shared.logClickPartnerRestaurant(
+            collegeId: currentCollegeId,
+            majorId: currentDepartmentId,
+            partnerId: partnership.partnershipInfos.first?.id ?? -1
+        )
 
         let detailVC = PartnershipDetailSheetViewController(
             storeName: partnership.storeName,
