@@ -421,9 +421,14 @@ extension SetRateViewController {
                 )
                 
                 try await postFixReview(reviewId: reviewId, request: request)
-                
+
                 await MainActor.run {
                     self.isReviewSubmitted = true
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                        photoAttached: 0,
+                        rating: self.setRateView.rateView.currentStar,
+                        selection: self.validMenuIDList.count
+                    )
                     self.showToast(message: TextLiteral.Review.fixReviewSuccess)
                     self.moveToReviewVC()
                 }
@@ -470,6 +475,11 @@ extension SetRateViewController {
 
                 await MainActor.run {
                     self.isReviewSubmitted = true
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                        photoAttached: imageUrl != nil ? 1 : 0,
+                        rating: self.setRateView.rateView.currentStar,
+                        selection: self.validMenuIDList.count
+                    )
                     self.moveToReviewVC()
                 }
 
@@ -517,6 +527,11 @@ extension SetRateViewController {
 
                 await MainActor.run {
                     self.isReviewSubmitted = true
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                        photoAttached: imageUrl != nil ? 1 : 0,
+                        rating: self.setRateView.rateView.currentStar,
+                        selection: self.validMenuIDList.count
+                    )
                     self.moveToReviewVC()
                 }
 
