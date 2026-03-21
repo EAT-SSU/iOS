@@ -20,7 +20,7 @@ final class HomeAnalyticsManager {
     private enum Event {
         static let clickRestaurantInfo = "click_restaurant_info"
         static let selectMealTime = "select_mealtime"
-        static let selectDay = "select_day"
+        static let selectDay = "click_day"
         static let clickMenu = "click_menu"
     }
 
