@@ -97,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         let config = PostHogConfig(apiKey: apiKey, host: "https://us.i.posthog.com")
         config.captureApplicationLifecycleEvents = true
-        config.captureScreenViews = false
+        config.captureScreenViews = true
 
         PostHogSDK.shared.setup(config)
         #endif
