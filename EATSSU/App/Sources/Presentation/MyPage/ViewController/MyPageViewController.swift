@@ -99,7 +99,6 @@ final class MyPageViewController: BaseViewController {
         let fixAction = UIAlertAction(title: TextLiteral.MyPage.logout,
                                       style: .default,
                                       handler: { _ in
-                                          AnalyticsService.logEvent("click_logout")
                                           RealmService.shared.resetDB()
 
                                           let loginViewController = LoginViewController()

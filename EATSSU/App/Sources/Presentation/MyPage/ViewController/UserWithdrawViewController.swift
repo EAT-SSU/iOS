@@ -142,7 +142,6 @@ extension UserWithdrawViewController {
         ) { result in
             switch result {
             case .success:
-                AnalyticsService.logEvent("click_withdraw")
                 RealmService.shared.resetDB()
                 let loginViewController = LoginViewController()
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

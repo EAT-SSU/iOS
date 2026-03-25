@@ -114,7 +114,6 @@ final class MainMapViewController: BaseViewController {
         guard currentMapMode != .all else { return }
 
         currentMapMode = .all
-        MapAnalyticsManager.shared.logClickMapAll()
         setInitialCameraPosition(animated: true)
         root.selectWhole(true)
         fetchPartnerships()

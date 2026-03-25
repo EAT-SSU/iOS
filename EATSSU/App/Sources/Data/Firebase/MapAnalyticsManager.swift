@@ -17,7 +17,6 @@ final class MapAnalyticsManager {
 
     private enum Event {
         static let clickMap = "click_map"
-        static let clickMapAll = "click_map_all"
         static let clickMapMine = "click_map_mine"
         static let clickPartnerRestaurant = "click_partner_restaurant"
     }
@@ -38,14 +37,7 @@ final class MapAnalyticsManager {
     }
 
     /**
-     #2 지도 화면에서 '전체' 버튼을 클릭했을 때 호출
-     */
-    func logClickMapAll() {
-        AnalyticsService.logEvent(Event.clickMapAll)
-    }
-
-    /**
-     #3 지도 화면에서 '내 제휴' (또는 학과명) 버튼을 클릭했을 때 호출
+     #2 지도 화면에서 '내 제휴' (또는 학과명) 버튼을 클릭했을 때 호출
      - Parameter collegeId: 사용자의 단과대 ID
      - Parameter majorId: 사용자의 학과 ID
      */

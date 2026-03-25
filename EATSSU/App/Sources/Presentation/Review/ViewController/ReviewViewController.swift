@@ -345,8 +345,6 @@ final class ReviewViewController: BaseViewController {
     /// Firebase 작업 설정
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
-        
-        AnalyticsService.logEvent("ReviewViewControllerLoad")
     }
     
     /// 작성 후의 새로고침 함수
