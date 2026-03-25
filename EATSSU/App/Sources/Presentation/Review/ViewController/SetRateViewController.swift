@@ -428,7 +428,7 @@ extension SetRateViewController {
                     ReviewAnalyticsManager.shared.logCompleteReviewV1(
                         photoAttached: hasPhoto ? 1 : 0,
                         rating: self.setRateView.rateView.currentStar,
-                        selection: self.validMenuIDList.count
+                        likes: self.likedStates.filter { $0 }.count
                     )
                     self.showToast(message: TextLiteral.Review.fixReviewSuccess)
                     self.moveToReviewVC()
@@ -479,7 +479,7 @@ extension SetRateViewController {
                     ReviewAnalyticsManager.shared.logCompleteReviewV1(
                         photoAttached: imageUrl != nil ? 1 : 0,
                         rating: self.setRateView.rateView.currentStar,
-                        selection: self.validMenuIDList.count
+                        likes: self.likedStates.filter { $0 }.count
                     )
                     self.moveToReviewVC()
                 }
@@ -531,7 +531,7 @@ extension SetRateViewController {
                     ReviewAnalyticsManager.shared.logCompleteReviewV1(
                         photoAttached: imageUrl != nil ? 1 : 0,
                         rating: self.setRateView.rateView.currentStar,
-                        selection: self.validMenuIDList.count
+                        likes: self.likedStates.filter { $0 }.count
                     )
                     self.moveToReviewVC()
                 }
