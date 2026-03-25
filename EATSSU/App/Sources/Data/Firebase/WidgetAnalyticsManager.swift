@@ -31,17 +31,19 @@ final class WidgetAnalyticsManager {
     // MARK: - Event & Parameter Keys
 
     enum Event {
-        static let addWidget = "add_widget_ios"
-        static let changeWidget = "change_widget_ios"
+        static let addWidget = "add_widget"
+        static let changeWidget = "change_widget"
     }
 
     private enum Parameter {
+        static let restaurants = "restaurants"
         static let restaurantBefore = "restaurant_before"
         static let restaurantAfter = "restaurant_after"
     }
 
     enum UserDefaultsKey {
         static let widgetAdded = "pendingWidgetAddedEvent"
+        static let widgetAddedRestaurant = "pendingWidgetAddedRestaurant"
         static let widgetChanged = "pendingWidgetChangedEvent"
     }
 
@@ -58,8 +60,12 @@ final class WidgetAnalyticsManager {
     // MARK: - Methods to be Called from Widget Extension
 
     /// (위젯에서 호출) 사용자가 위젯을 추가했을 때, 이벤트를 기록합니다.
-    func recordWidgetAdded() {
+    /// - Parameter restaurant: 위젯에 설정된 식당 이름 (한글)
+    func recordWidgetAdded(restaurant: String) {
         userDefaults?.set(true, forKey: UserDefaultsKey.widgetAdded)
+        if let paramValue = restaurantNameMap[restaurant] {
+            userDefaults?.set(paramValue, forKey: UserDefaultsKey.widgetAddedRestaurant)
+        }
     }
 
     /// (위젯에서 호출) 사용자가 위젯의 식당을 변경했을 때, 이전/이후 정보를 기록합니다.
