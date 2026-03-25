@@ -482,13 +482,15 @@ extension HomeRestaurantViewController {
         let year = Calendar.current.component(.year, from: date)
         let month = Calendar.current.component(.month, from: date)
         
-        let cacheKey = "publicHolidayCache_\(year)_\(String(format: "%02d", month))"
+        let cacheKey = "\(HolidayAPIConstant.cacheKeyPrefix)\(year)_\(String(format: "%02d", month))"
         
         if let cached = UserDefaults.standard.array(forKey: cacheKey) as? [String] {
             return cached
         }
         
-        let serviceKey = Bundle.main.object(forInfoDictionaryKey: "HOLIDAY_API_KEY") as? String ?? ""
+        let serviceKey = Bundle.main.object(
+            forInfoDictionaryKey: HolidayAPIConstant.infoPlistKey
+        ) as? String ?? ""
         let trimmedServiceKey = serviceKey.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard !trimmedServiceKey.isEmpty else {
@@ -512,7 +514,7 @@ extension HomeRestaurantViewController {
             
             let decoded = try response.map(PublicHolidayResponseDTO.self)
             
-            guard decoded.response.header.resultCode == "00" else {
+            guard decoded.response.header.resultCode == HolidayAPIConstant.successResultCode else {
                 return []
             }
             
@@ -520,7 +522,7 @@ extension HomeRestaurantViewController {
             let holidayDates = Array(
                 Set(
                     items
-                        .filter { $0.isHoliday == "Y" }
+                        .filter { $0.isHoliday == HolidayAPIConstant.holidayFlag }
                         .map { String($0.locdate) }
                 )
             ).sorted()
