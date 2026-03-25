@@ -211,12 +211,17 @@ final class HomeRestaurantViewController: BaseViewController {
         return holidayDates.contains(targetDate)
     }
     
-    // 날짜를 yyyyMMdd 포맷 문자열로 변환
+    // 날짜를 yyyyMMdd 문자열로 변환
     private func changeDateFormat(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd"
-        return dateFormatter.string(from: date)
+        return Self.yyyyMMddDateFormatter.string(from: date)
     }
+    
+    ///"yyyyMMdd 포맷팅하기 위한 DateFormatter 인스턴스
+    private static let yyyyMMddDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        return formatter
+    }()
     
     /// 스낵코너 메뉴를 비우고 UI를 갱신
     private func hideSnackCorner() {
