@@ -9,7 +9,6 @@ import UIKit
 
 import Moya
 import SnapKit
-import FirebaseAnalytics
 
 import EATSSUDesign
 

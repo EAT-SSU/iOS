@@ -421,9 +421,15 @@ extension SetRateViewController {
                 )
                 
                 try await postFixReview(reviewId: reviewId, request: request)
-                
+
                 await MainActor.run {
                     self.isReviewSubmitted = true
+                    let hasPhoto = self.userPickedImage != nil || self.setRateView.userReviewImageView.image != nil
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                        photoAttached: hasPhoto ? 1 : 0,
+                        rating: self.setRateView.rateView.currentStar,
+                        likes: self.likedStates.filter { $0 }.count
+                    )
                     self.showToast(message: TextLiteral.Review.fixReviewSuccess)
                     self.moveToReviewVC()
                 }
@@ -470,6 +476,11 @@ extension SetRateViewController {
 
                 await MainActor.run {
                     self.isReviewSubmitted = true
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                        photoAttached: imageUrl != nil ? 1 : 0,
+                        rating: self.setRateView.rateView.currentStar,
+                        likes: self.likedStates.filter { $0 }.count
+                    )
                     self.moveToReviewVC()
                 }
 
@@ -517,6 +528,11 @@ extension SetRateViewController {
 
                 await MainActor.run {
                     self.isReviewSubmitted = true
+                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                        photoAttached: imageUrl != nil ? 1 : 0,
+                        rating: self.setRateView.rateView.currentStar,
+                        likes: self.likedStates.filter { $0 }.count
+                    )
                     self.moveToReviewVC()
                 }
 

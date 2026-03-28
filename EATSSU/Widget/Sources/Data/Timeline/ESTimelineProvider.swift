@@ -105,7 +105,7 @@ struct ESTimelineProvider: AppIntentTimelineProvider {
                 WidgetAnalyticsManager.shared.recordWidgetChanged(before: oldRestaurant, after: newRestaurant)
             }
         } else {
-            WidgetAnalyticsManager.shared.recordWidgetAdded()
+            WidgetAnalyticsManager.shared.recordWidgetAdded(restaurant: newRestaurant)
         }
         userDefaults?.set(newRestaurant, forKey: lastRestaurantKey)
     }

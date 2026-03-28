@@ -10,7 +10,6 @@ import UIKit
 
 // External Module
 import SnapKit
-import FirebaseAnalytics
 
 import EATSSUDesign
 

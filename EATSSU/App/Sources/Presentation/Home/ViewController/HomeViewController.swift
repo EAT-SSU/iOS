@@ -8,7 +8,6 @@
 import UIKit
 import Combine
 
-import FirebaseAnalytics
 import Moya
 import SnapKit
 

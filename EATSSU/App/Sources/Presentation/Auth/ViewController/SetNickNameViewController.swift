@@ -10,8 +10,6 @@ import Combine
 
 import Moya
 
-import FirebaseAnalytics
-
 import EATSSUDesign
 
 enum SetNickNameSource {

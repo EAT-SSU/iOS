@@ -11,10 +11,15 @@ extension WidgetAnalyticsManager {
     func sendPendingEvents() {
         // 1. 위젯 추가 이벤트 전송
         if userDefaults?.bool(forKey: UserDefaultsKey.widgetAdded) == true {
-            AnalyticsService.logEvent(Event.addWidget)
+            var parameters: [String: Any] = [:]
+            if let restaurant = userDefaults?.string(forKey: UserDefaultsKey.widgetAddedRestaurant) {
+                parameters["restaurants"] = restaurant
+            }
+            AnalyticsService.logEvent(Event.addWidget, parameters: parameters)
             userDefaults?.removeObject(forKey: UserDefaultsKey.widgetAdded)
+            userDefaults?.removeObject(forKey: UserDefaultsKey.widgetAddedRestaurant)
             #if DEBUG
-            print("Analytics: Logged add_widget_ios")
+            print("Analytics: Logged add_widget with params \(parameters)")
             #endif
         }
 
@@ -23,7 +28,7 @@ extension WidgetAnalyticsManager {
             AnalyticsService.logEvent(Event.changeWidget, parameters: changeInfo)
             userDefaults?.removeObject(forKey: UserDefaultsKey.widgetChanged)
             #if DEBUG
-            print("Analytics: Logged change_widget_ios with params \(changeInfo)")
+            print("Analytics: Logged change_widget with params \(changeInfo)")
             #endif
         }
     }

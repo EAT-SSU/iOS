@@ -128,6 +128,7 @@ final class LoginViewController: BaseViewController {
                     departmentId: info.departmentId,
                     departmentName: info.departmentName
                 )
+
             }
             changeIntoHomeViewController()
         } else {
@@ -150,6 +151,8 @@ final class LoginViewController: BaseViewController {
 
     @objc
     private func kakaoLoginButtonDidTapped() {
+        AnalyticsService.logEvent("click_login", parameters: ["method": "kakao"])
+
         // 카카오톡이 설치되어 있으면 앱을 통해 로그인 시도
         if UserApi.isKakaoTalkLoginAvailable() {
             UserApi.shared.loginWithKakaoTalk { [weak self] _, error in
@@ -180,11 +183,13 @@ final class LoginViewController: BaseViewController {
 
     @objc
     private func appleLoginButtonDidTapped() {
+        AnalyticsService.logEvent("click_login", parameters: ["method": "apple"])
         appleLoginRequest()
     }
 
     @objc
     private func lookingWithNoSignInButtonDidTapped() {
+        AnalyticsService.logEvent("click_login", parameters: ["method": "guest"])
         changeIntoHomeViewController()
     }
 }
@@ -246,6 +251,7 @@ extension LoginViewController {
                                             refreshToken: signData.refreshToken)
                 _ = UserInfoManager.shared.createUserInfo(accountType: .kakao)
                 UserDefaults.standard.set(UserInfo.AccountType.kakao.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
+                AnalyticsService.logEvent("complete_login", parameters: ["method": "kakao"])
                 getMyInfo()
                 
             case .failure(let error):
@@ -275,6 +281,7 @@ extension LoginViewController {
                                             refreshToken: signData.refreshToken)
                 _ = UserInfoManager.shared.createUserInfo(accountType: .apple)
                 UserDefaults.standard.set(UserInfo.AccountType.apple.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
+                AnalyticsService.logEvent("complete_login", parameters: ["method": "apple"])
                 getMyInfo()
                 
             case .failure(let error):

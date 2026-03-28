@@ -10,7 +10,7 @@ import CoreLocation
 
 import NMapsMap
 import Moya
-import FirebaseAnalytics
+
 
 import EATSSUDesign
 
@@ -112,7 +112,7 @@ final class MainMapViewController: BaseViewController {
 
     @objc private func didTapWhole() {
         guard currentMapMode != .all else { return }
-        
+
         currentMapMode = .all
         setInitialCameraPosition(animated: true)
         root.selectWhole(true)

@@ -9,7 +9,6 @@ import UIKit
 
 import Moya
 import SnapKit
-import FirebaseAnalytics
 
 final class MyReviewViewController: BaseViewController {
     override var shouldHideTabBar: Bool { true }

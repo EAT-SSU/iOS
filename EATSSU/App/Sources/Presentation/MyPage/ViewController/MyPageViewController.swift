@@ -8,7 +8,6 @@
 import UIKit
 import WebKit
 
-import FirebaseAnalytics
 import KakaoSDKCommon
 import KakaoSDKTalk
 import Moya
@@ -76,6 +75,7 @@ final class MyPageViewController: BaseViewController {
     
     @objc
     private func userWithdrawButtonTapped() {
+        AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "withdraw"])
         let userWithdrawViewController = UserWithdrawViewController(nickName: nickName)
         navigationController?.pushViewController(userWithdrawViewController, animated: true)
     }
@@ -185,21 +185,25 @@ extension MyPageViewController: UITableViewDelegate {
         switch indexPath.row {
         // "푸시 알림 설정" 스위치 토글
         case MyPageLabels.NotificationSetting.rawValue:
+            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "notification_setting"])
             handleNotificationSettingToggle(at: indexPath)
-            
+
         // "내 정보" 스크린으로 이동
         case MyPageLabels.MyInfo.rawValue:
+            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "my_info"])
             let setNickNameVC = SetNickNameViewController()
             setNickNameVC.source = .signup
             navigationController?.pushViewController(setNickNameVC, animated: true)
 
         // "내 리뷰" 스크린으로 이동
         case MyPageLabels.MyReview.rawValue:
+            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "my_review"])
             let myReviewViewController = MyReviewViewController(nickname: nickName)
             navigationController?.pushViewController(myReviewViewController, animated: true)
 
         // "문의하기" 스크린으로 이동
         case MyPageLabels.Inquiry.rawValue:
+            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "inquiry"])
             TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
                 if error != nil {
                     if let kakaoChannelLink = URL(string: "http://pf.kakao.com/\(TextLiteral.KakaoChannel.id)") {
@@ -218,18 +222,21 @@ extension MyPageViewController: UITableViewDelegate {
 
         // "서비스 이용약관" 스크린으로 이동
         case MyPageLabels.TermsOfUse.rawValue:
+            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "terms_of_use"])
             let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
             provisionViewController.navigationTitle = TextLiteral.MyPage.termsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "개인정보 이용약관" 스크린으로 이동
         case MyPageLabels.PrivacyTermsOfUse.rawValue:
+            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "privacy_policy"])
             let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
             provisionViewController.navigationTitle = TextLiteral.MyPage.privacyTermsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "만든사람들" 스크린으로 이동
         case MyPageLabels.Creator.rawValue:
+            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "creator"])
             let creatorViewController = CreatorViewController()
             navigationController?.pushViewController(creatorViewController, animated: true)
 

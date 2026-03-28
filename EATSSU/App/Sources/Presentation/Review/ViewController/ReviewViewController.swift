@@ -7,7 +7,7 @@
 
 import UIKit
 import SnapKit
-import FirebaseAnalytics
+
 import Moya
 
 import EATSSUDesign
@@ -201,6 +201,8 @@ final class ReviewViewController: BaseViewController {
     
     /// 리뷰 작성 버튼 탭 처리
     @objc private func handleAddReviewButtonTap() {
+        ReviewAnalyticsManager.shared.logWriteReviewV1()
+
         if type == "VARIABLE" {
             let reviewVC = SetRateViewController(mealId: menuID)
             reviewVC.dataBind(
@@ -343,11 +345,6 @@ final class ReviewViewController: BaseViewController {
     /// Firebase 작업 설정
     private func setFirebaseTask() {
         FirebaseRemoteConfig.shared.fetchRestaurantInfo()
-        
-#if DEBUG
-#else
-        Analytics.logEvent("ReviewViewControllerLoad", parameters: nil)
-#endif
     }
     
     /// 작성 후의 새로고침 함수

@@ -10,7 +10,6 @@ import UIKit
 import Moya
 import Realm
 import SnapKit
-import FirebaseAnalytics
 
 final class UserWithdrawViewController: BaseViewController {
     override var shouldHideTabBar: Bool { true }

@@ -50,6 +50,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             } else {
                 LaunchSourceManager.shared.setSource(.icon)
             }
+
+            // PostHog Deep Link 이벤트
+            AnalyticsService.logEvent("Deep Link Opened", parameters: ["url": url.absoluteString])
         }
     }
 

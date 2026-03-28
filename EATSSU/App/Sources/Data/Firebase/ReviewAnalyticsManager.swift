@@ -16,14 +16,14 @@ final class ReviewAnalyticsManager {
     // MARK: - Event & Parameter Keys
 
     private enum Event {
-        static let writeReview = "write_review_v1"
-        static let completeReview = "complete_review_v1"
+        static let writeReview = "write_review_v2"
+        static let completeReview = "complete_review_v2"
     }
 
     private enum Parameter {
         static let photoAttached = "photo_attached"
         static let rating = "rating"
-        static let selection = "selection"
+        static let likes = "likes"
     }
 
     // MARK: - Logging Methods
@@ -41,11 +41,11 @@ final class ReviewAnalyticsManager {
      - Parameter rating: 사용자가 부여한 메인 별점 (1~5)
      - Parameter selection: 사용자가 한 번에 리뷰를 작성하는 메뉴의 총 개수
      */
-    func logCompleteReviewV1(photoAttached: Int, rating: Int, selection: Int) {
+    func logCompleteReviewV1(photoAttached: Int, rating: Int, likes: Int) {
         AnalyticsService.logEvent(Event.completeReview, parameters: [
             Parameter.photoAttached: photoAttached,
             Parameter.rating: rating,
-            Parameter.selection: selection
+            Parameter.likes: likes
         ])
     }
 }

@@ -255,6 +255,11 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
         
         // 커피 탭: 전체화면 모달로 웹뷰 표시
         if selectedTab == .coffee {
+            let userInfo = UserInfoManager.shared.getCurrentUserInfo()
+            var params: [String: Any] = [:]
+            if let collegeId = userInfo?.collegeId { params["college"] = collegeId }
+            if let majorId = userInfo?.departmentId { params["major"] = majorId }
+            AnalyticsService.logEvent("click_plz_not_me", parameters: params)
             presentCoffeeWebView()
             return false
         }
