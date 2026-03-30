@@ -55,14 +55,14 @@ final class CustomTabBarContainerController: UITabBarController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        setupEventBadgeIfNeeded()
-        updateEventBadgePosition()
+        // setupEventBadgeIfNeeded()
+        // updateEventBadgePosition()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
             
-        updateEventBadgePosition()
+        // updateEventBadgePosition()
     }
     
     // MARK: - Setup
