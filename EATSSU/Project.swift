@@ -47,6 +47,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "CFBundleDevelopmentRegion": "ko",
     "NAVER_CLIENT_ID": "$(NAVER_CLIENT_ID)",
     "POSTHOG_API_KEY": "$(POSTHOG_API_KEY)",
+    "HOLIDAY_API_KEY": "$(HOLIDAY_API_KEY)",
 ])
 
 let widgetInfoPlist: InfoPlist = .extendingDefault(with: [
