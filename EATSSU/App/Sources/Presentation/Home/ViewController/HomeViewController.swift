@@ -52,7 +52,7 @@ final class HomeViewController: BaseViewController {
         logFirebaseEvent()
         
         logScreenView(screenID: FirebaseScreenID.Home.home1)
-        presentPromotionPopupIfNeeded()
+        // presentPromotionPopupIfNeeded()
     }
     
     override func viewWillAppear(_ animated: Bool) {
