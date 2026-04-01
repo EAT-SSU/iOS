@@ -57,13 +57,11 @@ final class MainMapViewController: BaseViewController {
         super.viewDidLoad()
 
         locationManager.delegate = self
-        
+
         configureNavigationBar()
         setInitialCameraPosition(animated: false)
         setupLocationButtonObserver()
         setupMarkerTapHandler()
-        
-        fetchDepartmentAndUpdateButton()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -74,22 +72,22 @@ final class MainMapViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // 학과 정보 다시 로드
-        loadDepartmentFromRealm()
-        
-        // 학과가 있으면 학과별 제휴로 시작, 없으면 전체로 시작
-        if let departmentName = currentDepartmentName, !departmentName.isEmpty {
-            currentMapMode = .myOnly
-            root.selectWhole(false)
-            fetchMyPartnerships()
-        } else {
-            currentMapMode = .all
-            root.selectWhole(true)
-            fetchPartnerships()
+        // 서버에서 학과 정보를 확인한 후, 결과에 따라 적절한 API 호출
+        fetchDepartmentAndUpdateButton { [weak self] in
+            guard let self = self else { return }
+
+            if let departmentName = self.currentDepartmentName, !departmentName.isEmpty {
+                self.currentMapMode = .myOnly
+                self.root.selectWhole(false)
+                self.fetchMyPartnerships()
+            } else {
+                self.currentMapMode = .all
+                self.root.selectWhole(true)
+                self.fetchPartnerships()
+            }
+
+            self.updateMyOnlyButtonTitle()
         }
-        
-        // 버튼 텍스트 업데이트
-        updateMyOnlyButtonTitle()
     }
 
     // MARK: - Configuration
