@@ -173,33 +173,67 @@ final class HomeRestaurantViewController: BaseViewController {
                 }
             }
         }
-
+        
         // Task를 AnyCancellable로 변환해서 저장 (취소 가능하도록)
         cancellables.insert(AnyCancellable { task.cancel() })
         
         let weekday = Weekday.from(date: date)
         isWeekend = weekday.isWeekend
+        
+        guard time == MealTime.lunch.rawValue else {
+            hideSnackCorner()
+            return
+        }
 
-        if time == MealTime.lunch.rawValue {
-            // 학기 중 평일 점심에만 스낵 고정 메뉴 요청
-            if !FirebaseRemoteConfig.shared.isVacationPeriod, !weekday.isWeekend {
-                isSelectable = true
-                let fixTask = _Concurrency.Task {
-                    await self.fetchFixedMenuData(restaurant: RestaurantIdentifier.snackCorner.rawValue)
-                }
-                cancellables.insert(AnyCancellable { fixTask.cancel() })
+        let snackTask = _Concurrency.Task { [weak self] in
+            guard let self else { return }
+
+            let isHoliday = await self.isHoliday(date: date)
+
+            if !FirebaseRemoteConfig.shared.isVacationPeriod,
+               !weekday.isWeekend,
+               !isHoliday {
+                self.isSelectable = true
+                await self.fetchFixedMenuData(restaurant: RestaurantIdentifier.snackCorner.rawValue)
             } else {
-                // 방학/주말 더미
-                fixMenuTableViewData[RestaurantIdentifier.snackCorner.rawValue] = []
+                self.hideSnackCorner()
             }
         }
+        cancellables.insert(AnyCancellable { snackTask.cancel() })
     }
-
-    // 날짜를 yyyyMMdd 포맷 문자열로 변환
-    func changeDateFormat(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd"
-        return dateFormatter.string(from: date)
+    
+    // MARK: - Private Functions
+    
+    /// 특정 날짜가 공휴일인지 판단
+    private func isHoliday(date: Date) async -> Bool {
+        let targetDate = changeDateFormat(date: date)
+        let holidayDates = await fetchHolidays(date: date)
+        return holidayDates.contains(targetDate)
+    }
+    
+    // 날짜를 yyyyMMdd 문자열로 변환
+    private func changeDateFormat(date: Date) -> String {
+        return Self.yyyyMMddDateFormatter.string(from: date)
+    }
+    
+    ///"yyyyMMdd 포맷팅하기 위한 DateFormatter 인스턴스
+    private static let yyyyMMddDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        return formatter
+    }()
+    
+    /// 스낵코너 메뉴를 비우고 UI를 갱신
+    private func hideSnackCorner() {
+        isSelectable = false
+        fixMenuTableViewData[RestaurantIdentifier.snackCorner.rawValue] = []
+        
+        if let sectionIndex = getSectionIndex(for: RestaurantIdentifier.snackCorner.rawValue) {
+            restaurantView.restaurantTableView.reloadSections(
+                IndexSet(integer: sectionIndex),
+                with: .none
+            )
+        }
     }
 }
 
@@ -440,6 +474,64 @@ extension HomeRestaurantViewController {
             if let sectionIndex = self.getSectionIndex(for: restaurant) {
                 self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: animation)
             }
+        }
+    }
+    
+    // 공휴일 조회 API 호출
+    func fetchHolidays(date: Date) async -> [String] {
+        let year = Calendar.current.component(.year, from: date)
+        let month = Calendar.current.component(.month, from: date)
+        
+        let cacheKey = "\(HolidayAPIConstant.cacheKeyPrefix)\(year)_\(String(format: "%02d", month))"
+        
+        if let cached = UserDefaults.standard.array(forKey: cacheKey) as? [String] {
+            return cached
+        }
+        
+        let serviceKey = Bundle.main.object(
+            forInfoDictionaryKey: HolidayAPIConstant.infoPlistKey
+        ) as? String ?? ""
+        let trimmedServiceKey = serviceKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !trimmedServiceKey.isEmpty else {
+            return []
+        }
+        
+        let provider = MoyaProvider<PublicHolidayRouter>()
+        
+        do {
+            let response = try await withCheckedThrowingContinuation { continuation in
+                provider.request(
+                    .getPublicHolidays(
+                        serviceKey: trimmedServiceKey,
+                        year: year,
+                        month: month
+                    )
+                ) { result in
+                    continuation.resume(with: result)
+                }
+            }
+            
+            let decoded = try response.map(PublicHolidayResponseDTO.self)
+            
+            guard decoded.response.header.resultCode == HolidayAPIConstant.successResultCode else {
+                return []
+            }
+            
+            let items = decoded.response.body.items?.item.values ?? []
+            let holidayDates = Array(
+                Set(
+                    items
+                        .filter { $0.isHoliday == HolidayAPIConstant.holidayFlag }
+                        .map { String($0.locdate) }
+                )
+            ).sorted()
+            
+            UserDefaults.standard.set(holidayDates, forKey: cacheKey)
+            return holidayDates
+        } catch {
+            print("공휴일 조회 실패: \(error.localizedDescription)")
+            return []
         }
     }
 }
