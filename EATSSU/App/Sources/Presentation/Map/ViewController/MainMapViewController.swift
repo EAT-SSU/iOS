@@ -86,7 +86,6 @@ final class MainMapViewController: BaseViewController {
                 self.fetchPartnerships()
             }
 
-            self.updateMyOnlyButtonTitle()
         }
     }
 
