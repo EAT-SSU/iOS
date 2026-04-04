@@ -208,9 +208,8 @@ let project = Project(
                     ),
                     .release(name: "Release",
                              settings: [
-                               // TODO: 테스트 후 AppStore로 원복 필요
-                               "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
-                               "CODE_SIGN_IDENTITY": "Apple Development"
+                               "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
+                               "CODE_SIGN_IDENTITY": "Apple Distribution"
                              ],
                              xcconfig: "App/Resources/Secrets/Release.xcconfig"
                     )
@@ -289,9 +288,8 @@ let project = Project(
                     ),
                     .release(name: "Release",
                              settings: [
-                                // TODO: 테스트 후 AppStore로 원복 필요
-                                "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
-                                "CODE_SIGN_IDENTITY": "Apple Development"
+                                "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
+                                "CODE_SIGN_IDENTITY": "Apple Distribution"
                              ],
                              xcconfig: "App/Resources/Secrets/Release.xcconfig"
                     )
