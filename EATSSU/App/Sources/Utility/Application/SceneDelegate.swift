@@ -65,6 +65,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 앱이 완전히 포그라운드에 진입했을 때 실행 경로 로깅 처리
         handleForegroundTransition()
         checkAndNotifyNewDay()
+
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -245,16 +246,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
             guard let self = self else { return }
 
+            // Remote Config에서 테마 값 저장 (아이콘 변경은 화면 전환 후 수행)
+            let remoteTheme = FirebaseRemoteConfig.shared.currentTheme
+            print("[Theme] Remote Config 테마: \(remoteTheme), 현재 적용 테마: \(ThemeManager.shared.appliedTheme.rawValue)")
+
             let elapsedTime = Date().timeIntervalSince(splashStartTime)
             let remainingTime = max(0, minimumSplashDuration - elapsedTime)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
                 if let notice = result, !notice.isEmpty {
-                    // 공지사항이 있으면 공지 화면으로
                     self.transitionToNotice(notice)
                 } else {
-                    // 공지사항 없으면 인증 체크 시작
                     self.startAuthenticationFlow()
+                }
+
+                // 화면 전환 완료 후 아이콘 변경
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    ThemeManager.shared.applyRemoteTheme(remoteTheme) {}
                 }
             }
         }
