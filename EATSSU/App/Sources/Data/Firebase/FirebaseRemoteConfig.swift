@@ -14,6 +14,11 @@ class FirebaseRemoteConfig {
     var remoteConfig: RemoteConfig
     var isVacationPeriod = false
 
+    /// Remote Config에서 가져온 현재 테마 (noticeCheck 이후 호출)
+    var currentTheme: String {
+        return remoteConfig["app_theme"].stringValue ?? "default"
+    }
+
     private init() {
         remoteConfig = RemoteConfig.remoteConfig()
         let settings = RemoteConfigSettings()

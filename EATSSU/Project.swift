@@ -69,7 +69,8 @@ let projectSettings: Settings = .settings(
         "SWIFT_CONCURRENCY": "complete",
         "CODE_SIGN_STYLE": "Manual",
         "MARKETING_VERSION": "3.5.0",
-        "CURRENT_PROJECT_VERSION": "1"
+        "CURRENT_PROJECT_VERSION": "1",
+        "ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS": "YES"
     ],
     configurations: [
         .debug(
@@ -113,6 +114,7 @@ let project = Project(
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
             entitlements: "App/Entitlements/EatSSU-iOS-Dev.entitlements",
+            scripts: [],
             dependencies: [
                 .target(name: "EATSSUWidget-DEV"),
 
@@ -168,6 +170,7 @@ let project = Project(
             sources: ["App/Sources/**"],
             resources: ["App/Resources/**"],
             entitlements: "App/Entitlements/EatSSU-iOS-Prod.entitlements",
+            scripts: [],
             dependencies: [
                 .target(name: "EATSSUWidget-PROD"),
 
