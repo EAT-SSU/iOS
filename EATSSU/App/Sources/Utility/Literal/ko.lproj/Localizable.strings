@@ -1,0 +1,429 @@
+//
+//  Localizable.strings
+//  EATSSU
+//
+//  Created by jeongminji on 5/3/26.
+//
+
+// MARK: - Common
+
+/// "확인"
+"common.confirm" = "확인";
+/// "취소"
+"common.cancel" = "취소";
+/// "취소하기"
+"common.cancelDark" = "취소하기";
+/// "삭제하기"
+"common.delete" = "삭제하기";
+/// "수정하기"
+"common.fix" = "수정하기";
+/// "로그인이 필요한 서비스입니다"
+"common.needLogin" = "로그인이 필요한 서비스입니다";
+/// "로그인 하시겠습니까?"
+"common.askLogin" = "로그인 하시겠습니까?";
+/// "설정으로 이동"
+"common.moveToSetting" = "설정으로 이동";
+/// "탈퇴 처리가 완료되었습니다."
+"common.withdrawComplete" = "탈퇴 처리가 완료되었습니다.";
+/// "잠시 후 다시 시도해주세요."
+"common.tryAgain" = "잠시 후 다시 시도해주세요.";
+/// "세션이 만료되었습니다. 다시 로그인해주세요."
+"common.sessionExpired" = "세션이 만료되었습니다. 다시 로그인해주세요.";
+/// "에러가 발생했습니다"
+"common.errorOccured" = "에러가 발생했습니다";
+/// "다시 시도하세요"
+"common.retry" = "다시 시도하세요";
+
+
+// MARK: - TabBar
+
+/// "학식"
+"tabBar.meal" = "학식";
+/// "지도"
+"tabBar.map" = "지도";
+/// "나만아니면돼~"
+"tabBar.coffee" = "나만아니면돼~";
+/// "마이"
+"tabBar.my" = "마이";
+
+
+// MARK: - Auth
+
+/// "닉네임을 입력해주세요"
+"auth.inputNickName" = "닉네임을 입력해주세요";
+/// "Apple로 로그인"
+"auth.signInWithApple" = "Apple로 로그인";
+/// "카카오 로그인"
+"auth.signInWithKakao" = "카카오 로그인";
+/// "둘러보기"
+"auth.lookingWithNoSignIn" = "둘러보기";
+/// "최근에 로그인했어요"
+"auth.lastLoginTooltip" = "최근에 로그인했어요";
+/// LoginVC - "카카오톡으로 생성된 계정입니다."
+"auth.kakaoAccount" = "카카오톡으로 생성된 계정입니다.";
+/// LoginVC - "Apple로 생성된 계정입니다."
+"auth.appleAccount" = "Apple로 생성된 계정입니다.";
+/// SetNickNameView - "닉네임 설정"
+"auth.setNickname" = "닉네임 설정";
+/// SetNickNameView - "중복 확인"
+"auth.checkDuplicate" = "중복 확인";
+/// SetNickNameView - "소속 설정"
+"auth.setCollege" = "소속 설정";
+/// SetNickNameView - "단과대"
+"auth.college" = "단과대";
+/// SetNickNameView - "학과"
+"auth.department" = "학과";
+/// SetNickNameView - "연결된 계정"
+"auth.linkedAccount" = "연결된 계정";
+/// SetNickNameView - "없음"
+"auth.empty" = "없음";
+/// SetNickNameView - "저장하기"
+"auth.save" = "저장하기";
+/// SetNickNameView - "카카오"
+"auth.kakao" = "카카오";
+/// SetNickNameView - "APPLE"
+"auth.apple" = "APPLE";
+/// SetNickNameVC - "변경된 정보가 없습니다."
+"auth.noChanges" = "변경된 정보가 없습니다.";
+/// SetNickNameVC - "유효하지 않은 학과 정보입니다."
+"auth.invalidDepartment" = "유효하지 않은 학과 정보입니다.";
+/// SetNickNameVC - "정보 업데이트 중 오류가 발생했습니다."
+"auth.updateError" = "정보 업데이트 중 오류가 발생했습니다.";
+/// SetNickNameVC - "내 정보가 수정되었어요."
+"auth.updateSuccess" = "내 정보가 수정되었어요.";
+/// NIcknameTextFieldResultType - "필수 입력 사항입니다"
+"auth.requiredInput" = "필수 입력 사항입니다";
+/// NIcknameTextFieldResultType - "중복 확인을 진행해주세요."
+"auth.needCheckDuplicate" = "중복 확인을 진행해주세요.";
+/// NIcknameTextFieldResultType - "이미 사용 중인 닉네임이에요."
+"auth.duplicatedNickname" = "이미 사용 중인 닉네임이에요.";
+/// NIcknameTextFieldResultType - "사용가능한 닉네임이에요"
+"auth.availableNickname" = "사용가능한 닉네임이에요";
+/// NIcknameTextFieldResultType - "2~16글자를 입력해 주세요."
+"auth.nicknameLength" = "2~16글자를 입력해 주세요.";
+/// NIcknameTextFieldResultType - "특수문자로 시작/끝나는 닉네임은 사용할 수 없어요."
+"auth.specialCharNickname" = "특수문자로 시작/끝나는 닉네임은 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "연속된 특수문자(--, __)는 사용할 수 없어요."
+"auth.continuousSpecialChar" = "연속된 특수문자(--, __)는 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "숫자만으로 된 닉네임은 사용할 수 없어요."
+"auth.numberOnlyNickname" = "숫자만으로 된 닉네임은 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "허용 문자(한글/영문/숫자)만 사용할 수 있어요."
+"auth.allowedChar" = "허용 문자(한글/영문/숫자)만 사용할 수 있어요.";
+/// NIcknameTextFieldResultType - "사용할 수 없는 단어가 포함되어 있어요."
+"auth.bannedWord" = "사용할 수 없는 단어가 포함되어 있어요.";
+/// NIcknameTextFieldResultType - "띄어쓰기로 시작/끝나는 닉네임은 사용할 수 없어요."
+"auth.spaceNickname" = "띄어쓰기로 시작/끝나는 닉네임은 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "연속된 띄어쓰기는 사용할 수 없어요."
+"auth.continuousSpace" = "연속된 띄어쓰기는 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "이모지, 특수문자는 사용할 수 없어요."
+"auth.emojiSpecialChar" = "이모지, 특수문자는 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "관리자로 혼동될 수 있는 닉네임은 사용할 수 없어요."
+"auth.adminNickname" = "관리자로 혼동될 수 있는 닉네임은 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "서비스명 단독 닉네임은 사용할 수 없어요."
+"auth.serviceNameNickname" = "서비스명 단독 닉네임은 사용할 수 없어요.";
+/// NIcknameTextFieldResultType - "욕설, 비속어 등의 표현이 포함된 닉네임은 사용할 수 없어요."
+"auth.slangNickname" = "욕설, 비속어 등의 표현이 포함된 닉네임은 사용할 수 없어요.";
+
+
+// MARK: - Home
+
+/// Home - "오늘의 메뉴"
+"home.todayMenu" = "오늘의 메뉴";
+/// Home - "가격"
+"home.price" = "가격";
+/// Home - "평점"
+"home.rating" = "평점";
+/// Home - "  -"
+"home.emptyRating" = "  -";
+/// Home - "제공되는 메뉴가 없습니다"
+"home.noMenuProvidedMessage" = "제공되는 메뉴가 없습니다";
+/// CustomTimeTabController - "아침"
+"home.morning" = "아침";
+/// CustomTimeTabController - "점심"
+"home.lunch" = "점심";
+/// CustomTimeTabController - "저녁"
+"home.dinner" = "저녁";
+/// RestaurantInfoView - "학생 식당"
+"home.studentRestaurant" = "학생 식당";
+/// RestaurantInfoView - "식당 위치"
+"home.restaurantLocation" = "식당 위치";
+/// RestaurantInfoView - "식당 사진"
+"home.restaurantPicture" = "식당 사진";
+/// RestaurantInfoView - "숭실대학교"
+"home.soongsilUniversity" = "숭실대학교";
+/// RestaurantInfoView - "영업 시간"
+"home.businessHour" = "영업 시간";
+/// RestaurantInfoView - "비고"
+"home.note" = "비고";
+/// RestaurantInfoView - "아시안푸드, 돈까스, 샐러드, 국밥 등\n카페"
+"home.dodamEtc" = "아시안푸드, 돈까스, 샐러드, 국밥 등\n카페";
+/// RestaurantMenuGroupCell - "영업 시간이 아니에요."
+"home.notBusinessHour" = "영업 시간이 아니에요.";
+/// RestaurantTableViewHeader - "기숙사 식당"
+"home.dormitoryRestaurant" = "기숙사 식당";
+
+
+// MARK: - Map
+
+/// MainMapVC - "제휴 지도"
+"map.map" = "제휴 지도";
+/// MainMapView - "전체"
+"map.all" = "전체";
+/// MainMapView - "내 제휴"
+"map.myPartner" = "내 제휴";
+/// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
+"map.inputDepartment" = "학과를 입력하고\n나만의 제휴를 확인해보세요!";
+/// NoDepartmentSheetVC - "학과 입력하기"
+"map.inputDepartmentButton" = "학과 입력하기";
+/// PartnershipDetailSheetVC - "음식점"
+"map.restaurant" = "음식점";
+/// PartnershipDetailSheetVC - "카페"
+"map.cafe" = "카페";
+/// PartnershipDetailSheetVC - "주점"
+"map.pub" = "주점";
+/// PartnershipDetailSheetVC - "학과 정보 없음"
+"map.noDepartmentInfo" = "학과 정보 없음";
+/// MainMapVC+Location - "위치 권한 필요"
+"map.needLocationAuth" = "위치 권한 필요";
+/// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."
+"map.locationAuthDescription" = "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요.";
+
+
+// MARK: - MyPage
+
+/// "마이페이지"
+"myPage.myPage" = "마이페이지";
+/// "내 정보"
+"myPage.myInfo" = "내 정보";
+/// "내 리뷰"
+"myPage.myReview" = "내 리뷰";
+/// UserWithdrawVC - "회원탈퇴"
+"myPage.withdraw" = "회원탈퇴";
+/// MyPageVC - "로그아웃"
+"myPage.logout" = "로그아웃";
+/// MyPageVC - "정말 로그아웃 하시겠습니까?"
+"myPage.askLogout" = "정말 로그아웃 하시겠습니까?";
+/// MyPageVC - "EAT-SSU 수신 동의"
+"myPage.agreeNoti" = "EAT-SSU 수신 동의 (%@)";
+/// MyPageVC - "EAT-SSU 수신 거절"
+"myPage.disagreeNoti" = "EAT-SSU 수신 거절 (%@)";
+/// MyPageVC - "알림 설정 중 오류가 발생했습니다."
+"myPage.notiSettingError" = "알림 설정 중 오류가 발생했습니다.";
+/// CreatorVC - "만든 사람들"
+"myPage.creators" = "만든 사람들";
+/// MyReviewVC - "리뷰 수정 혹은 삭제"
+"myPage.fixOrDeleteReview" = "리뷰 수정 혹은 삭제";
+/// MyReviewVC - "작성하신 리뷰를 수정 또는 삭제하시겠습니까?"
+"myPage.askFixOrDeleteReview" = "작성하신 리뷰를 수정 또는 삭제하시겠습니까?";
+/// MyReviewVC - "리뷰 삭제하기"
+"myPage.deleteMyReview" = "리뷰 삭제하기";
+/// MyReviewVC - "해당 리뷰를 삭제할까요?"
+"myPage.askDeleteMyReview" = "해당 리뷰를 삭제할까요?";
+/// MyReviewVC - "리뷰가 성공적으로 삭제되었습니다."
+"myPage.deleteMyReviewSuccess" = "리뷰가 성공적으로 삭제되었습니다.";
+/// MyPageView - "다시 시도해주세요"
+"myPage.retry" = "다시 시도해주세요";
+/// MyPageView - "앱 버전"
+"myPage.appVersion" = "앱 버전";
+/// MyPageView - "탈퇴하기"
+"myPage.withdrawButton" = "탈퇴하기";
+/// MyPageView - "알 수 없음"
+"myPage.unknownUser" = "알 수 없음";
+/// NotificationSettingTableViewCell - "푸시 알림 설정"
+"myPage.pushNotificationSetting" = "푸시 알림 설정";
+/// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
+"myPage.pushNotificationDescription" = "매일 오전 11시에 알림을 보내드려요";
+/// MyPageVC - "문의하기"
+"myPage.inquiry" = "문의하기";
+/// MyPageVC - "서비스 이용약관"
+"myPage.termsOfUse" = "서비스 이용약관";
+/// MyPageVC - "개인정보 이용약관"
+"myPage.privacyTermsOfUse" = "개인정보 이용약관";
+/// ProvisionVC - "이용약관"
+"myPage.defaultTerms" = "이용약관";
+/// UserWithdrawView - "정말 탈퇴하시겠습니까?"
+"myPage.confirmWithdrawal" = "정말 탈퇴하시겠습니까?";
+/// UserWithdrawView - "작성한 리뷰 게시글은 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보처리방침을 확인해 주세요."
+"myPage.withdrawalNotice" = "작성한 리뷰 게시글은 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보처리방침을 확인해 주세요.";
+/// UserWithdrawView - "올바른 입력입니다."
+"myPage.validInputMessage" = "올바른 입력입니다";
+/// UserWithdrawView - "올바르지 않은 닉네임입니다"
+"myPage.invalidNicknameMessage" = "올바르지 않은 닉네임입니다";
+
+
+// MARK: - Review
+
+/// ReportVC - "EAT SSU 팀에게 보내기"
+"review.sendToTeam" = "EAT SSU 팀에게 보내기";
+/// ReportVC - "신고하기"
+"review.report" = "신고하기";
+/// ReportVC - "사유를 선택해주세요!"
+"review.selectReason" = "사유를 선택해주세요!";
+/// ReportVC - "신고가 성공적으로 접수되었어요!"
+"review.reportSuccess" = "신고가 성공적으로 접수되었어요!";
+/// ReportVC, ReportView - "메뉴와 관련없는 내용"
+"review.unrelatedMenu" = "메뉴와 관련없는 내용";
+/// ReportVC, ReportView - "음란성, 욕설 등 부적절한 내용"
+"review.inappropriateContent" = "음란성, 욕설 등 부적절한 내용";
+/// ReportVC, ReportView - "부적절한 홍보 또는 광고"
+"review.inappropriateAd" = "부적절한 홍보 또는 광고";
+/// ReportVC, ReportView - "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)"
+"review.notReviewFormat" = "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)";
+/// ReportVC, ReportView - "저작권 도용 의심 (사진 등)"
+"review.copyright" = "저작권 도용 의심 (사진 등)";
+/// ReportVC, ReportView - "기타 (하단 내용 작성)"
+"review.etc" = "기타 (하단 내용 작성)";
+/// ReportView - "리뷰 신고 사유를 알려주세요"
+"review.reportReason" = "리뷰 신고 사유를 알려주세요";
+/// ReportView - "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다."
+"review.reportGuide" = "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다.";
+/// ReportView - "리뷰 신고 사유를 작성해 주세요"
+"review.inputReportReason" = "리뷰 신고 사유를 작성해 주세요";
+/// ReviewVC - "리뷰 작성하기"
+"review.writeReview" = "리뷰 작성하기";
+/// ReviewVC - "리뷰가 성공적으로 등록되었습니다."
+"review.registerReviewSuccess" = "리뷰가 성공적으로 등록되었습니다.";
+/// ReviewVC - "리뷰"
+"review.review" = "리뷰";
+/// ReviewVC - "리뷰 삭제"
+"review.deleteReview" = "리뷰 삭제";
+/// ReviewVC - "해당 리뷰를 삭제할까요?"
+"review.askDeleteReview" = "해당 리뷰를 삭제할까요?";
+/// ReviewVC - "리뷰 신고하기"
+"review.reportReview" = "리뷰 신고하기";
+/// ReviewVC - "해당 리뷰를 신고하시겠습니까?"
+"review.askReportReview" = "해당 리뷰를 신고하시겠습니까?";
+/// ReviewVC - "리뷰가 성공적으로 삭제되었습니다."
+"review.deleteReviewSuccess" = "리뷰가 성공적으로 삭제되었습니다.";
+/// ReviewVC - "리뷰 삭제에 실패했습니다."
+"review.deleteReviewFail" = "리뷰 삭제에 실패했습니다.";
+/// SetRateVC - "리뷰 수정하기"
+"review.fixReview" = "리뷰 수정하기";
+/// SetRateVC - "리뷰 남기기"
+"review.leaveReview" = "리뷰 남기기";
+/// 메뉴 이름의 받침 유무에 따라 '을/를'을 동적으로 붙여 추천 문장을 생성합니다.
+"review.recommendMenu.default" = "%@을(를) 추천하시겠어요?";
+/// 메뉴 이름의 받침 유무에 따라 '을/를'을 동적으로 붙여 추천 문장을 생성합니다.
+"review.recommendMenu.withJongseong" = "%@을 추천하시겠어요?";
+/// 메뉴 이름의 받침 유무에 따라 '을/를'을 동적으로 붙여 추천 문장을 생성합니다.
+"review.recommendMenu.withoutJongseong" = "%@를 추천하시겠어요?";
+/// SetRateVC - "메뉴를 추천하시겠어요?"
+"review.recommendMenuTitle" = "메뉴를 추천하시겠어요?";
+/// SetRateVC - "리뷰 수정 완료하기"
+"review.fixReviewComplete" = "리뷰 수정 완료하기";
+/// SetRateVC - "완료하기"
+"review.complete" = "완료하기";
+/// SetRateVC - "별점을 입력해주세요!"
+"review.inputRating" = "별점을 입력해주세요!";
+/// SetRateVC - "메뉴 목록 조회에 실패했습니다."
+"review.loadMenuListFail" = "메뉴 목록 조회에 실패했습니다.";
+/// SetRateVC - "수정할 리뷰 정보가 없습니다."
+"review.noReviewInfoForFix" = "수정할 리뷰 정보가 없습니다.";
+/// SetRateVC - "리뷰가 성공적으로 수정되었습니다."
+"review.fixReviewSuccess" = "리뷰가 성공적으로 수정되었습니다.";
+/// SetRateVC - "리뷰 수정에 실패했습니다."
+"review.fixReviewFail" = "리뷰 수정에 실패했습니다.";
+/// SetRateVC - "식단 정보가 없습니다."
+"review.noMealInfo" = "식단 정보가 없습니다.";
+/// SetRateVC - "리뷰 업로드에 실패했습니다."
+"review.uploadReviewFail" = "리뷰 업로드에 실패했습니다.";
+/// SetRateVC - "메뉴 정보가 없습니다."
+"review.noMenuInfo" = "메뉴 정보가 없습니다.";
+/// SetRateVC - "메뉴에 대한 상세한 리뷰를 작성해주세요"
+"review.inputDetailReview" = "메뉴에 대한 상세한 리뷰를 작성해주세요";
+/// SetRateVC - "나가시겠어요?"
+"review.askLeave" = "나가시겠어요?";
+/// SetRateVC - "지금 나가면 작성한 내용이 저장되지 않습니다."
+"review.leaveWarning" = "지금 나가면 작성한 내용이 저장되지 않습니다.";
+/// SetRateVC - "나가기"
+"review.leave" = "나가기";
+/// SetRateVC - "계속 작성"
+"review.continueWriting" = "계속 작성";
+/// ReviewEmptyViewCell - "아직 작성된 리뷰가 없어요!"
+"review.noReview" = "아직 작성된 리뷰가 없어요!";
+/// ReviewEmptyViewCell - "메뉴에 가장 먼저 리뷰를 남겨주세요!"
+"review.beFirstReviewer" = "메뉴에 가장 먼저 리뷰를 남겨주세요!";
+/// ReviewEmptyViewCell - "로그인이 필요합니다"
+"review.needLogin" = "로그인이 필요합니다";
+/// ReviewEmptyViewCell - "로그인 후 리뷰를 확인하세요"
+"review.checkReviewAfterLogin" = "로그인 후 리뷰를 확인하세요";
+/// ReviewEmptyViewCell - "아직 작성한 리뷰가 없어요"
+"review.noWrittenReview" = "아직 작성한 리뷰가 없어요";
+/// ReviewEmptyViewCell - "첫 리뷰를 남겨 주세요!"
+"review.writeFirstReview" = "첫 리뷰를 남겨 주세요!";
+/// ReviewDividerCell - "리뷰"
+"review.reviewCount" = "리뷰 %d";
+/// ReviewRateViewCell - "오늘의 메뉴"
+"review.todayMenu" = "오늘의 메뉴";
+/// ReviewRateViewCell - "5점"
+"review.fiveStars" = "5점";
+/// ReviewRateViewCell - "4점"
+"review.fourStars" = "4점";
+/// ReviewRateViewCell - "3점"
+"review.threeStars" = "3점";
+/// ReviewRateViewCell - "2점"
+"review.twoStars" = "2점";
+/// ReviewRateViewCell - "1점"
+"review.oneStar" = "1점";
+/// SetRateView - "오늘의 식사는 어떠셨나요?"
+"review.rateTodayMeal" = "오늘의 식사는 어떠셨나요?";
+/// SetRateView - "추천하고 싶은 메뉴가 있나요?"
+"review.recommendMenu" = "추천하고 싶은 메뉴가 있나요?";
+/// SetRateView - "사진 추가 (0/1)"
+"review.addPhoto" = "사진 추가 (%d/1)";
+/// character count
+"review.characterCount" = "%d / %d";
+
+
+// MARK: - Coffee
+
+/// "나가시겠어요?"
+"coffee.askLeave" = "나가시겠어요?";
+/// "지금 나가면 진행 상황이\n저장되지 않습니다."
+"coffee.leaveWarning" = "지금 나가면 진행 상황이\n저장되지 않습니다.";
+/// "나가기"
+"coffee.leave" = "나가기";
+/// "계속하기"
+"coffee.continueEvent" = "계속하기";
+
+
+// MARK: - Splash
+
+/// NoticeSplashVC - "긴급 서버 점검 안내"
+"splash.serverInspection" = "긴급 서버 점검 안내";
+
+
+// MARK: - PromotionPopup
+
+/// 03. 16(월)~03. 27(금)
+"promotionPopup.period" = "03. 16(월)~03. 27(금)";
+/// EAT-SSU 인스타그램 바로가기
+"promotionPopup.instagramButtonTitle" = "EAT-SSU 인스타그램 바로가기";
+/// 자세한 내용은 EAT-SSU 인스타그램을 확인해 주세요
+"promotionPopup.guideMessage" = "자세한 내용은 EAT-SSU 인스타그램을 확인해 주세요";
+/// 다시 보지 않기
+"promotionPopup.neverShowAgain" = "다시 보지 않기";
+/// 닫기
+"promotionPopup.close" = "닫기";
+
+
+// MARK: - Notification
+
+/// 🤔 오늘 밥 뭐 먹지…
+"notification.dailyWeekdayNotificationTitle" = "🤔 오늘 밥 뭐 먹지…";
+/// 오늘의 학식을 확인해보세요!
+"notification.dailyWeekdayNotificationBody" = "오늘의 학식을 확인해보세요!";
+
+
+// MARK: - Restaurant
+
+/// "기숙사 식당"
+"restaurant.dormitoryRestaurant" = "기숙사 식당";
+/// "도담 식당"
+"restaurant.dodamRestaurant" = "도담 식당";
+/// "학생 식당"
+"restaurant.studentRestaurant" = "학생 식당";
+/// "스낵 코너"
+"restaurant.snackCorner" = "스낵 코너";
+/// "FACULTY (교직원 전용)"
+"restaurant.facultyRestaurant" = "FACULTY (교직원 전용)";
