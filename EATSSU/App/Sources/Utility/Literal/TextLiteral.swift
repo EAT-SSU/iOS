@@ -1059,6 +1059,34 @@ enum TextLiteral {
         static var dailyWeekdayNotificationBody: String {
             Localization.localized("notification.dailyWeekdayNotificationBody", fallback: "오늘의 학식을 확인해보세요!")
         }
+        /// 알림 권한 필요
+        static var permissionDeniedMessage: String {
+            Localization.localized(
+                "notification_error_permission_denied_message",
+                fallback: "알림 권한 필요"
+            )
+        }
+        /// 알림을 받으려면 설정에서 알림 권한을 허용해주세요.
+        static var permissionDeniedDescription: String {
+            Localization.localized(
+                "notification_error_permission_denied_description",
+                fallback: "알림을 받으려면 설정에서 알림 권한을 허용해주세요."
+            )
+        }
+        /// 알 수 없는 오류
+        static var unknownErrorMessage: String {
+            Localization.localized(
+                "notification_error_unknown_message",
+                fallback: "알 수 없는 오류"
+            )
+        }
+        /// 다시 시도해주세요.
+        static var unknownErrorDescription: String {
+            Localization.localized(
+                "notification_error_unknown_description",
+                fallback: "다시 시도해주세요."
+            )
+        }
     }
     
     // MARK: - Restaurant

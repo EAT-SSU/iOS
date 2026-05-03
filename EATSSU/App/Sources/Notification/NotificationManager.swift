@@ -119,25 +119,26 @@ class NotificationManager {
     }
 
     // MARK: - Error Types
+
     enum NotificationError: Error {
         case permissionDenied
         case unknown
-        
+
         var message: String {
             switch self {
             case .permissionDenied:
-                return "알림 권한 필요"
+                return TextLiteral.Notification.permissionDeniedMessage
             case .unknown:
-                return "알 수 없는 오류"
+                return TextLiteral.Notification.unknownErrorMessage
             }
         }
-        
+
         var description: String {
             switch self {
             case .permissionDenied:
-                return "알림을 받으려면 설정에서 알림 권한을 허용해주세요."
+                return TextLiteral.Notification.permissionDeniedDescription
             case .unknown:
-                return "다시 시도해주세요."
+                return TextLiteral.Notification.unknownErrorDescription
             }
         }
     }
