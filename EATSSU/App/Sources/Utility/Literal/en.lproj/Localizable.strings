@@ -192,24 +192,57 @@
 
 /// "마이페이지"
 "myPage.myPage" = "My Page";
-/// "내 정보"
-"myPage.myInfo" = "My Info";
-/// "내 리뷰"
-"myPage.myReview" = "My Reviews";
 /// UserWithdrawVC - "회원탈퇴"
 "myPage.withdraw" = "Delete Account";
-/// MyPageVC - "로그아웃"
-"myPage.logout" = "Log Out";
-/// MyPageVC - "정말 로그아웃 하시겠습니까?"
-"myPage.askLogout" = "Are you sure you want to log out?";
 /// MyPageVC - "EAT-SSU 수신 동의"
 "myPage.agreeNoti" = "EAT-SSU notifications enabled (%@)";
 /// MyPageVC - "EAT-SSU 수신 거절"
 "myPage.disagreeNoti" = "EAT-SSU notifications disabled (%@)";
+
+// MARK: - MyPageSection: 알림 및 활동
+/// MyPageSectionVC - "알림 및 활동"
+"myPage.activitySection" = "Notifications & Activity";
+/// "내 정보"
+"myPage.myInfo" = "My Info";
+/// "내 리뷰"
+"myPage.myReview" = "My Reviews";
+/// NotificationSettingTableViewCell - "푸시 알림 설정"
+"myPage.pushNotificationSetting" = "Push Notification Settings";
+/// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
+"myPage.pushNotificationDescription" = "We'll send you a notification every day at 11 AM.";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "An error occurred while updating notification settings.";
+
+// MARK: - MyPageSection: 서비스 정보
+// MyPageSectionVC - "서비스 정보"
+"myPage.serviceInfoSection" = "Service Info";
+/// MyPageVC - "문의하기"
+"myPage.inquiry" = "Contact Us";
 /// CreatorVC - "만든 사람들"
 "myPage.creators" = "Creators";
+/// MyPageVC - "EAT-SSU 인스타그램"
+"myPage.instagram" = "EAT-SSU Instagram";
+
+// MARK: - MyPageSection: 기타
+// MyPageSectionVC - "기타"
+"myPage.etcSection" = "Other";
+/// MyPageVC - "언어 설정"
+"myPage.languageSetting" = "Language";
+/// MyPageVC - "지원 언어: 한국어"
+"myPage.language.korean" = "Korean";
+/// MyPageVC - "지원 언어: 영어"
+"myPage.language.english" = "English";
+/// MyPageVC - "약관 및 정책"
+"myPage.termsAndPolicy" = "Terms & Policies";
+/// MyPageVC - "서비스 이용약관"
+"myPage.termsOfUse" = "Terms of Service";
+/// MyPageVC - "개인정보처리방침"
+"myPage.privacyTermsOfUse" = "Privacy Policy";
+/// MyPageVC - "로그아웃"
+"myPage.logout" = "Log Out";
+/// MyPageVC - "정말 로그아웃 하시겠습니까?"
+"myPage.askLogout" = "Are you sure you want to log out?";
+
 /// MyReviewVC - "리뷰 수정 혹은 삭제"
 "myPage.fixOrDeleteReview" = "Edit or Delete Review";
 /// MyReviewVC - "작성하신 리뷰를 수정 또는 삭제하시겠습니까?"
@@ -228,16 +261,6 @@
 "myPage.withdrawButton" = "Delete Account";
 /// MyPageView - "알 수 없음"
 "myPage.unknownUser" = "Unknown";
-/// NotificationSettingTableViewCell - "푸시 알림 설정"
-"myPage.pushNotificationSetting" = "Push Notification Settings";
-/// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "We'll send you a notification every day at 11 AM.";
-/// MyPageVC - "문의하기"
-"myPage.inquiry" = "Contact Us";
-/// MyPageVC - "서비스 이용약관"
-"myPage.termsOfUse" = "Terms of Service";
-/// MyPageVC - "개인정보 이용약관"
-"myPage.privacyTermsOfUse" = "Privacy Policy";
 /// ProvisionVC - "이용약관"
 "myPage.defaultTerms" = "Terms of Service";
 /// UserWithdrawView - "정말 탈퇴하시겠습니까?"
