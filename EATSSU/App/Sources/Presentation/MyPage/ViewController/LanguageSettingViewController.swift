@@ -12,11 +12,15 @@ import EATSSUDesign
 
 final class LanguageSettingViewController: BaseViewController {
     override var shouldHideTabBar: Bool { true }
+
     // MARK: - Properties
 
     /// 언어 설정 화면에서 실제로 언어가 변경되었는지 여부
     /// - true이면 뒤로가기 시 앱 전체 화면을 새 언어 기준으로 다시 구성
     private var didChangeLanguage = false
+
+    /// 버튼 뒤로가기와 swipe back에서 root 재구성이 중복 호출되는 것을 방지
+    private var isResettingRootViewController = false
 
     private var selectedLanguage: AppLanguage {
         return AppLanguageManager.shared.currentLanguage
@@ -39,6 +43,19 @@ final class LanguageSettingViewController: BaseViewController {
 
         setTableViewDelegate()
         registerTableViewCells()
+        setInteractivePopGesture()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        guard didChangeLanguage,
+              isMovingFromParent,
+              !isResettingRootViewController else {
+            return
+        }
+
+        resetRootAfterLanguageChangeIfNeeded()
     }
 
     // MARK: - Functions
@@ -83,10 +100,15 @@ final class LanguageSettingViewController: BaseViewController {
         )
     }
 
+    private func setInteractivePopGesture() {
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+    }
+
     @objc
     private func backButtonDidTap() {
         if didChangeLanguage {
-            resetRootViewController()
+            resetRootAfterLanguageChangeIfNeeded()
         } else {
             navigationController?.popViewController(animated: true)
         }
@@ -106,6 +128,13 @@ final class LanguageSettingViewController: BaseViewController {
     private func updateLocalizedTexts() {
         navigationItem.title = TextLiteral.MyPage.languageSetting
         tableView.reloadData()
+    }
+
+    private func resetRootAfterLanguageChangeIfNeeded() {
+        guard !isResettingRootViewController else { return }
+
+        isResettingRootViewController = true
+        resetRootViewController()
     }
 
     private func resetRootViewController() {
@@ -167,5 +196,13 @@ extension LanguageSettingViewController: UITableViewDelegate {
         let language = AppLanguage.allCases[indexPath.row]
 
         changeLanguage(to: language)
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+
+extension LanguageSettingViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return navigationController?.viewControllers.count ?? 0 > 1
     }
 }
