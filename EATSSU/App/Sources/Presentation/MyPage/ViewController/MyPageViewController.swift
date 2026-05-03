@@ -16,6 +16,9 @@ import SnapKit
 
 final class MyPageViewController: BaseViewController {
     // MARK: - Properties
+    private enum URLConstants {
+        static let instagram = "https://www.instagram.com/eatssu.official/"
+    }
     
     private var nickName = ""
     private var switchState = false
@@ -304,7 +307,7 @@ extension MyPageViewController: UITableViewDelegate {
             // TODO: 실제 로그 이름 통일
             //AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "instagram"])
             
-            if let instagramURL = URL(string: "https://www.instagram.com/eatssu.official/") {
+            if let instagramURL = URL(string: URLConstants.instagram) {
                 UIApplication.shared.open(instagramURL)
             }
             

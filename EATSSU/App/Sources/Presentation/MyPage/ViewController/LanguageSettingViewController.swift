@@ -87,10 +87,8 @@ final class LanguageSettingViewController: BaseViewController {
     private func backButtonDidTap() {
         if didChangeLanguage {
             resetRootViewController()
-            print("루트 새로 변경됨")
         } else {
             navigationController?.popViewController(animated: true)
-            print("루트 새로 변경안됨")
         }
     }
 
