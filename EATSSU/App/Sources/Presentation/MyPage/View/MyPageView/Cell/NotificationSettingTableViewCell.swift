@@ -11,7 +11,7 @@ import SnapKit
 
 import EATSSUDesign
 
-class NotificationSettingTableViewCell: UITableViewCell {
+final class NotificationSettingTableViewCell: UITableViewCell {
     // MARK: - Properties
 
     static let identifier = "NotificationSettingTableViewCell"
@@ -86,5 +86,10 @@ class NotificationSettingTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview().inset(24)
             make.centerY.equalToSuperview()
         }
+    }
+
+    func configure(with item: MyPageLabels) {
+        pushNotificationTitleLabel.text = item.title
+        dailyNotificationInfoLabel.text = item.subtitle
     }
 }
