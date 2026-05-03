@@ -67,7 +67,5 @@ final class AppLanguageManager {
     func changeLanguage(to language: AppLanguage) {
         UserDefaults.standard.set(language.rawValue, forKey: Constant.selectedLanguageKey)
         UserDefaults.standard.set(true, forKey: Constant.didSelectLanguageManuallyKey)
-
-        NotificationCenter.default.post(name: .appLanguageDidChange, object: nil)
     }
 }
