@@ -48,6 +48,10 @@ enum TextLiteral {
     
     enum Common {
         /// "확인"
+        static var logoSubTitle: String {
+            Localization.localized("common.logoSubTitle", fallback: "숭실대에서 먹자")
+        }
+        /// "확인"
         static var confirm: String {
             Localization.localized("common.confirm", fallback: "확인")
         }

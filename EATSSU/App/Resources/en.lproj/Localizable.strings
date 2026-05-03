@@ -7,6 +7,8 @@
 
 // MARK: - Common
 
+/// "숭실대에서 먹자"
+"common.logoSubTitle" = "Eat at Soongsil";
 /// "확인"
 "common.confirm" = "Confirm";
 /// "취소"
@@ -52,11 +54,11 @@
 /// "닉네임을 입력해주세요"
 "auth.inputNickName" = "Please enter a nickname";
 /// "Apple로 로그인"
-"auth.signInWithApple" = "Continue with Apple";
+"auth.signInWithApple" = "Sign in with Apple";
 /// "카카오 로그인"
-"auth.signInWithKakao" = "Continue with Kakao";
+"auth.signInWithKakao" = "Login with Kakao";
 /// "둘러보기"
-"auth.lookingWithNoSignIn" = "Browse";
+"auth.lookingWithNoSignIn" = "Browse Without Signing In";
 /// "최근에 로그인했어요"
 "auth.lastLoginTooltip" = "Recently used";
 /// LoginVC - "카카오톡으로 생성된 계정입니다."

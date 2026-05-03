@@ -19,31 +19,30 @@ final class LoginView: BaseUIView {
         imageView.image = EATSSUDesignAsset.Images.authLogo.image
         return imageView
     }()
-
-    private let logoSubTitle: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = EATSSUDesignAsset.Images.authSubTitle.image
-        return imageView
+    
+    private let logoSubTitle: UILabel = {
+        let label = UILabel()
+        label.font = .header2
+        label.attributedText = TextLiteral.Common.logoSubTitle.logoHighlightedLastWord(
+            baseColor: .black,
+            highlightColor: .primary
+        )
+        return label
     }()
-
-    let appleLoginButton: UIButton = {
-        let button = UIButton()
-        button.setImage(EATSSUDesignAsset.Images.appleLoginButton.image, for: .normal)
-        return button
-    }()
-
-    let kakaoLoginButton: UIButton = {
-        let button = UIButton()
-        button.setImage(EATSSUDesignAsset.Images.kakaoLoginButton.image, for: .normal)
-        return button
-    }()
-
+    
+    let appleLoginButton = SocialLoginButton(type: .apple)
+    
+    let kakaoLoginButton = SocialLoginButton(type: .kakao)
+    
     let lookingWithNoSignInButton: UIButton = {
-        let button = UIButton()
-        button.setImage(EATSSUDesignAsset.Images.lookAroundButton.image, for: .normal)
+        let button = UIButton(type: .system)
+        button.setTitle(TextLiteral.Auth.lookingWithNoSignIn, for: .normal)
+        button.setTitleColor(.gray400, for: .normal)
+        button.titleLabel?.font = .body2
+        button.backgroundColor = .clear
         return button
     }()
-
+    
     private var lastLoginTooltipView: LastLoginTooltipView?
 
     override func configureUI() {
@@ -69,11 +68,13 @@ final class LoginView: BaseUIView {
 
         appleLoginButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(45)
             $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(151)
         }
 
         kakaoLoginButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(45)
             $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(90)
         }
 
