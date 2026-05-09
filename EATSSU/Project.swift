@@ -124,7 +124,6 @@ let project = Project(
                 .external(name: "Moya"),
                 .external(name: "FSCalendar"),
                 .external(name: "Kingfisher"),
-                .external(name: "GoogleAppMeasurement"),
                 .external(name: "Realm"),
                 .external(name: "RealmSwift"),
                 .external(name: "FirebaseCrashlytics"),
@@ -180,7 +179,6 @@ let project = Project(
                 .external(name: "Moya"),
                 .external(name: "FSCalendar"),
                 .external(name: "Kingfisher"),
-                .external(name: "GoogleAppMeasurement"),
                 .external(name: "Realm"),
                 .external(name: "RealmSwift"),
                 .external(name: "FirebaseCrashlytics"),
@@ -230,8 +228,6 @@ let project = Project(
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "CombineMoya"),
-                .external(name: "FirebaseAnalytics"),
-                .external(name: "GoogleAppMeasurement"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
@@ -270,8 +266,6 @@ let project = Project(
             dependencies: [
                 .external(name: "Moya"),
                 .external(name: "CombineMoya"),
-                .external(name: "FirebaseAnalytics"),
-                .external(name: "GoogleAppMeasurement"),
 
                 // EATSSU 내장 라이브러리
                 .project(target: "EATSSUDesign", path: .relativeToRoot("../EATSSUDesign"), condition: .none),
