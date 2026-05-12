@@ -13,6 +13,7 @@ class FirebaseRemoteConfig {
     static let shared = FirebaseRemoteConfig()
     var remoteConfig: RemoteConfig
     var isVacationPeriod = false
+    var isFestivalEnabled = false
 
     /// Remote Config에서 가져온 현재 테마 (noticeCheck 이후 호출)
     var currentTheme: String {
@@ -104,6 +105,19 @@ class FirebaseRemoteConfig {
             } else {
                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
             }
+        }
+    }
+
+    func fetchIsFestivalEnabled(completion: (() -> Void)? = nil) {
+        remoteConfig.fetch(withExpirationDuration: 0) { status, error in
+            if status == .success {
+                self.remoteConfig.activate()
+                self.isFestivalEnabled = self.remoteConfig["festival_tab_enabled"].boolValue
+                print("Is festival enabled: \(self.isFestivalEnabled)")
+            } else {
+                print("Error fetching festival_tab_enabled: \(error?.localizedDescription ?? "Unknown error")")
+            }
+            DispatchQueue.main.async { completion?() }
         }
     }
 }
