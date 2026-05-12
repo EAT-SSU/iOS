@@ -16,6 +16,17 @@ import EATSSUDesign
 
 final class MainMapViewController: BaseViewController {
 
+    // MARK: - Constants
+
+    /// 지도 초기 카메라 위치 설정값
+    private enum CameraConstants {
+        /// 숭실대입구역과 숭실대학교 사이 (역에서 살짝 동쪽)
+        static let initialLatitude = 37.4960
+        static let initialLongitude = 126.9555
+        static let initialZoom: Double = 14.7
+        static let animationDuration: TimeInterval = 0.3
+    }
+
     // MARK: - Properties
 
     let root = MainMapView()
@@ -187,20 +198,19 @@ final class MainMapViewController: BaseViewController {
     }
     
     func setInitialCameraPosition(animated: Bool) {
-        // 숭실대입구역과 숭실대학교 사이 (역에서 살짝 동쪽)
-        let initialLatitude = 37.4960
-        let initialLongitude = 126.9555
-
         let cameraUpdate = NMFCameraUpdate(
-            scrollTo: NMGLatLng(lat: initialLatitude, lng: initialLongitude),
-            zoomTo: 14.7
+            scrollTo: NMGLatLng(
+                lat: CameraConstants.initialLatitude,
+                lng: CameraConstants.initialLongitude
+            ),
+            zoomTo: CameraConstants.initialZoom
         )
-        
+
         if animated {
             cameraUpdate.animation = .easeIn
-            cameraUpdate.animationDuration = 0.3
+            cameraUpdate.animationDuration = CameraConstants.animationDuration
         }
-        
+
         root.mapView.mapView.moveCamera(cameraUpdate)
     }
     
