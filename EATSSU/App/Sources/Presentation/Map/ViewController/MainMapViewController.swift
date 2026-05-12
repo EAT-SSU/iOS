@@ -162,12 +162,13 @@ final class MainMapViewController: BaseViewController {
     }
     
     func setInitialCameraPosition(animated: Bool) {
-        let ssuLatitude = 37.49517278813046
-        let ssuLongitude = 126.95661313346206
-        
+        // 숭실대입구역과 숭실대학교 사이 (역에서 살짝 동쪽)
+        let initialLatitude = 37.4960
+        let initialLongitude = 126.9555
+
         let cameraUpdate = NMFCameraUpdate(
-            scrollTo: NMGLatLng(lat: ssuLatitude, lng: ssuLongitude),
-            zoomTo: 17.5
+            scrollTo: NMGLatLng(lat: initialLatitude, lng: initialLongitude),
+            zoomTo: 14.7
         )
         
         if animated {
