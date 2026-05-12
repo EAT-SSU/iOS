@@ -243,9 +243,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let splashStartTime = Date()
         let minimumSplashDuration: TimeInterval = 1.0
 
-        // 축제 탭 활성 여부도 미리 fetch (탭바 click_map 이벤트의 default_type 결정에 필요)
-        FirebaseRemoteConfig.shared.fetchIsFestivalEnabled()
-
         FirebaseRemoteConfig.shared.noticeCheck { [weak self] result in
             guard let self = self else { return }
 
