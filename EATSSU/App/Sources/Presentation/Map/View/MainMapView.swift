@@ -128,6 +128,20 @@ final class MainMapView: BaseUIView {
         applySelection(wholeButton, isSelected: mode == .all, highlightColor: highlightColor)
     }
 
+    /// 축제 탭 노출 여부 토글. 숨길 때는 width를 0으로 만들어 레이아웃에서 사라지게 함
+    func setFestivalVisible(_ visible: Bool) {
+        festivalButton.isHidden = !visible
+        festivalButton.snp.remakeConstraints {
+            $0.top.bottom.equalToSuperview().inset(4)
+            $0.leading.equalToSuperview().inset(4)
+            if visible {
+                $0.width.greaterThanOrEqualTo(60)
+            } else {
+                $0.width.equalTo(0)
+            }
+        }
+    }
+
     private func applySelection(_ button: UIButton, isSelected: Bool, highlightColor: UIColor) {
         if isSelected {
             button.backgroundColor = highlightColor

@@ -71,13 +71,26 @@ final class MainMapViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // 기본 진입은 축제 탭. 학과 정보는 내 제휴 버튼 라벨 갱신용으로만 사용
+        // Remote Config에 따라 축제 탭 노출 여부 결정
+        let festivalEnabled = FirebaseRemoteConfig.shared.isFestivalEnabled
+        root.setFestivalVisible(festivalEnabled)
+
         fetchDepartmentAndUpdateButton { [weak self] in
             guard let self = self else { return }
 
-            self.currentMapMode = .festival
-            self.root.select(.festival)
-            self.refreshAllPartnerships()
+            if festivalEnabled {
+                self.currentMapMode = .festival
+                self.root.select(.festival)
+                self.refreshAllPartnerships()
+            } else if let departmentName = self.currentDepartmentName, !departmentName.isEmpty {
+                self.currentMapMode = .myOnly
+                self.root.select(.myOnly)
+                self.fetchMyPartnerships()
+            } else {
+                self.currentMapMode = .all
+                self.root.select(.all)
+                self.refreshAllPartnerships()
+            }
         }
     }
 
