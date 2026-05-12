@@ -18,7 +18,10 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     
     /// 지도에 표시할 제휴점 데이터 목록
     var partnerships: [PartnershipDTO] = []
-    
+
+    /// 현재 지도 모드 (마커 아이콘 분기에 사용)
+    var currentMapMode: MapMode = .all
+
     /// 마커 탭 시 호출될 클로저
     var onMarkerTap: ((PartnershipDTO) -> Void)?
     
@@ -71,17 +74,22 @@ final class PartnershipLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
         return markerView.toImage()
     }
     
-    /// 제휴점 타입에 따른 아이콘 이미지 반환
+    /// 제휴점 타입에 따른 아이콘 이미지 반환 (모드별로 분기)
     private func iconForRestaurantType(_ type: String) -> UIImage? {
-        switch type {
-        case "RESTAURANT":
-            return EATSSUDesignAsset.Images.restaurantPin.image
-        case "CAFE":
-            return EATSSUDesignAsset.Images.cafePin.image
-        case "PUB":
-            return EATSSUDesignAsset.Images.pubPin.image
-        default:
-            return EATSSUDesignAsset.Images.restaurantPin.image
+        if currentMapMode == .festival {
+            switch type {
+            case "RESTAURANT": return EATSSUDesignAsset.Images.festivalRestaurantPin.image
+            case "CAFE":       return EATSSUDesignAsset.Images.festivalCafePin.image
+            case "PUB":        return EATSSUDesignAsset.Images.festivalPubPin.image
+            default:           return EATSSUDesignAsset.Images.festivalRestaurantPin.image
+            }
+        } else {
+            switch type {
+            case "RESTAURANT": return EATSSUDesignAsset.Images.restaurantPin.image
+            case "CAFE":       return EATSSUDesignAsset.Images.cafePin.image
+            case "PUB":        return EATSSUDesignAsset.Images.pubPin.image
+            default:           return EATSSUDesignAsset.Images.restaurantPin.image
+            }
         }
     }
 }

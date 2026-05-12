@@ -10,20 +10,55 @@ import Foundation
 // MARK: - Network Requests
 
 extension MainMapViewController {
-    
-    func fetchPartnerships() {
+
+    /// 전체 제휴 데이터를 받아 캐시에 저장하고, 현재 모드에 맞춰 마커를 표시
+    func refreshAllPartnerships() {
         NetworkService.shared.request(
             PartnershipRouter.getAllPartnerships,
             responseType: [PartnershipDTO].self,
             useAuth: true
         ) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let partnerships):
-                self?.displayMarkers(partnerships)
-                
+                self.cachedAllPartnerships = partnerships
+                self.applyCachedMarkers()
+
             case .failure(let error):
-                print("전체 제휴 조회 실패: \(error.localizedDescription)")
+                print("제휴 조회 실패: \(error.localizedDescription)")
+                self.cachedAllPartnerships = []
+                self.displayMarkers([])
             }
+        }
+    }
+
+    /// 캐시된 데이터에서 현재 모드의 periodType만 필터해 마커 표시
+    /// myOnly 모드는 별도 API를 쓰므로 여기서 처리하지 않음
+    func applyCachedMarkers() {
+        let periodType: PartnershipPeriodType
+        switch currentMapMode {
+        case .festival: periodType = .festival
+        case .all:      periodType = .normal
+        case .myOnly:   return
+        }
+        let filtered = Self.filterPartnerships(cachedAllPartnerships, by: periodType)
+        displayMarkers(filtered)
+    }
+
+    private static func filterPartnerships(
+        _ partnerships: [PartnershipDTO],
+        by periodType: PartnershipPeriodType
+    ) -> [PartnershipDTO] {
+        partnerships.compactMap { partnership in
+            let matchingInfos = partnership.partnershipInfos.filter { $0.periodType == periodType }
+            guard !matchingInfos.isEmpty else { return nil }
+            return PartnershipDTO(
+                storeName: partnership.storeName,
+                longitude: partnership.longitude,
+                latitude: partnership.latitude,
+                restaurantType: partnership.restaurantType,
+                partnershipInfos: matchingInfos
+            )
         }
     }
     
@@ -95,7 +130,8 @@ extension MainMapViewController {
         ) { [weak self] result in
             switch result {
             case .success(let partnerships):
-                self?.displayMarkers(partnerships)
+                let filtered = Self.filterPartnerships(partnerships, by: .normal)
+                self?.displayMarkers(filtered)
 
             case .failure(let error):
                 print("내 제휴 조회 실패: \(error.localizedDescription)")

@@ -53,11 +53,12 @@ extension MainMapViewController {
     private func createLeafMarkerUpdater(with partnerships: [PartnershipDTO]) -> PartnershipLeafMarkerUpdater {
         let leafMarkerUpdater = PartnershipLeafMarkerUpdater()
         leafMarkerUpdater.partnerships = partnerships
-        
+        leafMarkerUpdater.currentMapMode = currentMapMode
+
         leafMarkerUpdater.onMarkerTap = { [weak self] partnership in
             self?.showPartnershipDetail(for: partnership)
         }
-        
+
         return leafMarkerUpdater
     }
     
@@ -104,10 +105,11 @@ extension MainMapViewController {
     
     // MARK: - Private Helpers
     
-    /// 원형 배경 그리기
+    /// 원형 배경 그리기 (현재 모드에 따라 색상 분기)
     private func drawCircle(in context: UIGraphicsImageRendererContext, size: CGSize) {
         let circleRect = CGRect(origin: .zero, size: size)
-        UIColor.primary.setFill()
+        let fillColor: UIColor = (currentMapMode == .festival) ? .festivalPrimary : .primary
+        fillColor.setFill()
         context.cgContext.fillEllipse(in: circleRect)
     }
     

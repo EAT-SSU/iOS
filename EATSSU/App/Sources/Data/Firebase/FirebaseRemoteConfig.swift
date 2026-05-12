@@ -19,6 +19,11 @@ class FirebaseRemoteConfig {
         return remoteConfig["app_theme"].stringValue ?? "default"
     }
 
+    /// 축제 탭 노출 여부 (noticeCheck 이후 호출)
+    var isFestivalEnabled: Bool {
+        return remoteConfig["festival_tab_enabled"].boolValue
+    }
+
     private init() {
         remoteConfig = RemoteConfig.remoteConfig()
         let settings = RemoteConfigSettings()
@@ -106,4 +111,5 @@ class FirebaseRemoteConfig {
             }
         }
     }
+
 }
