@@ -118,6 +118,10 @@ final class MainMapViewController: BaseViewController {
         currentMapMode = .festival
         setInitialCameraPosition(animated: true)
         root.select(.festival)
+        MapAnalyticsManager.shared.logClickMapFestival(
+            collegeId: currentCollegeId,
+            majorId: currentDepartmentId
+        )
         applyCachedMarkers()
     }
 
@@ -127,6 +131,10 @@ final class MainMapViewController: BaseViewController {
         currentMapMode = .all
         setInitialCameraPosition(animated: true)
         root.select(.all)
+        MapAnalyticsManager.shared.logClickMapAll(
+            collegeId: currentCollegeId,
+            majorId: currentDepartmentId
+        )
         applyCachedMarkers()
     }
 
