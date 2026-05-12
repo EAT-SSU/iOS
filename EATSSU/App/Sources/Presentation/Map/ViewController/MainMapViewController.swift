@@ -172,9 +172,13 @@ final class MainMapViewController: BaseViewController {
             case .festival, .all:
                 self.refreshAllPartnerships()
             case .myOnly:
-                // 학과가 없어졌다면 축제로 전환
+                // 학과가 없어졌다면 축제 활성 여부에 따라 폴백
                 if self.currentDepartmentName?.isEmpty ?? true {
-                    self.didTapFestival()
+                    if FirebaseRemoteConfig.shared.isFestivalEnabled {
+                        self.didTapFestival()
+                    } else {
+                        self.didTapWhole()
+                    }
                 } else {
                     self.fetchMyPartnerships()
                 }
