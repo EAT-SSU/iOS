@@ -24,4 +24,10 @@ struct PartnershipInfoDTO: Codable {
     let description: String
     let startDate: String
     let endDate: String
+    let periodType: PartnershipPeriodType
+}
+
+enum PartnershipPeriodType: String, Codable {
+    case normal = "NORMAL"
+    case festival = "FESTIVAL"
 }

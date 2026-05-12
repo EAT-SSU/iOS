@@ -26,15 +26,13 @@ final class MainMapViewController: BaseViewController {
     var hasRequestedLocationPermission = false
 
     var clusterer: NMCClusterer<PartnershipMarkerKey>?
-    
+
+    /// 가장 최근에 받아온 전체 제휴 목록 (모드 전환 시 필터링용 캐시)
+    var cachedAllPartnerships: [PartnershipDTO] = []
+
     // MARK: - Map Mode Management
-    
-    enum MapMode {
-        case all
-        case myOnly
-    }
-    
-    var currentMapMode: MapMode = .all
+
+    var currentMapMode: MapMode = .festival
 
     // MARK: - View Setup
     
@@ -47,6 +45,7 @@ final class MainMapViewController: BaseViewController {
     }
 
     override func setButtonEvent() {
+        root.festivalButton.addTarget(self, action: #selector(didTapFestival), for: .touchUpInside)
         root.wholeButton.addTarget(self, action: #selector(didTapWhole), for: .touchUpInside)
         root.myOnlyButton.addTarget(self, action: #selector(didTapMyOnly), for: .touchUpInside)
     }
@@ -72,20 +71,13 @@ final class MainMapViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // 서버에서 학과 정보를 확인한 후, 결과에 따라 적절한 API 호출
+        // 기본 진입은 축제 탭. 학과 정보는 내 제휴 버튼 라벨 갱신용으로만 사용
         fetchDepartmentAndUpdateButton { [weak self] in
             guard let self = self else { return }
 
-            if let departmentName = self.currentDepartmentName, !departmentName.isEmpty {
-                self.currentMapMode = .myOnly
-                self.root.selectWhole(false)
-                self.fetchMyPartnerships()
-            } else {
-                self.currentMapMode = .all
-                self.root.selectWhole(true)
-                self.fetchPartnerships()
-            }
-
+            self.currentMapMode = .festival
+            self.root.select(.festival)
+            self.refreshAllPartnerships()
         }
     }
 
@@ -107,13 +99,22 @@ final class MainMapViewController: BaseViewController {
 
     // MARK: - Action Methods
 
+    @objc private func didTapFestival() {
+        guard currentMapMode != .festival else { return }
+
+        currentMapMode = .festival
+        setInitialCameraPosition(animated: true)
+        root.select(.festival)
+        applyCachedMarkers()
+    }
+
     @objc private func didTapWhole() {
         guard currentMapMode != .all else { return }
 
         currentMapMode = .all
         setInitialCameraPosition(animated: true)
-        root.selectWhole(true)
-        fetchPartnerships()
+        root.select(.all)
+        applyCachedMarkers()
     }
 
     @objc private func didTapMyOnly() {
@@ -121,17 +122,17 @@ final class MainMapViewController: BaseViewController {
             presentNoDepartmentSheet()
             return
         }
-        
+
         // 이미 학과별 모드면 return
         guard currentMapMode != .myOnly else { return }
-        
+
         currentMapMode = .myOnly
-        
+
         if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
             MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
         }
         setInitialCameraPosition(animated: true)
-        root.selectWhole(false)
+        root.select(.myOnly)
         fetchMyPartnerships()
     }
 
@@ -143,16 +144,16 @@ final class MainMapViewController: BaseViewController {
     // MARK: - Helper Methods
     
     func reloadContent() {
-        // 학과 정보를 다시 불러온 후, 현재 모드에 맞게 API 호출
+        // 학과 정보를 다시 불러온 후, 현재 모드에 맞게 데이터 갱신
         fetchDepartmentAndUpdateButton { [weak self] in
             guard let self = self else { return }
             switch self.currentMapMode {
-            case .all:
-                self.fetchPartnerships()
+            case .festival, .all:
+                self.refreshAllPartnerships()
             case .myOnly:
-                // 학과가 없어졌다면 전체로 전환
+                // 학과가 없어졌다면 축제로 전환
                 if self.currentDepartmentName?.isEmpty ?? true {
-                    self.didTapWhole()
+                    self.didTapFestival()
                 } else {
                     self.fetchMyPartnerships()
                 }
@@ -177,28 +178,4 @@ final class MainMapViewController: BaseViewController {
         root.mapView.mapView.moveCamera(cameraUpdate)
     }
     
-    func loadDepartmentFromRealm() {
-        guard let userInfo = UserInfoManager.shared.getCurrentUserInfo() else {
-            currentDepartmentName = nil
-            currentDepartmentId = nil
-            currentCollegeId = nil
-            updateMyOnlyButtonTitle()
-            return
-        }
-        
-        let departmentName = userInfo.departmentName ?? ""
-        currentDepartmentName = departmentName
-        currentDepartmentId = userInfo.departmentId
-        currentCollegeId = userInfo.collegeId
-        
-        updateMyOnlyButtonTitle()
-    }
-    
-    private func updateMyOnlyButtonTitle() {
-        if let departmentName = currentDepartmentName, !departmentName.isEmpty {
-            root.myOnlyButton.setTitle(departmentName, for: .normal)
-        } else {
-            root.myOnlyButton.setTitle(TextLiteral.Map.myPartner, for: .normal)
-        }
-    }
 }

@@ -259,6 +259,9 @@ enum TextLiteral {
         /// MainMapView - "내 제휴"
         static let myPartner: String = "내 제휴"
 
+        /// MainMapView - "축제"
+        static let festival: String = "축제"
+
         /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
         static let inputDepartment: String = "학과를 입력하고\n나만의 제휴를 확인해보세요!"
         
