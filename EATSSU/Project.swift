@@ -146,14 +146,16 @@ let project = Project(
                     .debug(name: "Debug",
                            settings: [
                                "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU",
-                               "CODE_SIGN_IDENTITY": "Apple Development"
+                               "CODE_SIGN_IDENTITY": "Apple Development",
+                               "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                            ],
                            xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     ),
                     .release(name: "Release",
                              settings: [
                                "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU",
-                               "CODE_SIGN_IDENTITY": "Apple Distribution"
+                               "CODE_SIGN_IDENTITY": "Apple Distribution",
+                               "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                              ],
                              xcconfig: "App/Resources/Secrets/Release.xcconfig"
                     )
@@ -242,14 +244,16 @@ let project = Project(
                     .debug(name: "Debug",
                            settings: [
                                 "PROVISIONING_PROFILE_SPECIFIER": "match Development com.jiwoo.EatSSU.EatSSUwidget2025",
-                                "CODE_SIGN_IDENTITY": "Apple Development"
+                                "CODE_SIGN_IDENTITY": "Apple Development",
+                                "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                            ],
                            xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     ),
                     .release(name: "Release",
                              settings: [
                                 "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.jiwoo.EatSSU.EatSSUwidget2025",
-                                "CODE_SIGN_IDENTITY": "Apple Distribution"
+                                "CODE_SIGN_IDENTITY": "Apple Distribution",
+                                "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                              ],
                              xcconfig: "App/Resources/Secrets/Release.xcconfig"
                     )
@@ -325,8 +329,8 @@ let project = Project(
             buildAction: .buildAction(targets: [.target("EATSSU-DEV")]),
             testAction: .targets(["EATSSU-DEV"]),
             runAction: .runAction(configuration: "Debug"),
-            archiveAction: .archiveAction(configuration: "Debug"),
-            profileAction: .profileAction(configuration: "Debug"),
+            archiveAction: .archiveAction(configuration: "Release"),
+            profileAction: .profileAction(configuration: "Release"),
             analyzeAction: .analyzeAction(configuration: "Debug")
         ),
         .scheme(name: "EATSSU-PROD",
@@ -343,8 +347,8 @@ let project = Project(
             buildAction: .buildAction(targets: [.target("EATSSUWidget-DEV")]),
             testAction: .targets(["EATSSUWidget-DEV"]),
             runAction: .runAction(configuration: "Debug"),
-            archiveAction: .archiveAction(configuration: "Debug"),
-            profileAction: .profileAction(configuration: "Debug"),
+            archiveAction: .archiveAction(configuration: "Release"),
+            profileAction: .profileAction(configuration: "Release"),
             analyzeAction: .analyzeAction(configuration: "Debug")
         ),
         .scheme(name: "EATSSUWidget-PROD",
