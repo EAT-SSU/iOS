@@ -234,11 +234,14 @@ extension MyPageViewController: UITableViewDelegate {
             provisionViewController.navigationTitle = TextLiteral.MyPage.privacyTermsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
-        // "만든사람들" 스크린으로 이동
+        // "만든사람들" 노션 페이지로 이동 (앱 내 웹뷰)
         case MyPageLabels.Creator.rawValue:
             AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "creator"])
-            let creatorViewController = CreatorViewController()
-            navigationController?.pushViewController(creatorViewController, animated: true)
+            if let creatorsURL = URL(string: "https://eat-ssu.notion.site/1d2eeef75a16814db1e5c5abaf40cf6a") {
+                let creatorsWebVC = ProvisionViewController(url: creatorsURL)
+                creatorsWebVC.navigationTitle = TextLiteral.MyPage.creators
+                navigationController?.pushViewController(creatorsWebVC, animated: true)
+            }
 
         // "로그아웃" 팝업알림 표시
         case MyPageLabels.Logout.rawValue:
