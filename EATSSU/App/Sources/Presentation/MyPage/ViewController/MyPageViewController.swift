@@ -17,6 +17,10 @@ import SnapKit
 final class MyPageViewController: BaseViewController {
     // MARK: - Properties
 
+    private enum URLConstants {
+        static let creatorsNotion = "https://eat-ssu.notion.site/1d2eeef75a16814db1e5c5abaf40cf6a"
+    }
+
     private var nickName = ""
     private var switchState = false
     private let myPageTableLabelList = MyPageLocalData.myPageTableLabelList
@@ -237,7 +241,7 @@ extension MyPageViewController: UITableViewDelegate {
         // "만든사람들" 노션 페이지로 이동 (앱 내 웹뷰)
         case MyPageLabels.Creator.rawValue:
             AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "creator"])
-            if let creatorsURL = URL(string: "https://eat-ssu.notion.site/1d2eeef75a16814db1e5c5abaf40cf6a") {
+            if let creatorsURL = URL(string: URLConstants.creatorsNotion) {
                 let creatorsWebVC = ProvisionViewController(url: creatorsURL)
                 creatorsWebVC.navigationTitle = TextLiteral.MyPage.creators
                 navigationController?.pushViewController(creatorsWebVC, animated: true)
