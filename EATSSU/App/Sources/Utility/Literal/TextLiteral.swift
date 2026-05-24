@@ -115,6 +115,26 @@ enum TextLiteral {
         static var retry: String {
             Localization.localized("common.retry", fallback: "다시 시도하세요")
         }
+
+        /// BaseViewController - "오류"
+        static var error: String {
+            Localization.localized("common.error", fallback: "오류")
+        }
+
+        /// BaseViewController - "네트워크를 확인해주세요"
+        static var checkNetwork: String {
+            Localization.localized("common.checkNetwork", fallback: "네트워크를 확인해주세요")
+        }
+
+        /// NoticeViewController - "NOTICE"
+        static var notice: String {
+            Localization.localized("common.notice", fallback: "NOTICE")
+        }
+
+        /// EATSSUToastView - "보러가기"
+        static var viewDetail: String {
+            Localization.localized("common.viewDetail", fallback: "보러가기")
+        }
     }
     
     // MARK: - TabBar
@@ -1019,6 +1039,24 @@ enum TextLiteral {
         /// NoticeSplashVC - "긴급 서버 점검 안내"
         static var serverInspection: String {
             Localization.localized("splash.serverInspection", fallback: "긴급 서버 점검 안내")
+        }
+
+        /// SceneDelegate - "업데이트 알림"
+        static var updateAlertTitle: String {
+            Localization.localized("splash.updateAlertTitle", fallback: "업데이트 알림")
+        }
+
+        /// SceneDelegate - "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!"
+        static var updateAlertMessage: String {
+            Localization.localized(
+                "splash.updateAlertMessage",
+                fallback: "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!"
+            )
+        }
+
+        /// SceneDelegate - "업데이트"
+        static var update: String {
+            Localization.localized("splash.update", fallback: "업데이트")
         }
     }
     

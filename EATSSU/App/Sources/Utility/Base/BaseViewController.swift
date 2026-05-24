@@ -65,7 +65,11 @@ class BaseViewController: UIViewController {
 
         if !NetworkMonitor.shared.isConnected {
             print("네트워크 오류")
-            showAlertController(title: "오류", message: "네트워크를 확인해주세요", style: .destructive)
+            showAlertController(
+                title: TextLiteral.Common.error,
+                message: TextLiteral.Common.checkNetwork,
+                style: .destructive
+            )
         }
     }
 

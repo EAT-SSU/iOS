@@ -98,7 +98,7 @@ class EATSSUToastView: BaseUIView {
     
     private let actionButton: UIButton = {
         let button = UIButton()
-        button.setTitle("보러가기", for: .normal)
+        button.setTitle(TextLiteral.Common.viewDetail, for: .normal)
         button.titleLabel?.font = .button2
         button.isHidden = true
         return button

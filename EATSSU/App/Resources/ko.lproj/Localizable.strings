@@ -35,6 +35,14 @@
 "common.errorOccured" = "에러가 발생했습니다.";
 /// "다시 시도하세요"
 "common.retry" = "다시 시도하세요";
+/// BaseViewController - "오류"
+"common.error" = "오류";
+/// BaseViewController - "네트워크를 확인해주세요"
+"common.checkNetwork" = "네트워크를 확인해주세요";
+/// NoticeViewController - "NOTICE"
+"common.notice" = "NOTICE";
+/// EATSSUToastView - "보러가기"
+"common.viewDetail" = "보러가기";
 
 
 // MARK: - TabBar
@@ -416,6 +424,12 @@
 
 /// NoticeSplashVC - "긴급 서버 점검 안내"
 "splash.serverInspection" = "긴급 서버 점검 안내";
+/// SceneDelegate - "업데이트 알림"
+"splash.updateAlertTitle" = "업데이트 알림";
+/// SceneDelegate - "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!"
+"splash.updateAlertMessage" = "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!";
+/// SceneDelegate - "업데이트"
+"splash.update" = "업데이트";
 
 
 // MARK: - PromotionPopup
