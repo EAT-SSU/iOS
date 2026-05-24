@@ -41,11 +41,9 @@ final class AppLanguageManager {
     private var deviceLanguage: AppLanguage {
         let preferredCode = Locale.preferredLanguages.first ?? "ko"
 
-        if preferredCode.hasPrefix("en") {
-            return .english
-        } else {
-            return .korean
-        }
+        return AppLanguage.allCases.first {
+            preferredCode.hasPrefix($0.rawValue)
+        } ?? .korean
     }
 
     // MARK: - Bundle
