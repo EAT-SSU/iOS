@@ -25,14 +25,14 @@
 "common.askLogin" = "로그인 하시겠습니까?";
 /// "설정으로 이동"
 "common.moveToSetting" = "설정으로 이동";
-/// "탈퇴 처리가 완료되었습니다."
-"common.withdrawComplete" = "탈퇴 처리가 완료되었습니다.";
+/// "회원탈퇴되었어요."
+"common.withdrawComplete" = "회원탈퇴되었어요.";
 /// "잠시 후 다시 시도해주세요."
 "common.tryAgain" = "잠시 후 다시 시도해주세요.";
-/// "세션이 만료되었습니다. 다시 로그인해주세요."
-"common.sessionExpired" = "세션이 만료되었습니다. 다시 로그인해주세요.";
-/// "에러가 발생했습니다"
-"common.errorOccured" = "에러가 발생했습니다";
+/// "세션이 만료되어 다시 로그인해주세요."
+"common.sessionExpired" = "세션이 만료되어 다시 로그인해주세요.";
+/// "에러가 발생했습니다."
+"common.errorOccured" = "에러가 발생했습니다.";
 /// "다시 시도하세요"
 "common.retry" = "다시 시도하세요";
 
@@ -91,16 +91,16 @@
 "auth.invalidDepartment" = "유효하지 않은 학과 정보입니다.";
 /// SetNickNameVC - "정보 업데이트 중 오류가 발생했습니다."
 "auth.updateError" = "정보 업데이트 중 오류가 발생했습니다.";
-/// SetNickNameVC - "내 정보가 수정되었어요."
-"auth.updateSuccess" = "내 정보가 수정되었어요.";
+/// SetNickNameVC - "정보가 업데이트되었습니다."
+"auth.updateSuccess" = "정보가 업데이트되었습니다.";
 /// NIcknameTextFieldResultType - "필수 입력 사항입니다"
 "auth.requiredInput" = "필수 입력 사항입니다";
 /// NIcknameTextFieldResultType - "중복 확인을 진행해주세요."
 "auth.needCheckDuplicate" = "중복 확인을 진행해주세요.";
 /// NIcknameTextFieldResultType - "이미 사용 중인 닉네임이에요."
 "auth.duplicatedNickname" = "이미 사용 중인 닉네임이에요.";
-/// NIcknameTextFieldResultType - "사용가능한 닉네임이에요"
-"auth.availableNickname" = "사용가능한 닉네임이에요";
+/// NIcknameTextFieldResultType - "사용 가능한 닉네임입니다!"
+"auth.availableNickname" = "사용 가능한 닉네임입니다!";
 /// NIcknameTextFieldResultType - "2~16글자를 입력해 주세요."
 "auth.nicknameLength" = "2~16글자를 입력해 주세요.";
 /// NIcknameTextFieldResultType - "특수문자로 시작/끝나는 닉네임은 사용할 수 없어요."
@@ -239,12 +239,12 @@
 "myPage.termsAndPolicy" = "약관 및 정책";
 /// MyPageVC - "서비스 이용약관"
 "myPage.termsOfUse" = "서비스 이용약관";
-/// MyPageVC - "개인정보처리방침"
-"myPage.privacyTermsOfUse" = "개인정보처리방침";
+/// MyPageVC - "개인정보 처리방침"
+"myPage.privacyTermsOfUse" = "개인정보 처리방침";
 /// MyPageVC - "로그아웃"
 "myPage.logout" = "로그아웃";
-/// MyPageVC - "정말 로그아웃 하시겠습니까?"
-"myPage.askLogout" = "정말 로그아웃 하시겠습니까?";
+/// MyPageVC - "로그아웃 하시겠습니까?"
+"myPage.askLogout" = "로그아웃 하시겠습니까?";
 
 /// MyReviewVC - "리뷰 수정 혹은 삭제"
 "myPage.fixOrDeleteReview" = "리뷰 수정 혹은 삭제";
@@ -268,8 +268,8 @@
 "myPage.defaultTerms" = "이용약관";
 /// UserWithdrawView - "정말 탈퇴하시겠습니까?"
 "myPage.confirmWithdrawal" = "정말 탈퇴하시겠습니까?";
-/// UserWithdrawView - "작성한 리뷰 게시글은 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보처리방침을 확인해 주세요."
-"myPage.withdrawalNotice" = "작성한 리뷰 게시글은 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보처리방침을 확인해 주세요.";
+/// UserWithdrawView - "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요."
+"myPage.withdrawalNotice" = "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요.";
 /// UserWithdrawView - "올바른 입력입니다."
 "myPage.validInputMessage" = "올바른 입력입니다";
 /// UserWithdrawView - "올바르지 않은 닉네임입니다"
@@ -306,8 +306,8 @@
 "review.inputReportReason" = "리뷰 신고 사유를 작성해 주세요";
 /// ReviewVC - "리뷰 작성하기"
 "review.writeReview" = "리뷰 작성하기";
-/// ReviewVC - "리뷰가 성공적으로 등록되었습니다."
-"review.registerReviewSuccess" = "리뷰가 성공적으로 등록되었습니다.";
+/// ReviewVC - "리뷰가 등록되었어요."
+"review.registerReviewSuccess" = "리뷰가 등록되었어요.";
 /// ReviewVC - "리뷰"
 "review.review" = "리뷰";
 /// ReviewVC - "리뷰 삭제"
@@ -346,8 +346,8 @@
 "review.noReviewInfoForFix" = "수정할 리뷰 정보가 없습니다.";
 /// SetRateVC - "리뷰가 성공적으로 수정되었습니다."
 "review.fixReviewSuccess" = "리뷰가 성공적으로 수정되었습니다.";
-/// SetRateVC - "리뷰 수정에 실패했습니다."
-"review.fixReviewFail" = "리뷰 수정에 실패했습니다.";
+/// SetRateVC - "리뷰 수정이 실패했습니다."
+"review.fixReviewFail" = "리뷰 수정이 실패했습니다.";
 /// SetRateVC - "식단 정보가 없습니다."
 "review.noMealInfo" = "식단 정보가 없습니다.";
 /// SetRateVC - "리뷰 업로드에 실패했습니다."
@@ -390,8 +390,8 @@
 "review.twoStars" = "2점";
 /// ReviewRateViewCell - "1점"
 "review.oneStar" = "1점";
-/// SetRateView - "오늘의 식사는 어떠셨나요?"
-"review.rateTodayMeal" = "오늘의 식사는 어떠셨나요?";
+/// SetRateView - "오늘의 식사는 어땠나요?"
+"review.rateTodayMeal" = "오늘의 식사는 어땠나요?";
 /// SetRateView - "추천하고 싶은 메뉴가 있나요?"
 "review.recommendMenu" = "추천하고 싶은 메뉴가 있나요?";
 /// SetRateView - "사진 추가 (0/1)"
@@ -440,8 +440,8 @@
 "notification.dailyWeekdayNotificationBody" = "오늘의 학식을 확인해보세요!";
 /// 알림 권한 필요
 "notification_error_permission_denied_message" = "알림 권한 필요";
-/// 알림을 받으려면 설정에서 알림 권한을 허용해주세요.
-"notification_error_permission_denied_description" = "알림을 받으려면 설정에서 알림 권한을 허용해주세요.";
+/// 알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.
+"notification_error_permission_denied_description" = "알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.";
 /// 알 수 없는 오류
 "notification_error_unknown_message" = "알 수 없는 오류";
 /// 다시 시도해주세요.

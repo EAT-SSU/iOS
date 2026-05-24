@@ -25,13 +25,13 @@
 "common.askLogin" = "Would you like to log in?";
 /// "설정으로 이동"
 "common.moveToSetting" = "Go to Settings";
-/// "탈퇴 처리가 완료되었습니다."
+/// "회원탈퇴되었어요."
 "common.withdrawComplete" = "Your account has been deleted.";
 /// "잠시 후 다시 시도해주세요."
 "common.tryAgain" = "Please try again later.";
-/// "세션이 만료되었습니다. 다시 로그인해주세요."
+/// "세션이 만료되어 다시 로그인해주세요."
 "common.sessionExpired" = "Your session has expired. Please log in again.";
-/// "에러가 발생했습니다"
+/// "에러가 발생했습니다."
 "common.errorOccured" = "An error occurred.";
 /// "다시 시도하세요"
 "common.retry" = "Try Again";
@@ -52,7 +52,7 @@
 // MARK: - Auth
 
 /// "닉네임을 입력해주세요"
-"auth.inputNickName" = "Please enter a nickname";
+"auth.inputNickName" = "Please enter your nickname";
 /// "Apple로 로그인"
 "auth.signInWithApple" = "Sign in with Apple";
 /// "카카오 로그인"
@@ -68,15 +68,15 @@
 /// SetNickNameView - "닉네임 설정"
 "auth.setNickname" = "Edit Nickname";
 /// SetNickNameView - "중복 확인"
-"auth.checkDuplicate" = "Check Availability";
+"auth.checkDuplicate" = "Check";
 /// SetNickNameView - "소속 설정"
-"auth.setCollege" = "Set Affiliation";
+"auth.setCollege" = "College & Department";
 /// SetNickNameView - "단과대"
 "auth.college" = "College";
 /// SetNickNameView - "학과"
 "auth.department" = "Department";
 /// SetNickNameView - "연결된 계정"
-"auth.linkedAccount" = "Linked Account";
+"auth.linkedAccount" = "Connected Account";
 /// SetNickNameView - "없음"
 "auth.empty" = "None";
 /// SetNickNameView - "저장하기"
@@ -91,7 +91,7 @@
 "auth.invalidDepartment" = "Invalid department information.";
 /// SetNickNameVC - "정보 업데이트 중 오류가 발생했습니다."
 "auth.updateError" = "An error occurred while updating your information.";
-/// SetNickNameVC - "내 정보가 수정되었어요."
+/// SetNickNameVC - "정보가 업데이트되었습니다."
 "auth.updateSuccess" = "Your information has been updated.";
 /// NIcknameTextFieldResultType - "필수 입력 사항입니다"
 "auth.requiredInput" = "Required field";
@@ -99,18 +99,18 @@
 "auth.needCheckDuplicate" = "Please check availability.";
 /// NIcknameTextFieldResultType - "이미 사용 중인 닉네임이에요."
 "auth.duplicatedNickname" = "This nickname is already in use.";
-/// NIcknameTextFieldResultType - "사용가능한 닉네임이에요"
+/// NIcknameTextFieldResultType - "사용 가능한 닉네임입니다!"
 "auth.availableNickname" = "This nickname is available.";
 /// NIcknameTextFieldResultType - "2~16글자를 입력해 주세요."
 "auth.nicknameLength" = "Enter 2–16 characters";
 /// NIcknameTextFieldResultType - "특수문자로 시작/끝나는 닉네임은 사용할 수 없어요."
-"auth.specialCharNickname" = "Nicknames cannot start or end with a special character.";
+"auth.specialCharNickname" = "A nickname cannot start or end with a special character.";
 /// NIcknameTextFieldResultType - "연속된 특수문자(--, __)는 사용할 수 없어요."
 "auth.continuousSpecialChar" = "Consecutive special characters (--, __) are not allowed.";
 /// NIcknameTextFieldResultType - "숫자만으로 된 닉네임은 사용할 수 없어요."
-"auth.numberOnlyNickname" = "Nicknames made only of numbers are not allowed.";
+"auth.numberOnlyNickname" = "A nickname cannot contain only numbers.";
 /// NIcknameTextFieldResultType - "허용 문자(한글/영문/숫자)만 사용할 수 있어요."
-"auth.allowedChar" = "Only Korean/English letters and numbers are allowed.";
+"auth.allowedChar" = "Only Korean, English letters, and numbers are allowed.";
 /// NIcknameTextFieldResultType - "사용할 수 없는 단어가 포함되어 있어요."
 "auth.bannedWord" = "This nickname contains a word that cannot be used.";
 /// NIcknameTextFieldResultType - "띄어쓰기로 시작/끝나는 닉네임은 사용할 수 없어요."
@@ -124,7 +124,7 @@
 /// NIcknameTextFieldResultType - "서비스명 단독 닉네임은 사용할 수 없어요."
 "auth.serviceNameNickname" = "You cannot use the service name by itself as a nickname.";
 /// NIcknameTextFieldResultType - "욕설, 비속어 등의 표현이 포함된 닉네임은 사용할 수 없어요."
-"auth.slangNickname" = "Nicknames containing profanity or slang are not allowed.";
+"auth.slangNickname" = "Nicknames containing profanity or abusive language are not allowed.";
 
 
 // MARK: - Home
@@ -133,7 +133,7 @@
 /// Home - "가격"
 "home.price" = "Price";
 /// Home - "평점"
-"home.rating" = "Rating";
+"home.rating" = "★";
 /// Home - "  -"
 "home.emptyRating" = "  -";
 /// Home - "제공되는 메뉴가 없습니다"
@@ -145,7 +145,7 @@
 /// CustomTimeTabController - "저녁"
 "home.dinner" = "Dinner";
 /// RestaurantInfoView - "학생 식당"
-"home.studentRestaurant" = "Student Restaurant";
+"home.studentRestaurant" = "Student Cafeteria";
 /// RestaurantInfoView - "식당 위치"
 "home.restaurantLocation" = "Location";
 /// RestaurantInfoView - "식당 사진"
@@ -167,15 +167,15 @@
 // MARK: - Map
 
 /// MainMapVC - "제휴 지도"
-"map.map" = "Partnership Map";
+"map.map" = "Partner Map";
 /// MainMapView - "전체"
 "map.all" = "All";
 /// MainMapView - "내 제휴"
-"map.myPartner" = "My Partnerships";
+"map.myPartner" = "My Partners";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
-"map.inputDepartment" = "Enter your department\nand check your own partnerships!";
+"map.inputDepartment" = "Enter your department\n and check your personalized partnerships!";
 /// NoDepartmentSheetVC - "학과 입력하기"
-"map.inputDepartmentButton" = "Enter Department";
+"map.inputDepartmentButton" = "Enter your department";
 /// PartnershipDetailSheetVC - "음식점"
 "map.restaurant" = "Restaurant";
 /// PartnershipDetailSheetVC - "카페"
@@ -211,7 +211,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "Push Notification Settings";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "We'll send you a notification every day at 11 AM.";
+"myPage.pushNotificationDescription" = "We'll send you a notification every day at 11:00 AM.";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "An error occurred while updating notification settings.";
 
@@ -238,11 +238,11 @@
 "myPage.termsAndPolicy" = "Terms & Policies";
 /// MyPageVC - "서비스 이용약관"
 "myPage.termsOfUse" = "Terms of Service";
-/// MyPageVC - "개인정보처리방침"
+/// MyPageVC - "개인정보 처리방침"
 "myPage.privacyTermsOfUse" = "Privacy Policy";
 /// MyPageVC - "로그아웃"
 "myPage.logout" = "Log Out";
-/// MyPageVC - "정말 로그아웃 하시겠습니까?"
+/// MyPageVC - "로그아웃 하시겠습니까?"
 "myPage.askLogout" = "Are you sure you want to log out?";
 
 /// MyReviewVC - "리뷰 수정 혹은 삭제"
@@ -267,7 +267,7 @@
 "myPage.defaultTerms" = "Terms of Service";
 /// UserWithdrawView - "정말 탈퇴하시겠습니까?"
 "myPage.confirmWithdrawal" = "Are you sure you want to delete your account?";
-/// UserWithdrawView - "작성한 리뷰 게시글은 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보처리방침을 확인해 주세요."
+/// UserWithdrawView - "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요."
 "myPage.withdrawalNotice" = "Your posted reviews will not be deleted and will be shown as (Unknown).\nFor details, please check the Terms of Service and Privacy Policy.";
 /// UserWithdrawView - "올바른 입력입니다."
 "myPage.validInputMessage" = "Valid input.";
@@ -300,12 +300,12 @@
 /// ReportView - "리뷰 신고 사유를 알려주세요"
 "review.reportReason" = "Tell us why you are reporting this review";
 /// ReportView - "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다."
-"review.reportGuide" = "You can report the same review only once every 24 hours.";
+"review.reportGuide" = "You can report the same review only once within 24 hours.";
 /// ReportView - "리뷰 신고 사유를 작성해 주세요"
-"review.inputReportReason" = "Please enter the reason for reporting this review.";
+"review.inputReportReason" = "Please write the reason for reporting this review";
 /// ReviewVC - "리뷰 작성하기"
 "review.writeReview" = "Write a Review";
-/// ReviewVC - "리뷰가 성공적으로 등록되었습니다."
+/// ReviewVC - "리뷰가 등록되었어요."
 "review.registerReviewSuccess" = "Your review has been posted successfully.";
 /// ReviewVC - "리뷰"
 "review.review" = "Reviews";
@@ -320,7 +320,7 @@
 /// ReviewVC - "리뷰가 성공적으로 삭제되었습니다."
 "review.deleteReviewSuccess" = "Your review has been deleted successfully.";
 /// ReviewVC - "리뷰 삭제에 실패했습니다."
-"review.deleteReviewFail" = "Failed to delete the review.";
+"review.deleteReviewFail" = "Failed to delete your review.";
 /// SetRateVC - "리뷰 수정하기"
 "review.fixReview" = "Edit Review";
 /// SetRateVC - "리뷰 남기기"
@@ -345,7 +345,7 @@
 "review.noReviewInfoForFix" = "There is no review information to edit.";
 /// SetRateVC - "리뷰가 성공적으로 수정되었습니다."
 "review.fixReviewSuccess" = "Your review has been updated successfully.";
-/// SetRateVC - "리뷰 수정에 실패했습니다."
+/// SetRateVC - "리뷰 수정이 실패했습니다."
 "review.fixReviewFail" = "Failed to update the review.";
 /// SetRateVC - "식단 정보가 없습니다."
 "review.noMealInfo" = "No meal information is available.";
@@ -354,7 +354,7 @@
 /// SetRateVC - "메뉴 정보가 없습니다."
 "review.noMenuInfo" = "No menu information is available.";
 /// SetRateVC - "메뉴에 대한 상세한 리뷰를 작성해주세요"
-"review.inputDetailReview" = "Please write a detailed review of the menu.";
+"review.inputDetailReview" = "Write a detailed review of the menu";
 /// SetRateVC - "나가시겠어요?"
 "review.askLeave" = "Leave this page?";
 /// SetRateVC - "지금 나가면 작성한 내용이 저장되지 않습니다."
@@ -366,15 +366,15 @@
 /// ReviewEmptyViewCell - "아직 작성된 리뷰가 없어요!"
 "review.noReview" = "No reviews have been written yet!";
 /// ReviewEmptyViewCell - "메뉴에 가장 먼저 리뷰를 남겨주세요!"
-"review.beFirstReviewer" = "Be the first to leave a review for this menu!";
+"review.beFirstReviewer" = "Be the first to review this menu item!";
 /// ReviewEmptyViewCell - "로그인이 필요합니다"
 "review.needLogin" = "Login is required.";
 /// ReviewEmptyViewCell - "로그인 후 리뷰를 확인하세요"
 "review.checkReviewAfterLogin" = "Log in to view reviews.";
 /// ReviewEmptyViewCell - "아직 작성한 리뷰가 없어요"
-"review.noWrittenReview" = "You haven't written any reviews yet.";
+"review.noWrittenReview" = "No reviews yet";
 /// ReviewEmptyViewCell - "첫 리뷰를 남겨 주세요!"
-"review.writeFirstReview" = "Leave your first review!";
+"review.writeFirstReview" = "Be the first to leave a review!";
 /// ReviewDividerCell - "리뷰"
 "review.reviewCount" = "%d Reviews";
 /// ReviewRateViewCell - "오늘의 메뉴"
@@ -389,7 +389,7 @@
 "review.twoStars" = "2 Stars";
 /// ReviewRateViewCell - "1점"
 "review.oneStar" = "1 Star";
-/// SetRateView - "오늘의 식사는 어떠셨나요?"
+/// SetRateView - "오늘의 식사는 어땠나요?"
 "review.rateTodayMeal" = "How was your meal today?";
 /// SetRateView - "추천하고 싶은 메뉴가 있나요?"
 "review.recommendMenu" = "Any dishes you'd recommend?";
@@ -439,7 +439,7 @@
 "notification.dailyWeekdayNotificationBody" = "Check today's cafeteria menu!";
 /// 알림 권한 필요
 "notification_error_permission_denied_message" = "Notification Permission Required";
-/// 알림을 받으려면 설정에서 알림 권한을 허용해주세요.
+/// 알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.
 "notification_error_permission_denied_description" = "Please allow notification permission in Settings to receive notifications.";
 /// 알 수 없는 오류
 "notification_error_unknown_message" = "Unknown Error";
@@ -454,7 +454,7 @@
 /// "도담 식당"
 "restaurant.dodamRestaurant" = "Dodam Restaurant";
 /// "학생 식당"
-"restaurant.studentRestaurant" = "Student Restaurant";
+"restaurant.studentRestaurant" = "Student Cafeteria";
 /// "스낵 코너"
 "restaurant.snackCorner" = "Snack Corner";
 /// "FACULTY (교직원 전용)"

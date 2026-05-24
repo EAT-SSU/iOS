@@ -396,6 +396,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private func handleSessionExpired() {
         RealmService.shared.deleteAll(Token.self)
-        transitionToLogin(withMessage: "세션이 만료되었습니다. 다시 로그인해주세요.")
+        transitionToLogin(withMessage: "세션이 만료되어 다시 로그인해주세요.")
     }
 }

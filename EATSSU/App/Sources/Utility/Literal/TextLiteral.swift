@@ -91,9 +91,9 @@ enum TextLiteral {
             Localization.localized("common.moveToSetting", fallback: "설정으로 이동")
         }
         
-        /// "탈퇴 처리가 완료되었습니다."
+        /// "회원탈퇴되었어요."
         static var withdrawComplete: String {
-            Localization.localized("common.withdrawComplete", fallback: "탈퇴 처리가 완료되었습니다.")
+            Localization.localized("common.withdrawComplete", fallback: "회원탈퇴되었어요.")
         }
         
         /// "잠시 후 다시 시도해주세요."
@@ -101,14 +101,14 @@ enum TextLiteral {
             Localization.localized("common.tryAgain", fallback: "잠시 후 다시 시도해주세요.")
         }
         
-        /// "세션이 만료되었습니다. 다시 로그인해주세요."
+        /// "세션이 만료되어 다시 로그인해주세요."
         static var sessionExpired: String {
-            Localization.localized("common.sessionExpired", fallback: "세션이 만료되었습니다. 다시 로그인해주세요.")
+            Localization.localized("common.sessionExpired", fallback: "세션이 만료되어 다시 로그인해주세요.")
         }
 
-        /// "에러가 발생했습니다"
+        /// "에러가 발생했습니다."
         static var errorOccured: String {
-            Localization.localized("common.errorOccured", fallback: "에러가 발생했습니다")
+            Localization.localized("common.errorOccured", fallback: "에러가 발생했습니다.")
         }
         
         /// "다시 시도하세요"
@@ -247,9 +247,9 @@ enum TextLiteral {
             Localization.localized("auth.updateError", fallback: "정보 업데이트 중 오류가 발생했습니다.")
         }
         
-        /// SetNickNameVC - "내 정보가 수정되었어요."
+        /// SetNickNameVC - "정보가 업데이트되었습니다."
         static var updateSuccess: String {
-            Localization.localized("auth.updateSuccess", fallback: "내 정보가 수정되었어요.")
+            Localization.localized("auth.updateSuccess", fallback: "정보가 업데이트되었습니다.")
         }
 
         /// NIcknameTextFieldResultType - "필수 입력 사항입니다"
@@ -267,9 +267,9 @@ enum TextLiteral {
             Localization.localized("auth.duplicatedNickname", fallback: "이미 사용 중인 닉네임이에요.")
         }
         
-        /// NIcknameTextFieldResultType - "사용가능한 닉네임이에요"
+        /// NIcknameTextFieldResultType - "사용 가능한 닉네임입니다!"
         static var availableNickname: String {
-            Localization.localized("auth.availableNickname", fallback: "사용가능한 닉네임이에요")
+            Localization.localized("auth.availableNickname", fallback: "사용 가능한 닉네임입니다!")
         }
         
         /// NIcknameTextFieldResultType - "2~16글자를 입력해 주세요."
@@ -591,9 +591,9 @@ enum TextLiteral {
             Localization.localized("myPage.termsOfUse", fallback: "서비스 이용약관")
         }
 
-        /// MyPageVC - "개인정보처리방침"
+        /// MyPageVC - "개인정보 처리방침"
         static var privacyTermsOfUse: String {
-            Localization.localized("myPage.privacyTermsOfUse", fallback: "개인정보처리방침")
+            Localization.localized("myPage.privacyTermsOfUse", fallback: "개인정보 처리방침")
         }
         
         /// MyPageVC - "로그아웃"
@@ -601,9 +601,9 @@ enum TextLiteral {
             Localization.localized("myPage.logout", fallback: "로그아웃")
         }
         
-        /// MyPageVC - "정말 로그아웃 하시겠습니까?"
+        /// MyPageVC - "로그아웃 하시겠습니까?"
         static var askLogout: String {
-            Localization.localized("myPage.askLogout", fallback: "정말 로그아웃 하시겠습니까?")
+            Localization.localized("myPage.askLogout", fallback: "로그아웃 하시겠습니까?")
         }
 
         /// MyReviewVC - "리뷰 수정 혹은 삭제"
@@ -661,11 +661,11 @@ enum TextLiteral {
             Localization.localized("myPage.confirmWithdrawal", fallback: "정말 탈퇴하시겠습니까?")
         }
 
-        /// UserWithdrawView - "작성한 리뷰 게시글은 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보처리방침을 확인해 주세요."
+        /// UserWithdrawView - "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요."
         static var withdrawalNotice: String {
             Localization.localized(
                 "myPage.withdrawalNotice",
-                fallback: "작성한 리뷰 게시글은 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보처리방침을 확인해 주세요."
+                fallback: "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요."
             )
         }
 
@@ -753,9 +753,9 @@ enum TextLiteral {
             Localization.localized("review.writeReview", fallback: "리뷰 작성하기")
         }
         
-        /// ReviewVC - "리뷰가 성공적으로 등록되었습니다."
+        /// ReviewVC - "리뷰가 등록되었어요."
         static var registerReviewSuccess: String {
-            Localization.localized("review.registerReviewSuccess", fallback: "리뷰가 성공적으로 등록되었습니다.")
+            Localization.localized("review.registerReviewSuccess", fallback: "리뷰가 등록되었어요.")
         }
         
         /// ReviewVC - "리뷰"
@@ -858,9 +858,9 @@ enum TextLiteral {
             Localization.localized("review.fixReviewSuccess", fallback: "리뷰가 성공적으로 수정되었습니다.")
         }
         
-        /// SetRateVC - "리뷰 수정에 실패했습니다."
+        /// SetRateVC - "리뷰 수정이 실패했습니다."
         static var fixReviewFail: String {
-            Localization.localized("review.fixReviewFail", fallback: "리뷰 수정에 실패했습니다.")
+            Localization.localized("review.fixReviewFail", fallback: "리뷰 수정이 실패했습니다.")
         }
         
         /// SetRateVC - "식단 정보가 없습니다."
@@ -968,9 +968,9 @@ enum TextLiteral {
             Localization.localized("review.oneStar", fallback: "1점")
         }
 
-        /// SetRateView - "오늘의 식사는 어떠셨나요?"
+        /// SetRateView - "오늘의 식사는 어땠나요?"
         static var rateTodayMeal: String {
-            Localization.localized("review.rateTodayMeal", fallback: "오늘의 식사는 어떠셨나요?")
+            Localization.localized("review.rateTodayMeal", fallback: "오늘의 식사는 어땠나요?")
         }
 
         /// SetRateView - "추천하고 싶은 메뉴가 있나요?"
@@ -1070,11 +1070,11 @@ enum TextLiteral {
                 fallback: "알림 권한 필요"
             )
         }
-        /// 알림을 받으려면 설정에서 알림 권한을 허용해주세요.
+        /// 알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.
         static var permissionDeniedDescription: String {
             Localization.localized(
                 "notification_error_permission_denied_description",
-                fallback: "알림을 받으려면 설정에서 알림 권한을 허용해주세요."
+                fallback: "알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요."
             )
         }
         /// 알 수 없는 오류
