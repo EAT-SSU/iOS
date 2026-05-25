@@ -27,6 +27,18 @@ import PackageDescription
             "Firebase": .framework,
             "GoogleAppMeasurement": .framework,
 
+            // GoogleUtilities / nanopb 등의 정적 product를 동적 프레임워크로 변환
+            // (FirebaseAnalytics가 transitive로 가져오면서 GoogleAppMeasurementTarget과 중복 링크되는 경고 방지)
+            "GoogleUtilities-AppDelegateSwizzler": .framework,
+            "GoogleUtilities-Environment": .framework,
+            "GoogleUtilities-Logger": .framework,
+            "GoogleUtilities-MethodSwizzler": .framework,
+            "GoogleUtilities-NSData": .framework,
+            "GoogleUtilities-Network": .framework,
+            "GoogleUtilities-Reachability": .framework,
+            "nanopb": .framework,
+            "third-party-IsAppEncrypted": .framework,
+
             // realm-swift
             "Realm": .framework,
             "RealmSwift": .framework,
