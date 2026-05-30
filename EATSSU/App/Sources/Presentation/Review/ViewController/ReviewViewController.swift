@@ -299,10 +299,12 @@ final class ReviewViewController: BaseViewController {
     /// 리뷰 작성 버튼 탭 처리 (로그인 체크 포함)
     func userTapReviewButton() {
         if RealmService.shared.isAccessTokenPresent() {
+            ReviewAnalyticsManager.shared.logWriteReviewV2(restaurantName: restaurantName)
             DispatchQueue.global().async {
                 DispatchQueue.main.async { [self] in
                     if type == "FIXED" {
                         let setRateViewController = SetRateViewController(menuId: menuID)
+                        setRateViewController.restaurantName = restaurantName
                         setRateViewController.dataBind(
                             list: menuNameList,
                             idList: menuIDList ?? []
@@ -313,6 +315,7 @@ final class ReviewViewController: BaseViewController {
                         )
                     } else {
                         let setRateViewController = SetRateViewController(mealId: menuID)
+                        setRateViewController.restaurantName = restaurantName
                         setRateViewController.dataBind(
                             list: validMenusForReview.map { $0.name },
                             idList: validMenusForReview.map { $0.menuId }
