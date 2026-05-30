@@ -27,6 +27,9 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
     private var userPickedImage: UIImage?
 
     private var isReviewSubmitted = false
+
+    /// 리뷰를 작성 중인 메뉴가 속한 식당 이름 (예: "학생 식당")
+    var restaurantName: String?
     
     
     enum ReviewType {
@@ -425,7 +428,8 @@ extension SetRateViewController {
                 await MainActor.run {
                     self.isReviewSubmitted = true
                     let hasPhoto = self.userPickedImage != nil || self.setRateView.userReviewImageView.image != nil
-                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                    ReviewAnalyticsManager.shared.logCompleteReviewV2(
+                        restaurantName: self.restaurantName,
                         photoAttached: hasPhoto ? 1 : 0,
                         rating: self.setRateView.rateView.currentStar,
                         likes: self.likedStates.filter { $0 }.count
@@ -476,7 +480,8 @@ extension SetRateViewController {
 
                 await MainActor.run {
                     self.isReviewSubmitted = true
-                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                    ReviewAnalyticsManager.shared.logCompleteReviewV2(
+                        restaurantName: self.restaurantName,
                         photoAttached: imageUrl != nil ? 1 : 0,
                         rating: self.setRateView.rateView.currentStar,
                         likes: self.likedStates.filter { $0 }.count
@@ -528,7 +533,8 @@ extension SetRateViewController {
 
                 await MainActor.run {
                     self.isReviewSubmitted = true
-                    ReviewAnalyticsManager.shared.logCompleteReviewV1(
+                    ReviewAnalyticsManager.shared.logCompleteReviewV2(
+                        restaurantName: self.restaurantName,
                         photoAttached: imageUrl != nil ? 1 : 0,
                         rating: self.setRateView.rateView.currentStar,
                         likes: self.likedStates.filter { $0 }.count

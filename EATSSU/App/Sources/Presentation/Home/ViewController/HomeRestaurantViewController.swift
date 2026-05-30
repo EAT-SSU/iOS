@@ -288,6 +288,10 @@ extension HomeRestaurantViewController: UITableViewDataSource {
 
         var reviewMenuTypeInfo = ReviewMenuTypeInfo(menuType: "", menuID: 0)
 
+        if section < sectionHeaderRestaurant.count {
+            reviewMenuTypeInfo.restaurantName = sectionHeaderRestaurant[section]
+        }
+
         if !isSnackCorner {
             guard let menus = changeMenuTableViewData[restaurant],
                   menuIndex < menus.count else {

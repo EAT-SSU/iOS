@@ -11,4 +11,5 @@ struct ReviewMenuTypeInfo {
     var menuType: String
     var menuID: Int
     var changeMenuIDList: [Int]?
+    var restaurantName: String?
 }
