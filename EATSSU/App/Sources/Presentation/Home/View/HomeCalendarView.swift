@@ -51,6 +51,10 @@ final class HomeCalendarView: BaseUIView {
         calendar.dataSource = self
         calendar.delegate = self
     }
+
+    private var calendarLocale: Locale {
+        return Locale(identifier: AppLanguageManager.shared.currentLanguage.rawValue)
+    }
     
     
     /// 특정 날짜로 선택하고 해당 월로 스크롤합니다.
@@ -66,7 +70,7 @@ extension HomeCalendarView: FSCalendarDataSource, FSCalendarDelegate {
     private func setUpCalendar() {
         // Base
         calendar.scope = .week
-        calendar.locale = Locale(identifier: "ko_KR")
+        calendar.locale = calendarLocale
         calendar.scrollEnabled = true
         calendar.scrollDirection = .horizontal
 

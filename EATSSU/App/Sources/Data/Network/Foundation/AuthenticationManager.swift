@@ -15,7 +15,7 @@ enum AuthResult {
     
     var errorMessage: String? {
         if case .sessionExpired = self {
-            return "세션이 만료되었습니다. 다시 로그인해주세요."
+            return "세션이 만료되어 다시 로그인해주세요."
         }
         return nil
     }

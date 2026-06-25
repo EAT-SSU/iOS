@@ -364,9 +364,10 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         }
 
         let restaurantName = sectionHeaderRestaurant[section]
+        let koreanName = koreanRestaurantName(from: restaurantName)
         header.titleLabel.text = restaurantName
 
-        if let info = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == restaurantName }) {
+        if let info = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == koreanName }) {
             var container = AttributeContainer()
             container.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 10)
             header.infoButton.configuration?.attributedTitle = AttributedString(info.location, attributes: container)
@@ -393,6 +394,25 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         )
 
         return header
+    }
+    
+    // TODO: - 추후 삭제 필요: RestaurantInfoData 관련 Firebase 반환 값에서 id 추가로 받아서 이름 말고 id로 매칭하는 방식으로 변경 필요
+    
+    private func koreanRestaurantName(from name: String) -> String {
+        switch name {
+        case TextLiteral.Restaurant.dodamRestaurant:
+            return "도담 식당"
+        case TextLiteral.Restaurant.studentRestaurant:
+            return "학생 식당"
+        case TextLiteral.Restaurant.snackCorner:
+            return "스낵 코너"
+        case TextLiteral.Restaurant.dormitoryRestaurant:
+            return "기숙사 식당"
+        case TextLiteral.Restaurant.facultyRestaurant:
+            return "FACULTY (교직원 전용)"
+        default:
+            return name
+        }
     }
 }
 

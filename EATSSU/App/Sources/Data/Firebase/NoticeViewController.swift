@@ -47,11 +47,11 @@ class NoticeViewController: BaseViewController {
     }
 
     private func showNoticeAlert() {
-        let alert = UIAlertController(title: "NOTICE",
+        let alert = UIAlertController(title: TextLiteral.Common.notice,
                                       message: noticeMessage,
                                       preferredStyle: UIAlertController.Style.alert)
 
-        let action = UIAlertAction(title: "확인", style: .default, handler: { _ in
+        let action = UIAlertAction(title: TextLiteral.Common.confirm, style: .default, handler: { _ in
             self.quitService()
         })
         alert.addAction(action)

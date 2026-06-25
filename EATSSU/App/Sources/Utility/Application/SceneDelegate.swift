@@ -342,12 +342,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private func showUpdateAlert() {
         let alert = UIAlertController(
-            title: "업데이트 알림",
-            message: "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!",
+            title: TextLiteral.Splash.updateAlertTitle,
+            message: TextLiteral.Splash.updateAlertMessage,
             preferredStyle: .alert
         )
 
-        let updateAction = UIAlertAction(title: "업데이트", style: .default) { _ in
+        let updateAction = UIAlertAction(title: TextLiteral.Splash.update, style: .default) { _ in
             AppStoreCheck().openAppStore()
         }
 
@@ -396,6 +396,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private func handleSessionExpired() {
         RealmService.shared.deleteAll(Token.self)
-        transitionToLogin(withMessage: "세션이 만료되었습니다. 다시 로그인해주세요.")
+        transitionToLogin(withMessage: "세션이 만료되어 다시 로그인해주세요.")
     }
 }

@@ -39,8 +39,26 @@ final class RestaurantInfoViewController: BaseViewController {
 extension RestaurantInfoViewController: RestaurantInfoDelegate {
     func didTappedRestaurantInfo(restaurantName: String) {
         restaurantInfoView.restaurantNameLabel.text = restaurantName
-        if let restaurantInfo = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == restaurantName }) {
+        let koreanName = koreanRestaurantName(from: restaurantName)
+        if let restaurantInfo = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == koreanName }) {
             restaurantInfoView.bind(data: restaurantInfo)
+        }
+    }
+    
+    private func koreanRestaurantName(from name: String) -> String {
+        switch name {
+        case TextLiteral.Restaurant.dodamRestaurant:
+            return "도담 식당"
+        case TextLiteral.Restaurant.studentRestaurant:
+            return "학생 식당"
+        case TextLiteral.Restaurant.snackCorner:
+            return "스낵 코너"
+        case TextLiteral.Restaurant.dormitoryRestaurant:
+            return "기숙사 식당"
+        case TextLiteral.Restaurant.facultyRestaurant:
+            return "FACULTY (교직원 전용)"
+        default:
+            return name
         }
     }
 }

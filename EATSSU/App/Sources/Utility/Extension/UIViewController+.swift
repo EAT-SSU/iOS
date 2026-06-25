@@ -30,8 +30,8 @@ extension UIViewController {
     func showCustomDialog(
         title: String,
         message: String,
-        cancelButtonTitle: String = "취소하기",
-        confirmButtonTitle: String = "확인",
+        cancelButtonTitle: String = TextLiteral.Common.cancelDark,
+        confirmButtonTitle: String = TextLiteral.Common.confirm,
         cancelAction: (() -> Void)? = nil,
         confirmAction: @escaping () -> Void
     ) {

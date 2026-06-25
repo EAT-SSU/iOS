@@ -27,7 +27,7 @@ class EATSSUDialogView: BaseUIView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "제목을 입력해주세요"
+        label.text = TextLiteral.Common.notice
         label.font = .header2
         label.textColor = .gray700
         label.textAlignment = .center
@@ -36,7 +36,7 @@ class EATSSUDialogView: BaseUIView {
     
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "본문을 입력해주세요"
+        label.text = ""
         label.font = .subtitle2
         label.textColor = .gray600
         label.textAlignment = .center
@@ -54,7 +54,7 @@ class EATSSUDialogView: BaseUIView {
     
     let cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("취소", for: .normal)
+        button.setTitle(TextLiteral.Common.cancel, for: .normal)
         button.setTitleColor(.gray700, for: .normal)
         button.titleLabel?.font = .subtitle2
         button.backgroundColor = .gray200
@@ -64,7 +64,7 @@ class EATSSUDialogView: BaseUIView {
     
     let confirmButton: UIButton = {
         let button = UIButton()
-        button.setTitle("확인", for: .normal)
+        button.setTitle(TextLiteral.Common.confirm, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .subtitle2
         button.backgroundColor = .primary
