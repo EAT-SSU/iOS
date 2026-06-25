@@ -26,6 +26,7 @@ public extension UIColor {
     
     static var primary: UIColor { EATSSUDesignAsset.Color.Main.primary.color }
     static var secondary: UIColor { EATSSUDesignAsset.Color.Main.secondary.color }
+    static var festivalPrimary: UIColor { EATSSUDesignAsset.Color.Main.festivalPrimary.color }
 
     // MARK: - Dialog & Status (These are flat directly under EATSSUDesignAsset.Color)
     

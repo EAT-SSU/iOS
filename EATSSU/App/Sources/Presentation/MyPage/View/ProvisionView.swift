@@ -28,6 +28,13 @@ final class ProvisionView: BaseUIView {
         connectWebLink(agreementType: agreementType)
     }
 
+    init(url: URL) {
+        webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
+        super.init(frame: .zero)
+
+        webView.load(URLRequest(url: url))
+    }
+
     // MARK: - Functions
 
     override func configureUI() {

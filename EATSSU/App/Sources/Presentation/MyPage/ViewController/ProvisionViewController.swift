@@ -32,6 +32,12 @@ final class ProvisionViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    init(url: URL) {
+        provisionView = ProvisionView(url: url)
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

@@ -13,6 +13,8 @@ import SnapKit
 
 import EATSSUDesign
 
+/// "만든 사람들" 화면 ViewController.
+/// - Note: 현재는 노션 페이지로 대체되어 사용하지 않습니다. 추후 복구 가능성을 위해 남겨둡니다.
 class CreatorViewController: BaseViewController {
     override var shouldHideTabBar: Bool { true }
     // MARK: - Properties

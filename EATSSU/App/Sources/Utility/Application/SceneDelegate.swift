@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
 
-        #if DEBUG
+        #if DEBUG || DEV
         setupDebugBanner(in: windowScene)
         #endif
 
@@ -83,7 +83,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // MARK: - Debug Banner
 
-    #if DEBUG
+    #if DEBUG || DEV
     private var debugWindow: UIWindow?
 
     private func setupDebugBanner(in windowScene: UIWindowScene) {
@@ -312,7 +312,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func checkForAppUpdate() {
-        #if DEBUG
+        #if DEBUG || DEV
             print("개발 환경에서는 앱 업데이트 체크를 건너뜁니다.")
             return
         #else

@@ -69,13 +69,13 @@ final class LoginView: BaseUIView {
         appleLoginButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(45)
-            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(151)
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(176)
         }
 
         kakaoLoginButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(45)
-            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(90)
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(115)
         }
 
         lookingWithNoSignInButton.snp.makeConstraints {

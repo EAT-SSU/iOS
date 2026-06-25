@@ -12,17 +12,24 @@ import SnapKit
 
 import EATSSUDesign
 
+enum MapMode {
+    case festival
+    case myOnly
+    case all
+}
+
 final class MainMapView: BaseUIView {
 
     // MARK: - UI Components
 
     let mapView = NMFNaverMapView()
     let toggleBackgroundView = UIView()
-    let wholeButton = UIButton(type: .system)
+    let festivalButton = UIButton(type: .system)
     let myOnlyButton = UIButton(type: .system)
+    let wholeButton = UIButton(type: .system)
 
     // MARK: - UI Setup
-    
+
     override func configureUI() {
         backgroundColor = .white
 
@@ -41,60 +48,44 @@ final class MainMapView: BaseUIView {
 
         let titleFont = UIFont.button2
 
-        // 전체 버튼
-        wholeButton.setTitle(TextLiteral.Map.all, for: .normal)
-        wholeButton.titleLabel?.font = titleFont
-        wholeButton.layer.cornerRadius = 14
-        wholeButton.clipsToBounds = true
-        wholeButton.backgroundColor = .clear
-        wholeButton.setTitleColor(.label, for: .normal)
-        if #available(iOS 15.0, *) {
-            var cfg = wholeButton.configuration ?? .plain()
-            cfg.title = TextLiteral.Map.all
-            cfg.baseForegroundColor = .label
-            cfg.baseBackgroundColor = .clear
-            cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
-            cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
-                var out = inAttrs
-                out.font = titleFont
-                return out
-            }
-            wholeButton.configuration = cfg
-        } else {
-            wholeButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        }
+        configureToggleButton(festivalButton, title: TextLiteral.Map.festival, font: titleFont)
+        configureToggleButton(myOnlyButton, title: TextLiteral.Map.myPartner, font: titleFont)
+        configureToggleButton(wholeButton, title: TextLiteral.Map.all, font: titleFont)
 
-        // 내 제휴 버튼
-        myOnlyButton.setTitle(TextLiteral.Map.myPartner, for: .normal)
-        myOnlyButton.titleLabel?.font = titleFont
-        myOnlyButton.layer.cornerRadius = 14
-        myOnlyButton.clipsToBounds = true
-        myOnlyButton.backgroundColor = .clear
-        myOnlyButton.setTitleColor(.label, for: .normal)
-        if #available(iOS 15.0, *) {
-            var cfg = myOnlyButton.configuration ?? .plain()
-            cfg.title = TextLiteral.Map.myPartner
-            cfg.baseForegroundColor = .label
-            cfg.baseBackgroundColor = .clear
-            cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
-            cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
-                var out = inAttrs
-                out.font = titleFont
-                return out
-            }
-            myOnlyButton.configuration = cfg
-        } else {
-            myOnlyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        }
-
-        // 초기 선택 상태
-        selectWhole(true)
+        toggleBackgroundView.addSubview(festivalButton)
         toggleBackgroundView.addSubview(myOnlyButton)
         toggleBackgroundView.addSubview(wholeButton)
+
+        // 초기 선택 상태: 축제
+        select(.festival)
+    }
+
+    private func configureToggleButton(_ button: UIButton, title: String, font: UIFont) {
+        button.setTitle(title, for: .normal)
+        button.titleLabel?.font = font
+        button.layer.cornerRadius = 14
+        button.clipsToBounds = true
+        button.backgroundColor = .clear
+        button.setTitleColor(.label, for: .normal)
+        if #available(iOS 15.0, *) {
+            var cfg = button.configuration ?? .plain()
+            cfg.title = title
+            cfg.baseForegroundColor = .label
+            cfg.baseBackgroundColor = .clear
+            cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
+            cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
+                var out = inAttrs
+                out.font = font
+                return out
+            }
+            button.configuration = cfg
+        } else {
+            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        }
     }
 
     // MARK: - Layout Setup
-    
+
     override func setLayout() {
         mapView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -108,35 +99,56 @@ final class MainMapView: BaseUIView {
             $0.trailing.lessThanOrEqualToSuperview().inset(15)
         }
 
-        myOnlyButton.snp.makeConstraints {
+        festivalButton.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(4)
             $0.leading.equalToSuperview().inset(4)
+            $0.width.greaterThanOrEqualTo(60)
+        }
+
+        myOnlyButton.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview().inset(4)
+            $0.leading.equalTo(festivalButton.snp.trailing)
             $0.width.greaterThanOrEqualTo(60)
         }
 
         wholeButton.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(4)
             $0.leading.equalTo(myOnlyButton.snp.trailing)
-            $0.trailing.equalToSuperview().inset(4)   
+            $0.trailing.equalToSuperview().inset(4)
             $0.width.equalTo(60)
         }
     }
 
     // MARK: - Button Selection Handling
-    
-    func selectWhole(_ isSelected: Bool) {
+
+    func select(_ mode: MapMode) {
+        let highlightColor: UIColor = (mode == .festival) ? .festivalPrimary : .primary
+        applySelection(festivalButton, isSelected: mode == .festival, highlightColor: highlightColor)
+        applySelection(myOnlyButton, isSelected: mode == .myOnly, highlightColor: highlightColor)
+        applySelection(wholeButton, isSelected: mode == .all, highlightColor: highlightColor)
+    }
+
+    /// 축제 탭 노출 여부 토글. 숨길 때는 width를 0으로 만들어 레이아웃에서 사라지게 함
+    func setFestivalVisible(_ visible: Bool) {
+        festivalButton.isHidden = !visible
+        festivalButton.snp.remakeConstraints {
+            $0.top.bottom.equalToSuperview().inset(4)
+            $0.leading.equalToSuperview().inset(4)
+            if visible {
+                $0.width.greaterThanOrEqualTo(60)
+            } else {
+                $0.width.equalTo(0)
+            }
+        }
+    }
+
+    private func applySelection(_ button: UIButton, isSelected: Bool, highlightColor: UIColor) {
         if isSelected {
-            wholeButton.backgroundColor = .primary
-            wholeButton.setTitleColor(.white, for: .normal)
-
-            myOnlyButton.backgroundColor = .clear
-            myOnlyButton.setTitleColor(.label, for: .normal)
+            button.backgroundColor = highlightColor
+            button.setTitleColor(.white, for: .normal)
         } else {
-            wholeButton.backgroundColor = .clear
-            wholeButton.setTitleColor(.label, for: .normal)
-
-            myOnlyButton.backgroundColor = .primary
-            myOnlyButton.setTitleColor(.white, for: .normal)
+            button.backgroundColor = .clear
+            button.setTitleColor(.label, for: .normal)
         }
     }
 }

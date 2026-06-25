@@ -460,6 +460,9 @@ enum TextLiteral {
             Localization.localized("map.myPartner", fallback: "내 제휴")
         }
 
+        /// MainMapView - "축제"
+        static let festival: String = "축제"
+
         /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
         static var inputDepartment: String {
             Localization.localized("map.inputDepartment", fallback: "학과를 입력하고\n나만의 제휴를 확인해보세요!")
