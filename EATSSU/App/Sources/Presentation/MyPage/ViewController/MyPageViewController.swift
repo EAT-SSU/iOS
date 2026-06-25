@@ -79,7 +79,7 @@ final class MyPageViewController: BaseViewController {
     
     @objc
     private func userWithdrawButtonTapped() {
-        AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "withdraw"])
+        MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .withdraw)
         let userWithdrawViewController = UserWithdrawViewController(nickName: nickName)
         navigationController?.pushViewController(userWithdrawViewController, animated: true)
     }
@@ -189,25 +189,25 @@ extension MyPageViewController: UITableViewDelegate {
         switch indexPath.row {
         // "푸시 알림 설정" 스위치 토글
         case MyPageLabels.NotificationSetting.rawValue:
-            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "notification_setting"])
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .notificationSetting)
             handleNotificationSettingToggle(at: indexPath)
 
         // "내 정보" 스크린으로 이동
         case MyPageLabels.MyInfo.rawValue:
-            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "my_info"])
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .myInfo)
             let setNickNameVC = SetNickNameViewController()
             setNickNameVC.source = .signup
             navigationController?.pushViewController(setNickNameVC, animated: true)
 
         // "내 리뷰" 스크린으로 이동
         case MyPageLabels.MyReview.rawValue:
-            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "my_review"])
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .myReview)
             let myReviewViewController = MyReviewViewController(nickname: nickName)
             navigationController?.pushViewController(myReviewViewController, animated: true)
 
         // "문의하기" 스크린으로 이동
         case MyPageLabels.Inquiry.rawValue:
-            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "inquiry"])
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .inquiry)
             TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
                 if error != nil {
                     if let kakaoChannelLink = URL(string: "http://pf.kakao.com/\(TextLiteral.KakaoChannel.id)") {
@@ -226,21 +226,21 @@ extension MyPageViewController: UITableViewDelegate {
 
         // "서비스 이용약관" 스크린으로 이동
         case MyPageLabels.TermsOfUse.rawValue:
-            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "terms_of_use"])
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .termsOfUse)
             let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
             provisionViewController.navigationTitle = TextLiteral.MyPage.termsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "개인정보 이용약관" 스크린으로 이동
         case MyPageLabels.PrivacyTermsOfUse.rawValue:
-            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "privacy_policy"])
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .privacyPolicy)
             let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
             provisionViewController.navigationTitle = TextLiteral.MyPage.privacyTermsOfUse
             navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "만든사람들" 노션 페이지로 이동 (앱 내 웹뷰)
         case MyPageLabels.Creator.rawValue:
-            AnalyticsService.logEvent("click_mypage_menu", parameters: ["menu": "creator"])
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .creator)
             if let creatorsURL = URL(string: URLConstants.creatorsNotion) {
                 let creatorsWebVC = ProvisionViewController(url: creatorsURL)
                 creatorsWebVC.navigationTitle = TextLiteral.MyPage.creators
@@ -249,6 +249,7 @@ extension MyPageViewController: UITableViewDelegate {
 
         // "로그아웃" 팝업알림 표시
         case MyPageLabels.Logout.rawValue:
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .logout)
             logoutShowAlert()
 
         default:

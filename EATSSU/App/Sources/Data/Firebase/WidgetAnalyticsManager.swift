@@ -53,6 +53,7 @@ final class WidgetAnalyticsManager {
         "도담식당": "dodam",
         "기숙사 식당": "dormitory",
         "FACULTY (교직원 전용)": "faculty",
+        "스낵 코너": "snack_corner",
     ]
 
     private init() {}

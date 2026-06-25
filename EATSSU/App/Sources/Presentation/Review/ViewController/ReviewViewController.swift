@@ -28,9 +28,12 @@ final class ReviewViewController: BaseViewController {
     
     /// 메뉴 ID (FIXED 타입) 또는 식사 ID (VARIABLE 타입)
     var menuID: Int = 0
-    
+
     /// 메뉴 타입 ("FIXED" 또는 "VARIABLE")
     var type = "VARIABLE"
+
+    /// 리뷰 작성 대상 메뉴가 속한 식당 이름 (예: "학생 식당")
+    private var restaurantName: String?
     
     /// 메뉴 이름 리스트
     private var menuNameList: [String] = []
@@ -201,18 +204,20 @@ final class ReviewViewController: BaseViewController {
     
     /// 리뷰 작성 버튼 탭 처리
     @objc private func handleAddReviewButtonTap() {
-        ReviewAnalyticsManager.shared.logWriteReviewV1()
+        ReviewAnalyticsManager.shared.logWriteReviewV2(restaurantName: restaurantName)
 
         if type == "VARIABLE" {
             let reviewVC = SetRateViewController(mealId: menuID)
+            reviewVC.restaurantName = restaurantName
             reviewVC.dataBind(
                 list: validMenusForReview.map { $0.name },
                 idList: validMenusForReview.map { $0.menuId }
             )
             navigationController?.pushViewController(reviewVC, animated: true)
-            
+
         } else {
             let reviewVC = SetRateViewController(menuId: menuID)
+            reviewVC.restaurantName = restaurantName
             reviewVC.dataBind(
                 list: menuNameList,
                 idList: menuIDList ?? []
@@ -294,10 +299,12 @@ final class ReviewViewController: BaseViewController {
     /// 리뷰 작성 버튼 탭 처리 (로그인 체크 포함)
     func userTapReviewButton() {
         if RealmService.shared.isAccessTokenPresent() {
+            ReviewAnalyticsManager.shared.logWriteReviewV2(restaurantName: restaurantName)
             DispatchQueue.global().async {
                 DispatchQueue.main.async { [self] in
                     if type == "FIXED" {
                         let setRateViewController = SetRateViewController(menuId: menuID)
+                        setRateViewController.restaurantName = restaurantName
                         setRateViewController.dataBind(
                             list: menuNameList,
                             idList: menuIDList ?? []
@@ -308,6 +315,7 @@ final class ReviewViewController: BaseViewController {
                         )
                     } else {
                         let setRateViewController = SetRateViewController(mealId: menuID)
+                        setRateViewController.restaurantName = restaurantName
                         setRateViewController.dataBind(
                             list: validMenusForReview.map { $0.name },
                             idList: validMenusForReview.map { $0.menuId }
@@ -715,14 +723,9 @@ extension ReviewViewController: ReviewMenuTypeInfoDelegate {
     
     /// 메뉴 타입 정보 델리게이트
     func didDelegateReviewMenuTypeInfo(for menuTypeData: ReviewMenuTypeInfo) {
-        let reviewMenuTypeInfo = ReviewMenuTypeInfo(
-            menuType: menuTypeData.menuType,
-            menuID: menuTypeData.menuID,
-            changeMenuIDList: menuTypeData.changeMenuIDList
-        )
-        
-        type = reviewMenuTypeInfo.menuType
-        menuID = reviewMenuTypeInfo.menuID
-        menuIDList = reviewMenuTypeInfo.changeMenuIDList
+        type = menuTypeData.menuType
+        menuID = menuTypeData.menuID
+        menuIDList = menuTypeData.changeMenuIDList
+        restaurantName = menuTypeData.restaurantName
     }
 }
