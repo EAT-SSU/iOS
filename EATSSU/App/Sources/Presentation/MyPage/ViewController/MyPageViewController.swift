@@ -19,6 +19,7 @@ final class MyPageViewController: BaseViewController {
 
     private enum URLConstants {
         static let creatorsNotion = "https://eat-ssu.notion.site/1d2eeef75a16814db1e5c5abaf40cf6a"
+        static let instagram = "https://www.instagram.com/eatssu.official/"
     }
 
     private var nickName = ""
@@ -257,27 +258,27 @@ extension MyPageViewController: UITableViewDelegate {
     ) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        switch indexPath.row {
+        switch item(at: indexPath) {
         // "푸시 알림 설정" 스위치 토글
-        case MyPageLabels.NotificationSetting.rawValue:
+        case .notificationSetting:
             MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .notificationSetting)
             handleNotificationSettingToggle(at: indexPath)
 
         // "내 정보" 스크린으로 이동
-        case MyPageLabels.MyInfo.rawValue:
+        case .myInfo:
             MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .myInfo)
             let setNickNameVC = SetNickNameViewController()
             setNickNameVC.source = .signup
             navigationController?.pushViewController(setNickNameVC, animated: true)
 
         // "내 리뷰" 스크린으로 이동
-        case MyPageLabels.MyReview.rawValue:
+        case .myReview:
             MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .myReview)
             let myReviewViewController = MyReviewViewController(nickname: nickName)
             navigationController?.pushViewController(myReviewViewController, animated: true)
 
         // "문의하기" 스크린으로 이동
-        case MyPageLabels.Inquiry.rawValue:
+        case .inquiry:
             MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .inquiry)
             TalkApi.shared.chatChannel(channelPublicId: TextLiteral.KakaoChannel.id) { [weak self] error in
                 if error != nil {
@@ -294,22 +295,9 @@ extension MyPageViewController: UITableViewDelegate {
                     // TODO: 카카오톡 채널 채팅방으로 연결 성공했을 때, 앱에서 동작되어야 하는 로직 고민
                 }
             }
-        // "서비스 이용약관" 스크린으로 이동
-        case MyPageLabels.TermsOfUse.rawValue:
-            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .termsOfUse)
-            let provisionViewController = ProvisionViewController(agreementType: .termsOfService)
-            provisionViewController.navigationTitle = TextLiteral.MyPage.termsOfUse
-            navigationController?.pushViewController(provisionViewController, animated: true)
-
-        // "개인정보 이용약관" 스크린으로 이동
-        case MyPageLabels.PrivacyTermsOfUse.rawValue:
-            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .privacyPolicy)
-            let provisionViewController = ProvisionViewController(agreementType: .privacyPolicy)
-            provisionViewController.navigationTitle = TextLiteral.MyPage.privacyTermsOfUse
-            navigationController?.pushViewController(provisionViewController, animated: true)
 
         // "만든사람들" 노션 페이지로 이동 (앱 내 웹뷰)
-        case MyPageLabels.Creator.rawValue:
+        case .creators:
             MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .creator)
             if let creatorsURL = URL(string: URLConstants.creatorsNotion) {
                 let creatorsWebVC = ProvisionViewController(url: creatorsURL)
@@ -317,8 +305,24 @@ extension MyPageViewController: UITableViewDelegate {
                 navigationController?.pushViewController(creatorsWebVC, animated: true)
             }
 
+        // "EAT-SSU 인스타그램" 외부 링크 열기
+        case .instagram:
+            if let instagramURL = URL(string: URLConstants.instagram) {
+                UIApplication.shared.open(instagramURL)
+            }
+
+        // "언어 설정" 스크린으로 이동
+        case .languageSetting:
+            let languageSettingViewController = LanguageSettingViewController()
+            navigationController?.pushViewController(languageSettingViewController, animated: true)
+
+        // "약관 및 정책" 스크린으로 이동
+        case .termsAndPolicy:
+            let termsAndPolicyViewController = TermsAndPolicyViewController()
+            navigationController?.pushViewController(termsAndPolicyViewController, animated: true)
+
         // "로그아웃" 팝업알림 표시
-        case MyPageLabels.Logout.rawValue:
+        case .logout:
             MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .logout)
             logoutShowAlert()
         }
