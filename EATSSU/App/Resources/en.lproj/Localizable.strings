@@ -54,7 +54,7 @@
 /// "나만아니면돼~"
 "tabBar.coffee" = "Lucky Game";
 /// "마이"
-"tabBar.my" = "My";
+"tabBar.my" = "My Page";
 
 
 // MARK: - Auth
@@ -276,7 +276,7 @@
 /// UserWithdrawView - "정말 탈퇴하시겠습니까?"
 "myPage.confirmWithdrawal" = "Are you sure you want to delete your account?";
 /// UserWithdrawView - "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요."
-"myPage.withdrawalNotice" = "Your posted reviews will not be deleted and will be shown as (Unknown).\nFor details, please check the Terms of Service and Privacy Policy.";
+"myPage.withdrawalNotice" = "Your reviews will not be deleted and will appear as (Unknown).\nFor details, please check the Terms of Service and Privacy Policy.";
 /// UserWithdrawView - "올바른 입력입니다."
 "myPage.validInputMessage" = "Valid input.";
 /// UserWithdrawView - "올바르지 않은 닉네임입니다"
