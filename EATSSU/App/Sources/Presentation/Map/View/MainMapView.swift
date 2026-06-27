@@ -64,7 +64,7 @@ final class MainMapView: BaseUIView {
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = font
         button.titleLabel?.numberOfLines = 1
-        button.titleLabel?.lineBreakMode = .byClipping
+        button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.layer.cornerRadius = 14
@@ -77,7 +77,7 @@ final class MainMapView: BaseUIView {
             cfg.baseForegroundColor = .label
             cfg.baseBackgroundColor = .clear
             cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
-            cfg.titleLineBreakMode = .byClipping
+            cfg.titleLineBreakMode = .byTruncatingTail
             cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
                 var out = inAttrs
                 out.font = font
