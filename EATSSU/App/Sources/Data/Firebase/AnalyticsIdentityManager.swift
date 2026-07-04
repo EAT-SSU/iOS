@@ -30,13 +30,21 @@ enum AnalyticsIdentityManager {
         static let departmentName = "department_name"
     }
 
+    /// Keychain 조회(IPC)를 매번 하지 않도록 프로세스 생명주기 동안 캐싱한다.
+    private static var cachedDeviceUserID: String?
+
     /// 기기 단위 고유 식별자. 없으면 생성하여 Keychain에 저장한다.
     private static var deviceUserID: String {
+        if let cached = cachedDeviceUserID {
+            return cached
+        }
         if let saved = KeychainHelper.read(forKey: Key.deviceUserID) {
+            cachedDeviceUserID = saved
             return saved
         }
         let newID = UUID().uuidString
         KeychainHelper.save(newID, forKey: Key.deviceUserID)
+        cachedDeviceUserID = newID
         return newID
     }
 

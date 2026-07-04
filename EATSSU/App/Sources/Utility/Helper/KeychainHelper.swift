@@ -12,6 +12,9 @@ import Security
 /// UserDefaults와 달리 앱 재설치 후에도 값이 유지된다.
 enum KeychainHelper {
 
+    /// kSecAttrAccount와 함께 복합 기본 키를 구성해 다른 항목과의 충돌을 방지한다.
+    private static let service = Bundle.main.bundleIdentifier ?? "com.eatssu.keychain"
+
     /// 값을 저장한다. 같은 key가 있으면 덮어쓴다.
     @discardableResult
     static func save(_ value: String, forKey key: String) -> Bool {
@@ -19,7 +22,8 @@ enum KeychainHelper {
 
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key
+            kSecAttrAccount as String: key,
+            kSecAttrService as String: service
         ]
         SecItemDelete(query as CFDictionary)
 
@@ -35,6 +39,7 @@ enum KeychainHelper {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
+            kSecAttrService as String: service,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
