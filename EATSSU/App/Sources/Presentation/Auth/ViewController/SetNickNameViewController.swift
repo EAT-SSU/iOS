@@ -363,6 +363,8 @@ extension SetNickNameViewController {
                                                             departmentId: departmentInfo.id,
                                                             departmentName: departmentInfo.name)
                 }
+                // 학과 정보 갱신 후 유저 속성 재식별
+                AnalyticsIdentityManager.identify()
                 completion(true)
                 
             case .failure(let error):

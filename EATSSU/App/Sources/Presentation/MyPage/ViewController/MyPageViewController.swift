@@ -115,8 +115,9 @@ final class MyPageViewController: BaseViewController {
         let fixAction = UIAlertAction(title: TextLiteral.MyPage.logout,
                                       style: .default,
                                       handler: { _ in
+            AnalyticsIdentityManager.reset()
             RealmService.shared.resetDB()
-            
+
             let loginViewController = LoginViewController()
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })

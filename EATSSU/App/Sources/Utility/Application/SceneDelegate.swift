@@ -276,6 +276,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             await MainActor.run {
                 switch result {
                 case .authenticated:
+                    // 이미 로그인된 유저도 앱 실행 시 식별
+                    AnalyticsIdentityManager.identify()
                     transitionToHome()
                 case .notAuthenticated, .sessionExpired:
                     transitionToLogin(withMessage: result.errorMessage)

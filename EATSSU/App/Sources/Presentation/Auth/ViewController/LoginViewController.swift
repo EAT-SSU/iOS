@@ -130,6 +130,8 @@ final class LoginViewController: BaseViewController {
                 )
 
             }
+            // 로그인 성공 + 유저 정보 채운 뒤 식별
+            AnalyticsIdentityManager.identify()
             changeIntoHomeViewController()
         } else {
             // 닉네임 설정이 필요한 경우
