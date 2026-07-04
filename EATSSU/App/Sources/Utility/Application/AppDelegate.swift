@@ -97,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         let config = PostHogConfig(apiKey: apiKey, host: "https://us.i.posthog.com")
         config.captureApplicationLifecycleEvents = true
-        // 수동 .screen() 호출(AnalyticsService.logScreen)과 중복되므로 자동수집은 비활성화
+        // 수동 screen_view 발사(AnalyticsService.logScreen)와 중복되므로 자동수집은 비활성화
         config.captureScreenViews = false
 
         PostHogSDK.shared.setup(config)
