@@ -36,6 +36,8 @@ final class MyPageAnalyticsManager {
         case termsOfUse = "terms_of_use"
         case privacyPolicy = "privacy_policy"
         case creator = "creator"
+        case insta = "insta"
+        case languageSetting = "language_setting"
         case logout = "logout"
         case withdraw = "withdraw"
     }

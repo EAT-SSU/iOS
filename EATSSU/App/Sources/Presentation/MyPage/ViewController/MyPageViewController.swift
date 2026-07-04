@@ -307,12 +307,14 @@ extension MyPageViewController: UITableViewDelegate {
 
         // "EAT-SSU 인스타그램" 외부 링크 열기
         case .instagram:
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .insta)
             if let instagramURL = URL(string: URLConstants.instagram) {
                 UIApplication.shared.open(instagramURL)
             }
 
         // "언어 설정" 스크린으로 이동
         case .languageSetting:
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .languageSetting)
             let languageSettingViewController = LanguageSettingViewController()
             navigationController?.pushViewController(languageSettingViewController, animated: true)
 
