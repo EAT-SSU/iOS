@@ -277,7 +277,7 @@
 /// UserWithdrawView - "정말 탈퇴하시겠습니까?"
 "myPage.confirmWithdrawal" = "Bạn có chắc muốn xóa tài khoản không?";
 /// UserWithdrawView - "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요."
-"myPage.withdrawalNotice" = "Các đánh giá bạn đã viết sẽ không bị xóa và sẽ hiển thị là (Không xác định).\nVui lòng xem Điều khoản dịch vụ và Chính sách quyền riêng tư để biết thêm chi tiết.";
+"myPage.withdrawalNotice" = "Đánh giá của bạn sẽ vẫn hiển thị là (Không xác định).\nXem Điều khoản và Chính sách để biết thêm.";
 /// UserWithdrawView - "올바른 입력입니다."
 "myPage.validInputMessage" = "Thông tin nhập hợp lệ";
 /// UserWithdrawView - "올바르지 않은 닉네임입니다"
@@ -287,7 +287,7 @@
 // MARK: - Review
 
 /// ReportVC - "EAT SSU 팀에게 보내기"
-"review.sendToTeam" = "Gửi đến đội EAT SSU";
+"review.sendToTeam" = "Gửi đến nhóm EAT SSU";
 /// ReportVC - "신고하기"
 "review.report" = "Báo cáo";
 /// ReportVC - "사유를 선택해주세요!"
@@ -297,17 +297,17 @@
 /// ReportVC, ReportView - "메뉴와 관련없는 내용"
 "review.unrelatedMenu" = "Nội dung không liên quan đến thực đơn";
 /// ReportVC, ReportView - "음란성, 욕설 등 부적절한 내용"
-"review.inappropriateContent" = "Nội dung không phù hợp như khiêu dâm, chửi thề, v.v.";
+"review.inappropriateContent" = "Nội dung nhạy cảm hoặc xúc phạm";
 /// ReportVC, ReportView - "부적절한 홍보 또는 광고"
 "review.inappropriateAd" = "Quảng cáo hoặc quảng bá không phù hợp";
 /// ReportVC, ReportView - "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)"
-"review.notReviewFormat" = "Nội dung không phù hợp với mục đích đánh giá (ví dụ: sao chép văn bản)";
+"review.notReviewFormat" = "Không liên quan đến đánh giá";
 /// ReportVC, ReportView - "저작권 도용 의심 (사진 등)"
 "review.copyright" = "Nghi ngờ vi phạm bản quyền (ảnh, v.v.)";
 /// ReportVC, ReportView - "기타 (하단 내용 작성)"
 "review.etc" = "Khác (viết nội dung bên dưới)";
 /// ReportView - "리뷰 신고 사유를 알려주세요"
-"review.reportReason" = "Vui lòng cho biết lý do báo cáo đánh giá";
+"review.reportReason" = "Vui lòng cho biết lý do báo cáo đánh giá này";
 /// ReportView - "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다."
 "review.reportGuide" = "Bạn chỉ có thể báo cáo cùng một đánh giá một lần trong vòng 24 giờ.";
 /// ReportView - "리뷰 신고 사유를 작성해 주세요"
