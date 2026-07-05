@@ -24,7 +24,10 @@ enum AnalyticsService {
             AnalyticsParameterScreenClass: screenClass
         ])
         #if !DEBUG
-        PostHogSDK.shared.screen(name, properties: [
+        // Firebase와 이벤트명/파라미터 키를 맞추기 위해 PostHog 네이티브 .screen($screen) 대신
+        // screen_view 커스텀 이벤트로 발사
+        PostHogSDK.shared.capture("screen_view", properties: [
+            AnalyticsParameterScreenName: name,
             AnalyticsParameterScreenClass: screenClass
         ])
         #endif

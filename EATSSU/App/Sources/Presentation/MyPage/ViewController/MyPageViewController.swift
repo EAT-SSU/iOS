@@ -115,8 +115,9 @@ final class MyPageViewController: BaseViewController {
         let fixAction = UIAlertAction(title: TextLiteral.MyPage.logout,
                                       style: .default,
                                       handler: { _ in
+            AnalyticsIdentityManager.reset()
             RealmService.shared.resetDB()
-            
+
             let loginViewController = LoginViewController()
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
@@ -307,12 +308,14 @@ extension MyPageViewController: UITableViewDelegate {
 
         // "EAT-SSU 인스타그램" 외부 링크 열기
         case .instagram:
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .insta)
             if let instagramURL = URL(string: URLConstants.instagram) {
                 UIApplication.shared.open(instagramURL)
             }
 
         // "언어 설정" 스크린으로 이동
         case .languageSetting:
+            MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .languageSetting)
             let languageSettingViewController = LanguageSettingViewController()
             navigationController?.pushViewController(languageSettingViewController, animated: true)
 

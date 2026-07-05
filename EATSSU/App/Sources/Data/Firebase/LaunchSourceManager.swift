@@ -73,7 +73,10 @@ final class LaunchSourceManager {
 
         // 아직 로깅하지 않았으면 로깅 수행
         if !hasLogged {
-            AnalyticsService.logEvent("app_launch", parameters: ["launch_path": source.rawValue])
+            AnalyticsService.logEvent("app_launch", parameters: [
+                "launch_path": source.rawValue,
+                "app_locale": AppLanguageManager.shared.currentLanguage.rawValue
+            ])
             hasLogged = true
 
             print("App launch logged: \(source.rawValue) (New session: \(isNewSession))")
