@@ -63,6 +63,10 @@ final class MainMapView: BaseUIView {
     private func configureToggleButton(_ button: UIButton, title: String, font: UIFont) {
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = font
+        button.titleLabel?.numberOfLines = 1
+        button.titleLabel?.lineBreakMode = .byTruncatingTail
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.layer.cornerRadius = 14
         button.clipsToBounds = true
         button.backgroundColor = .clear
@@ -73,6 +77,7 @@ final class MainMapView: BaseUIView {
             cfg.baseForegroundColor = .label
             cfg.baseBackgroundColor = .clear
             cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
+            cfg.titleLineBreakMode = .byTruncatingTail
             cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
                 var out = inAttrs
                 out.font = font
@@ -115,7 +120,7 @@ final class MainMapView: BaseUIView {
             $0.top.bottom.equalToSuperview().inset(4)
             $0.leading.equalTo(myOnlyButton.snp.trailing)
             $0.trailing.equalToSuperview().inset(4)
-            $0.width.equalTo(60)
+            $0.width.greaterThanOrEqualTo(60)
         }
     }
 

@@ -1,0 +1,476 @@
+//
+//  Localizable.strings
+//  EATSSU
+//
+//  Created by jeongminji on 5/3/26.
+//
+
+// MARK: - Common
+
+/// "숭실대에서 먹자"
+"common.logoSubTitle" = "崇実大で食べよう";
+/// "확인"
+"common.confirm" = "確認";
+/// "취소"
+"common.cancel" = "キャンセル";
+/// "취소하기"
+"common.cancelDark" = "キャンセル";
+/// "삭제하기"
+"common.delete" = "削除";
+/// "수정하기"
+"common.fix" = "編集";
+/// "로그인이 필요한 서비스입니다"
+"common.needLogin" = "ログインが必要なサービスです";
+/// "로그인 하시겠습니까?"
+"common.askLogin" = "ログインしますか？";
+/// "설정으로 이동"
+"common.moveToSetting" = "設定へ移動";
+/// "회원탈퇴되었어요."
+"common.withdrawComplete" = "アカウントを削除しました。";
+/// "잠시 후 다시 시도해주세요."
+"common.tryAgain" = "しばらくしてからもう一度お試しください。";
+/// "세션이 만료되어 다시 로그인해주세요."
+"common.sessionExpired" = "セッションの有効期限が切れました。もう一度ログインしてください。";
+/// "에러가 발생했습니다."
+"common.errorOccured" = "エラーが発生しました。";
+/// "다시 시도하세요"
+"common.retry" = "もう一度試す";
+/// BaseViewController - "오류"
+"common.error" = "エラー";
+/// BaseViewController - "네트워크를 확인해주세요"
+"common.checkNetwork" = "ネットワーク接続を確認してください。";
+/// NoticeViewController - "NOTICE"
+"common.notice" = "NOTICE";
+/// EATSSUToastView - "보러가기"
+"common.viewDetail" = "見る";
+
+
+// MARK: - TabBar
+
+/// "학식"
+"tabBar.meal" = "学食";
+/// "지도"
+"tabBar.map" = "マップ";
+/// "나만아니면돼~"
+"tabBar.coffee" = "ラッキーゲーム";
+/// "마이"
+"tabBar.my" = "マイページ";
+
+
+// MARK: - Auth
+
+/// "닉네임을 입력해주세요"
+"auth.inputNickName" = "ニックネームを入力してください";
+/// "Apple로 로그인"
+"auth.signInWithApple" = "Appleでログイン";
+/// "카카오 로그인"
+"auth.signInWithKakao" = "カカオログイン";
+/// "둘러보기"
+"auth.lookingWithNoSignIn" = "ゲストとして見る";
+/// "최근에 로그인했어요"
+"auth.lastLoginTooltip" = "最近ログインしました";
+/// LoginVC - "카카오톡으로 생성된 계정입니다."
+"auth.kakaoAccount" = "カカオトークで作成されたアカウントです。";
+/// LoginVC - "Apple로 생성된 계정입니다."
+"auth.appleAccount" = "Appleで作成されたアカウントです。";
+/// SetNickNameView - "닉네임 설정"
+"auth.setNickname" = "ニックネーム編集";
+/// SetNickNameView - "중복 확인"
+"auth.checkDuplicate" = "確認";
+/// SetNickNameView - "소속 설정"
+"auth.setCollege" = "学部・学科";
+/// SetNickNameView - "단과대"
+"auth.college" = "学部";
+/// SetNickNameView - "학과"
+"auth.department" = "学科";
+/// SetNickNameView - "연결된 계정"
+"auth.linkedAccount" = "連携済みアカウント";
+/// SetNickNameView - "없음"
+"auth.empty" = "なし";
+/// SetNickNameView - "저장하기"
+"auth.save" = "保存";
+/// SetNickNameView - "카카오"
+"auth.kakao" = "カカオ";
+/// SetNickNameView - "APPLE"
+"auth.apple" = "APPLE";
+/// SetNickNameVC - "변경된 정보가 없습니다."
+"auth.noChanges" = "変更された情報はありません。";
+/// SetNickNameVC - "유효하지 않은 학과 정보입니다."
+"auth.invalidDepartment" = "無効な学科情報です。";
+/// SetNickNameVC - "정보 업데이트 중 오류가 발생했습니다."
+"auth.updateError" = "情報の更新中にエラーが発生しました。";
+/// SetNickNameVC - "정보가 업데이트되었습니다."
+"auth.updateSuccess" = "情報を更新しました。";
+/// NIcknameTextFieldResultType - "필수 입력 사항입니다"
+"auth.requiredInput" = "必須入力項目です";
+/// NIcknameTextFieldResultType - "중복 확인을 진행해주세요."
+"auth.needCheckDuplicate" = "重複確認を行ってください。";
+/// NIcknameTextFieldResultType - "이미 사용 중인 닉네임이에요."
+"auth.duplicatedNickname" = "すでに使用中のニックネームです。";
+/// NIcknameTextFieldResultType - "사용 가능한 닉네임입니다!"
+"auth.availableNickname" = "使用できるニックネームです！";
+/// NIcknameTextFieldResultType - "2~16글자를 입력해 주세요."
+"auth.nicknameLength" = "2〜16文字を入力してください。";
+/// NIcknameTextFieldResultType - "특수문자로 시작/끝나는 닉네임은 사용할 수 없어요."
+"auth.specialCharNickname" = "特殊文字で始まる、または終わるニックネームは使用できません。";
+/// NIcknameTextFieldResultType - "연속된 특수문자(--, __)는 사용할 수 없어요."
+"auth.continuousSpecialChar" = "連続した特殊文字（--、__）は使用できません。";
+/// NIcknameTextFieldResultType - "숫자만으로 된 닉네임은 사용할 수 없어요."
+"auth.numberOnlyNickname" = "数字だけのニックネームは使用できません。";
+/// NIcknameTextFieldResultType - "허용 문자(한글/영문/숫자)만 사용할 수 있어요."
+"auth.allowedChar" = "韓国語、英字、数字のみ使用できます。";
+/// NIcknameTextFieldResultType - "사용할 수 없는 단어가 포함되어 있어요."
+"auth.bannedWord" = "使用できない単語が含まれています。";
+/// NIcknameTextFieldResultType - "띄어쓰기로 시작/끝나는 닉네임은 사용할 수 없어요."
+"auth.spaceNickname" = "空白で始まる、または終わるニックネームは使用できません。";
+/// NIcknameTextFieldResultType - "연속된 띄어쓰기는 사용할 수 없어요."
+"auth.continuousSpace" = "連続したスペースは使用できません。";
+/// NIcknameTextFieldResultType - "이모지, 특수문자는 사용할 수 없어요."
+"auth.emojiSpecialChar" = "絵文字、特殊文字は使用できません。";
+/// NIcknameTextFieldResultType - "관리자로 혼동될 수 있는 닉네임은 사용할 수 없어요."
+"auth.adminNickname" = "管理者と混同される可能性のあるニックネームは使用できません。";
+/// NIcknameTextFieldResultType - "서비스명 단독 닉네임은 사용할 수 없어요."
+"auth.serviceNameNickname" = "サービス名だけのニックネームは使用できません。";
+/// NIcknameTextFieldResultType - "욕설, 비속어 등의 표현이 포함된 닉네임은 사용할 수 없어요."
+"auth.slangNickname" = "暴言や不適切な表現を含むニックネームは使用できません。";
+
+
+// MARK: - Home
+
+/// Home - "오늘의 메뉴"
+"home.todayMenu" = "今日のメニュー";
+/// Home - "가격"
+"home.price" = "価格";
+/// Home - "평점"
+"home.rating" = "★";
+/// Home - "  -"
+"home.emptyRating" = "  -";
+/// Home - "제공되는 메뉴가 없습니다"
+"home.noMenuProvidedMessage" = "提供されるメニューがありません";
+/// CustomTimeTabController - "아침"
+"home.morning" = "朝食";
+/// CustomTimeTabController - "점심"
+"home.lunch" = "昼食";
+/// CustomTimeTabController - "저녁"
+"home.dinner" = "夕食";
+/// RestaurantInfoView - "학생 식당"
+"home.studentRestaurant" = "学生食堂";
+/// RestaurantInfoView - "식당 위치"
+"home.restaurantLocation" = "場所";
+/// RestaurantInfoView - "식당 사진"
+"home.restaurantPicture" = "食堂の写真";
+/// RestaurantInfoView - "숭실대학교"
+"home.soongsilUniversity" = "崇実大学";
+/// RestaurantInfoView - "영업 시간"
+"home.businessHour" = "営業時間";
+/// RestaurantInfoView - "비고"
+"home.note" = "備考";
+/// RestaurantInfoView - "아시안푸드, 돈까스, 샐러드, 국밥 등\n카페"
+"home.dodamEtc" = "アジアンフード、トンカツ、サラダ、クッパなど\nカフェ";
+/// RestaurantMenuGroupCell - "영업 시간이 아니에요."
+"home.notBusinessHour" = "営業時間外です。";
+/// RestaurantTableViewHeader - "기숙사 식당"
+"home.dormitoryRestaurant" = "寮食堂";
+
+
+// MARK: - Map
+
+/// MainMapVC - "제휴 지도"
+"map.map" = "提携マップ";
+/// MainMapView - "전체"
+"map.all" = "すべて";
+/// MainMapView - "내 제휴"
+"map.myPartner" = "自分の提携";
+/// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
+"map.inputDepartment" = "学科を入力して\n自分だけの提携を確認してみましょう！";
+/// NoDepartmentSheetVC - "학과 입력하기"
+"map.inputDepartmentButton" = "学科を入力";
+/// PartnershipDetailSheetVC - "음식점"
+"map.restaurant" = "飲食店";
+/// PartnershipDetailSheetVC - "카페"
+"map.cafe" = "カフェ";
+/// PartnershipDetailSheetVC - "주점"
+"map.pub" = "居酒屋";
+/// PartnershipDetailSheetVC - "학과 정보 없음"
+"map.noDepartmentInfo" = "学科情報なし";
+/// MainMapVC+Location - "위치 권한 필요"
+"map.needLocationAuth" = "位置情報権限が必要です";
+/// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."
+"map.locationAuthDescription" = "現在地をすぐに確認し、近くの提携レストランを探せるように、位置情報へのアクセスを許可してください。";
+
+
+// MARK: - MyPage
+
+/// "마이페이지"
+"myPage.myPage" = "マイページ";
+/// UserWithdrawVC - "회원탈퇴"
+"myPage.withdraw" = "アカウント削除";
+/// MyPageVC - "EAT-SSU 수신 동의"
+"myPage.agreeNoti" = "EAT-SSU通知を許可（%@）";
+/// MyPageVC - "EAT-SSU 수신 거절"
+"myPage.disagreeNoti" = "EAT-SSU通知を拒否（%@）";
+
+// MARK: - MyPageSection: 알림 및 활동
+/// MyPageSectionVC - "알림 및 활동"
+"myPage.activitySection" = "通知と活動";
+/// "내 정보"
+"myPage.myInfo" = "自分の情報";
+/// "내 리뷰"
+"myPage.myReview" = "自分のレビュー";
+/// NotificationSettingTableViewCell - "푸시 알림 설정"
+"myPage.pushNotificationSetting" = "プッシュ通知設定";
+/// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
+"myPage.pushNotificationDescription" = "毎日午前11時に通知をお送りします。";
+/// MyPageVC - "알림 설정 중 오류가 발생했습니다."
+"myPage.notiSettingError" = "通知設定中にエラーが発生しました。";
+
+// MARK: - MyPageSection: 서비스 정보
+// MyPageSectionVC - "서비스 정보"
+"myPage.serviceInfoSection" = "サービス情報";
+/// MyPageVC - "문의하기"
+"myPage.inquiry" = "お問い合わせ";
+/// CreatorVC - "만든 사람들"
+"myPage.creators" = "開発者";
+/// MyPageVC - "EAT-SSU 인스타그램"
+"myPage.instagram" = "EAT-SSU Instagram";
+
+// MARK: - MyPageSection: 기타
+// MyPageSectionVC - "기타"
+"myPage.etcSection" = "その他";
+/// MyPageVC - "언어 설정"
+"myPage.languageSetting" = "言語設定";
+/// MyPageVC - "지원 언어: 한국어"
+"myPage.language.korean" = "한국어";
+/// MyPageVC - "지원 언어: 영어"
+"myPage.language.english" = "English";
+/// MyPageVC - "약관 및 정책"
+"myPage.termsAndPolicy" = "規約およびポリシー";
+/// MyPageVC - "서비스 이용약관"
+"myPage.termsOfUse" = "利用規約";
+/// MyPageVC - "개인정보 처리방침"
+"myPage.privacyTermsOfUse" = "プライバシーポリシー";
+/// MyPageVC - "로그아웃"
+"myPage.logout" = "ログアウト";
+/// MyPageVC - "로그아웃 하시겠습니까?"
+"myPage.askLogout" = "ログアウトしますか？";
+
+/// MyReviewVC - "리뷰 수정 혹은 삭제"
+"myPage.fixOrDeleteReview" = "レビューを編集または削除";
+/// MyReviewVC - "작성하신 리뷰를 수정 또는 삭제하시겠습니까?"
+"myPage.askFixOrDeleteReview" = "作成したレビューを編集または削除しますか？";
+/// MyReviewVC - "리뷰 삭제하기"
+"myPage.deleteMyReview" = "レビューを削除";
+/// MyReviewVC - "해당 리뷰를 삭제할까요?"
+"myPage.askDeleteMyReview" = "このレビューを削除しますか？";
+/// MyReviewVC - "리뷰가 성공적으로 삭제되었습니다."
+"myPage.deleteMyReviewSuccess" = "レビューを削除しました。";
+/// MyPageView - "다시 시도해주세요"
+"myPage.retry" = "もう一度お試しください";
+/// MyPageView - "앱 버전"
+"myPage.appVersion" = "アプリバージョン";
+/// MyPageView - "탈퇴하기"
+"myPage.withdrawButton" = "アカウント削除";
+/// MyPageView - "알 수 없음"
+"myPage.unknownUser" = "不明";
+/// ProvisionVC - "이용약관"
+"myPage.defaultTerms" = "利用規約";
+/// UserWithdrawView - "정말 탈퇴하시겠습니까?"
+"myPage.confirmWithdrawal" = "本当にアカウントを削除しますか？";
+/// UserWithdrawView - "작성한 리뷰는 삭제되지 않으며, (알수없음)으로 표시됩니다.\n자세한 내용은 서비스이용약관 및 개인정보 처리방침을 확인해 주세요."
+"myPage.withdrawalNotice" = "作成したレビューは削除されず、（不明）と表示されます。\n詳しくは利用規約およびプライバシーポリシーをご確認ください。";
+/// UserWithdrawView - "올바른 입력입니다."
+"myPage.validInputMessage" = "正しい入力です";
+/// UserWithdrawView - "올바르지 않은 닉네임입니다"
+"myPage.invalidNicknameMessage" = "無効なニックネームです";
+
+
+// MARK: - Review
+
+/// ReportVC - "EAT SSU 팀에게 보내기"
+"review.sendToTeam" = "EAT SSUチームに送信";
+/// ReportVC - "신고하기"
+"review.report" = "通報";
+/// ReportVC - "사유를 선택해주세요!"
+"review.selectReason" = "理由を選択してください！";
+/// ReportVC - "신고가 성공적으로 접수되었어요!"
+"review.reportSuccess" = "通報が正常に送信されました！";
+/// ReportVC, ReportView - "메뉴와 관련없는 내용"
+"review.unrelatedMenu" = "メニューと関係のない内容";
+/// ReportVC, ReportView - "음란성, 욕설 등 부적절한 내용"
+"review.inappropriateContent" = "わいせつ、暴言など不適切な内容";
+/// ReportVC, ReportView - "부적절한 홍보 또는 광고"
+"review.inappropriateAd" = "不適切な宣伝または広告";
+/// ReportVC, ReportView - "리뷰 작성 취지에 맞지 않는 내용 (복사글 등)"
+"review.notReviewFormat" = "レビューの趣旨に合わない内容（コピー文など）";
+/// ReportVC, ReportView - "저작권 도용 의심 (사진 등)"
+"review.copyright" = "著作権侵害の疑い（写真など）";
+/// ReportVC, ReportView - "기타 (하단 내용 작성)"
+"review.etc" = "その他（下部に内容を入力）";
+/// ReportView - "리뷰 신고 사유를 알려주세요"
+"review.reportReason" = "レビューを通報する理由を教えてください";
+/// ReportView - "하나의 리뷰에 대해 24시간 내 한 번만 신고 가능합니다."
+"review.reportGuide" = "同じレビューは24時間以内に1回のみ通報できます。";
+/// ReportView - "리뷰 신고 사유를 작성해 주세요"
+"review.inputReportReason" = "レビューを通報する理由を入力してください";
+/// ReviewVC - "리뷰 작성하기"
+"review.writeReview" = "レビューを書く";
+/// ReviewVC - "리뷰가 등록되었어요."
+"review.registerReviewSuccess" = "レビューを投稿しました。";
+/// ReviewVC - "리뷰"
+"review.review" = "レビュー";
+/// ReviewVC - "리뷰 삭제"
+"review.deleteReview" = "レビュー削除";
+/// ReviewVC - "해당 리뷰를 삭제할까요?"
+"review.askDeleteReview" = "このレビューを削除しますか？";
+/// ReviewVC - "리뷰 신고하기"
+"review.reportReview" = "レビューを通報";
+/// ReviewVC - "해당 리뷰를 신고하시겠습니까?"
+"review.askReportReview" = "このレビューを通報しますか？";
+/// ReviewVC - "리뷰가 성공적으로 삭제되었습니다."
+"review.deleteReviewSuccess" = "レビューを削除しました。";
+/// ReviewVC - "리뷰 삭제에 실패했습니다."
+"review.deleteReviewFail" = "レビューの削除に失敗しました。";
+/// SetRateVC - "리뷰 수정하기"
+"review.fixReview" = "レビューを編集";
+/// SetRateVC - "리뷰 남기기"
+"review.leaveReview" = "レビューを投稿";
+/// 메뉴 이름의 받침 유무에 따라 '을/를'을 동적으로 붙여 추천 문장을 생성합니다.
+"review.recommendMenu.default" = "%@をおすすめしますか？";
+/// 메뉴 이름의 받침 유무에 따라 '을/를'을 동적으로 붙여 추천 문장을 생성합니다.
+"review.recommendMenu.withJongseong" = "%@をおすすめしますか？";
+/// 메뉴 이름의 받침 유무에 따라 '을/를'을 동적으로 붙여 추천 문장을 생성합니다.
+"review.recommendMenu.withoutJongseong" = "%@をおすすめしますか？";
+/// SetRateVC - "메뉴를 추천하시겠어요?"
+"review.recommendMenuTitle" = "メニューをおすすめしますか？";
+/// SetRateVC - "리뷰 수정 완료하기"
+"review.fixReviewComplete" = "レビュー編集を完了";
+/// SetRateVC - "완료하기"
+"review.complete" = "完了";
+/// SetRateVC - "별점을 입력해주세요!"
+"review.inputRating" = "評価を入力してください！";
+/// SetRateVC - "메뉴 목록 조회에 실패했습니다."
+"review.loadMenuListFail" = "メニュー一覧の取得に失敗しました。";
+/// SetRateVC - "수정할 리뷰 정보가 없습니다."
+"review.noReviewInfoForFix" = "編集するレビュー情報がありません。";
+/// SetRateVC - "리뷰가 성공적으로 수정되었습니다."
+"review.fixReviewSuccess" = "レビューを修正しました。";
+/// SetRateVC - "리뷰 수정이 실패했습니다."
+"review.fixReviewFail" = "レビューの更新に失敗しました。";
+/// SetRateVC - "식단 정보가 없습니다."
+"review.noMealInfo" = "食事情報がありません。";
+/// SetRateVC - "리뷰 업로드에 실패했습니다."
+"review.uploadReviewFail" = "レビューのアップロードに失敗しました。";
+/// SetRateVC - "메뉴 정보가 없습니다."
+"review.noMenuInfo" = "メニュー情報がありません。";
+/// SetRateVC - "메뉴에 대한 상세한 리뷰를 작성해주세요"
+"review.inputDetailReview" = "メニューについて詳しいレビューを書いてください";
+/// SetRateVC - "나가시겠어요?"
+"review.askLeave" = "退出しますか？";
+/// SetRateVC - "지금 나가면 작성한 내용이 저장되지 않습니다."
+"review.leaveWarning" = "今退出すると、作成した内容は保存されません。";
+/// SetRateVC - "나가기"
+"review.leave" = "退出";
+/// SetRateVC - "계속 작성"
+"review.continueWriting" = "続けて作成";
+/// ReviewEmptyViewCell - "아직 작성된 리뷰가 없어요!"
+"review.noReview" = "まだ作成されたレビューがありません！";
+/// ReviewEmptyViewCell - "메뉴에 가장 먼저 리뷰를 남겨주세요!"
+"review.beFirstReviewer" = "このメニューに最初のレビューを残しましょう！";
+/// ReviewEmptyViewCell - "로그인이 필요합니다"
+"review.needLogin" = "ログインが必要です";
+/// ReviewEmptyViewCell - "로그인 후 리뷰를 확인하세요"
+"review.checkReviewAfterLogin" = "ログイン後にレビューを確認してください";
+/// ReviewEmptyViewCell - "아직 작성한 리뷰가 없어요"
+"review.noWrittenReview" = "まだレビューがありません";
+/// ReviewEmptyViewCell - "첫 리뷰를 남겨 주세요!"
+"review.writeFirstReview" = "最初のレビューを投稿しましょう！";
+/// ReviewDividerCell - "리뷰"
+"review.reviewCount" = "レビュー %d件";
+/// ReviewRateViewCell - "오늘의 메뉴"
+"review.todayMenu" = "今日のメニュー";
+/// ReviewRateViewCell - "5점"
+"review.fiveStars" = "5点";
+/// ReviewRateViewCell - "4점"
+"review.fourStars" = "4点";
+/// ReviewRateViewCell - "3점"
+"review.threeStars" = "3点";
+/// ReviewRateViewCell - "2점"
+"review.twoStars" = "2点";
+/// ReviewRateViewCell - "1점"
+"review.oneStar" = "1点";
+/// SetRateView - "오늘의 식사는 어땠나요?"
+"review.rateTodayMeal" = "今日の食事はいかがでしたか？";
+/// SetRateView - "추천하고 싶은 메뉴가 있나요?"
+"review.recommendMenu" = "おすすめしたいメニューはありますか？";
+/// SetRateView - "사진 추가 (0/1)"
+"review.addPhoto" = "写真を追加（%d/1）";
+/// character count
+"review.characterCount" = "%d / %d";
+
+
+// MARK: - Coffee
+
+/// "나가시겠어요?"
+"coffee.askLeave" = "退出しますか？";
+/// "지금 나가면 진행 상황이\n저장되지 않습니다."
+"coffee.leaveWarning" = "今退出すると進行状況が\n保存されません。";
+/// "나가기"
+"coffee.leave" = "退出";
+/// "계속하기"
+"coffee.continueEvent" = "続ける";
+
+
+// MARK: - Splash
+
+/// NoticeSplashVC - "긴급 서버 점검 안내"
+"splash.serverInspection" = "緊急サーバーメンテナンスのお知らせ";
+/// SceneDelegate - "업데이트 알림"
+"splash.updateAlertTitle" = "アップデートのお知らせ";
+/// SceneDelegate - "더 나은 서비스를 위해 EAT-SSU를 업데이트해주세요!"
+"splash.updateAlertMessage" = "より良いサービスのためにEAT-SSUをアップデートしてください！";
+/// SceneDelegate - "업데이트"
+"splash.update" = "アップデート";
+
+
+// MARK: - PromotionPopup
+
+/// 03. 16(월)~03. 27(금)
+"promotionPopup.period" = "03. 16(月)〜03. 27(金)";
+/// EAT-SSU 인스타그램 바로가기
+"promotionPopup.instagramButtonTitle" = "EAT-SSU Instagramへ移動";
+/// 자세한 내용은 EAT-SSU 인스타그램을 확인해 주세요
+"promotionPopup.guideMessage" = "詳しくはEAT-SSU Instagramをご確認ください";
+/// 다시 보지 않기
+"promotionPopup.neverShowAgain" = "今後表示しない";
+/// 닫기
+"promotionPopup.close" = "閉じる";
+
+
+// MARK: - Notification
+
+/// 🤔 오늘 밥 뭐 먹지…
+"notification.dailyWeekdayNotificationTitle" = "🤔 今日何を食べよう…";
+/// 오늘의 학식을 확인해보세요!
+"notification.dailyWeekdayNotificationBody" = "今日の学食メニューをチェックしましょう！";
+/// 알림 권한 필요
+"notification_error_permission_denied_message" = "通知権限が必要です";
+/// 알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.
+"notification_error_permission_denied_description" = "通知を受け取るには通知権限を有効にする必要があります。\n設定で通知権限を許可してください。";
+/// 알 수 없는 오류
+"notification_error_unknown_message" = "不明なエラー";
+/// 다시 시도해주세요.
+"notification_error_unknown_description" = "もう一度お試しください。";
+
+
+// MARK: - Restaurant
+
+/// "기숙사 식당"
+"restaurant.dormitoryRestaurant" = "寮食堂";
+/// "도담 식당"
+"restaurant.dodamRestaurant" = "ドダム食堂";
+/// "학생 식당"
+"restaurant.studentRestaurant" = "学生食堂";
+/// "스낵 코너"
+"restaurant.snackCorner" = "スナックコーナー";
+/// "FACULTY (교직원 전용)"
+"restaurant.facultyRestaurant" = "FACULTY（教職員専用）";

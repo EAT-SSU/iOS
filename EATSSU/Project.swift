@@ -99,7 +99,7 @@ let widgetDeploymentTarget: DeploymentTargets = .iOS("17.0")
 let project = Project(
     name: "EATSSU",
     options: .options(
-        defaultKnownRegions: ["ko", "en"],
+        defaultKnownRegions: ["ko", "en", "ja", "vi"],
         developmentRegion: "ko"
     ),
     settings: projectSettings,
