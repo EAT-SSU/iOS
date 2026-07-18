@@ -15,7 +15,7 @@ public final class ESSpinner: UIView {
     // MARK: - Properties
 
     /// 호 색상 (트랙은 이 색의 연한 버전으로 자동 적용)
-    public var color: UIColor = .aiAccent {
+    public var color: UIColor = .gray400 {
         didSet {
             arcLayer.strokeColor = color.cgColor
             updateTrackColor()
@@ -91,6 +91,14 @@ public final class ESSpinner: UIView {
         }
     }
 
+    /// 앱이 백그라운드에 다녀오면 CAAnimation이 제거되므로 포그라운드 복귀 시 복구
+    @objc
+    private func handleWillEnterForeground() {
+        if isAnimating {
+            addRotationAnimation()
+        }
+    }
+
     // MARK: - Public Methods
 
     public func startAnimating() {
@@ -127,6 +135,13 @@ public final class ESSpinner: UIView {
 
         updateTrackColor()
         isHidden = hidesWhenStopped
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
     }
 
     private func updateTrackColor() {

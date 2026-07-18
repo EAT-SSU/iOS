@@ -38,8 +38,17 @@ private extension ReviewListItem {
 private struct ReviewTableCellPreview: UIViewRepresentable {
     let state: ReviewTranslationState
 
-    func makeUIView(context _: Context) -> UIView {
+    /// contentView만 반환하면 셀이 해제되어 태그 컬렉션의 weak dataSource가 끊기므로 셀을 보유
+    final class Coordinator {
         let cell = ReviewTableCell(style: .default, reuseIdentifier: nil)
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    func makeUIView(context: Context) -> UIView {
+        let cell = context.coordinator.cell
         cell.dataBind(response: .mock)
         cell.configureTranslation(state: state, isAvailable: true)
         return cell.contentView
