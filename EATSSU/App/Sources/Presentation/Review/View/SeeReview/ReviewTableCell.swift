@@ -380,10 +380,13 @@ final class ReviewTableCell: UITableViewCell {
         guard isAvailable, !originalContent.isEmpty else {
             translationFooterStackView.isHidden = true
             translationSpinner.stopAnimating()
+            contentStackView.setCustomSpacing(8, after: reviewTextView)
             return
         }
 
         translationFooterStackView.isHidden = false
+        // 본문-번역 푸터 간격은 4 (푸터가 없을 땐 다음 요소와 8 유지)
+        contentStackView.setCustomSpacing(4, after: reviewTextView)
 
         switch state {
         case .idle:
