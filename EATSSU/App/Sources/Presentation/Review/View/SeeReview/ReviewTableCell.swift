@@ -266,7 +266,7 @@ final class ReviewTableCell: UITableViewCell {
         }
 
         profileStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15).priority(.high)
+            make.top.equalToSuperview().offset(10).priority(.high)
             make.leading.equalToSuperview().offset(16)
         }
         
@@ -282,7 +282,7 @@ final class ReviewTableCell: UITableViewCell {
         contentStackView.snp.makeConstraints { make in
             make.top.equalTo(profileStackView.snp.bottom).priority(.high)
             make.leading.equalToSuperview().offset(16)
-            make.bottom.equalToSuperview().offset(-16).priority(.high)
+            make.bottom.equalToSuperview().offset(-10).priority(.high)
             make.trailing.equalToSuperview().offset(-16)
         }
 
