@@ -59,8 +59,14 @@ final class ReviewViewController: BaseViewController {
     /// 리뷰 작성 가능한 메뉴 목록 (VARIABLE 타입)
     private var validMenusForReview: [ReviewValidMenu] = []
 
+    /// 리뷰 목록 섹션 인덱스 (0: 통계, 1: 구분선, 2: 리뷰 목록)
+    private static let reviewListSection = 2
+
     /// 리뷰별 번역 상태 (셀 재사용에 대비해 reviewId 기준으로 보관)
     private var translationStates: [Int: ReviewTranslationState] = [:]
+
+    /// 번역 요청 시점의 원문 (리스트 갱신 시 내용이 바뀐 리뷰의 번역을 무효화하는 데 사용)
+    private var translationSourceContents: [Int: String] = [:]
 
     /// 번역 기능 노출 여부 (현재 서버가 EN 번역만 지원 + 번역 API는 인증 필수)
     private var isTranslationAvailable: Bool {
@@ -133,7 +139,8 @@ final class ReviewViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
+        TranslationTooltipView.dismissAll(in: view)
     }
     
     // MARK: - UI Configuration
@@ -685,9 +692,11 @@ extension ReviewViewController {
             switch result {
             case .success(let data):
                 self.reviewList = data.dataList
+                self.pruneTranslationStates()
+                TranslationTooltipView.dismissAll(in: self.view)
                 self.reviewTableView.reloadData()
                 print("✅ Fixed Menu Reviews loaded: \(self.reviewList.count) items")
-                
+
             case .failure(let error):
                 print("❌ Fixed Menu Review List Error: \(error.localizedDescription)")
             }
@@ -706,9 +715,11 @@ extension ReviewViewController {
             switch result {
             case .success(let data):
                 self.reviewList = data.dataList
+                self.pruneTranslationStates()
+                TranslationTooltipView.dismissAll(in: self.view)
                 self.reviewTableView.reloadData()
                 print("✅ Meal Reviews loaded: \(self.reviewList.count) items")
-                
+
             case .failure(let error):
                 print("❌ Meal Review List Error: \(error.localizedDescription)")
             }
@@ -719,10 +730,11 @@ extension ReviewViewController {
     /// 번역하기 / 원문 보기 / 번역 보기 탭 처리
     private func handleTranslationAction(reviewId: Int) {
         switch translationStates[reviewId] ?? .idle {
-        case .idle, .failed:
+        case .idle:
             requestTranslation(reviewId: reviewId)
 
-        case .loading:
+        case .loading, .failed:
+            // 디자인상 실패 상태에는 재시도 UI가 없음 (안내 문구 + ⓘ만 노출)
             break
 
         case let .translated(text, showingOriginal):
@@ -735,6 +747,7 @@ extension ReviewViewController {
     /// 리뷰 번역 요청
     private func requestTranslation(reviewId: Int) {
         translationStates[reviewId] = .loading
+        translationSourceContents[reviewId] = reviewList.first(where: { $0.reviewId == reviewId })?.content ?? ""
         reloadReviewRow(reviewId: reviewId)
 
         let language = AppLanguageManager.shared.currentLanguage.rawValue.uppercased()
@@ -758,10 +771,36 @@ extension ReviewViewController {
         }
     }
 
-    /// reviewId에 해당하는 리뷰 셀만 갱신
+    /// reviewId에 해당하는 리뷰 셀의 번역 UI만 갱신
+    ///
+    /// reloadRows 대신 보이는 셀에 직접 상태를 주입해 이미지/태그 재바인딩을 피하고,
+    /// 화면 밖 셀은 다음 cellForRowAt에서 상태가 적용되므로 건드리지 않는다.
     private func reloadReviewRow(reviewId: Int) {
+        TranslationTooltipView.dismissAll(in: view)
+
         guard let row = reviewList.firstIndex(where: { $0.reviewId == reviewId }) else { return }
-        reviewTableView.reloadRows(at: [IndexPath(row: row, section: 2)], with: .none)
+        let indexPath = IndexPath(row: row, section: Self.reviewListSection)
+
+        guard let cell = reviewTableView.cellForRow(at: indexPath) as? ReviewTableCell else { return }
+        cell.configureTranslation(
+            state: translationStates[reviewId] ?? .idle,
+            isAvailable: isTranslationAvailable
+        )
+        reviewTableView.performBatchUpdates(nil)
+    }
+
+    /// 리스트 갱신 후 삭제되었거나 내용이 바뀐 리뷰의 번역 상태를 제거
+    private func pruneTranslationStates() {
+        let currentContents = Dictionary(
+            reviewList.map { ($0.reviewId, $0.content ?? "") },
+            uniquingKeysWith: { first, _ in first }
+        )
+        translationStates = translationStates.filter { reviewId, _ in
+            currentContents[reviewId] == translationSourceContents[reviewId]
+        }
+        translationSourceContents = translationSourceContents.filter { reviewId, content in
+            currentContents[reviewId] == content
+        }
     }
 
     /// 리뷰 삭제
