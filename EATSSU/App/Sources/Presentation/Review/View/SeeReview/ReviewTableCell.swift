@@ -155,9 +155,8 @@ final class ReviewTableCell: UITableViewCell {
         return button
     }()
 
-    private let translationSpinner: UIActivityIndicatorView = {
-        let spinner = UIActivityIndicatorView(style: .medium)
-        spinner.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+    private let translationSpinner: ESSpinner = {
+        let spinner = ESSpinner()
         spinner.color = .aiAccent
         spinner.hidesWhenStopped = true
         return spinner
@@ -300,6 +299,10 @@ final class ReviewTableCell: UITableViewCell {
 
         translationInfoButton.snp.makeConstraints { make in
             make.width.height.equalTo(16.adjusted)
+        }
+
+        translationSpinner.snp.makeConstraints { make in
+            make.width.height.equalTo(14.adjusted)
         }
     }
     
