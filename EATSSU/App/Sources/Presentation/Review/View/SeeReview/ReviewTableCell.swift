@@ -38,7 +38,7 @@ final class ReviewTableCell: UITableViewCell {
     private var userNameLabel: UILabel = {
         let label = UILabel()
         label.text = "hellosoongsil1234"
-        label.font = .caption1
+        label.font = .caption2
         label.textColor = .black
         return label
     }()
@@ -64,7 +64,7 @@ final class ReviewTableCell: UITableViewCell {
     lazy var infoStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameMenuStackView, rateStackView])
         stackView.axis = .vertical
-        stackView.spacing = 4.adjusted
+        stackView.spacing = 8.adjusted
         stackView.alignment = .leading
         return stackView
     }()
@@ -82,7 +82,7 @@ final class ReviewTableCell: UITableViewCell {
     private var dateLabel: UILabel = {
         let label = UILabel()
         label.text = "2023.03.03"
-        label.font = .caption3
+        label.font = .caption2
         label.textColor = .gray600
         return label
     }()
