@@ -382,6 +382,11 @@ extension ReviewViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {
         print("cell did touched")
     }
+
+    /// 스크롤 시작 시 떠 있는 번역 툴팁을 닫는다
+    func scrollViewWillBeginDragging(_: UIScrollView) {
+        TranslationTooltipView.dismissAll(in: view)
+    }
     
     /// 섹션 헤더 높이
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
