@@ -193,6 +193,10 @@
 "map.pub" = "居酒屋";
 /// PartnershipDetailSheetVC - "학과 정보 없음"
 "map.noDepartmentInfo" = "学科情報なし";
+
+"map.kakaoMap" = "カカオマップ";
+
+"map.naverMap" = "NAVERマップ";
 /// MainMapVC+Location - "위치 권한 필요"
 "map.needLocationAuth" = "位置情報権限が必要です";
 /// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."

@@ -193,6 +193,10 @@
 "map.pub" = "Quán nhậu";
 /// PartnershipDetailSheetVC - "학과 정보 없음"
 "map.noDepartmentInfo" = "Không có thông tin ngành";
+
+"map.kakaoMap" = "KakaoMap";
+
+"map.naverMap" = "Naver Map";
 /// MainMapVC+Location - "위치 권한 필요"
 "map.needLocationAuth" = "Cần quyền truy cập vị trí";
 /// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."

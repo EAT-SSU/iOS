@@ -155,11 +155,7 @@ extension MainMapViewController {
             partnerId: partnership.partnershipInfos.first?.id ?? -1
         )
 
-        let detailVC = PartnershipDetailSheetViewController(
-            storeName: partnership.storeName,
-            restaurantType: partnership.restaurantType,
-            partnershipInfos: partnership.partnershipInfos
-        )
+        let detailVC = PartnershipDetailSheetViewController(partnership: partnership)
         
         // 뷰가 로드된 후 높이 계산
         detailVC.loadViewIfNeeded()

@@ -20,8 +20,10 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "LSApplicationQueriesSchemes": [
         "kakaokompassauth",
         "kakaolink",
+        "kakaomap",
         "kakaoplus",
         "kakaotalk",
+        "nmap",
     ],
     "NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요.",
     "UIApplicationSceneManifest": [

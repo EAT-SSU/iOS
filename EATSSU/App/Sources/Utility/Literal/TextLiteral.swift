@@ -493,6 +493,16 @@ enum TextLiteral {
             Localization.localized("map.noDepartmentInfo", fallback: "학과 정보 없음")
         }
 
+        /// PartnershipDetailSheetVC - "카카오맵"
+        static var kakaoMap: String {
+            Localization.localized("map.kakaoMap", fallback: "카카오맵")
+        }
+
+        /// PartnershipDetailSheetVC - "네이버지도"
+        static var naverMap: String {
+            Localization.localized("map.naverMap", fallback: "네이버지도")
+        }
+
         /// MainMapVC+Location - "위치 권한 필요"
         static var needLocationAuth: String {
             Localization.localized("map.needLocationAuth", fallback: "위치 권한 필요")

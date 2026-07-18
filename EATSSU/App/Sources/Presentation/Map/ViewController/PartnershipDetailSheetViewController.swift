@@ -15,9 +15,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Properties
 
-    private let storeName: String
-    private let restaurantType: String
-    private let partnershipInfos: [PartnershipInfoDTO]
+    private let partnership: PartnershipDTO
 
     // MARK: - UI Components
 
@@ -26,13 +24,15 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     private let typeIconImageView = UIImageView()
     private let typeTextLabel = UILabel()
     private let infoListStackView = UIStackView()
+    private let mapButtonBarView = UIView()
+    private let kakaoMapButton = UIButton()
+    private let naverMapButton = UIButton()
+    private let mapButtonDivider = UIView()
 
     // MARK: - Init
 
-    init(storeName: String, restaurantType: String, partnershipInfos: [PartnershipInfoDTO]) {
-        self.storeName = storeName
-        self.restaurantType = restaurantType
-        self.partnershipInfos = partnershipInfos
+    init(partnership: PartnershipDTO) {
+        self.partnership = partnership
         super.init(nibName: nil, bundle: nil)
 
         modalPresentationStyle = .pageSheet
@@ -47,13 +47,13 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     override func configureUI() {
         view.backgroundColor = .white
 
-        storeNameLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
+        storeNameLabel.font = .header2
         storeNameLabel.textColor = .label
 
         typeIconImageView.contentMode = .scaleAspectFit
         typeIconImageView.snp.makeConstraints { $0.width.height.equalTo(18) }
 
-        typeTextLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 10)
+        typeTextLabel.font = .body2
         typeTextLabel.textColor = .gray
 
         typeStackView.axis = .horizontal
@@ -69,7 +69,25 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         infoListStackView.isLayoutMarginsRelativeArrangement = true
         infoListStackView.layoutMargins = .init(top: 10, left: 0, bottom: 10, right: 0)
 
-        [storeNameLabel, typeStackView, infoListStackView].forEach {
+        kakaoMapButton.configuration = makeMapButtonConfiguration(
+            image: EATSSUDesignAsset.Images.kakaoMapLogo.image,
+            title: TextLiteral.Map.kakaoMap
+        )
+        kakaoMapButton.addTarget(self, action: #selector(kakaoMapButtonTapped), for: .touchUpInside)
+
+        naverMapButton.configuration = makeMapButtonConfiguration(
+            image: EATSSUDesignAsset.Images.naverMapLogo.image,
+            title: TextLiteral.Map.naverMap
+        )
+        naverMapButton.addTarget(self, action: #selector(naverMapButtonTapped), for: .touchUpInside)
+
+        mapButtonDivider.backgroundColor = EATSSUDesignColors.Color.gray200
+
+        [kakaoMapButton, naverMapButton, mapButtonDivider].forEach {
+            mapButtonBarView.addSubview($0)
+        }
+
+        [storeNameLabel, typeStackView, infoListStackView, mapButtonBarView].forEach {
             view.addSubview($0)
         }
     }
@@ -89,6 +107,28 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             $0.top.equalTo(typeStackView.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+
+        mapButtonBarView.snp.makeConstraints {
+            $0.top.equalTo(infoListStackView.snp.bottom).offset(6)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(56)
+        }
+
+        kakaoMapButton.snp.makeConstraints {
+            $0.leading.top.bottom.equalToSuperview()
+            $0.trailing.equalTo(mapButtonBarView.snp.centerX)
+        }
+
+        naverMapButton.snp.makeConstraints {
+            $0.trailing.top.bottom.equalToSuperview()
+            $0.leading.equalTo(mapButtonBarView.snp.centerX)
+        }
+
+        mapButtonDivider.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.equalTo(1)
+            $0.height.equalTo(16)
+        }
     }
 
     // MARK: - Data Config
@@ -106,9 +146,9 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     /// 매장 정보와 제휴 내용을 화면에 반영
     private func configureData() {
-        storeNameLabel.text = storeName
+        storeNameLabel.text = partnership.storeName
 
-        switch restaurantType {
+        switch partnership.restaurantType {
         case "RESTAURANT":
             typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
             typeTextLabel.text = TextLiteral.Map.restaurant
@@ -120,11 +160,11 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             typeTextLabel.text = TextLiteral.Map.pub
         default:
             typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
-            typeTextLabel.text = restaurantType
+            typeTextLabel.text = partnership.restaurantType
         }
 
-        for (index, info) in partnershipInfos.enumerated() {
-            let isLast = index == partnershipInfos.count - 1
+        for (index, info) in partnership.partnershipInfos.enumerated() {
+            let isLast = index == partnership.partnershipInfos.count - 1
             let card = makeInfoCard(info: info, isLast: isLast)
             infoListStackView.addArrangedSubview(card)
         }
@@ -135,10 +175,23 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     /// 제휴 content 갯수에 따라 유동적으로 Height 측정
     func calculatePreferredHeight() -> CGFloat {
         view.layoutIfNeeded()
-        let contentHeight = infoListStackView.frame.maxY
-        let bottomPadding: CGFloat = view.safeAreaInsets.bottom + 20
-        
+        let contentHeight = mapButtonBarView.frame.maxY
+        let bottomPadding: CGFloat = view.safeAreaInsets.bottom + 10
+
         return contentHeight + bottomPadding
+    }
+
+    /// 지도 앱 이동 버튼 공통 Configuration 생성
+    private func makeMapButtonConfiguration(image: UIImage, title: String) -> UIButton.Configuration {
+        var config = UIButton.Configuration.plain()
+        config.image = image
+        config.imagePadding = 6
+        config.baseForegroundColor = .label
+        config.attributedTitle = AttributedString(
+            title,
+            attributes: AttributeContainer([.font: UIFont.body2])
+        )
+        return config
     }
     
     /// 제휴 정보 카드 뷰 생성
@@ -155,21 +208,21 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         let dateRange = (fullText as NSString).range(of: "\(start) ~ \(end)")
 
         attrText.addAttributes([
-            .font: EATSSUDesignFontFamily.Pretendard.medium.font(size: 14),
+            .font: UIFont.body2,
             .foregroundColor: UIColor.label
         ], range: collegeRange)
 
         attrText.addAttributes([
-            .font: EATSSUDesignFontFamily.Pretendard.regular.font(size: 10),
+            .font: UIFont.caption2,
             .foregroundColor: EATSSUDesignColors.Color.gray700,
-            .baselineOffset: +2
+            .baselineOffset: +1
         ], range: dateRange)
 
         let titleDateLabel = UILabel()
         titleDateLabel.attributedText = attrText
 
         let descriptionLabel = UILabel()
-        descriptionLabel.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        descriptionLabel.font = .body3
         descriptionLabel.textColor = EATSSUDesignColors.Color.gray700
         descriptionLabel.numberOfLines = 0
         descriptionLabel.text = info.description
@@ -196,6 +249,42 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         }
 
         return paddedContainer
+    }
+
+    // MARK: - Actions
+
+    /// 카카오맵 앱으로 이동 (미설치 시 카카오맵 웹)
+    @objc private func kakaoMapButtonTapped() {
+        let appURL = URL(string: "kakaomap://look?p=\(partnership.latitude),\(partnership.longitude)")
+        let encodedName = partnership.storeName
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let webURL = URL(
+            string: "https://map.kakao.com/link/map/\(encodedName),\(partnership.latitude),\(partnership.longitude)"
+        )
+        openMapApp(appURL: appURL, fallbackURL: webURL)
+    }
+
+    /// 네이버지도 앱으로 이동 (미설치 시 네이버지도 웹 검색)
+    @objc private func naverMapButtonTapped() {
+        var components = URLComponents(string: "nmap://place")
+        components?.queryItems = [
+            URLQueryItem(name: "lat", value: "\(partnership.latitude)"),
+            URLQueryItem(name: "lng", value: "\(partnership.longitude)"),
+            URLQueryItem(name: "name", value: partnership.storeName),
+            URLQueryItem(name: "appname", value: Bundle.main.bundleIdentifier ?? "")
+        ]
+        let encodedName = partnership.storeName
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let webURL = URL(string: "https://map.naver.com/p/search/\(encodedName)")
+        openMapApp(appURL: components?.url, fallbackURL: webURL)
+    }
+
+    private func openMapApp(appURL: URL?, fallbackURL: URL?) {
+        if let appURL, UIApplication.shared.canOpenURL(appURL) {
+            UIApplication.shared.open(appURL)
+        } else if let fallbackURL {
+            UIApplication.shared.open(fallbackURL)
+        }
     }
 
 }
