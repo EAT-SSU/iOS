@@ -253,8 +253,26 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Actions
 
-    /// 카카오맵 앱으로 이동 (미설치 시 카카오맵 웹)
+    /// 카카오맵 장소 상세 페이지로 이동 (place id 조회 실패 시 좌표 핀으로 폴백)
     @objc private func kakaoMapButtonTapped() {
+        KakaoLocalService.shared.searchNearestPlace(
+            keyword: partnership.storeName,
+            latitude: partnership.latitude,
+            longitude: partnership.longitude
+        ) { [weak self] place in
+            guard let self else { return }
+
+            if let place {
+                let appURL = URL(string: "kakaomap://place?id=\(place.id)")
+                self.openMapApp(appURL: appURL, fallbackURL: URL(string: place.placeURL))
+            } else {
+                self.openKakaoMapByCoordinate()
+            }
+        }
+    }
+
+    /// 카카오맵 좌표 핀으로 이동 (미설치 시 카카오맵 웹)
+    private func openKakaoMapByCoordinate() {
         let appURL = URL(string: "kakaomap://look?p=\(partnership.latitude),\(partnership.longitude)")
         let encodedName = partnership.storeName
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
@@ -264,18 +282,28 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         openMapApp(appURL: appURL, fallbackURL: webURL)
     }
 
-    /// 네이버지도 앱으로 이동 (미설치 시 네이버지도 웹 검색)
+    /// 네이버지도 검색으로 이동 (미설치 시 네이버지도 웹 검색)
+    /// 카카오 로컬 API의 정제된 상호명(지점명 포함)으로 검색해 명중률을 높임
     @objc private func naverMapButtonTapped() {
-        var components = URLComponents(string: "nmap://place")
+        KakaoLocalService.shared.searchNearestPlace(
+            keyword: partnership.storeName,
+            latitude: partnership.latitude,
+            longitude: partnership.longitude
+        ) { [weak self] place in
+            guard let self else { return }
+            self.openNaverMapSearch(query: place?.placeName ?? self.partnership.storeName)
+        }
+    }
+
+    private func openNaverMapSearch(query: String) {
+        var components = URLComponents(string: "nmap://search")
         components?.queryItems = [
-            URLQueryItem(name: "lat", value: "\(partnership.latitude)"),
-            URLQueryItem(name: "lng", value: "\(partnership.longitude)"),
-            URLQueryItem(name: "name", value: partnership.storeName),
+            URLQueryItem(name: "query", value: query),
             URLQueryItem(name: "appname", value: Bundle.main.bundleIdentifier ?? "")
         ]
-        let encodedName = partnership.storeName
+        let encodedQuery = query
             .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        let webURL = URL(string: "https://map.naver.com/p/search/\(encodedName)")
+        let webURL = URL(string: "https://map.naver.com/p/search/\(encodedQuery)")
         openMapApp(appURL: components?.url, fallbackURL: webURL)
     }
 

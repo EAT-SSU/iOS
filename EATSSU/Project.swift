@@ -6,6 +6,7 @@ let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
+    "KAKAO REST API KEY": "$(KAKAO_REST_API_KEY)",
     "AppGroupID": "$(APP_GROUP_ID)",
     "FirebaseAutomaticScreenReportingEnabled": false,
     "UIBackgroundModes": [
