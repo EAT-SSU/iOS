@@ -253,8 +253,18 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Actions
 
-    /// 카카오맵 장소 상세 페이지로 이동 (place id 조회 실패 시 좌표 핀으로 폴백)
+    /// 카카오맵 장소 상세 페이지로 이동
+    /// 서버 제공 URL 우선 → 없으면 로컬 API 매칭 → 실패 시 좌표 핀 폴백
     @objc private func kakaoMapButtonTapped() {
+        // 서버가 준 place URL(place.map.kakao.com/{id})에서 id를 추출해 앱 스킴으로 연결
+        if let urlString = partnership.kakaoMapUrl,
+           let webURL = URL(string: urlString),
+           Int(webURL.lastPathComponent) != nil {
+            let appURL = URL(string: "kakaomap://place?id=\(webURL.lastPathComponent)")
+            openMapApp(appURL: appURL, fallbackURL: webURL)
+            return
+        }
+
         KakaoLocalService.shared.searchNearestPlace(
             keyword: partnership.storeName,
             latitude: partnership.latitude,
@@ -282,9 +292,15 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         openMapApp(appURL: appURL, fallbackURL: webURL)
     }
 
-    /// 네이버지도 검색으로 이동 (미설치 시 네이버지도 웹 검색)
-    /// 카카오 로컬 API의 정제된 상호명(지점명 포함)으로 검색해 명중률을 높임
+    /// 네이버지도 플레이스로 이동
+    /// 서버 제공 URL 우선(유니버설 링크로 앱/웹 자동 분기) → 없으면 정제된 상호명 검색 폴백
     @objc private func naverMapButtonTapped() {
+        if let urlString = partnership.naverMapUrl,
+           let url = URL(string: urlString) {
+            UIApplication.shared.open(url)
+            return
+        }
+
         KakaoLocalService.shared.searchNearestPlace(
             keyword: partnership.storeName,
             latitude: partnership.latitude,

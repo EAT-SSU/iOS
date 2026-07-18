@@ -12,6 +12,8 @@ struct PartnershipDTO: Codable {
     let longitude: Double
     let latitude: Double
     let restaurantType: String
+    let naverMapUrl: String?
+    let kakaoMapUrl: String?
     let partnershipInfos: [PartnershipInfoDTO]
 }
 

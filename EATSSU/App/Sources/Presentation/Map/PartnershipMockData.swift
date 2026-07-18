@@ -18,6 +18,8 @@ enum PartnershipMockData {
             longitude: 126.9550,
             latitude: 37.4959,
             restaurantType: "RESTAURANT",
+            naverMapUrl: nil,
+            kakaoMapUrl: nil,
             partnershipInfos: [
                 PartnershipInfoDTO(
                     id: -1,
@@ -48,6 +50,8 @@ enum PartnershipMockData {
             longitude: 126.9538,
             latitude: 37.4964,
             restaurantType: "CAFE",
+            naverMapUrl: nil,
+            kakaoMapUrl: nil,
             partnershipInfos: [
                 PartnershipInfoDTO(
                     id: -3,
@@ -67,6 +71,8 @@ enum PartnershipMockData {
             longitude: 126.9532,
             latitude: 37.4949,
             restaurantType: "PUB",
+            naverMapUrl: nil,
+            kakaoMapUrl: nil,
             partnershipInfos: [
                 PartnershipInfoDTO(
                     id: -4,

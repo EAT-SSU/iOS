@@ -65,6 +65,8 @@ extension MainMapViewController {
                 longitude: partnership.longitude,
                 latitude: partnership.latitude,
                 restaurantType: partnership.restaurantType,
+                naverMapUrl: partnership.naverMapUrl,
+                kakaoMapUrl: partnership.kakaoMapUrl,
                 partnershipInfos: matchingInfos
             )
         }
