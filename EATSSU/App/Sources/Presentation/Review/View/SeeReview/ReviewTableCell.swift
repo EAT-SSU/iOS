@@ -64,7 +64,7 @@ final class ReviewTableCell: UITableViewCell {
     lazy var infoStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameMenuStackView, rateStackView])
         stackView.axis = .vertical
-        stackView.spacing = 8.adjusted
+        stackView.spacing = 4.adjusted
         stackView.alignment = .leading
         return stackView
     }()
@@ -262,7 +262,7 @@ final class ReviewTableCell: UITableViewCell {
     
     func setLayout() {
         userProfileImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(30).priority(.high)
+            make.width.height.equalTo(32).priority(.high)
         }
 
         profileStackView.snp.makeConstraints { make in
