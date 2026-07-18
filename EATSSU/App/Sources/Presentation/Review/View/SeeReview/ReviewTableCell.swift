@@ -150,14 +150,14 @@ final class ReviewTableCell: UITableViewCell {
     private lazy var translationActionButton: UIButton = {
         let button = UIButton(type: .system)
         button.titleLabel?.font = .caption2
-        button.setTitleColor(.aiAccent, for: .normal)
+        button.setTitleColor(.info, for: .normal)
         button.addTarget(self, action: #selector(touchedTranslationActionButton), for: .touchUpInside)
         return button
     }()
 
     private let translationSpinner: ESSpinner = {
         let spinner = ESSpinner()
-        spinner.color = .aiAccent
+        spinner.color = .info
         spinner.hidesWhenStopped = true
         return spinner
     }()
