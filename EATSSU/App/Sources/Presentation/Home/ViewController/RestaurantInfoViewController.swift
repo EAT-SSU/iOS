@@ -5,6 +5,8 @@
 //  Created by 최지우 on 2023/08/29.
 //
 
+import UIKit
+
 import SnapKit
 
 import Moya
@@ -31,6 +33,12 @@ final class RestaurantInfoViewController: BaseViewController {
         restaurantInfoView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+
+    /// 컨텐츠에 맞는 시트 높이 (마지막 텍스트 아래 여백 54, 세이프에리어 포함)
+    func calculatePreferredHeight() -> CGFloat {
+        view.layoutIfNeeded()
+        return restaurantInfoView.contentBottomY() + 54
     }
 }
 

@@ -141,6 +141,12 @@ final class RestaurantInfoView: BaseUIView {
         }
     }
 
+    /// 시트 높이 계산용: 마지막 컨텐츠(비고 값)의 하단 Y
+    func contentBottomY() -> CGFloat {
+        layoutIfNeeded()
+        return ectLabel.frame.maxY
+    }
+
     /// 여러 줄 값 레이블에 줄 간격을 유지한 채 텍스트를 적용
     private func setValueText(_ text: String, on label: UILabel) {
         let paragraphStyle = NSMutableParagraphStyle()
