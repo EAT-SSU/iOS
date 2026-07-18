@@ -202,7 +202,7 @@ final class SetRateView: UIView {
         }
 
         detailLabel.snp.makeConstraints { make in
-            make.top.equalTo(rateView.snp.bottom).offset(35)
+            make.top.equalTo(rateView.snp.bottom).offset(26)
             make.centerX.equalToSuperview()
         }
 
