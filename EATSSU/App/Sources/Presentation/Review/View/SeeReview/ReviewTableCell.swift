@@ -179,15 +179,12 @@ final class ReviewTableCell: UITableViewCell {
 
     private lazy var translationInfoButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(
-            EATSSUDesignAsset.Images.icInfo.image.withRenderingMode(.alwaysTemplate),
-            for: .normal
-        )
+        // 에셋 원본이 12라서 스펙(16)에 맞게 리사이즈해서 사용
+        let icon = EATSSUDesignAsset.Images.icInfo.image
+            .resized(to: CGSize(width: 16.adjusted, height: 16.adjusted))
+            .withRenderingMode(.alwaysTemplate)
+        button.setImage(icon, for: .normal)
         button.tintColor = .gray500
-        // 에셋 원본(12)이 아니라 버튼 크기(16)에 맞춰 글리프를 채움
-        button.contentHorizontalAlignment = .fill
-        button.contentVerticalAlignment = .fill
-        button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(touchedTranslationInfoButton), for: .touchUpInside)
         return button
     }()
