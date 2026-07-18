@@ -58,6 +58,15 @@ final class ReviewViewController: BaseViewController {
     
     /// 리뷰 작성 가능한 메뉴 목록 (VARIABLE 타입)
     private var validMenusForReview: [ReviewValidMenu] = []
+
+    /// 리뷰별 번역 상태 (셀 재사용에 대비해 reviewId 기준으로 보관)
+    private var translationStates: [Int: ReviewTranslationState] = [:]
+
+    /// 번역 기능 노출 여부 (현재 서버가 EN 번역만 지원 + 번역 API는 인증 필수)
+    private var isTranslationAvailable: Bool {
+        AppLanguageManager.shared.currentLanguage == .english
+            && RealmService.shared.getToken() != ""
+    }
     
     // MARK: - UI Components
     
@@ -535,13 +544,27 @@ extension ReviewViewController: UITableViewDataSource {
             
             let reviewItem = reviewList[indexPath.row]
             cell.dataBind(response: reviewItem)
-            
+
             cell.handler = { [weak self] in
                 guard let self else { return }
-                
+
                 reviewList[indexPath.row].isWriter
                 ? self.showDeleteAlert(data: reviewList[indexPath.row])
                 : self.showReportAlert(reviewID: reviewList[indexPath.row].reviewId)
+            }
+
+            cell.configureTranslation(
+                state: translationStates[reviewItem.reviewId] ?? .idle,
+                isAvailable: isTranslationAvailable
+            )
+
+            cell.translationActionHandler = { [weak self] in
+                self?.handleTranslationAction(reviewId: reviewItem.reviewId)
+            }
+
+            cell.translationInfoHandler = { [weak self] anchorView in
+                guard let self else { return }
+                TranslationTooltipView.show(in: self.view, from: anchorView)
             }
             
             cell.selectionStyle = .none
@@ -688,6 +711,54 @@ extension ReviewViewController {
     }
     
     
+    /// 번역하기 / 원문 보기 / 번역 보기 탭 처리
+    private func handleTranslationAction(reviewId: Int) {
+        switch translationStates[reviewId] ?? .idle {
+        case .idle, .failed:
+            requestTranslation(reviewId: reviewId)
+
+        case .loading:
+            break
+
+        case let .translated(text, showingOriginal):
+            // 이미 번역문을 갖고 있으므로 API 재호출 없이 토글만 수행
+            translationStates[reviewId] = .translated(text: text, showingOriginal: !showingOriginal)
+            reloadReviewRow(reviewId: reviewId)
+        }
+    }
+
+    /// 리뷰 번역 요청
+    private func requestTranslation(reviewId: Int) {
+        translationStates[reviewId] = .loading
+        reloadReviewRow(reviewId: reviewId)
+
+        let language = AppLanguageManager.shared.currentLanguage.rawValue.uppercased()
+
+        NetworkService.shared.request(
+            ReviewRouter.translateReview(reviewId, language: language),
+            responseType: ReviewTranslationResponse.self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let data):
+                self.translationStates[reviewId] = .translated(text: data.translatedContent, showingOriginal: false)
+
+            case .failure(let error):
+                print("❌ Review Translation Error: \(error.localizedDescription)")
+                self.translationStates[reviewId] = .failed
+            }
+            self.reloadReviewRow(reviewId: reviewId)
+        }
+    }
+
+    /// reviewId에 해당하는 리뷰 셀만 갱신
+    private func reloadReviewRow(reviewId: Int) {
+        guard let row = reviewList.firstIndex(where: { $0.reviewId == reviewId }) else { return }
+        reviewTableView.reloadRows(at: [IndexPath(row: row, section: 2)], with: .none)
+    }
+
     /// 리뷰 삭제
     /// - Parameter reviewID: 삭제할 리뷰 ID
     func deleteReview(reviewID: Int) {

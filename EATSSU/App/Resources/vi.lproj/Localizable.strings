@@ -474,3 +474,20 @@
 "restaurant.snackCorner" = "Quầy đồ ăn nhẹ";
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (Chỉ dành cho giảng viên/nhân viên)";
+
+// MARK: - Review Translation
+
+/// "번역하기"
+"review.translate" = "Dịch";
+/// "번역 중..."
+"review.translating" = "Đang dịch...";
+/// "AI가 한국어에서 번역함"
+"review.translatedFromKorean" = "Được AI dịch từ tiếng Hàn";
+/// "원문 보기"
+"review.showOriginal" = "Xem bản gốc";
+/// "번역 보기"
+"review.showTranslation" = "Xem bản dịch";
+/// "번역을 사용할 수 없어요"
+"review.translationUnavailable" = "Không thể dịch";
+/// "AI 번역은 정확하지 않을 수 있어요."
+"review.translationDisclaimer" = "Bản dịch AI có thể không chính xác.";
