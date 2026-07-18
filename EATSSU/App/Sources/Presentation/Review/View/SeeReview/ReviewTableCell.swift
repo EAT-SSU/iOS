@@ -184,6 +184,10 @@ final class ReviewTableCell: UITableViewCell {
             for: .normal
         )
         button.tintColor = .gray500
+        // 에셋 원본(12)이 아니라 버튼 크기(16)에 맞춰 글리프를 채움
+        button.contentHorizontalAlignment = .fill
+        button.contentVerticalAlignment = .fill
+        button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(touchedTranslationInfoButton), for: .touchUpInside)
         return button
     }()
