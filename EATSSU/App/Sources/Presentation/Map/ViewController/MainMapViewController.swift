@@ -133,7 +133,7 @@ final class MainMapViewController: BaseViewController {
             collegeId: currentCollegeId,
             majorId: currentDepartmentId
         )
-        applyCachedMarkers()
+        refreshOrApplyCachedMarkers()
     }
 
     @objc private func didTapWhole() {
@@ -146,7 +146,16 @@ final class MainMapViewController: BaseViewController {
             collegeId: currentCollegeId,
             majorId: currentDepartmentId
         )
-        applyCachedMarkers()
+        refreshOrApplyCachedMarkers()
+    }
+
+    /// 캐시가 비어있으면(내 제휴 모드로 시작해 전체 데이터를 아직 안 받은 경우) 서버에서 받아오고, 있으면 캐시로 필터링
+    private func refreshOrApplyCachedMarkers() {
+        if cachedAllPartnerships.isEmpty {
+            refreshAllPartnerships()
+        } else {
+            applyCachedMarkers()
+        }
     }
 
     @objc private func didTapMyOnly() {
