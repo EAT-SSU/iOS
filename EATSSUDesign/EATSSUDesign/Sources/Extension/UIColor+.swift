@@ -43,6 +43,10 @@ public extension UIColor {
     static var warningBg: UIColor { EATSSUDesignAsset.Color.warningBg.color }
     static var warningBr: UIColor { EATSSUDesignAsset.Color.warningBr.color }
 
+    // MARK: - Purple
+    /// AI 번역 버튼/링크 포인트 컬러 (#6B46C1)
+    static var aiAccent: UIColor { EATSSUDesignAsset.Color.Purple.aiAccent.color }
+
     // MARK: - Red
     static var error: UIColor { EATSSUDesignAsset.Color.Red.error.color }
     
