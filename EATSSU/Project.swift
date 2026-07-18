@@ -3,6 +3,8 @@ import ProjectDescription
 let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "CFBundleShortVersionString": "$(MARKETING_VERSION)",
     "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+    // 표준 HTTPS만 사용하므로 수출 규정(암호화) 심사 면제 — 테플 업로드 후 컴플라이언스 대기 없이 자동 배포
+    "ITSAppUsesNonExemptEncryption": false,
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
