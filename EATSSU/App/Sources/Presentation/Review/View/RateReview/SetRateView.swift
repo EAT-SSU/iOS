@@ -50,7 +50,7 @@ final class SetRateView: UIView {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.isScrollEnabled = false
-        tableView.rowHeight = 48.adjusted
+        tableView.rowHeight = 36.adjusted
         return tableView
     }()
 
