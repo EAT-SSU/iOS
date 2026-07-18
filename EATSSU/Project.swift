@@ -156,7 +156,8 @@ let project = Project(
                                "CODE_SIGN_IDENTITY": "Apple Distribution",
                                "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                              ],
-                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                             // DEV 타깃은 TestFlight(Release) 빌드도 dev 서버를 바라본다
+                             xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     )
                 ]
             )
@@ -251,7 +252,8 @@ let project = Project(
                                 "CODE_SIGN_IDENTITY": "Apple Distribution",
                                 "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                              ],
-                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                             // DEV 위젯도 TestFlight(Release) 빌드에서 dev 서버를 바라본다
+                             xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     )
                 ]
             )
