@@ -12,7 +12,7 @@ import EATSSUDesign
 
 /// AI 번역 유의사항 툴팁 (ⓘ 아이콘 탭 시 노출)
 ///
-/// X 버튼 외에도 바깥 영역 탭·스크롤 등 다른 인터랙션이 발생하면 자동으로 닫힌다.
+/// 닫기 버튼 없이 바깥 영역 탭·스크롤·화면 이동 등 다른 인터랙션이 발생하면 자동으로 닫힌다.
 final class TranslationTooltipView: UIView {
 
     // MARK: - Properties
@@ -26,23 +26,9 @@ final class TranslationTooltipView: UIView {
         let label = UILabel()
         label.text = TextLiteral.Review.translationDisclaimer
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
-        label.textColor = .black
+        label.textColor = .gray600
         label.numberOfLines = 0
         return label
-    }()
-
-    private lazy var closeButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(
-            EATSSUDesignAsset.Images.icClose.image.withRenderingMode(.alwaysTemplate),
-            for: .normal
-        )
-        button.tintColor = .gray500
-        button.contentHorizontalAlignment = .fill
-        button.contentVerticalAlignment = .fill
-        button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(touchedCloseButton), for: .touchUpInside)
-        return button
     }()
 
     // MARK: - Initialization
@@ -61,25 +47,17 @@ final class TranslationTooltipView: UIView {
     // MARK: - UI Configuration
 
     private func setupUI() {
-        backgroundColor = .white
+        backgroundColor = .gray100
         layer.cornerRadius = 8
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.15
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 8
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.gray300.cgColor
 
-        addSubviews(messageLabel, closeButton)
+        addSubviews(messageLabel)
     }
 
     private func setLayout() {
         messageLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(12)
-        }
-
-        // X는 우상단 코너에 고정 (텍스트는 트레일링 여백 없이 전체 폭 사용)
-        closeButton.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().inset(6)
-            make.width.height.equalTo(12)
         }
     }
 
@@ -93,11 +71,6 @@ final class TranslationTooltipView: UIView {
     }
 
     // MARK: - Actions
-
-    @objc
-    private func touchedCloseButton() {
-        removeFromSuperview()
-    }
 
     /// 툴팁 바깥을 탭하면 닫는다 (cancelsTouchesInView = false라 원래 탭 동작은 그대로 전달됨)
     @objc
@@ -130,12 +103,18 @@ final class TranslationTooltipView: UIView {
         tooltip.outsideTapGesture = outsideTap
 
         let anchorFrame = anchorView.convert(anchorView.bounds, to: containerView)
-        let maxWidth: CGFloat = 180
-        let size = tooltip.systemLayoutSizeFitting(
-            CGSize(width: maxWidth, height: UIView.layoutFittingCompressedSize.height),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        )
+
+        // 한 줄에 다 들어가면 텍스트 폭에 맞추고, 화면 폭을 넘으면 자연스럽게 줄바꿈
+        let maxWidth = containerView.bounds.width - 32
+        var size = tooltip.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        if size.width > maxWidth {
+            size = tooltip.systemLayoutSizeFitting(
+                CGSize(width: maxWidth, height: UIView.layoutFittingCompressedSize.height),
+                withHorizontalFittingPriority: .required,
+                verticalFittingPriority: .fittingSizeLevel
+            )
+            size.width = maxWidth
+        }
 
         // 아이콘 위에 배치하되, 화면 밖으로 나가지 않도록 조정
         var originX = anchorFrame.midX - size.width / 2
