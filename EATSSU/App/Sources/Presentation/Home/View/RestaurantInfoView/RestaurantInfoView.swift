@@ -15,26 +15,26 @@ import EATSSUDesign
 final class RestaurantInfoView: BaseUIView {
     // MARK: - UI Components
 
-    let restaurantImage = UIImageView(image: EATSSUDesignAsset.Images.restaurantImage.image)
+    let restaurantImage: UIImageView = {
+        let imageView = UIImageView(image: EATSSUDesignAsset.Images.restaurantImage.image)
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 8
+        imageView.clipsToBounds = true
+        return imageView
+    }()
 
     var restaurantNameLabel: UILabel = {
         let label = UILabel()
         label.text = TextLiteral.Home.studentRestaurant
-        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 20)
+        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
         return label
     }()
 
     private let locationTitleLabel: UILabel = {
         let label = UILabel()
         label.text = TextLiteral.Home.restaurantLocation
-        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
-        return label
-    }()
-
-    private let imageTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = TextLiteral.Home.restaurantPicture
-        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 13)
+        label.textColor = .gray500
         return label
     }()
 
@@ -42,26 +42,21 @@ final class RestaurantInfoView: BaseUIView {
         let label = UILabel()
         label.text = TextLiteral.Home.soongsilUniversity
         label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+        label.numberOfLines = 0
         return label
     }()
 
     private let openingTimeTitleLabel: UILabel = {
         let label = UILabel()
         label.text = TextLiteral.Home.businessHour
-        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 13)
+        label.textColor = .gray500
         return label
     }()
 
     private let openingTimeLabel: UILabel = {
         let label = UILabel()
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 10
-        label.attributedText = NSAttributedString(
-            string: "08:00~09:30\n11:00~14:00\n17:00~18:30",
-            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
-        )
         label.numberOfLines = 0
-        label.textAlignment = .right
         label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
         return label
     }()
@@ -69,20 +64,14 @@ final class RestaurantInfoView: BaseUIView {
     private let ectTitleLabel: UILabel = {
         let label = UILabel()
         label.text = TextLiteral.Home.note
-        label.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 18)
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 13)
+        label.textColor = .gray500
         return label
     }()
 
     private let ectLabel: UILabel = {
         let label = UILabel()
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 10
-        label.attributedText = NSAttributedString(
-            string: TextLiteral.Home.dodamEtc,
-            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
-        )
         label.numberOfLines = 0
-        label.textAlignment = .right
         label.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
         return label
     }()
@@ -91,10 +80,9 @@ final class RestaurantInfoView: BaseUIView {
 
     override func configureUI() {
         addSubviews(restaurantNameLabel,
+                    restaurantImage,
                     locationTitleLabel,
                     locationLabel,
-                    imageTitleLabel,
-                    restaurantImage,
                     openingTimeTitleLabel,
                     openingTimeLabel,
                     ectTitleLabel,
@@ -106,47 +94,42 @@ final class RestaurantInfoView: BaseUIView {
             $0.top.equalToSuperview().offset(38)
             $0.centerX.equalToSuperview()
         }
-        locationTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(restaurantNameLabel.snp.bottom).offset(56)
-            $0.leading.equalToSuperview().offset(21)
-        }
-        locationLabel.snp.makeConstraints {
-            $0.top.equalTo(locationTitleLabel)
-            $0.trailing.equalToSuperview().inset(21)
-        }
-        imageTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(locationTitleLabel.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().offset(21)
-        }
         restaurantImage.snp.makeConstraints {
-            $0.top.equalTo(imageTitleLabel.snp.bottom).offset(8)
-            $0.horizontalEdges.equalToSuperview().inset(21)
+            $0.top.equalTo(restaurantNameLabel.snp.bottom).offset(28)
+            $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(232)
         }
+        locationTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(restaurantImage.snp.bottom).offset(28)
+            $0.leading.equalToSuperview().offset(20)
+        }
+        locationLabel.snp.makeConstraints {
+            $0.top.equalTo(locationTitleLabel.snp.bottom).offset(12)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+        }
         openingTimeTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(restaurantImage.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().offset(21)
+            $0.top.equalTo(locationLabel.snp.bottom).offset(32)
+            $0.leading.equalToSuperview().offset(20)
         }
         openingTimeLabel.snp.makeConstraints {
-            $0.top.equalTo(openingTimeTitleLabel)
-            $0.trailing.equalToSuperview().inset(21)
-            $0.width.equalTo(250)
+            $0.top.equalTo(openingTimeTitleLabel.snp.bottom).offset(12)
+            $0.horizontalEdges.equalToSuperview().inset(20)
         }
         ectTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(openingTimeLabel.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().offset(21)
+            $0.top.equalTo(openingTimeLabel.snp.bottom).offset(32)
+            $0.leading.equalToSuperview().offset(20)
         }
         ectLabel.snp.makeConstraints {
-            $0.top.equalTo(ectTitleLabel)
-            $0.trailing.equalToSuperview().inset(21)
+            $0.top.equalTo(ectTitleLabel.snp.bottom).offset(12)
+            $0.horizontalEdges.equalToSuperview().inset(20)
         }
     }
 
     func bind(data: RestaurantInfoData) {
         restaurantNameLabel.text = data.name
-        locationLabel.text = data.location
-        openingTimeLabel.text = data.time
-        ectLabel.text = data.etc
+        setValueText(data.location, on: locationLabel)
+        setValueText(data.time, on: openingTimeLabel)
+        setValueText(data.etc, on: ectLabel)
         loadImage(with: data.image, into: restaurantImage)
     }
 
@@ -156,5 +139,18 @@ final class RestaurantInfoView: BaseUIView {
         } else {
             print("Invalid URL string.")
         }
+    }
+
+    /// 여러 줄 값 레이블에 줄 간격을 유지한 채 텍스트를 적용
+    private func setValueText(_ text: String, on label: UILabel) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 8
+        label.attributedText = NSAttributedString(
+            string: text,
+            attributes: [
+                .paragraphStyle: paragraphStyle,
+                .font: EATSSUDesignFontFamily.Pretendard.medium.font(size: 16)
+            ]
+        )
     }
 }
