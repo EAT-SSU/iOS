@@ -168,10 +168,10 @@ extension MainMapViewController {
                 let customDetent = UISheetPresentationController.Detent.custom { _ in
                     return contentHeight
                 }
-                sheet.detents = [customDetent]
+                sheet.detents = [customDetent, .large()]
             } else {
                 // iOS 16.0 미만에서는 medium detent 사용
-                sheet.detents = [.medium()]
+                sheet.detents = [.medium(), .large()]
             }
             
             sheet.prefersGrabberVisible = true

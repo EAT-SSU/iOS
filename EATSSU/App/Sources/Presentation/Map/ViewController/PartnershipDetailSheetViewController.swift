@@ -81,7 +81,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         )
         naverMapButton.addTarget(self, action: #selector(naverMapButtonTapped), for: .touchUpInside)
 
-        mapButtonDivider.backgroundColor = EATSSUDesignColors.Color.gray200
+        mapButtonDivider.backgroundColor = EATSSUDesignColors.Color.gray300
 
         [kakaoMapButton, naverMapButton, mapButtonDivider].forEach {
             mapButtonBarView.addSubview($0)
@@ -108,10 +108,12 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             $0.leading.trailing.equalToSuperview().inset(24)
         }
 
+        // large로 확장 시에도 버튼 바가 시트 하단에 붙어있도록 bottom 고정
         mapButtonBarView.snp.makeConstraints {
-            $0.top.equalTo(infoListStackView.snp.bottom).offset(6)
+            $0.top.greaterThanOrEqualTo(infoListStackView.snp.bottom).offset(6)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(56)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
 
         kakaoMapButton.snp.makeConstraints {
@@ -173,12 +175,13 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     // MARK: - UI Helpers
 
     /// 제휴 content 갯수에 따라 유동적으로 Height 측정
+    /// 버튼 바는 시트 하단에 고정이므로 리스트 높이 기준으로 계산
     func calculatePreferredHeight() -> CGFloat {
         view.layoutIfNeeded()
-        let contentHeight = mapButtonBarView.frame.maxY
-        let bottomPadding: CGFloat = view.safeAreaInsets.bottom + 10
+        let buttonBarArea: CGFloat = 6 + 56 + 10
+        let bottomPadding: CGFloat = view.safeAreaInsets.bottom
 
-        return contentHeight + bottomPadding
+        return infoListStackView.frame.maxY + buttonBarArea + bottomPadding
     }
 
     /// 지도 앱 이동 버튼 공통 Configuration 생성
@@ -232,7 +235,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         contentStack.spacing = 4
 
         let separator = UIView()
-        separator.backgroundColor = EATSSUDesignColors.Color.gray200
+        separator.backgroundColor = EATSSUDesignColors.Color.gray300
         separator.isHidden = isLast
         separator.snp.makeConstraints {
             $0.height.equalTo(1)
