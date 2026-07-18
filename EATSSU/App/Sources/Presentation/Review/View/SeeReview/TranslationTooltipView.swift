@@ -24,7 +24,6 @@ final class TranslationTooltipView: UIView {
 
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = TextLiteral.Review.translationDisclaimer
         label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
         label.textColor = .gray600
         label.numberOfLines = 0
@@ -91,10 +90,16 @@ final class TranslationTooltipView: UIView {
     }
 
     /// anchorView(ⓘ 아이콘) 위쪽에 툴팁을 띄운다. 기존 툴팁은 제거.
-    static func show(in containerView: UIView, from anchorView: UIView) {
+    /// - Parameter message: 표시할 문구 (기본값: AI 번역 유의사항)
+    static func show(
+        in containerView: UIView,
+        from anchorView: UIView,
+        message: String = TextLiteral.Review.translationDisclaimer
+    ) {
         dismissAll(in: containerView)
 
         let tooltip = TranslationTooltipView()
+        tooltip.messageLabel.text = message
         containerView.addSubview(tooltip)
 
         let outsideTap = UITapGestureRecognizer(target: tooltip, action: #selector(handleOutsideTap(_:)))

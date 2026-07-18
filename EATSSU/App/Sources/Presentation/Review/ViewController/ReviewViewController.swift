@@ -576,7 +576,14 @@ extension ReviewViewController: UITableViewDataSource {
 
             cell.translationInfoHandler = { [weak self] anchorView in
                 guard let self else { return }
-                TranslationTooltipView.show(in: self.view, from: anchorView)
+
+                // 실패 상태의 ⓘ는 유의사항 대신 실패 안내 문구를 보여준다
+                let message: String = if case .failed = self.translationStates[reviewItem.reviewId] ?? .idle {
+                    TextLiteral.Review.translationFailedTooltip
+                } else {
+                    TextLiteral.Review.translationDisclaimer
+                }
+                TranslationTooltipView.show(in: self.view, from: anchorView, message: message)
             }
             
             cell.selectionStyle = .none

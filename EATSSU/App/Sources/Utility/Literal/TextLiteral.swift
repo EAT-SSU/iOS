@@ -851,6 +851,11 @@ enum TextLiteral {
             Localization.localized("review.translationDisclaimer", fallback: "AI 번역은 정확하지 않을 수 있어요.")
         }
 
+        /// ReviewVC - "AI 번역이 일시적으로 불가능해요. 잠시 후 다시 시도해 주세요."
+        static var translationFailedTooltip: String {
+            Localization.localized("review.translationFailedTooltip", fallback: "AI 번역이 일시적으로 불가능해요. 잠시 후 다시 시도해 주세요.")
+        }
+
         /// SetRateVC - "리뷰 수정하기"
         static var fixReview: String {
             Localization.localized("review.fixReview", fallback: "리뷰 수정하기")
