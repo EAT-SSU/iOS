@@ -9,26 +9,35 @@ import UIKit
 
 /// 원호(arc)가 회전하는 커스텀 로딩 스피너
 ///
-/// UIActivityIndicatorView 대체용. 원의 일정 구간만 채워진 호가 회전한다.
+/// UIActivityIndicatorView 대체용. 연한 색 트랙 원 위에서 진한 색 호가 회전한다.
 public final class ESSpinner: UIView {
 
     // MARK: - Properties
 
-    /// 호 색상
+    /// 호 색상 (트랙은 이 색의 연한 버전으로 자동 적용)
     public var color: UIColor = .aiAccent {
-        didSet { arcLayer.strokeColor = color.cgColor }
+        didSet {
+            arcLayer.strokeColor = color.cgColor
+            updateTrackColor()
+        }
+    }
+
+    /// 트랙(배경 원) 색상. nil이면 color의 25% 알파를 사용
+    public var trackColor: UIColor? {
+        didSet { updateTrackColor() }
     }
 
     /// 호 두께
     public var lineWidth: CGFloat = 2 {
         didSet {
             arcLayer.lineWidth = lineWidth
+            trackLayer.lineWidth = lineWidth
             setNeedsLayout()
         }
     }
 
     /// 원 둘레 대비 호가 채워지는 비율 (0~1)
-    public var arcRatio: CGFloat = 0.75 {
+    public var arcRatio: CGFloat = 0.25 {
         didSet { arcLayer.strokeEnd = arcRatio }
     }
 
@@ -37,6 +46,7 @@ public final class ESSpinner: UIView {
 
     public private(set) var isAnimating: Bool = false
 
+    private let trackLayer = CAShapeLayer()
     private let arcLayer = CAShapeLayer()
     private static let rotationAnimationKey = "es.spinner.rotation"
 
@@ -57,16 +67,19 @@ public final class ESSpinner: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
 
+        trackLayer.frame = bounds
         arcLayer.frame = bounds
 
         let radius = (min(bounds.width, bounds.height) - lineWidth) / 2
-        arcLayer.path = UIBezierPath(
+        let circlePath = UIBezierPath(
             arcCenter: CGPoint(x: bounds.midX, y: bounds.midY),
             radius: radius,
             startAngle: -.pi / 2,
             endAngle: .pi * 3 / 2,
             clockwise: true
         ).cgPath
+        trackLayer.path = circlePath
+        arcLayer.path = circlePath
     }
 
     /// 화면 재진입 시 끊긴 애니메이션 복구 (CAAnimation은 오프스크린에서 제거됨)
@@ -98,6 +111,12 @@ public final class ESSpinner: UIView {
     // MARK: - Private Methods
 
     private func setupLayer() {
+        trackLayer.fillColor = UIColor.clear.cgColor
+        trackLayer.lineWidth = lineWidth
+        trackLayer.strokeStart = 0
+        trackLayer.strokeEnd = 1
+        layer.addSublayer(trackLayer)
+
         arcLayer.fillColor = UIColor.clear.cgColor
         arcLayer.strokeColor = color.cgColor
         arcLayer.lineWidth = lineWidth
@@ -106,7 +125,13 @@ public final class ESSpinner: UIView {
         arcLayer.strokeEnd = arcRatio
         layer.addSublayer(arcLayer)
 
+        updateTrackColor()
         isHidden = hidesWhenStopped
+    }
+
+    private func updateTrackColor() {
+        let resolved = trackColor ?? color.withAlphaComponent(0.25)
+        trackLayer.strokeColor = resolved.cgColor
     }
 
     private func addRotationAnimation() {
