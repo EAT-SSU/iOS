@@ -122,6 +122,8 @@ final class RestaurantInfoView: BaseUIView {
         ectLabel.snp.makeConstraints {
             $0.top.equalTo(ectTitleLabel.snp.bottom).offset(12)
             $0.horizontalEdges.equalToSuperview().inset(20)
+            // 시트 높이 계산용 하단 여백. 시트가 컨텐츠보다 클 때(iOS 15 large 폴백)를 위해 required 미만으로 설정
+            $0.bottom.equalToSuperview().inset(54).priority(.high)
         }
     }
 
@@ -139,12 +141,6 @@ final class RestaurantInfoView: BaseUIView {
         } else {
             print("Invalid URL string.")
         }
-    }
-
-    /// 시트 높이 계산용: 마지막 컨텐츠(비고 값)의 하단 Y
-    func contentBottomY() -> CGFloat {
-        layoutIfNeeded()
-        return ectLabel.frame.maxY
     }
 
     /// 여러 줄 값 레이블에 줄 간격을 유지한 채 텍스트를 적용

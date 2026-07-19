@@ -37,8 +37,12 @@ final class RestaurantInfoViewController: BaseViewController {
 
     /// 컨텐츠에 맞는 시트 높이 (마지막 텍스트 아래 여백 54, 세이프에리어 포함)
     func calculatePreferredHeight() -> CGFloat {
-        view.layoutIfNeeded()
-        return restaurantInfoView.contentBottomY() + 54
+        let targetSize = CGSize(width: view.bounds.width, height: UIView.layoutFittingCompressedSize.height)
+        return view.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
     }
 }
 

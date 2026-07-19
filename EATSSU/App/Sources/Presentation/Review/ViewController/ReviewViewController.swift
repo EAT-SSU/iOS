@@ -71,7 +71,7 @@ final class ReviewViewController: BaseViewController {
     /// 번역 기능 노출 여부 (현재 서버가 EN 번역만 지원 + 번역 API는 인증 필수)
     private var isTranslationAvailable: Bool {
         AppLanguageManager.shared.currentLanguage == .english
-            && RealmService.shared.getToken() != ""
+            && RealmService.shared.isAccessTokenPresent()
     }
     
     // MARK: - UI Components
@@ -803,7 +803,8 @@ extension ReviewViewController {
             uniquingKeysWith: { first, _ in first }
         )
         translationStates = translationStates.filter { reviewId, _ in
-            currentContents[reviewId] == translationSourceContents[reviewId]
+            guard let currentContent = currentContents[reviewId] else { return false }
+            return currentContent == translationSourceContents[reviewId]
         }
         translationSourceContents = translationSourceContents.filter { reviewId, content in
             currentContents[reviewId] == content
