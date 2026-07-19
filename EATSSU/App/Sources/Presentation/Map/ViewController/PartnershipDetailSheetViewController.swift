@@ -142,8 +142,17 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         logScreenView(screenID: FirebaseScreenID.Map.map2)
+    }
+
+    /// 시트가 화면에 붙어 실제 safe area가 확정되면 detent 높이 재계산
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+
+        if #available(iOS 16.0, *) {
+            sheetPresentationController?.invalidateDetents()
+        }
     }
 
     /// 매장 정보와 제휴 내용을 화면에 반영
@@ -287,12 +296,18 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     /// 카카오맵 좌표 핀으로 이동 (미설치 시 카카오맵 웹)
     private func openKakaoMapByCoordinate() {
         let appURL = URL(string: "kakaomap://look?p=\(partnership.latitude),\(partnership.longitude)")
-        let encodedName = partnership.storeName
-            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let encodedName = percentEncodedForMapURL(partnership.storeName)
         let webURL = URL(
             string: "https://map.kakao.com/link/map/\(encodedName),\(partnership.latitude),\(partnership.longitude)"
         )
         openMapApp(appURL: appURL, fallbackURL: webURL)
+    }
+
+    /// 지도 웹 URL 경로에 안전하게 넣을 수 있도록 경로/구분자 문자까지 인코딩
+    private func percentEncodedForMapURL(_ text: String) -> String {
+        var allowed = CharacterSet.urlPathAllowed
+        allowed.remove(charactersIn: "/?&,")
+        return text.addingPercentEncoding(withAllowedCharacters: allowed) ?? ""
     }
 
     /// 네이버지도 플레이스로 이동
@@ -320,8 +335,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             URLQueryItem(name: "query", value: query),
             URLQueryItem(name: "appname", value: Bundle.main.bundleIdentifier ?? "")
         ]
-        let encodedQuery = query
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let encodedQuery = percentEncodedForMapURL(query)
         let webURL = URL(string: "https://map.naver.com/p/search/\(encodedQuery)")
         openMapApp(appURL: components?.url, fallbackURL: webURL)
     }

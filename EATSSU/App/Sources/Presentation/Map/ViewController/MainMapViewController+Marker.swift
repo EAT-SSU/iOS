@@ -161,12 +161,11 @@ extension MainMapViewController {
         detailVC.loadViewIfNeeded()
         
         if let sheet = detailVC.sheetPresentationController {
-            let contentHeight = detailVC.calculatePreferredHeight()
-            
             // iOS 16.0 이상에서만 custom detent 사용
+            // 표시 후 safe area 확정 시 invalidateDetents()로 클로저가 재실행되어 높이가 보정됨
             if #available(iOS 16.0, *) {
-                let customDetent = UISheetPresentationController.Detent.custom { _ in
-                    return contentHeight
+                let customDetent = UISheetPresentationController.Detent.custom { [weak detailVC] _ in
+                    detailVC?.calculatePreferredHeight()
                 }
                 sheet.detents = [customDetent, .large()]
             } else {
