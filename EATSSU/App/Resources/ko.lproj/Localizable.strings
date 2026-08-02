@@ -193,6 +193,10 @@
 "map.pub" = "주점";
 /// PartnershipDetailSheetVC - "학과 정보 없음"
 "map.noDepartmentInfo" = "학과 정보 없음";
+
+"map.kakaoMap" = "카카오맵";
+
+"map.naverMap" = "네이버지도";
 /// MainMapVC+Location - "위치 권한 필요"
 "map.needLocationAuth" = "위치 권한 필요";
 /// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."

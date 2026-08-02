@@ -29,6 +29,14 @@ extension MainMapViewController {
                 self.cachedAllPartnerships = []
                 self.displayMarkers([])
             }
+
+            #if DEBUG
+            // 서버에 제휴 데이터가 없는 동안 Mock으로 대체 (DEBUG 빌드 전용)
+            if self.cachedAllPartnerships.isEmpty {
+                self.cachedAllPartnerships = PartnershipMockData.samples
+                self.applyCachedMarkers()
+            }
+            #endif
         }
     }
 
@@ -57,6 +65,8 @@ extension MainMapViewController {
                 longitude: partnership.longitude,
                 latitude: partnership.latitude,
                 restaurantType: partnership.restaurantType,
+                naverMapUrl: partnership.naverMapUrl,
+                kakaoMapUrl: partnership.kakaoMapUrl,
                 partnershipInfos: matchingInfos
             )
         }

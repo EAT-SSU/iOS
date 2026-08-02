@@ -155,27 +155,22 @@ extension MainMapViewController {
             partnerId: partnership.partnershipInfos.first?.id ?? -1
         )
 
-        let detailVC = PartnershipDetailSheetViewController(
-            storeName: partnership.storeName,
-            restaurantType: partnership.restaurantType,
-            partnershipInfos: partnership.partnershipInfos
-        )
+        let detailVC = PartnershipDetailSheetViewController(partnership: partnership)
         
         // 뷰가 로드된 후 높이 계산
         detailVC.loadViewIfNeeded()
         
         if let sheet = detailVC.sheetPresentationController {
-            let contentHeight = detailVC.calculatePreferredHeight()
-            
             // iOS 16.0 이상에서만 custom detent 사용
+            // 표시 후 safe area 확정 시 invalidateDetents()로 클로저가 재실행되어 높이가 보정됨
             if #available(iOS 16.0, *) {
-                let customDetent = UISheetPresentationController.Detent.custom { _ in
-                    return contentHeight
+                let customDetent = UISheetPresentationController.Detent.custom { [weak detailVC] _ in
+                    detailVC?.calculatePreferredHeight()
                 }
-                sheet.detents = [customDetent]
+                sheet.detents = [customDetent, .large()]
             } else {
                 // iOS 16.0 미만에서는 medium detent 사용
-                sheet.detents = [.medium()]
+                sheet.detents = [.medium(), .large()]
             }
             
             sheet.prefersGrabberVisible = true
