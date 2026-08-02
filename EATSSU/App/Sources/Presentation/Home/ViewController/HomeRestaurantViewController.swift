@@ -384,10 +384,21 @@ extension HomeRestaurantViewController: UITableViewDataSource {
                 HomeAnalyticsManager.shared.logClickRestaurantInfo(restaurantName: restaurantName)
                 let vc = RestaurantInfoViewController()
                 vc.modalPresentationStyle = .pageSheet
-                vc.sheetPresentationController?.prefersGrabberVisible = true
 
+                vc.loadViewIfNeeded()
                 self.infoDelegate = vc
                 self.infoDelegate?.didTappedRestaurantInfo(restaurantName: restaurantName)
+
+                if let sheet = vc.sheetPresentationController {
+                    if #available(iOS 16.0, *) {
+                        let height = vc.calculatePreferredHeight()
+                        sheet.detents = [.custom { _ in height }]
+                    } else {
+                        sheet.detents = [.large()]
+                    }
+                    sheet.prefersGrabberVisible = true
+                }
+
                 self.present(vc, animated: true)
             }),
             for: .touchUpInside

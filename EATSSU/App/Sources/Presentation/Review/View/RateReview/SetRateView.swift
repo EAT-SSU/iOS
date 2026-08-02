@@ -50,7 +50,7 @@ final class SetRateView: UIView {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.isScrollEnabled = false
-        tableView.rowHeight = 48.adjusted
+        tableView.rowHeight = 44.adjusted
         return tableView
     }()
 
@@ -202,7 +202,7 @@ final class SetRateView: UIView {
         }
 
         detailLabel.snp.makeConstraints { make in
-            make.top.equalTo(rateView.snp.bottom).offset(35)
+            make.top.equalTo(rateView.snp.bottom).offset(26)
             make.centerX.equalToSuperview()
         }
 

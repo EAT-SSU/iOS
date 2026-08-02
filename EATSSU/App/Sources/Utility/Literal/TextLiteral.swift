@@ -826,6 +826,46 @@ enum TextLiteral {
             Localization.localized("review.deleteReviewFail", fallback: "리뷰 삭제에 실패했습니다.")
         }
         
+        /// ReviewTableCell - "번역하기"
+        static var translate: String {
+            Localization.localized("review.translate", fallback: "번역하기")
+        }
+
+        /// ReviewTableCell - "번역 중..."
+        static var translating: String {
+            Localization.localized("review.translating", fallback: "번역 중...")
+        }
+
+        /// ReviewTableCell - "AI가 한국어에서 번역함"
+        static var translatedFromKorean: String {
+            Localization.localized("review.translatedFromKorean", fallback: "AI가 한국어에서 번역함")
+        }
+
+        /// ReviewTableCell - "원문 보기"
+        static var showOriginal: String {
+            Localization.localized("review.showOriginal", fallback: "원문 보기")
+        }
+
+        /// ReviewTableCell - "번역 보기"
+        static var showTranslation: String {
+            Localization.localized("review.showTranslation", fallback: "번역 보기")
+        }
+
+        /// ReviewTableCell - "번역을 사용할 수 없어요"
+        static var translationUnavailable: String {
+            Localization.localized("review.translationUnavailable", fallback: "번역을 사용할 수 없어요")
+        }
+
+        /// ReviewVC - "AI 번역은 정확하지 않을 수 있어요."
+        static var translationDisclaimer: String {
+            Localization.localized("review.translationDisclaimer", fallback: "AI 번역은 정확하지 않을 수 있어요.")
+        }
+
+        /// ReviewVC - "AI 번역이 일시적으로 불가능해요. 잠시 후 다시 시도해 주세요."
+        static var translationFailedTooltip: String {
+            Localization.localized("review.translationFailedTooltip", fallback: "AI 번역이 일시적으로 불가능해요. 잠시 후 다시 시도해 주세요.")
+        }
+
         /// SetRateVC - "리뷰 수정하기"
         static var fixReview: String {
             Localization.localized("review.fixReview", fallback: "리뷰 수정하기")

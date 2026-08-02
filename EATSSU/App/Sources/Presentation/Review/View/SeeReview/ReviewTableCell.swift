@@ -15,10 +15,16 @@ final class ReviewTableCell: UITableViewCell {
     static let identifier = "ReviewTableCell"
     
     var handler: (() -> Void)?
+    /// 번역하기 / 원문 보기 / 번역 보기 탭 시 호출
+    var translationActionHandler: (() -> Void)?
+    /// 번역 유의사항 아이콘 탭 시 호출 (탭된 아이콘 뷰 전달)
+    var translationInfoHandler: ((UIView) -> Void)?
     var reviewId: Int = 0
     var menuName: String = ""
     private var tags: [(name: String, isLiked: Bool)] = []
     private var tagCollectionViewHeightConstraint: Constraint?
+    /// 번역 토글 시 원문 복원용
+    private var originalContent: String = ""
     
     // MARK: - UI Components - Profile Section
     
@@ -32,7 +38,7 @@ final class ReviewTableCell: UITableViewCell {
     private var userNameLabel: UILabel = {
         let label = UILabel()
         label.text = "hellosoongsil1234"
-        label.font = .caption1
+        label.font = .caption2
         label.textColor = .black
         return label
     }()
@@ -76,7 +82,7 @@ final class ReviewTableCell: UITableViewCell {
     private var dateLabel: UILabel = {
         let label = UILabel()
         label.text = "2023.03.03"
-        label.font = .caption3
+        label.font = .caption2
         label.textColor = .gray600
         return label
     }()
@@ -139,10 +145,70 @@ final class ReviewTableCell: UITableViewCell {
         return imageView
     }()
     
+    // MARK: - UI Components - Translation Section
+
+    private lazy var translationActionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.font = .caption2
+        button.setTitleColor(.info, for: .normal)
+        button.addTarget(self, action: #selector(touchedTranslationActionButton), for: .touchUpInside)
+        return button
+    }()
+
+    private let translationSpinner: ESSpinner = {
+        let spinner = ESSpinner()
+        spinner.color = .info
+        spinner.hidesWhenStopped = true
+        return spinner
+    }()
+
+    private let translationGuideLabel: UILabel = {
+        let label = UILabel()
+        label.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 12)
+        label.textColor = .gray500
+        return label
+    }()
+
+    private let translationSeparatorLabel: UILabel = {
+        let label = UILabel()
+        label.text = "·"
+        label.font = .caption2
+        label.textColor = .gray500
+        return label
+    }()
+
+    private lazy var translationInfoButton: UIButton = {
+        let button = UIButton(type: .system)
+        // 에셋 원본이 12라서 스펙(16)에 맞게 리사이즈해서 사용
+        let icon = EATSSUDesignAsset.Images.icInfo.image
+            .resized(to: CGSize(width: 16.adjusted, height: 16.adjusted))
+            .withRenderingMode(.alwaysTemplate)
+        button.setImage(icon, for: .normal)
+        button.tintColor = .gray500
+        button.addTarget(self, action: #selector(touchedTranslationInfoButton), for: .touchUpInside)
+        return button
+    }()
+
+    private lazy var translationFooterStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            translationGuideLabel,
+            translationSeparatorLabel,
+            translationActionButton,
+            translationSpinner,
+            translationInfoButton
+        ])
+        stackView.axis = .horizontal
+        stackView.spacing = 6.adjusted
+        stackView.alignment = .center
+        stackView.isHidden = true
+        return stackView
+    }()
+
     lazy var contentStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
             tagCollectionView,
             reviewTextView,
+            translationFooterStackView,
             foodImageView
         ])
         stackView.axis = .vertical
@@ -178,6 +244,11 @@ final class ReviewTableCell: UITableViewCell {
         reviewTextView.text = ""
         dateLabel.text = ""
         userNameLabel.text = ""
+        originalContent = ""
+        translationActionHandler = nil
+        translationInfoHandler = nil
+        translationSpinner.stopAnimating()
+        translationFooterStackView.isHidden = true
     }
     
     // MARK: - UI Configuration
@@ -192,11 +263,11 @@ final class ReviewTableCell: UITableViewCell {
     
     func setLayout() {
         userProfileImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(30).priority(.high)
+            make.width.height.equalTo(32).priority(.high)
         }
 
         profileStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15).priority(.high)
+            make.top.equalToSuperview().offset(10).priority(.high)
             make.leading.equalToSuperview().offset(16)
         }
         
@@ -212,7 +283,7 @@ final class ReviewTableCell: UITableViewCell {
         contentStackView.snp.makeConstraints { make in
             make.top.equalTo(profileStackView.snp.bottom).priority(.high)
             make.leading.equalToSuperview().offset(16)
-            make.bottom.equalToSuperview().offset(-16).priority(.high)
+            make.bottom.equalToSuperview().offset(-10).priority(.high)
             make.trailing.equalToSuperview().offset(-16)
         }
 
@@ -223,9 +294,16 @@ final class ReviewTableCell: UITableViewCell {
         }
         
         foodImageView.snp.makeConstraints { make in
-            make.top.equalTo(reviewTextView.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(foodImageView.snp.width).multipliedBy(0.75)
+        }
+
+        translationInfoButton.snp.makeConstraints { make in
+            make.width.height.equalTo(16.adjusted)
+        }
+
+        translationSpinner.snp.makeConstraints { make in
+            make.width.height.equalTo(14.adjusted)
         }
     }
     
@@ -234,6 +312,16 @@ final class ReviewTableCell: UITableViewCell {
     @objc
     func touchedSideButtonEvent() {
         handler?()
+    }
+
+    @objc
+    private func touchedTranslationActionButton() {
+        translationActionHandler?()
+    }
+
+    @objc
+    private func touchedTranslationInfoButton() {
+        translationInfoHandler?(translationInfoButton)
     }
     
     // MARK: - Public Methods
@@ -247,6 +335,7 @@ final class ReviewTableCell: UITableViewCell {
         totalRateView.setRating(Int(response.rating))
         dateLabel.text = response.writtenAt
         reviewTextView.text = response.content ?? ""
+        originalContent = response.content ?? ""
         reviewId = response.reviewId
 
         let fixedWidth = reviewTextView.frame.size.width
@@ -287,6 +376,59 @@ final class ReviewTableCell: UITableViewCell {
         }
     }
     
+    /// 번역 푸터 상태 구성. isAvailable이 false거나 본문이 없으면 푸터를 숨긴다.
+    func configureTranslation(state: ReviewTranslationState, isAvailable: Bool) {
+        guard isAvailable, !originalContent.isEmpty else {
+            translationFooterStackView.isHidden = true
+            translationSpinner.stopAnimating()
+            contentStackView.setCustomSpacing(8, after: reviewTextView)
+            return
+        }
+
+        translationFooterStackView.isHidden = false
+        // 본문-번역 푸터 간격은 4 (푸터가 없을 땐 다음 요소와 8 유지)
+        contentStackView.setCustomSpacing(4, after: reviewTextView)
+
+        switch state {
+        case .idle:
+            reviewTextView.text = originalContent
+            setTranslationFooter(guide: nil, action: TextLiteral.Review.translate, showsInfo: false, isLoading: false)
+
+        case .loading:
+            reviewTextView.text = originalContent
+            setTranslationFooter(guide: nil, action: TextLiteral.Review.translating, showsInfo: false, isLoading: true)
+
+        case let .translated(text, showingOriginal):
+            if showingOriginal {
+                reviewTextView.text = originalContent
+                setTranslationFooter(guide: nil, action: TextLiteral.Review.showTranslation, showsInfo: false, isLoading: false)
+            } else {
+                reviewTextView.text = text
+                setTranslationFooter(
+                    guide: TextLiteral.Review.translatedFromKorean,
+                    action: TextLiteral.Review.showOriginal,
+                    showsInfo: true,
+                    isLoading: false
+                )
+            }
+
+        case .failed:
+            reviewTextView.text = originalContent
+            setTranslationFooter(guide: TextLiteral.Review.translationUnavailable, action: nil, showsInfo: true, isLoading: false)
+        }
+    }
+
+    private func setTranslationFooter(guide: String?, action: String?, showsInfo: Bool, isLoading: Bool) {
+        translationGuideLabel.text = guide
+        translationGuideLabel.isHidden = guide == nil
+        translationActionButton.setTitle(action, for: .normal)
+        translationActionButton.isHidden = action == nil
+        translationActionButton.isUserInteractionEnabled = !isLoading
+        translationSeparatorLabel.isHidden = guide == nil || action == nil
+        translationInfoButton.isHidden = !showsInfo
+        isLoading ? translationSpinner.startAnimating() : translationSpinner.stopAnimating()
+    }
+
     func myPageDataBind(response: MyReviewListItem, nickname: String) {
         self.layoutIfNeeded()
         

@@ -3,6 +3,8 @@ import ProjectDescription
 let appInfoPlist: InfoPlist = .extendingDefault(with: [
     "CFBundleShortVersionString": "$(MARKETING_VERSION)",
     "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+    // 표준 HTTPS만 사용하므로 수출 규정(암호화) 심사 면제 — 테플 업로드 후 컴플라이언스 대기 없이 자동 배포
+    "ITSAppUsesNonExemptEncryption": false,
     "UILaunchStoryboardName": "LaunchScreen",
     "BASE_URL": "https://$(BASE_URL)",
     "KAKAO API KEY": "$(KAKAO_API_KEY)",
@@ -159,7 +161,8 @@ let project = Project(
                                "CODE_SIGN_IDENTITY": "Apple Distribution",
                                "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                              ],
-                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                             // DEV 타깃은 TestFlight(Release) 빌드도 dev 서버를 바라본다
+                             xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     )
                 ]
             )
@@ -254,7 +257,8 @@ let project = Project(
                                 "CODE_SIGN_IDENTITY": "Apple Distribution",
                                 "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEV"
                              ],
-                             xcconfig: "App/Resources/Secrets/Release.xcconfig"
+                             // DEV 위젯도 TestFlight(Release) 빌드에서 dev 서버를 바라본다
+                             xcconfig: "App/Resources/Secrets/Debug.xcconfig"
                     )
                 ]
             )

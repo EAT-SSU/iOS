@@ -21,6 +21,7 @@ enum ReviewRouter {
                        size: Int? = 20)
     case getFixedMenuStatistics(_ menuId: Int)
     case getMealStatistics(_ mealId: Int)
+    case translateReview(_ reviewId: Int, language: String)
 }
 
 extension ReviewRouter: TargetType {
@@ -50,6 +51,8 @@ extension ReviewRouter: TargetType {
             "/v2/reviews/statistics/menus/\(menuId)"
         case let .getMealStatistics(mealId):
             "/v2/reviews/statistics/meals/\(mealId)"
+        case let .translateReview(reviewId, _):
+            "/v2/reviews/\(reviewId)/translate"
         }
     }
     
@@ -57,7 +60,7 @@ extension ReviewRouter: TargetType {
         switch self {
         case .getValidMenusForReview, .newReviewList, .getFixedMenuStatistics, .getMealStatistics:
                 .get
-        case .report:
+        case .report, .translateReview:
                 .post
         case .deleteReview:
                 .delete
@@ -107,6 +110,11 @@ extension ReviewRouter: TargetType {
                 .requestPlain
         case .getMealStatistics:
                 .requestPlain
+        case let .translateReview(_, language):
+                .requestParameters(
+                    parameters: ["language": language],
+                    encoding: URLEncoding.queryString
+                )
         }
     }
     

@@ -48,7 +48,7 @@ final class MenuLikeCell: UITableViewCell {
     /// 좋아요 버튼 컨테이너
     private let likeContainer: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 14
+        view.layer.cornerRadius = 18
         view.layer.borderWidth = 1
         view.layer.borderColor = EATSSUDesignAsset.Color.GrayScale.gray300.color.cgColor
         view.setContentHuggingPriority(.required, for: .horizontal)
@@ -90,15 +90,15 @@ final class MenuLikeCell: UITableViewCell {
 
     private func setLayout() {
         hStack.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(12).priority(.high)
+            $0.verticalEdges.equalToSuperview().inset(4).priority(.high)
             $0.horizontalEdges.equalToSuperview()
         }
-        
+
         likeContainer.snp.makeConstraints {
-            $0.height.equalTo(28).priority(.high)
+            $0.height.equalTo(36).priority(.high)
             $0.width.equalTo(58).priority(.required)
         }
-        
+
         likeButton.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.size.equalTo(CGSize(width: 18, height: 18))

@@ -30,7 +30,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
     /// 태그 이름 레이블
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .caption3
+        label.font = .caption2
         label.textColor = .primary
         label.numberOfLines = 1
         label.lineBreakMode = .byClipping
@@ -108,7 +108,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
         }
 
         contentView.snp.makeConstraints { make in
-            make.height.equalTo(22)
+            make.height.equalTo(26)
         }
     }
     
@@ -134,7 +134,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
     
     static func estimatedSize(for text: String, isLiked: Bool, maxWidth: CGFloat) -> CGSize {
         let label = UILabel()
-        label.font = .caption3
+        label.font = .caption2
         label.text = text
         label.numberOfLines = 1
 
@@ -142,7 +142,7 @@ final class ReviewTagCollectionViewCell: UICollectionViewCell {
 
         let iconWidth: CGFloat = isLiked ? 14 : 0
         let totalWidth = labelSize.width + iconWidth + 16
-        let height: CGFloat = 22 
+        let height: CGFloat = 26
 
         return CGSize(width: ceil(totalWidth), height: height)
     }

@@ -124,31 +124,31 @@ final class ReportView: BaseUIView {
         inappropriateContentButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(self).inset(24)
             make.height.equalTo(52)
-            make.top.equalTo(unrelatedToMenuButton.snp.bottom).offset(12)
+            make.top.equalTo(unrelatedToMenuButton.snp.bottom).offset(8)
         }
 
         inappropriatePromotionButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(self).inset(24)
             make.height.equalTo(52)
-            make.top.equalTo(inappropriateContentButton.snp.bottom).offset(12)
+            make.top.equalTo(inappropriateContentButton.snp.bottom).offset(8)
         }
 
         offTopicContentButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(self).inset(24)
             make.height.equalTo(52)
-            make.top.equalTo(inappropriatePromotionButton.snp.bottom).offset(12)
+            make.top.equalTo(inappropriatePromotionButton.snp.bottom).offset(8)
         }
 
         copyrightInfringementButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(self).inset(24)
             make.height.equalTo(52)
-            make.top.equalTo(offTopicContentButton.snp.bottom).offset(12)
+            make.top.equalTo(offTopicContentButton.snp.bottom).offset(8)
         }
 
         otherReasonButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(self).inset(24)
             make.height.equalTo(52)
-            make.top.equalTo(copyrightInfringementButton.snp.bottom).offset(12)
+            make.top.equalTo(copyrightInfringementButton.snp.bottom).offset(8)
         }
 
         reviewReportReasonTextView.snp.makeConstraints { make in
