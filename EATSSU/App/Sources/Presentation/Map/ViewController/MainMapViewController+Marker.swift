@@ -98,13 +98,19 @@ extension MainMapViewController {
 
     // MARK: - Cluster Image
 
-    /// 클러스터 마커용 원형 이미지 생성 (개수 표시)
+    /// 클러스터 마커용 원형 이미지 생성 (개수 표시). 줌/팬마다 재호출되므로 (색상, 개수)별로 캐시
     func makeClusterImage(count: Int) -> UIImage {
+        let color = clusterColor
+        let cacheKey = "\(color.hashValue)-\(count)"
+        if let cached = Self.clusterImageCache[cacheKey] {
+            return cached
+        }
+
         let size = CGSize(width: 40, height: 40)
         let renderer = UIGraphicsImageRenderer(size: size)
 
-        return renderer.image { context in
-            clusterColor.setFill()
+        let image = renderer.image { context in
+            color.setFill()
             context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
 
             let paragraphStyle = NSMutableParagraphStyle()
@@ -123,7 +129,12 @@ extension MainMapViewController {
                 height: textSize.height
             ))
         }
+
+        Self.clusterImageCache[cacheKey] = image
+        return image
     }
+
+    private static var clusterImageCache: [String: UIImage] = [:]
 }
 
 // MARK: - Detail Sheets
@@ -152,7 +163,6 @@ extension MainMapViewController {
         MapAnalyticsManager.shared.logClickGoodPriceStore(storeId: store.id)
 
         let detailVC = GoodPriceDetailSheetViewController(store: store)
-        detailVC.onLoadFailed = { [weak self] in self?.showStoreLoadFailedToast() }
         detailVC.loadViewIfNeeded()
         presentSheet(detailVC, heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() })
     }

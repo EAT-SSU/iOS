@@ -159,20 +159,13 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     private func configureData() {
         storeNameLabel.text = partnership.storeName
 
-        switch partnership.restaurantType {
-        case "RESTAURANT":
-            typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
-            typeTextLabel.text = TextLiteral.Map.restaurant
-        case "CAFE":
-            typeIconImageView.image = EATSSUDesignAsset.Images.cafePin.image
-            typeTextLabel.text = TextLiteral.Map.cafe
-        case "PUB":
-            typeIconImageView.image = EATSSUDesignAsset.Images.pubPin.image
-            typeTextLabel.text = TextLiteral.Map.pub
-        default:
-            typeIconImageView.image = EATSSUDesignAsset.Images.restaurantPin.image
-            typeTextLabel.text = partnership.restaurantType
-        }
+        typeIconImageView.image = MainMapViewController.partnershipIcon(
+            for: partnership.restaurantType,
+            isFestival: false
+        )
+        typeTextLabel.text = PartnershipFilter.allCases
+            .first { $0.restaurantType == partnership.restaurantType }?
+            .title ?? partnership.restaurantType
 
         for (index, info) in partnership.partnershipInfos.enumerated() {
             let isLast = index == partnership.partnershipInfos.count - 1

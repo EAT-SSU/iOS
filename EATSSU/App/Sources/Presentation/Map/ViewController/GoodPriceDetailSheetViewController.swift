@@ -27,9 +27,6 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
 
     private let store: GoodPriceStoreDTO
 
-    /// 상세 조회 실패 시 호출 (부모가 토스트 표시)
-    var onLoadFailed: (() -> Void)?
-
     // MARK: - UI Components
 
     private let storeNameLabel = UILabel()
@@ -155,7 +152,8 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
                 self.applyDetail(detail)
             case .failure(let error):
                 print("착한가격업소 상세 조회 실패: \(error.localizedDescription)")
-                self.onLoadFailed?()
+                // 시트가 지도 위에 떠 있으므로 토스트는 시트 자신의 view에 띄운다
+                self.showToast(message: TextLiteral.Map.storeLoadFailed, type: .danger)
             }
         }
     }
@@ -184,10 +182,7 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
         let menuPart = menu?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let pricePart: String
         if let price {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            let formatted = formatter.string(from: NSNumber(value: price)) ?? "\(price)"
-            pricePart = TextLiteral.Map.priceWon(formatted)
+            pricePart = TextLiteral.Map.priceWon(price.formattedWithCommas)
         } else {
             pricePart = ""
         }

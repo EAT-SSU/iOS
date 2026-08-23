@@ -95,13 +95,16 @@ final class MainMapView: BaseUIView {
 
     // MARK: - Configuration
 
-    /// 단독 진입(착한가격업소 지도)에서는 상단 탭을 숨긴다
+    /// 단독 진입(착한가격업소 지도)에서는 상단 탭을 숨기고 지도를 safe area 상단까지 올린다
     func setTopTabVisible(_ visible: Bool) {
         topTabView.isHidden = !visible
-        topTabView.snp.remakeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide)
-            $0.leading.trailing.equalToSuperview()
-            if !visible { $0.height.equalTo(0) }
+        mapView.snp.remakeConstraints {
+            if visible {
+                $0.top.equalTo(topTabView.snp.bottom)
+            } else {
+                $0.top.equalTo(safeAreaLayoutGuide)
+            }
+            $0.leading.trailing.bottom.equalToSuperview()
         }
     }
 }

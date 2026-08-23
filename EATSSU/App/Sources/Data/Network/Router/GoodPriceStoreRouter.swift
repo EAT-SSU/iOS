@@ -10,8 +10,8 @@ import Foundation
 import Moya
 
 enum GoodPriceStoreRouter {
-    /// 목록 조회. category가 nil이면 전체
-    case getStores(category: GoodPriceCategory?)
+    /// 전체 목록 조회 (업종 필터는 클라이언트에서 처리)
+    case getStores
     /// 상세 조회
     case getStoreDetail(id: Int)
 }
@@ -35,18 +35,7 @@ extension GoodPriceStoreRouter: TargetType {
     }
 
     var task: Task {
-        switch self {
-        case .getStores(let category):
-            guard let category, let serverValue = category.serverValue else {
-                return .requestPlain
-            }
-            return .requestParameters(
-                parameters: ["category": serverValue],
-                encoding: URLEncoding.queryString
-            )
-        case .getStoreDetail:
-            return .requestPlain
-        }
+        return .requestPlain
     }
 
     var headers: [String: String]? {

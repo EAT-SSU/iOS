@@ -13,6 +13,9 @@ final class MapLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
 
     var items: [MapMarkerItem] = []
 
+    /// 줌/팬으로 같은 마커가 반복 노출될 때 재래스터화를 피하기 위한 캐시 (identifier 기준)
+    private var imageCache: [Int: UIImage] = [:]
+
     override func updateLeafMarker(_ info: NMCLeafMarkerInfo, _ marker: NMFMarker) {
         super.updateLeafMarker(info, marker)
 
@@ -20,10 +23,16 @@ final class MapLeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
               items.indices.contains(key.identifier) else { return }
         let item = items[key.identifier]
 
-        let markerView = MapMarkerView(icon: item.icon, title: item.title)
-        markerView.layoutIfNeeded()
-        markerView.frame = CGRect(origin: .zero, size: markerView.intrinsicContentSize)
-        let iconImage = markerView.toImage()
+        let iconImage: UIImage
+        if let cached = imageCache[key.identifier] {
+            iconImage = cached
+        } else {
+            let markerView = MapMarkerView(icon: item.icon, title: item.title)
+            markerView.layoutIfNeeded()
+            markerView.frame = CGRect(origin: .zero, size: markerView.intrinsicContentSize)
+            iconImage = markerView.toImage()
+            imageCache[key.identifier] = iconImage
+        }
 
         marker.iconImage = NMFOverlayImage(image: iconImage)
         marker.width = iconImage.size.width

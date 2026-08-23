@@ -48,10 +48,22 @@ final class MainMapViewController: BaseViewController {
 
     /// 가장 최근에 받아온 전체 제휴 목록 (축제 필터용 캐시)
     var cachedAllPartnerships: [PartnershipDTO] = []
-    /// 내 학과 제휴 목록 캐시 (학교 제휴 탭 필터링용)
-    var cachedMyPartnerships: [PartnershipDTO] = []
     /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
     var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
+
+    /// 탭/필터가 바뀔 때마다 증가. 늦게 도착한 응답이 현재 화면을 덮어쓰지 않도록 완료 시점에 비교
+    private(set) var loadGeneration = 0
+
+    /// 새 로드 시작을 알리고 해당 로드의 세대 번호를 반환
+    func beginLoad() -> Int {
+        loadGeneration += 1
+        return loadGeneration
+    }
+
+    /// 해당 세대의 응답이 아직 유효한지
+    func isCurrentLoad(_ generation: Int) -> Bool {
+        generation == loadGeneration
+    }
 
     // MARK: - State
 
@@ -127,13 +139,19 @@ final class MainMapViewController: BaseViewController {
 
         switch currentTab {
         case .partnership:
-            // 축제 노출 여부가 바뀌었을 수 있으므로 칩 재구성
-            applyTabUI()
-            fetchDepartmentAndUpdateButton { [weak self] in
-                self?.loadPartnershipMarkers()
-            }
+            refreshPartnershipTab()
         case .goodPrice:
             loadGoodPriceMarkers()
+        }
+    }
+
+    /// 학과 정보를 다시 받아온 뒤 학교 제휴 마커 로드. 축제 노출 여부가 바뀌었을 수 있어 칩도 재구성
+    private func refreshPartnershipTab() {
+        applyTabUI()
+        let generation = beginLoad()
+        fetchDepartmentAndUpdateButton { [weak self] in
+            guard let self, self.isCurrentLoad(generation) else { return }
+            self.loadPartnershipMarkers()
         }
     }
 
@@ -199,15 +217,13 @@ final class MainMapViewController: BaseViewController {
     private func switchTab(to tab: MapTab) {
         guard currentTab != tab else { return }
         currentTab = tab
-        applyTabUI()
         setInitialCameraPosition(animated: true)
 
         switch tab {
         case .partnership:
-            fetchDepartmentAndUpdateButton { [weak self] in
-                self?.loadPartnershipMarkers()
-            }
+            refreshPartnershipTab()
         case .goodPrice:
+            applyTabUI()
             MapAnalyticsManager.shared.logClickMapGoodPrice(
                 collegeId: currentCollegeId,
                 majorId: currentDepartmentId
@@ -235,6 +251,7 @@ final class MainMapViewController: BaseViewController {
         }
     }
 
+    /// 축제 → click_map_festival, 그 외(내 학과 제휴 기준) → 학과 있으면 click_map_mine, 없으면 click_map_all
     private func logPartnershipFilterClick(_ filter: PartnershipFilter) {
         switch filter {
         case .festival:
@@ -243,10 +260,14 @@ final class MainMapViewController: BaseViewController {
                 majorId: currentDepartmentId
             )
         case .all, .restaurant, .cafe, .pub:
-            MapAnalyticsManager.shared.logClickMapAll(
-                collegeId: currentCollegeId,
-                majorId: currentDepartmentId
-            )
+            if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
+                MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
+            } else {
+                MapAnalyticsManager.shared.logClickMapAll(
+                    collegeId: currentCollegeId,
+                    majorId: currentDepartmentId
+                )
+            }
         }
     }
 
@@ -282,9 +303,7 @@ final class MainMapViewController: BaseViewController {
     func reloadContent() {
         switch currentTab {
         case .partnership:
-            fetchDepartmentAndUpdateButton { [weak self] in
-                self?.loadPartnershipMarkers()
-            }
+            refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []
             loadGoodPriceMarkers()

@@ -13,12 +13,13 @@ extension MainMapViewController {
 
     /// 전체 제휴 데이터를 받아 캐시에 저장하고 축제 제휴 마커를 표시
     func refreshAllPartnerships() {
+        let generation = beginLoad()
         NetworkService.shared.request(
             PartnershipRouter.getAllPartnerships,
             responseType: [PartnershipDTO].self,
             useAuth: true
         ) { [weak self] result in
-            guard let self = self else { return }
+            guard let self, self.isCurrentLoad(generation) else { return }
             switch result {
             case .success(let partnerships):
                 self.cachedAllPartnerships = partnerships
@@ -48,20 +49,19 @@ extension MainMapViewController {
             return
         }
 
+        let generation = beginLoad()
         NetworkService.shared.request(
             MyRouter.getMyPartnerships,
             responseType: [PartnershipDTO].self,
             useAuth: true
         ) { [weak self] result in
-            guard let self = self else { return }
+            guard let self, self.isCurrentLoad(generation) else { return }
             switch result {
             case .success(let partnerships):
-                self.cachedMyPartnerships = partnerships
                 self.applyPartnershipMarkers(from: partnerships, periodType: .normal)
 
             case .failure(let error):
                 print("내 제휴 조회 실패: \(error.localizedDescription)")
-                self.cachedMyPartnerships = []
                 self.displayMarkers([])
                 self.showStoreLoadFailedToast()
             }
@@ -150,16 +150,18 @@ extension MainMapViewController {
     /// 착한가격업소 마커 로드. 캐시가 있으면 카테고리만 필터, 없으면 전체 목록을 받아온다
     func loadGoodPriceMarkers() {
         if !cachedGoodPriceStores.isEmpty {
+            _ = beginLoad()
             applyGoodPriceMarkers()
             return
         }
 
+        let generation = beginLoad()
         NetworkService.shared.request(
-            GoodPriceStoreRouter.getStores(category: nil),
+            GoodPriceStoreRouter.getStores,
             responseType: [GoodPriceStoreDTO].self,
             useAuth: false
         ) { [weak self] result in
-            guard let self = self else { return }
+            guard let self, self.isCurrentLoad(generation) else { return }
             switch result {
             case .success(let stores):
                 self.cachedGoodPriceStores = stores

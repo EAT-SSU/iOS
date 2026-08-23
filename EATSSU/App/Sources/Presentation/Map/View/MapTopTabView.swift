@@ -40,6 +40,12 @@ final class MapTopTabView: BaseUIView {
             stackView.addArrangedSubview(button)
             buttons.append(button)
         }
+        // setLayout()은 버튼 추가 전에 호출되므로 여기서 탭 개수 기준으로 다시 잡는다
+        indicatorView.snp.remakeConstraints {
+            $0.bottom.leading.equalToSuperview()
+            $0.height.equalTo(2)
+            $0.width.equalToSuperview().dividedBy(max(buttons.count, 1))
+        }
         select(index: 0, animated: false)
     }
 
@@ -75,10 +81,9 @@ final class MapTopTabView: BaseUIView {
         }
 
         indicatorView.snp.makeConstraints {
-            $0.bottom.equalToSuperview()
+            $0.bottom.leading.equalToSuperview()
             $0.height.equalTo(2)
-            $0.width.equalToSuperview().dividedBy(max(buttons.count, 1))
-            $0.leading.equalToSuperview()
+            $0.width.equalToSuperview()
         }
     }
 
@@ -92,21 +97,22 @@ final class MapTopTabView: BaseUIView {
             button.setTitleColor(buttonIndex == index ? .primary : .gray500, for: .normal)
         }
 
-        let update = {
-            self.layoutIfNeeded()
-            let tabWidth = self.bounds.width / CGFloat(max(self.buttons.count, 1))
-            self.indicatorView.transform = CGAffineTransform(translationX: tabWidth * CGFloat(index), y: 0)
-        }
-
         if animated {
-            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut], animations: update)
+            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut]) {
+                self.layoutIfNeeded()
+                self.updateIndicatorTransform()
+            }
         } else {
-            update()
+            updateIndicatorTransform()
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        updateIndicatorTransform()
+    }
+
+    private func updateIndicatorTransform() {
         let tabWidth = bounds.width / CGFloat(max(buttons.count, 1))
         indicatorView.transform = CGAffineTransform(translationX: tabWidth * CGFloat(selectedIndex), y: 0)
     }
