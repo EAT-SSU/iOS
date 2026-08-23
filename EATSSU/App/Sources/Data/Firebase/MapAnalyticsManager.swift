@@ -21,6 +21,9 @@ final class MapAnalyticsManager {
         static let clickMapMine = "click_map_mine"
         static let clickMapFestival = "click_map_festival"
         static let clickPartnerRestaurant = "click_partner_restaurant"
+        static let clickMapGoodPrice = "click_map_good_price"
+        static let clickGoodPriceCategory = "click_good_price_category"
+        static let clickGoodPriceStore = "click_good_price_store"
     }
 
     private enum Parameter {
@@ -28,6 +31,8 @@ final class MapAnalyticsManager {
         static let major = "major"
         static let defaultType = "default_type"
         static let partnerRestaurantId = "partner_restaurant_id"
+        static let category = "category"
+        static let goodPriceStoreId = "good_price_store_id"
     }
 
     enum MapDefaultType: String {
@@ -104,6 +109,36 @@ final class MapAnalyticsManager {
         }
 
         AnalyticsService.logEvent(Event.clickPartnerRestaurant, parameters: parameters)
+    }
+
+    /**
+     #6 지도 화면에서 '착한 가격' 탭을 클릭했을 때 호출
+     */
+    func logClickMapGoodPrice(collegeId: Int?, majorId: Int?) {
+        AnalyticsService.logEvent(
+            Event.clickMapGoodPrice,
+            parameters: makeParameters(collegeId: collegeId, majorId: majorId)
+        )
+    }
+
+    /**
+     #7 착한가격 탭에서 업종 필터를 클릭했을 때 호출
+     - Parameter category: 선택한 업종 (전체는 "ALL")
+     */
+    func logClickGoodPriceCategory(category: GoodPriceCategory) {
+        AnalyticsService.logEvent(Event.clickGoodPriceCategory, parameters: [
+            Parameter.category: category.serverValue ?? "ALL"
+        ])
+    }
+
+    /**
+     #8 지도에서 착한가격업소 마커를 클릭했을 때 호출
+     - Parameter storeId: 클릭된 업소 ID
+     */
+    func logClickGoodPriceStore(storeId: Int) {
+        AnalyticsService.logEvent(Event.clickGoodPriceStore, parameters: [
+            Parameter.goodPriceStoreId: storeId
+        ])
     }
 
     // MARK: - Helpers

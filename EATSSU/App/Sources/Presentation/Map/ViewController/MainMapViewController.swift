@@ -11,7 +11,6 @@ import CoreLocation
 import NMapsMap
 import Moya
 
-
 import EATSSUDesign
 
 final class MainMapViewController: BaseViewController {
@@ -27,8 +26,17 @@ final class MainMapViewController: BaseViewController {
         static let animationDuration: TimeInterval = 0.3
     }
 
+    /// 화면 진입 형태
+    enum Mode {
+        /// 탭바 안의 지도 탭: 상단에 학교 제휴 / 착한 가격 탭 노출
+        case tabbed
+        /// 로그인 화면에서 바로 진입하는 착한가격업소 지도 (탭 없음)
+        case standaloneGoodPrice
+    }
+
     // MARK: - Properties
 
+    let mode: Mode
     let root = MainMapView()
     let locationManager = CLLocationManager()
     var currentDepartmentName: String?
@@ -36,19 +44,49 @@ final class MainMapViewController: BaseViewController {
     var currentCollegeId: Int?
     var hasRequestedLocationPermission = false
 
-    var clusterer: NMCClusterer<PartnershipMarkerKey>?
+    var clusterer: NMCClusterer<MapMarkerKey>?
 
-    /// 가장 최근에 받아온 전체 제휴 목록 (모드 전환 시 필터링용 캐시)
+    /// 가장 최근에 받아온 전체 제휴 목록 (축제 필터용 캐시)
     var cachedAllPartnerships: [PartnershipDTO] = []
+    /// 내 학과 제휴 목록 캐시 (학교 제휴 탭 필터링용)
+    var cachedMyPartnerships: [PartnershipDTO] = []
+    /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
+    var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
 
-    // MARK: - Map Mode Management
+    // MARK: - State
 
-    var currentMapMode: MapMode = .festival
+    private(set) var currentTab: MapTab
+    private(set) var partnershipFilter: PartnershipFilter = .all
+    private(set) var goodPriceCategory: GoodPriceCategory = .all
+
+    /// 현재 노출 중인 학교 제휴 필터 목록 (축제 활성 여부에 따라 달라짐)
+    private var visiblePartnershipFilters: [PartnershipFilter] {
+        let festivalEnabled = FirebaseRemoteConfig.shared.isFestivalEnabled
+        return PartnershipFilter.allCases.filter { $0 != .festival || festivalEnabled }
+    }
+
+    /// 클러스터 색상: 축제 필터일 때만 축제 색
+    var clusterColor: UIColor {
+        (currentTab == .partnership && partnershipFilter == .festival) ? .festivalPrimary : .primary
+    }
+
+    // MARK: - Init
+
+    init(mode: Mode = .tabbed) {
+        self.mode = mode
+        self.currentTab = (mode == .standaloneGoodPrice) ? .goodPrice : .partnership
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - View Setup
-    
+
     override func configureUI() {
         view.addSubview(root)
+        root.setTopTabVisible(mode == .tabbed)
     }
 
     override func setLayout() {
@@ -56,9 +94,13 @@ final class MainMapViewController: BaseViewController {
     }
 
     override func setButtonEvent() {
-        root.festivalButton.addTarget(self, action: #selector(didTapFestival), for: .touchUpInside)
-        root.wholeButton.addTarget(self, action: #selector(didTapWhole), for: .touchUpInside)
-        root.myOnlyButton.addTarget(self, action: #selector(didTapMyOnly), for: .touchUpInside)
+        root.topTabView.onSelect = { [weak self] index in
+            guard let tab = MapTab(rawValue: index) else { return }
+            self?.switchTab(to: tab)
+        }
+        root.filterChipBar.onSelect = { [weak self] index in
+            self?.didSelectFilter(at: index)
+        }
     }
 
     // MARK: - Life Cycle
@@ -72,8 +114,9 @@ final class MainMapViewController: BaseViewController {
         setInitialCameraPosition(animated: false)
         setupLocationButtonObserver()
         setupMarkerTapHandler()
+        applyTabUI()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         logScreenView(screenID: FirebaseScreenID.Map.map1)
@@ -82,36 +125,26 @@ final class MainMapViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // Remote Config에 따라 축제 탭 노출 여부 결정
-        let festivalEnabled = FirebaseRemoteConfig.shared.isFestivalEnabled
-        root.setFestivalVisible(festivalEnabled)
-
-        fetchDepartmentAndUpdateButton { [weak self] in
-            guard let self = self else { return }
-
-            if festivalEnabled {
-                self.currentMapMode = .festival
-                self.root.select(.festival)
-                self.refreshAllPartnerships()
-            } else if let departmentName = self.currentDepartmentName, !departmentName.isEmpty {
-                self.currentMapMode = .myOnly
-                self.root.select(.myOnly)
-                self.fetchMyPartnerships()
-            } else {
-                self.currentMapMode = .all
-                self.root.select(.all)
-                self.refreshAllPartnerships()
+        switch currentTab {
+        case .partnership:
+            // 축제 노출 여부가 바뀌었을 수 있으므로 칩 재구성
+            applyTabUI()
+            fetchDepartmentAndUpdateButton { [weak self] in
+                self?.loadPartnershipMarkers()
             }
+        case .goodPrice:
+            loadGoodPriceMarkers()
         }
     }
 
     // MARK: - Configuration
-    
+
     private func configureNavigationBar() {
-        title = TextLiteral.Map.map
+        title = (mode == .standaloneGoodPrice) ? TextLiteral.Map.goodPriceMapTitle : TextLiteral.Map.map
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.backgroundColor = .white
+        navBarAppearance.shadowColor = .clear
         navBarAppearance.titleTextAttributes = [
             .foregroundColor: UIColor.black,
             .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 16)
@@ -119,93 +152,145 @@ final class MainMapViewController: BaseViewController {
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         navigationController?.navigationBar.compactAppearance = navBarAppearance
-    }
+        navigationController?.navigationBar.tintColor = .black
+        navigationItem.backButtonDisplayMode = .minimal
 
-    // MARK: - Action Methods
-
-    @objc private func didTapFestival() {
-        guard currentMapMode != .festival else { return }
-
-        currentMapMode = .festival
-        setInitialCameraPosition(animated: true)
-        root.select(.festival)
-        MapAnalyticsManager.shared.logClickMapFestival(
-            collegeId: currentCollegeId,
-            majorId: currentDepartmentId
-        )
-        refreshOrApplyCachedMarkers()
-    }
-
-    @objc private func didTapWhole() {
-        guard currentMapMode != .all else { return }
-
-        currentMapMode = .all
-        setInitialCameraPosition(animated: true)
-        root.select(.all)
-        MapAnalyticsManager.shared.logClickMapAll(
-            collegeId: currentCollegeId,
-            majorId: currentDepartmentId
-        )
-        refreshOrApplyCachedMarkers()
-    }
-
-    /// 캐시가 비어있으면(내 제휴 모드로 시작해 전체 데이터를 아직 안 받은 경우) 서버에서 받아오고, 있으면 캐시로 필터링
-    private func refreshOrApplyCachedMarkers() {
-        if cachedAllPartnerships.isEmpty {
-            refreshAllPartnerships()
-        } else {
-            applyCachedMarkers()
+        // 모달로 띄워진 단독 화면이면 닫기 버튼 제공
+        if mode == .standaloneGoodPrice,
+           presentingViewController != nil,
+           navigationController?.viewControllers.first === self {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                image: EATSSUDesignAsset.Images.icClose.image.resize(newWidth: 24),
+                style: .plain,
+                target: self,
+                action: #selector(didTapClose)
+            )
         }
     }
 
-    @objc private func didTapMyOnly() {
-        guard !(currentDepartmentName?.isEmpty ?? true) else {
-            presentNoDepartmentSheet()
+    @objc private func didTapClose() {
+        dismiss(animated: true)
+    }
+
+    /// 현재 탭에 맞춰 필터 칩과 선택 상태를 갱신
+    private func applyTabUI() {
+        root.topTabView.select(index: currentTab.rawValue, animated: false)
+
+        switch currentTab {
+        case .partnership:
+            let filters = visiblePartnershipFilters
+            if !filters.contains(partnershipFilter) { partnershipFilter = .all }
+            root.filterChipBar.highlightColor = clusterColor
+            root.filterChipBar.configure(
+                titles: filters.map { $0.title },
+                selectedIndex: filters.firstIndex(of: partnershipFilter) ?? 0
+            )
+        case .goodPrice:
+            root.filterChipBar.highlightColor = .primary
+            root.filterChipBar.configure(
+                titles: GoodPriceCategory.allCases.map { $0.title },
+                selectedIndex: GoodPriceCategory.allCases.firstIndex(of: goodPriceCategory) ?? 0
+            )
+        }
+    }
+
+    // MARK: - Tab & Filter Actions
+
+    private func switchTab(to tab: MapTab) {
+        guard currentTab != tab else { return }
+        currentTab = tab
+        applyTabUI()
+        setInitialCameraPosition(animated: true)
+
+        switch tab {
+        case .partnership:
+            fetchDepartmentAndUpdateButton { [weak self] in
+                self?.loadPartnershipMarkers()
+            }
+        case .goodPrice:
+            MapAnalyticsManager.shared.logClickMapGoodPrice(
+                collegeId: currentCollegeId,
+                majorId: currentDepartmentId
+            )
+            loadGoodPriceMarkers()
+        }
+    }
+
+    private func didSelectFilter(at index: Int) {
+        switch currentTab {
+        case .partnership:
+            let filters = visiblePartnershipFilters
+            guard filters.indices.contains(index) else { return }
+            partnershipFilter = filters[index]
+            root.filterChipBar.highlightColor = clusterColor
+            logPartnershipFilterClick(partnershipFilter)
+            loadPartnershipMarkers()
+
+        case .goodPrice:
+            let categories = GoodPriceCategory.allCases
+            guard categories.indices.contains(index) else { return }
+            goodPriceCategory = categories[index]
+            MapAnalyticsManager.shared.logClickGoodPriceCategory(category: goodPriceCategory)
+            loadGoodPriceMarkers()
+        }
+    }
+
+    private func logPartnershipFilterClick(_ filter: PartnershipFilter) {
+        switch filter {
+        case .festival:
+            MapAnalyticsManager.shared.logClickMapFestival(
+                collegeId: currentCollegeId,
+                majorId: currentDepartmentId
+            )
+        case .all, .restaurant, .cafe, .pub:
+            MapAnalyticsManager.shared.logClickMapAll(
+                collegeId: currentCollegeId,
+                majorId: currentDepartmentId
+            )
+        }
+    }
+
+    // MARK: - Partnership Tab
+
+    /// 학교 제휴 탭 마커 로드. 학과 미입력이면 학과 입력 시트를 띄우고 마커는 비움
+    func loadPartnershipMarkers() {
+        if partnershipFilter == .festival {
+            refreshAllPartnerships()
             return
         }
 
-        // 이미 학과별 모드면 return
-        guard currentMapMode != .myOnly else { return }
-
-        currentMapMode = .myOnly
-
-        if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
-            MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
+        guard hasDepartment else {
+            displayMarkers([])
+            presentNoDepartmentSheetIfNeeded()
+            return
         }
-        setInitialCameraPosition(animated: true)
-        root.select(.myOnly)
         fetchMyPartnerships()
     }
 
-    private func presentNoDepartmentSheet() {
-        let sheetVC = NoDepartmentSheetViewController()
-        present(sheetVC, animated: true)
+    var hasDepartment: Bool {
+        !(currentDepartmentName?.isEmpty ?? true)
+    }
+
+    private func presentNoDepartmentSheetIfNeeded() {
+        guard mode == .tabbed, currentTab == .partnership, presentedViewController == nil else { return }
+        present(NoDepartmentSheetViewController(), animated: true)
     }
 
     // MARK: - Helper Methods
-    
+
+    /// 탭바에서 지도 탭을 다시 눌렀을 때 현재 탭 데이터 갱신
     func reloadContent() {
-        // 학과 정보를 다시 불러온 후, 현재 모드에 맞게 데이터 갱신
-        fetchDepartmentAndUpdateButton { [weak self] in
-            guard let self = self else { return }
-            switch self.currentMapMode {
-            case .festival, .all:
-                self.refreshAllPartnerships()
-            case .myOnly:
-                // 학과가 없어졌다면 축제 활성 여부에 따라 폴백
-                if self.currentDepartmentName?.isEmpty ?? true {
-                    if FirebaseRemoteConfig.shared.isFestivalEnabled {
-                        self.didTapFestival()
-                    } else {
-                        self.didTapWhole()
-                    }
-                } else {
-                    self.fetchMyPartnerships()
-                }
+        switch currentTab {
+        case .partnership:
+            fetchDepartmentAndUpdateButton { [weak self] in
+                self?.loadPartnershipMarkers()
             }
+        case .goodPrice:
+            cachedGoodPriceStores = []
+            loadGoodPriceMarkers()
         }
     }
-    
+
     func setInitialCameraPosition(animated: Bool) {
         let cameraUpdate = NMFCameraUpdate(
             scrollTo: NMGLatLng(
@@ -222,5 +307,9 @@ final class MainMapViewController: BaseViewController {
 
         root.mapView.mapView.moveCamera(cameraUpdate)
     }
-    
+
+    /// 업소 정보 로드 실패 토스트
+    func showStoreLoadFailedToast() {
+        showToast(message: TextLiteral.Map.storeLoadFailed, type: .danger)
+    }
 }

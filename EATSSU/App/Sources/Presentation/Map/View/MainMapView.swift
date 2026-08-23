@@ -12,10 +12,46 @@ import SnapKit
 
 import EATSSUDesign
 
-enum MapMode {
+/// 지도 상단 탭
+enum MapTab: Int, CaseIterable {
+    case partnership
+    case goodPrice
+
+    var title: String {
+        switch self {
+        case .partnership: return TextLiteral.Map.schoolPartnershipTab
+        case .goodPrice:   return TextLiteral.Map.goodPriceTab
+        }
+    }
+}
+
+/// 학교 제휴 탭 필터. festival은 Remote Config로 노출 여부 결정
+enum PartnershipFilter: CaseIterable {
     case festival
-    case myOnly
     case all
+    case restaurant
+    case cafe
+    case pub
+
+    var title: String {
+        switch self {
+        case .festival:   return TextLiteral.Map.festival
+        case .all:        return TextLiteral.Map.all
+        case .restaurant: return TextLiteral.Map.restaurant
+        case .cafe:       return TextLiteral.Map.cafe
+        case .pub:        return TextLiteral.Map.pub
+        }
+    }
+
+    /// 서버 restaurantType 값. 전체/축제는 nil
+    var restaurantType: String? {
+        switch self {
+        case .restaurant: return "RESTAURANT"
+        case .cafe:       return "CAFE"
+        case .pub:        return "PUB"
+        case .festival, .all: return nil
+        }
+    }
 }
 
 final class MainMapView: BaseUIView {
@@ -23,137 +59,49 @@ final class MainMapView: BaseUIView {
     // MARK: - UI Components
 
     let mapView = NMFNaverMapView()
-    let toggleBackgroundView = UIView()
-    let festivalButton = UIButton(type: .system)
-    let myOnlyButton = UIButton(type: .system)
-    let wholeButton = UIButton(type: .system)
+    let topTabView = MapTopTabView(titles: MapTab.allCases.map { $0.title })
+    let filterChipBar = MapFilterChipBar()
 
     // MARK: - UI Setup
 
     override func configureUI() {
         backgroundColor = .white
 
-        // 네이버 지도 뷰 설정
         mapView.showZoomControls = false
         mapView.showLocationButton = true
         mapView.mapView.positionMode = .disabled
-        addSubview(mapView)
 
-        // 상단 버튼 배경 뷰 설정
-        toggleBackgroundView.layer.cornerRadius = 20
-        toggleBackgroundView.layer.borderWidth = 1
-        toggleBackgroundView.layer.borderColor = UIColor.gray300.cgColor
-        toggleBackgroundView.backgroundColor = .white
-        addSubview(toggleBackgroundView)
-
-        let titleFont = UIFont.button2
-
-        configureToggleButton(festivalButton, title: TextLiteral.Map.festival, font: titleFont)
-        configureToggleButton(myOnlyButton, title: TextLiteral.Map.myPartner, font: titleFont)
-        configureToggleButton(wholeButton, title: TextLiteral.Map.all, font: titleFont)
-
-        toggleBackgroundView.addSubview(festivalButton)
-        toggleBackgroundView.addSubview(myOnlyButton)
-        toggleBackgroundView.addSubview(wholeButton)
-
-        // 초기 선택 상태: 축제
-        select(.festival)
-    }
-
-    private func configureToggleButton(_ button: UIButton, title: String, font: UIFont) {
-        button.setTitle(title, for: .normal)
-        button.titleLabel?.font = font
-        button.titleLabel?.numberOfLines = 1
-        button.titleLabel?.lineBreakMode = .byTruncatingTail
-        button.setContentHuggingPriority(.required, for: .horizontal)
-        button.setContentCompressionResistancePriority(.required, for: .horizontal)
-        button.layer.cornerRadius = 14
-        button.clipsToBounds = true
-        button.backgroundColor = .clear
-        button.setTitleColor(.label, for: .normal)
-        if #available(iOS 15.0, *) {
-            var cfg = button.configuration ?? .plain()
-            cfg.title = title
-            cfg.baseForegroundColor = .label
-            cfg.baseBackgroundColor = .clear
-            cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
-            cfg.titleLineBreakMode = .byTruncatingTail
-            cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inAttrs in
-                var out = inAttrs
-                out.font = font
-                return out
-            }
-            button.configuration = cfg
-        } else {
-            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        }
+        addSubviews(mapView, topTabView, filterChipBar)
     }
 
     // MARK: - Layout Setup
 
     override func setLayout() {
+        topTabView.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
+
         mapView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(topTabView.snp.bottom)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
 
-        toggleBackgroundView.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(12)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(40)
-            $0.leading.greaterThanOrEqualToSuperview().offset(15)
-            $0.trailing.lessThanOrEqualToSuperview().inset(15)
-        }
-
-        festivalButton.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(4)
-            $0.leading.equalToSuperview().inset(4)
-            $0.width.greaterThanOrEqualTo(60)
-        }
-
-        myOnlyButton.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(4)
-            $0.leading.equalTo(festivalButton.snp.trailing)
-            $0.width.greaterThanOrEqualTo(60)
-        }
-
-        wholeButton.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(4)
-            $0.leading.equalTo(myOnlyButton.snp.trailing)
-            $0.trailing.equalToSuperview().inset(4)
-            $0.width.greaterThanOrEqualTo(60)
+        filterChipBar.snp.makeConstraints {
+            $0.top.equalTo(mapView).offset(12)
+            $0.leading.trailing.equalToSuperview()
         }
     }
 
-    // MARK: - Button Selection Handling
+    // MARK: - Configuration
 
-    func select(_ mode: MapMode) {
-        let highlightColor: UIColor = (mode == .festival) ? .festivalPrimary : .primary
-        applySelection(festivalButton, isSelected: mode == .festival, highlightColor: highlightColor)
-        applySelection(myOnlyButton, isSelected: mode == .myOnly, highlightColor: highlightColor)
-        applySelection(wholeButton, isSelected: mode == .all, highlightColor: highlightColor)
-    }
-
-    /// 축제 탭 노출 여부 토글. 숨길 때는 width를 0으로 만들어 레이아웃에서 사라지게 함
-    func setFestivalVisible(_ visible: Bool) {
-        festivalButton.isHidden = !visible
-        festivalButton.snp.remakeConstraints {
-            $0.top.bottom.equalToSuperview().inset(4)
-            $0.leading.equalToSuperview().inset(4)
-            if visible {
-                $0.width.greaterThanOrEqualTo(60)
-            } else {
-                $0.width.equalTo(0)
-            }
-        }
-    }
-
-    private func applySelection(_ button: UIButton, isSelected: Bool, highlightColor: UIColor) {
-        if isSelected {
-            button.backgroundColor = highlightColor
-            button.setTitleColor(.white, for: .normal)
-        } else {
-            button.backgroundColor = .clear
-            button.setTitleColor(.label, for: .normal)
+    /// 단독 진입(착한가격업소 지도)에서는 상단 탭을 숨긴다
+    func setTopTabVisible(_ visible: Bool) {
+        topTabView.isHidden = !visible
+        topTabView.snp.remakeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+            if !visible { $0.height.equalTo(0) }
         }
     }
 }

@@ -176,7 +176,7 @@
 // MARK: - Map
 
 /// MainMapVC - "제휴 지도"
-"map.map" = "提携マップ";
+"map.map" = "マップ";
 /// MainMapView - "전체"
 "map.all" = "すべて";
 /// MainMapView - "내 제휴"
@@ -201,6 +201,22 @@
 "map.needLocationAuth" = "位置情報権限が必要です";
 /// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."
 "map.locationAuthDescription" = "現在地をすぐに確認し、近くの提携レストランを探せるように、位置情報へのアクセスを許可してください。";
+
+"map.goodPriceMapTitle" = "良心価格店マップ";
+"map.schoolPartnershipTab" = "学校提携";
+"map.goodPriceTab" = "良心価格";
+"map.korean" = "韓食";
+"map.japanese" = "和食";
+"map.western" = "洋食";
+"map.chinese" = "中華";
+"map.bakery" = "ベーカリー";
+"map.etc" = "その他";
+"map.storeLoadFailed" = "店舗情報を読み込めませんでした。";
+"map.priceWon" = "%@ウォン";
+"auth.loginSubTitle" = "崇実大からソウル各地まで";
+"auth.loginSubTitleHighlight" = "ソウル各地まで";
+"auth.goodPriceEntryTitle" = "良心価格店を見る";
+"auth.goodPriceEntrySubTitle" = "近くのお手頃な一食を探そう";
 
 
 // MARK: - MyPage

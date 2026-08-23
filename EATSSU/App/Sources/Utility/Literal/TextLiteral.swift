@@ -164,6 +164,26 @@ enum TextLiteral {
     // MARK: - Auth
     
     enum Auth {
+        /// LoginView - "숭실대에서 서울 곳곳까지"
+        static var loginSubTitle: String {
+            Localization.localized("auth.loginSubTitle", fallback: "숭실대에서 서울 곳곳까지")
+        }
+
+        /// LoginView - 서브타이틀 중 강조할 부분 "서울 곳곳까지"
+        static var loginSubTitleHighlight: String {
+            Localization.localized("auth.loginSubTitleHighlight", fallback: "서울 곳곳까지")
+        }
+
+        /// LoginView - "착한가격업소 둘러보기"
+        static var goodPriceEntryTitle: String {
+            Localization.localized("auth.goodPriceEntryTitle", fallback: "착한가격업소 둘러보기")
+        }
+
+        /// LoginView - "내 주변 착한 한 끼를 찾아보세요"
+        static var goodPriceEntrySubTitle: String {
+            Localization.localized("auth.goodPriceEntrySubTitle", fallback: "내 주변 착한 한 끼를 찾아보세요")
+        }
+
         /// "닉네임을 입력해주세요"
         static var inputNickName: String {
             Localization.localized("auth.inputNickName", fallback: "닉네임을 입력해주세요")
@@ -445,9 +465,64 @@ enum TextLiteral {
     // MARK: - Map
     
     enum Map {
-        /// MainMapVC - "제휴 지도"
+        /// MainMapVC - "지도"
         static var map: String {
-            Localization.localized("map.map", fallback: "제휴 지도")
+            Localization.localized("map.map", fallback: "지도")
+        }
+
+        /// 착한가격 단독 진입 화면 타이틀 - "착한가격업소 지도"
+        static var goodPriceMapTitle: String {
+            Localization.localized("map.goodPriceMapTitle", fallback: "착한가격업소 지도")
+        }
+
+        /// 상단 탭 - "학교 제휴"
+        static var schoolPartnershipTab: String {
+            Localization.localized("map.schoolPartnershipTab", fallback: "학교 제휴")
+        }
+
+        /// 상단 탭 - "착한 가격"
+        static var goodPriceTab: String {
+            Localization.localized("map.goodPriceTab", fallback: "착한 가격")
+        }
+
+        /// 착한가격 필터 - "한식"
+        static var korean: String {
+            Localization.localized("map.korean", fallback: "한식")
+        }
+
+        /// 착한가격 필터 - "일식"
+        static var japanese: String {
+            Localization.localized("map.japanese", fallback: "일식")
+        }
+
+        /// 착한가격 필터 - "양식"
+        static var western: String {
+            Localization.localized("map.western", fallback: "양식")
+        }
+
+        /// 착한가격 필터 - "중식"
+        static var chinese: String {
+            Localization.localized("map.chinese", fallback: "중식")
+        }
+
+        /// 착한가격 필터 - "베이커리"
+        static var bakery: String {
+            Localization.localized("map.bakery", fallback: "베이커리")
+        }
+
+        /// 착한가격 필터 - "기타"
+        static var etc: String {
+            Localization.localized("map.etc", fallback: "기타")
+        }
+
+        /// 업소 조회 실패 토스트 - "업소 정보를 불러오지 못했어요."
+        static var storeLoadFailed: String {
+            Localization.localized("map.storeLoadFailed", fallback: "업소 정보를 불러오지 못했어요.")
+        }
+
+        /// 착한가격 바텀시트 가격 포맷 - "%@원"
+        static func priceWon(_ price: String) -> String {
+            Localization.formatted("map.priceWon", fallback: "%@원", price)
         }
 
         /// MainMapView - "전체"

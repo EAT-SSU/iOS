@@ -81,6 +81,11 @@ final class LoginViewController: BaseViewController {
             action: #selector(lookingWithNoSignInButtonDidTapped),
             for: .touchUpInside
         )
+        loginView.goodPriceEntryButton.addTarget(
+            self,
+            action: #selector(goodPriceEntryButtonDidTapped),
+            for: .touchUpInside
+        )
     }
 
     private func configureFirebaseRemoteConfig() {
@@ -193,6 +198,21 @@ final class LoginViewController: BaseViewController {
     private func lookingWithNoSignInButtonDidTapped() {
         AnalyticsService.logEvent("click_login", parameters: ["method": "guest"])
         changeIntoHomeViewController()
+    }
+
+    /// 로그인 없이 착한가격업소 지도로 진입
+    @objc
+    private func goodPriceEntryButtonDidTapped() {
+        AnalyticsService.logEvent("click_login", parameters: ["method": "good_price"])
+        let mapVC = MainMapViewController(mode: .standaloneGoodPrice)
+        if let navigationController {
+            navigationController.pushViewController(mapVC, animated: true)
+        } else {
+            // 네비게이션 없이 루트로 올라온 경우: 닫기 버튼이 있는 네비게이션으로 모달 표시
+            let nav = UINavigationController(rootViewController: mapVC)
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true)
+        }
     }
 }
 

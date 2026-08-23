@@ -7,11 +7,11 @@
 
 import Foundation
 
-// MARK: - Network Requests
+// MARK: - Partnership Requests
 
 extension MainMapViewController {
 
-    /// 전체 제휴 데이터를 받아 캐시에 저장하고, 현재 모드에 맞춰 마커를 표시
+    /// 전체 제휴 데이터를 받아 캐시에 저장하고 축제 제휴 마커를 표시
     func refreshAllPartnerships() {
         NetworkService.shared.request(
             PartnershipRouter.getAllPartnerships,
@@ -22,35 +22,59 @@ extension MainMapViewController {
             switch result {
             case .success(let partnerships):
                 self.cachedAllPartnerships = partnerships
-                self.applyCachedMarkers()
+                self.applyPartnershipMarkers(from: partnerships, periodType: .festival)
 
             case .failure(let error):
                 print("제휴 조회 실패: \(error.localizedDescription)")
                 self.cachedAllPartnerships = []
                 self.displayMarkers([])
+                self.showStoreLoadFailedToast()
             }
 
             #if DEBUG
             // 서버에 제휴 데이터가 없는 동안 Mock으로 대체 (DEBUG 빌드 전용)
             if self.cachedAllPartnerships.isEmpty {
                 self.cachedAllPartnerships = PartnershipMockData.samples
-                self.applyCachedMarkers()
+                self.applyPartnershipMarkers(from: self.cachedAllPartnerships, periodType: .festival)
             }
             #endif
         }
     }
 
-    /// 캐시된 데이터에서 현재 모드의 periodType만 필터해 마커 표시
-    /// myOnly 모드는 별도 API를 쓰므로 여기서 처리하지 않음
-    func applyCachedMarkers() {
-        let periodType: PartnershipPeriodType
-        switch currentMapMode {
-        case .festival: periodType = .festival
-        case .all:      periodType = .normal
-        case .myOnly:   return
+    /// 내 학과 제휴를 받아 현재 업종 필터에 맞춰 마커 표시
+    func fetchMyPartnerships() {
+        guard hasDepartment else {
+            displayMarkers([])
+            return
         }
-        let filtered = Self.filterPartnerships(cachedAllPartnerships, by: periodType)
-        displayMarkers(filtered)
+
+        NetworkService.shared.request(
+            MyRouter.getMyPartnerships,
+            responseType: [PartnershipDTO].self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let partnerships):
+                self.cachedMyPartnerships = partnerships
+                self.applyPartnershipMarkers(from: partnerships, periodType: .normal)
+
+            case .failure(let error):
+                print("내 제휴 조회 실패: \(error.localizedDescription)")
+                self.cachedMyPartnerships = []
+                self.displayMarkers([])
+                self.showStoreLoadFailedToast()
+            }
+        }
+    }
+
+    /// periodType + 현재 업종 필터로 걸러서 마커 표시
+    private func applyPartnershipMarkers(from partnerships: [PartnershipDTO], periodType: PartnershipPeriodType) {
+        var filtered = Self.filterPartnerships(partnerships, by: periodType)
+        if let type = partnershipFilter.restaurantType {
+            filtered = filtered.filter { $0.restaurantType == type }
+        }
+        displayMarkers(filtered.map { makeMarkerItem(for: $0) })
     }
 
     private static func filterPartnerships(
@@ -71,7 +95,7 @@ extension MainMapViewController {
             )
         }
     }
-    
+
     func fetchDepartmentAndUpdateButton(completion: (() -> Void)? = nil) {
         NetworkService.shared.request(
             MyRouter.getDepartment,
@@ -82,13 +106,9 @@ extension MainMapViewController {
 
             switch result {
             case .success(let department):
-                let departmentName = department.departmentName
-                self.currentDepartmentName = departmentName
+                self.currentDepartmentName = department.departmentName
                 self.currentDepartmentId = department.departmentId
                 self.currentCollegeId = department.collegeId
-
-                let buttonTitle = departmentName.isEmpty ? TextLiteral.Map.myPartner : departmentName
-                self.root.myOnlyButton.setTitle(buttonTitle, for: .normal)
 
                 // Realm 데이터도 함께 동기화하여 서버-클라이언트 불일치 방지
                 if let userInfo = UserInfoManager.shared.getCurrentUserInfo() {
@@ -106,9 +126,7 @@ extension MainMapViewController {
                 self.currentDepartmentName = nil
                 self.currentDepartmentId = nil
                 self.currentCollegeId = nil
-                self.root.myOnlyButton.setTitle(TextLiteral.Map.myPartner, for: .normal)
 
-                // Realm 데이터도 함께 동기화하여 서버-클라이언트 불일치 방지
                 if let userInfo = UserInfoManager.shared.getCurrentUserInfo() {
                     UserInfoManager.shared.updateDepartment(
                         for: userInfo,
@@ -123,30 +141,46 @@ extension MainMapViewController {
             completion?()
         }
     }
-    
-    func fetchMyPartnerships() {
-        // 학과 정보가 없으면 API 호출하지 않음 (서버 에러 방지)
-        guard let departmentName = currentDepartmentName,
-              !departmentName.isEmpty else {
-            print("학과 정보가 없어 학과별 제휴 조회를 건너뜁니다")
-            displayMarkers([])
+}
+
+// MARK: - Good Price Store Requests
+
+extension MainMapViewController {
+
+    /// 착한가격업소 마커 로드. 캐시가 있으면 카테고리만 필터, 없으면 전체 목록을 받아온다
+    func loadGoodPriceMarkers() {
+        if !cachedGoodPriceStores.isEmpty {
+            applyGoodPriceMarkers()
             return
         }
 
         NetworkService.shared.request(
-            MyRouter.getMyPartnerships,
-            responseType: [PartnershipDTO].self,
-            useAuth: true
+            GoodPriceStoreRouter.getStores(category: nil),
+            responseType: [GoodPriceStoreDTO].self,
+            useAuth: false
         ) { [weak self] result in
+            guard let self = self else { return }
             switch result {
-            case .success(let partnerships):
-                let filtered = Self.filterPartnerships(partnerships, by: .normal)
-                self?.displayMarkers(filtered)
+            case .success(let stores):
+                self.cachedGoodPriceStores = stores
+                self.applyGoodPriceMarkers()
 
             case .failure(let error):
-                print("내 제휴 조회 실패: \(error.localizedDescription)")
-                self?.displayMarkers([])
+                print("착한가격업소 조회 실패: \(error.localizedDescription)")
+                self.cachedGoodPriceStores = []
+                self.displayMarkers([])
+                self.showStoreLoadFailedToast()
             }
         }
+    }
+
+    private func applyGoodPriceMarkers() {
+        let filtered: [GoodPriceStoreDTO]
+        if let serverValue = goodPriceCategory.serverValue {
+            filtered = cachedGoodPriceStores.filter { $0.category == serverValue }
+        } else {
+            filtered = cachedGoodPriceStores
+        }
+        displayMarkers(filtered.map { makeMarkerItem(for: $0) })
     }
 }
