@@ -13,6 +13,7 @@ import SnapKit
 import EATSSUDesign
 
 /// 착한가격업소 마커 선택 시 업소명/업종/주소/대표메뉴/가격/대표이미지를 보여주는 바텀시트
+/// 하단에 카카오맵/네이버지도 이동 버튼 제공 (서버 URL이 없어 카카오 로컬 검색 → 폴백 경로로 연결)
 final class GoodPriceDetailSheetViewController: BaseViewController {
 
     // MARK: - Constants
@@ -20,12 +21,12 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
     private enum Layout {
         static let horizontalInset: CGFloat = 24
         static let imageSize: CGFloat = 120
-        static let bottomPadding: CGFloat = 24
     }
 
     // MARK: - Properties
 
     private let store: GoodPriceStoreDTO
+    private let mapAppLauncher: MapAppLauncher
 
     // MARK: - UI Components
 
@@ -37,11 +38,18 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
     private let menuLabel = UILabel()
     private let textStackView = UIStackView()
     private let storeImageView = UIImageView()
+    private let mapAppButtonBar = MapAppButtonBar()
 
     // MARK: - Init
 
     init(store: GoodPriceStoreDTO) {
         self.store = store
+        // 착한가격업소는 서버가 지도 URL을 주지 않으므로 상호명 + 좌표 기반 검색으로 연결
+        self.mapAppLauncher = MapAppLauncher(destination: .init(
+            name: store.storeName,
+            latitude: store.latitude,
+            longitude: store.longitude
+        ))
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .pageSheet
     }
@@ -93,7 +101,10 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
         storeImageView.layer.cornerRadius = 8
         storeImageView.backgroundColor = .gray300
 
-        view.addSubviews(textStackView, storeImageView)
+        mapAppButtonBar.onKakaoMapTap = { [weak self] in self?.mapAppLauncher.openKakaoMap() }
+        mapAppButtonBar.onNaverMapTap = { [weak self] in self?.mapAppLauncher.openNaverMap() }
+
+        view.addSubviews(textStackView, storeImageView, mapAppButtonBar)
     }
 
     override func setLayout() {
@@ -107,6 +118,14 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             $0.leading.equalToSuperview().inset(Layout.horizontalInset)
             $0.trailing.equalTo(storeImageView.snp.leading).offset(-16)
+        }
+
+        // large로 확장 시에도 버튼 바가 시트 하단에 붙어있도록 bottom 고정
+        mapAppButtonBar.snp.makeConstraints {
+            $0.top.greaterThanOrEqualTo(textStackView.snp.bottom).offset(MapAppButtonBar.Layout.topSpacing)
+            $0.top.greaterThanOrEqualTo(storeImageView.snp.bottom).offset(MapAppButtonBar.Layout.topSpacing)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(MapAppButtonBar.Layout.bottomInset)
         }
     }
 
@@ -194,9 +213,10 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
     // MARK: - Height
 
     /// 텍스트/이미지 중 더 큰 쪽 기준으로 시트 높이 계산
+    /// 버튼 바는 시트 하단에 고정이므로 컨텐츠 높이 기준으로 계산
     func calculatePreferredHeight() -> CGFloat {
         view.layoutIfNeeded()
         let contentBottom = max(textStackView.frame.maxY, storeImageView.frame.maxY)
-        return contentBottom + Layout.bottomPadding + view.safeAreaInsets.bottom
+        return contentBottom + MapAppButtonBar.Layout.totalArea + view.safeAreaInsets.bottom
     }
 }
