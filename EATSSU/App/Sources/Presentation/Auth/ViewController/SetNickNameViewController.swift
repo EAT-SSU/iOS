@@ -80,7 +80,13 @@ final class SetNickNameViewController: BaseViewController {
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = TextLiteral.Auth.setNickname
+        // 회원가입 시에는 "닉네임 설정", 마이페이지에서 진입 시에는 "내 정보"
+        switch source {
+        case .signup:
+            navigationItem.title = TextLiteral.Auth.setNickname
+        case .mypage:
+            navigationItem.title = TextLiteral.MyPage.myInfo
+        }
     }
     
     private func bindUI() {

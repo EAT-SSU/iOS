@@ -117,6 +117,7 @@ final class NoDepartmentSheetViewController: BaseViewController {
                 myNav.popToViewController(existingVC, animated: true)
             } else {
                 let setNickNameVC = SetNickNameViewController()
+                setNickNameVC.source = .mypage
                 myNav.pushViewController(setNickNameVC, animated: true)
             }
         }
