@@ -179,10 +179,10 @@ final class MainMapViewController: BaseViewController {
         super.viewDidAppear(animated)
         logScreenView(screenID: FirebaseScreenID.Map.map1)
 
-        // 찜 목록에서 진입: 시트를 펼친 상태로 바로 보여준다 (한 번만)
+        // 찜 목록에서 진입: 마커 탭과 같은 내용 높이 시트를 바로 띄운다 (한 번만)
         if let store = detailPartnership, !didPresentDetailSheet {
             didPresentDetailSheet = true
-            showPartnershipDetail(for: store, expanded: true)
+            showPartnershipDetail(for: store)
         }
     }
 
