@@ -13,140 +13,139 @@ import EATSSUDesign
 // MARK: - Marker Management
 
 extension MainMapViewController {
-    
-    // MARK: - Display Markers
-    
-    /// 제휴점 데이터를 받아 지도에 마커 클러스터링으로 표시
-    func displayMarkers(_ partnerships: [PartnershipDTO]) {
-        removeExistingClusterer()
-        
-        let newClusterer = buildClusterer(with: partnerships)
-        
-        let markerData = createMarkerData(from: partnerships)
-        
-        newClusterer.addAll(markerData)
-        
-        attachClustererToMap(newClusterer)
-    }
-    
-    // MARK: - Private Methods
-    
-    private func removeExistingClusterer() {
+
+    /// 마커 데이터를 받아 지도에 클러스터링으로 표시
+    func displayMarkers(_ items: [MapMarkerItem]) {
         clusterer?.mapView = nil
-    }
-    
-    /// 클러스터러 생성 및 설정
-    private func buildClusterer(with partnerships: [PartnershipDTO]) -> NMCClusterer<PartnershipMarkerKey> {
-        let builder = NMCComplexBuilder<PartnershipMarkerKey>()
-        
+
+        let builder = NMCComplexBuilder<MapMarkerKey>()
         builder.maxScreenDistance = 25
         builder.distanceStrategy = NMCDefaultDistanceStrategy()
         builder.thresholdStrategy = NMCDefaultThresholdStrategy(threshold: 25)
-        
-        builder.leafMarkerUpdater = createLeafMarkerUpdater(with: partnerships)
-        builder.clusterMarkerUpdater = createClusterMarkerUpdater()
-        
-        return builder.build()
-    }
-    
-    /// Leaf 마커 업데이터 생성
-    private func createLeafMarkerUpdater(with partnerships: [PartnershipDTO]) -> PartnershipLeafMarkerUpdater {
-        let leafMarkerUpdater = PartnershipLeafMarkerUpdater()
-        leafMarkerUpdater.partnerships = partnerships
-        leafMarkerUpdater.currentMapMode = currentMapMode
 
-        leafMarkerUpdater.onMarkerTap = { [weak self] partnership in
-            self?.showPartnershipDetail(for: partnership)
-        }
+        let leafUpdater = MapLeafMarkerUpdater()
+        leafUpdater.items = items
+        builder.leafMarkerUpdater = leafUpdater
 
-        return leafMarkerUpdater
-    }
-    
-    /// 클러스터 마커 업데이터 생성
-    private func createClusterMarkerUpdater() -> PartnershipClusterMarkerUpdater {
-        let clusterMarkerUpdater = PartnershipClusterMarkerUpdater()
-        clusterMarkerUpdater.viewController = self
-        return clusterMarkerUpdater
-    }
-    
-    /// 제휴점 데이터를 마커 키-값 딕셔너리로 변환
-    private func createMarkerData(from partnerships: [PartnershipDTO]) -> [AnyHashable: NSObject] {
+        let clusterUpdater = MapClusterMarkerUpdater()
+        clusterUpdater.viewController = self
+        // 응답 대기 중 필터가 바뀌어도 기존 클러스터는 표시 당시 색을 유지하도록 색을 고정
+        clusterUpdater.color = clusterColor
+        builder.clusterMarkerUpdater = clusterUpdater
+
+        let newClusterer = builder.build()
+
         var markerData: [AnyHashable: NSObject] = [:]
-        
-        for (index, partnership) in partnerships.enumerated() {
-            let key = PartnershipMarkerKey(
+        for (index, item) in items.enumerated() {
+            let key = MapMarkerKey(
                 identifier: index,
-                position: NMGLatLng(lat: partnership.latitude, lng: partnership.longitude)
+                position: NMGLatLng(lat: item.latitude, lng: item.longitude)
             )
             markerData[key] = NSNull()
         }
-        
-        return markerData
-    }
-    
-    /// 클러스터러를 지도에 연결
-    private func attachClustererToMap(_ newClusterer: NMCClusterer<PartnershipMarkerKey>) {
-        self.clusterer = newClusterer
+        newClusterer.addAll(markerData)
+
+        clusterer = newClusterer
         clusterer?.mapView = root.mapView.mapView
     }
-    
-    // MARK: - Cluster Image
-    
-    /// 클러스터 마커용 원형 이미지 생성 (개수 표시)
-    func makeClusterImage(count: Int) -> UIImage {
-        let size = CGSize(width: 40, height: 40)
-        let renderer = UIGraphicsImageRenderer(size: size)
-        
-        return renderer.image { context in
-            drawCircle(in: context, size: size)
-            drawCountText(in: context, count: count, size: size)
+
+    // MARK: - Marker Items
+
+    func makeMarkerItem(for partnership: PartnershipDTO) -> MapMarkerItem {
+        let isFestival = partnershipFilter == .festival
+        return MapMarkerItem(
+            title: partnership.storeName,
+            latitude: partnership.latitude,
+            longitude: partnership.longitude,
+            icon: Self.partnershipIcon(for: partnership.restaurantType, isFestival: isFestival),
+            onTap: { [weak self] in self?.showPartnershipDetail(for: partnership) }
+        )
+    }
+
+    func makeMarkerItem(for store: GoodPriceStoreDTO) -> MapMarkerItem {
+        MapMarkerItem(
+            title: store.storeName,
+            latitude: store.latitude,
+            longitude: store.longitude,
+            icon: Self.goodPriceIcon(for: store.category),
+            onTap: { [weak self] in self?.showGoodPriceDetail(for: store) }
+        )
+    }
+
+    /// 제휴 업종별 아이콘 (축제 여부로 분기)
+    static func partnershipIcon(for type: String, isFestival: Bool) -> UIImage {
+        if isFestival {
+            switch type {
+            case "CAFE": return EATSSUDesignAsset.Images.festivalCafePin.image
+            case "PUB":  return EATSSUDesignAsset.Images.festivalPubPin.image
+            default:     return EATSSUDesignAsset.Images.festivalRestaurantPin.image
+            }
+        } else {
+            switch type {
+            case "CAFE": return EATSSUDesignAsset.Images.cafePin.image
+            case "PUB":  return EATSSUDesignAsset.Images.pubPin.image
+            default:     return EATSSUDesignAsset.Images.restaurantPin.image
+            }
         }
     }
-    
-    // MARK: - Private Helpers
-    
-    /// 원형 배경 그리기 (현재 모드에 따라 색상 분기)
-    private func drawCircle(in context: UIGraphicsImageRendererContext, size: CGSize) {
-        let circleRect = CGRect(origin: .zero, size: size)
-        let fillColor: UIColor = (currentMapMode == .festival) ? .festivalPrimary : .primary
-        fillColor.setFill()
-        context.cgContext.fillEllipse(in: circleRect)
+
+    /// 착한가격 업종별 아이콘: 베이커리는 전용, 기타는 카페, 나머지는 수저
+    static func goodPriceIcon(for category: String) -> UIImage {
+        switch GoodPriceCategory(serverValue: category) {
+        case .bakery: return EATSSUDesignAsset.Images.bakeryPin.image
+        case .etc:    return EATSSUDesignAsset.Images.cafePin.image
+        default:      return EATSSUDesignAsset.Images.restaurantPin.image
+        }
     }
-    
-    /// 중앙에 개수 텍스트 그리기
-    private func drawCountText(in context: UIGraphicsImageRendererContext, count: Int, size: CGSize) {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 14),
-            .foregroundColor: UIColor.white,
-            .paragraphStyle: paragraphStyle
-        ]
-        
-        let text = "\(count)"
-        let attributedString = NSAttributedString(string: text, attributes: attributes)
-        let textSize = attributedString.size()
-        let textRect = CGRect(
-            x: (size.width - textSize.width) / 2,
-            y: (size.height - textSize.height) / 2,
-            width: textSize.width,
-            height: textSize.height
-        )
-        
-        attributedString.draw(in: textRect)
+
+    // MARK: - Cluster Image
+
+    /// 클러스터 마커용 원형 이미지 생성 (개수 표시). 줌/팬마다 재호출되므로 (색상, 개수)별로 캐시
+    func makeClusterImage(count: Int, color: UIColor) -> UIImage {
+        let cacheKey = "\(color.hashValue)-\(count)"
+        if let cached = Self.clusterImageCache[cacheKey] {
+            return cached
+        }
+
+        let size = CGSize(width: 40, height: 40)
+        let renderer = UIGraphicsImageRenderer(size: size)
+
+        let image = renderer.image { context in
+            color.setFill()
+            context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
+
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = .center
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: EATSSUDesignFontFamily.Pretendard.bold.font(size: 14),
+                .foregroundColor: UIColor.white,
+                .paragraphStyle: paragraphStyle
+            ]
+            let text = NSAttributedString(string: "\(count)", attributes: attributes)
+            let textSize = text.size()
+            text.draw(in: CGRect(
+                x: (size.width - textSize.width) / 2,
+                y: (size.height - textSize.height) / 2,
+                width: textSize.width,
+                height: textSize.height
+            ))
+        }
+
+        Self.clusterImageCache[cacheKey] = image
+        return image
     }
+
+    private static var clusterImageCache: [String: UIImage] = [:]
 }
 
-// MARK: - Marker Tap Handler
+// MARK: - Detail Sheets
 
 extension MainMapViewController {
-    
-    /// 마커 탭 델리게이트 설정
+
     func setupMarkerTapHandler() {
         root.mapView.mapView.touchDelegate = self
     }
-    
+
     /// 제휴점 상세 바텀시트 표시
     func showPartnershipDetail(for partnership: PartnershipDTO) {
         MapAnalyticsManager.shared.logClickPartnerRestaurant(
@@ -156,37 +155,41 @@ extension MainMapViewController {
         )
 
         let detailVC = PartnershipDetailSheetViewController(partnership: partnership)
-        
-        // 뷰가 로드된 후 높이 계산
         detailVC.loadViewIfNeeded()
-        
-        if let sheet = detailVC.sheetPresentationController {
-            // iOS 16.0 이상에서만 custom detent 사용
-            // 표시 후 safe area 확정 시 invalidateDetents()로 클로저가 재실행되어 높이가 보정됨
+        presentSheet(detailVC, heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() })
+    }
+
+    /// 착한가격업소 상세 바텀시트 표시
+    func showGoodPriceDetail(for store: GoodPriceStoreDTO) {
+        MapAnalyticsManager.shared.logClickGoodPriceStore(storeId: store.id)
+
+        let detailVC = GoodPriceDetailSheetViewController(store: store)
+        detailVC.loadViewIfNeeded()
+        presentSheet(detailVC, heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() })
+    }
+
+    /// 커스텀 detent 시트 공통 표시. 표시 후 safe area 확정 시 invalidateDetents()로 높이가 보정됨
+    private func presentSheet(_ viewController: UIViewController, heightProvider: @escaping () -> CGFloat?) {
+        if let sheet = viewController.sheetPresentationController {
             if #available(iOS 16.0, *) {
-                let customDetent = UISheetPresentationController.Detent.custom { [weak detailVC] _ in
-                    detailVC?.calculatePreferredHeight()
-                }
+                let customDetent = UISheetPresentationController.Detent.custom { _ in heightProvider() }
                 sheet.detents = [customDetent, .large()]
             } else {
-                // iOS 16.0 미만에서는 medium detent 사용
                 sheet.detents = [.medium(), .large()]
             }
-            
             sheet.prefersGrabberVisible = true
         }
-        
-        present(detailVC, animated: true)
+        present(viewController, animated: true)
     }
 }
 
 // MARK: - NMFMapViewTouchDelegate
 
 extension MainMapViewController: NMFMapViewTouchDelegate {
-    
+
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
     }
-    
+
     func mapView(_ mapView: NMFMapView, didTap symbol: NMFSymbol) -> Bool {
         return false
     }

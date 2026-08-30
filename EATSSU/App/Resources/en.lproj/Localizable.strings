@@ -8,7 +8,6 @@
 // MARK: - Common
 
 /// "숭실대에서 먹자"
-"common.logoSubTitle" = "Eat at Soongsil";
 /// "확인"
 "common.confirm" = "Confirm";
 /// "취소"
@@ -175,11 +174,11 @@
 // MARK: - Map
 
 /// MainMapVC - "제휴 지도"
-"map.map" = "Partner Map";
+"map.map" = "Map";
 /// MainMapView - "전체"
 "map.all" = "All";
-/// MainMapView - "내 제휴"
-"map.myPartner" = "My Partners";
+/// "축제"
+"map.festival" = "Festival";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
 "map.inputDepartment" = "Enter your department\n and check your personalized partnerships!";
 /// NoDepartmentSheetVC - "학과 입력하기"
@@ -200,6 +199,22 @@
 "map.needLocationAuth" = "Location Permission Required";
 /// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."
 "map.locationAuthDescription" = "Please allow location permission so you can check your location on the map and easily find nearby partners.";
+
+"map.goodPriceMapTitle" = "Good Price Stores Map";
+"map.schoolPartnershipTab" = "Campus Partners";
+"map.goodPriceTab" = "Good Price";
+"map.korean" = "Korean";
+"map.japanese" = "Japanese";
+"map.western" = "Western";
+"map.chinese" = "Chinese";
+"map.bakery" = "Bakery";
+"map.etc" = "Others";
+"map.storeLoadFailed" = "Couldn't load store information.";
+"map.priceWon" = "%@ KRW";
+"auth.loginSubTitle" = "From Soongsil to all of Seoul";
+"auth.loginSubTitleHighlight" = "to all of Seoul";
+"auth.goodPriceEntryTitle" = "Explore Good Price Stores";
+"auth.goodPriceEntrySubTitle" = "Find an affordable meal near you";
 
 
 // MARK: - MyPage

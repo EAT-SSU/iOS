@@ -8,7 +8,6 @@
 // MARK: - Common
 
 /// "숭실대에서 먹자"
-"common.logoSubTitle" = "숭실대에서 먹자";
 /// "확인"
 "common.confirm" = "확인";
 /// "취소"
@@ -176,11 +175,11 @@
 // MARK: - Map
 
 /// MainMapVC - "제휴 지도"
-"map.map" = "제휴 지도";
+"map.map" = "지도";
 /// MainMapView - "전체"
 "map.all" = "전체";
-/// MainMapView - "내 제휴"
-"map.myPartner" = "내 제휴";
+/// "축제"
+"map.festival" = "축제";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
 "map.inputDepartment" = "학과를 입력하고\n나만의 제휴를 확인해보세요!";
 /// NoDepartmentSheetVC - "학과 입력하기"
@@ -201,6 +200,22 @@
 "map.needLocationAuth" = "위치 권한 필요";
 /// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."
 "map.locationAuthDescription" = "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요.";
+
+"map.goodPriceMapTitle" = "착한가격업소 지도";
+"map.schoolPartnershipTab" = "학교 제휴";
+"map.goodPriceTab" = "착한 가격";
+"map.korean" = "한식";
+"map.japanese" = "일식";
+"map.western" = "양식";
+"map.chinese" = "중식";
+"map.bakery" = "베이커리";
+"map.etc" = "기타";
+"map.storeLoadFailed" = "업소 정보를 불러오지 못했어요.";
+"map.priceWon" = "%@원";
+"auth.loginSubTitle" = "숭실대에서 서울 곳곳까지";
+"auth.loginSubTitleHighlight" = "서울 곳곳까지";
+"auth.goodPriceEntryTitle" = "착한가격업소 둘러보기";
+"auth.goodPriceEntrySubTitle" = "내 주변 착한 한 끼를 찾아보세요";
 
 
 // MARK: - MyPage

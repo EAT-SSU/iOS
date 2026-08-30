@@ -8,7 +8,6 @@
 // MARK: - Common
 
 /// "숭실대에서 먹자"
-"common.logoSubTitle" = "Ăn ở Soongsil";
 /// "확인"
 "common.confirm" = "Xác nhận";
 /// "취소"
@@ -176,11 +175,11 @@
 // MARK: - Map
 
 /// MainMapVC - "제휴 지도"
-"map.map" = "Bản đồ đối tác";
+"map.map" = "Bản đồ";
 /// MainMapView - "전체"
 "map.all" = "Tất cả";
-/// MainMapView - "내 제휴"
-"map.myPartner" = "Ưu đãi của tôi";
+/// "축제"
+"map.festival" = "Lễ hội";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
 "map.inputDepartment" = "Nhập ngành của bạn\nvà kiểm tra ưu đãi dành riêng cho bạn!";
 /// NoDepartmentSheetVC - "학과 입력하기"
@@ -201,6 +200,22 @@
 "map.needLocationAuth" = "Cần quyền truy cập vị trí";
 /// MainMapVC+Location - "지도에서 내 위치를 바로 확인하고, 현재 위치 주변의 제휴점들을 손쉽게 찾아볼 수 있도록 위치 권한을 허용해 주세요."
 "map.locationAuthDescription" = "Vui lòng cho phép truy cập vị trí để nhanh chóng xem vị trí của bạn và tìm các nhà hàng đối tác gần đó.";
+
+"map.goodPriceMapTitle" = "Bản đồ quán giá tốt";
+"map.schoolPartnershipTab" = "Đối tác trường";
+"map.goodPriceTab" = "Giá tốt";
+"map.korean" = "Món Hàn";
+"map.japanese" = "Món Nhật";
+"map.western" = "Món Âu";
+"map.chinese" = "Món Trung";
+"map.bakery" = "Tiệm bánh";
+"map.etc" = "Khác";
+"map.storeLoadFailed" = "Không thể tải thông tin cửa hàng.";
+"map.priceWon" = "%@ won";
+"auth.loginSubTitle" = "Từ Soongsil đến khắp Seoul";
+"auth.loginSubTitleHighlight" = "đến khắp Seoul";
+"auth.goodPriceEntryTitle" = "Khám phá quán giá tốt";
+"auth.goodPriceEntrySubTitle" = "Tìm bữa ăn giá hợp lý gần bạn";
 
 
 // MARK: - MyPage

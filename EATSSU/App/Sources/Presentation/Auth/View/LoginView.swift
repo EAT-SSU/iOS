@@ -23,7 +23,8 @@ final class LoginView: BaseUIView {
     private let logoSubTitle: UILabel = {
         let label = UILabel()
         label.font = .header2
-        label.attributedText = TextLiteral.Common.logoSubTitle.logoHighlightedLastWord(
+        label.attributedText = TextLiteral.Auth.loginSubTitle.highlighted(
+            TextLiteral.Auth.loginSubTitleHighlight,
             baseColor: .black,
             highlightColor: .primary
         )
@@ -42,8 +43,46 @@ final class LoginView: BaseUIView {
         button.backgroundColor = .clear
         return button
     }()
+
+    let goodPriceEntryButton = GoodPriceEntryButton()
+
+    /// 서울동아리ON / SEOUL MY SOUL 로고 (서울시 지원사업 필수 표기)
+    private let sponsorLogoStackView: UIStackView = {
+        let clubOnLogo = UIImageView(image: EATSSUDesignAsset.Images.seoulClubOnLogo.image)
+        clubOnLogo.contentMode = .scaleAspectFit
+        clubOnLogo.snp.makeConstraints {
+            $0.height.equalTo(18)
+            $0.width.equalTo(clubOnLogo.snp.height).multipliedBy(LoginView.aspectRatio(of: clubOnLogo.image))
+        }
+
+        let divider = UIView()
+        divider.backgroundColor = .gray300
+        divider.snp.makeConstraints {
+            $0.width.equalTo(1)
+            $0.height.equalTo(20)
+        }
+
+        let mySoulLogo = UIImageView(image: EATSSUDesignAsset.Images.seoulMySoulLogo.image)
+        mySoulLogo.contentMode = .scaleAspectFit
+        mySoulLogo.snp.makeConstraints {
+            $0.height.equalTo(16)
+            $0.width.equalTo(mySoulLogo.snp.height).multipliedBy(LoginView.aspectRatio(of: mySoulLogo.image))
+        }
+
+        let stack = UIStackView(arrangedSubviews: [clubOnLogo, divider, mySoulLogo])
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = 20
+        return stack
+    }()
     
     private var lastLoginTooltipView: LastLoginTooltipView?
+
+    /// 이미지 가로/세로 비율 (없으면 1)
+    private static func aspectRatio(of image: UIImage?) -> CGFloat {
+        guard let size = image?.size, size.height > 0 else { return 1 }
+        return size.width / size.height
+    }
 
     override func configureUI() {
         addSubviews(
@@ -51,14 +90,16 @@ final class LoginView: BaseUIView {
             logoSubTitle,
             appleLoginButton,
             kakaoLoginButton,
-            lookingWithNoSignInButton
+            lookingWithNoSignInButton,
+            goodPriceEntryButton,
+            sponsorLogoStackView
         )
     }
 
     override func setLayout() {
         logoImage.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(223)
+            $0.bottom.equalTo(appleLoginButton.snp.top).offset(-120)
         }
 
         logoSubTitle.snp.makeConstraints {
@@ -69,18 +110,28 @@ final class LoginView: BaseUIView {
         appleLoginButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(45)
-            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(176)
+            $0.bottom.equalTo(kakaoLoginButton.snp.top).offset(-16)
         }
 
         kakaoLoginButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(45)
-            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(115)
+            $0.bottom.equalTo(lookingWithNoSignInButton.snp.top).offset(-16)
         }
 
         lookingWithNoSignInButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(30)
+            $0.bottom.equalTo(goodPriceEntryButton.snp.top).offset(-28)
+        }
+
+        goodPriceEntryButton.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(45)
+            $0.bottom.equalTo(sponsorLogoStackView.snp.top).offset(-40)
+        }
+
+        sponsorLogoStackView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(24)
         }
     }
 
