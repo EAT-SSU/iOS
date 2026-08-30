@@ -9,7 +9,8 @@ import Foundation
 import Moya
 
 enum HomeRouter {
-    case getChangeMenuTableResponse(date: String, restaurant: String, time: String)
+    /// 변동식단 조회. `language`를 주면 대표메뉴(isMain) 이름이 해당 언어로 내려온다 (현재 서버는 EN만 지원, nil이면 한국어)
+    case getChangeMenuTableResponse(date: String, restaurant: String, time: String, language: String? = nil)
     case getFixedMenuTableResponse(restaurant: String)
 }
 
@@ -37,12 +38,15 @@ extension HomeRouter: TargetType {
 
     var task: Task {
         switch self {
-        case let .getChangeMenuTableResponse(date, restaurant, time):
-            .requestParameters(parameters: ["date": date, "restaurant": restaurant, "time": time],
-                               encoding: URLEncoding.queryString)
+        case let .getChangeMenuTableResponse(date, restaurant, time, language):
+            var parameters: [String: Any] = ["date": date, "restaurant": restaurant, "time": time]
+            if let language {
+                parameters["language"] = language
+            }
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         case let .getFixedMenuTableResponse(restaurant):
-            .requestParameters(parameters: ["restaurant": restaurant],
-                               encoding: URLEncoding.queryString)
+            return .requestParameters(parameters: ["restaurant": restaurant],
+                                      encoding: URLEncoding.queryString)
         }
     }
 

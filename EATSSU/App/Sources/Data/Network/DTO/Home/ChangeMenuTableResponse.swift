@@ -80,7 +80,8 @@ struct ChangeMenuTableResponse: Codable {
 /// ```json
 /// {
 ///   "menuId": 1,
-///   "name": "Bibimbap"
+///   "name": "Bibimbap",
+///   "isMain": true
 /// }
 /// ```
 struct BriefMenus: Codable {
@@ -91,6 +92,15 @@ struct BriefMenus: Codable {
 
     /// 메뉴의 이름
     ///
+    /// `language=EN`으로 조회 시 대표메뉴(`isMain == true`)만 영문으로 내려오고 나머지는 한국어 그대로다.
+    ///
     /// - 예시: `"Bibimbap"`
     let name: String
+
+    /// 대표메뉴 여부
+    ///
+    /// 대표메뉴 데이터가 아직 없는 식단은 전부 `false`로 내려온다. 구버전 서버 응답 호환을 위해 옵셔널.
+    ///
+    /// - 예시: `true`
+    let isMain: Bool?
 }
