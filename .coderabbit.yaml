@@ -1,0 +1,37 @@
+# CodeRabbit 설정 (https://docs.coderabbit.ai/reference/configuration)
+# Gemini Code Assist 소비자 버전 종료(2026-07-17)에 따라 교체. 기존 .gemini/styleguide.md 규칙을 이식함.
+language: ko-KR
+tone_instructions: "리뷰 코멘트와 설명은 입력 언어와 관계없이 한국어로 작성한다. 구체적이고 명확하게, 논리적 근거를 들어 지적하고, 가능하면 한 줄로 간결하게 쓴다."
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - develop
+      - "release/.*"
+  path_filters:
+    - "!**/*.xcassets/**"
+    - "!**/*.lproj/*.strings"
+    - "!**/Derived/**"
+    - "!**/*.xcodeproj/**"
+    - "!**/*.xcworkspace/**"
+    - "!**/Package.resolved"
+    - "!**/Gemfile.lock"
+  path_instructions:
+    - path: "EATSSU/App/Sources/**/*.swift"
+      instructions: >-
+        UIKit + SnapKit 기반 iOS 앱. BaseViewController/BaseUIView의 configureUI/setLayout 패턴,
+        TextLiteral을 통한 문자열 로컬라이제이션, [weak self] 캡처, 메인 스레드 UI 갱신 여부를 확인한다.
+        네트워크 응답 처리에서 늦은 응답이 최신 상태를 덮어쓰는 경우와 강한 참조 순환을 우선 지적한다.
+    - path: "EATSSUDesign/**/*.swift"
+      instructions: >-
+        공용 디자인 시스템 모듈. public API 변경이 앱 타깃에 미치는 영향과 하위 호환을 확인한다.
+
+chat:
+  auto_reply: true

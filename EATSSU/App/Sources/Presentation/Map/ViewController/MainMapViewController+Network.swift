@@ -87,7 +87,9 @@ extension MainMapViewController {
                 self.currentDepartmentId = department.departmentId
                 self.currentCollegeId = department.collegeId
 
-                let buttonTitle = departmentName.isEmpty ? TextLiteral.Map.myPartner : departmentName
+                let buttonTitle = departmentName.isEmpty
+                    ? TextLiteral.Map.myPartner
+                    : TextLiteral.Academic.department(departmentName)
                 self.root.myOnlyButton.setTitle(buttonTitle, for: .normal)
 
                 // Realm 데이터도 함께 동기화하여 서버-클라이언트 불일치 방지

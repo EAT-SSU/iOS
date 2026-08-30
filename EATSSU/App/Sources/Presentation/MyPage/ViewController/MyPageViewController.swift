@@ -54,8 +54,8 @@ final class MyPageViewController: BaseViewController {
 
         mypageView.setUserInfo(
             nickname: nickName,
-            collegeName: userInfo?.collegeName,
-            departmentName: userInfo?.departmentName
+            collegeName: TextLiteral.Academic.college(userInfo?.collegeName),
+            departmentName: TextLiteral.Academic.department(userInfo?.departmentName)
         )
     }
     
@@ -269,7 +269,7 @@ extension MyPageViewController: UITableViewDelegate {
         case .myInfo:
             MyPageAnalyticsManager.shared.logClickMyPageMenu(menu: .myInfo)
             let setNickNameVC = SetNickNameViewController()
-            setNickNameVC.source = .signup
+            setNickNameVC.source = .mypage
             navigationController?.pushViewController(setNickNameVC, animated: true)
 
         // "내 리뷰" 스크린으로 이동
