@@ -178,25 +178,13 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         likeButton.setImage(image, for: .normal)
     }
 
-    /// 하트 탭: 찜 추가 시 최대 개수(내 제휴 업체 수)를 확인하고, 삭제 시엔 '취소하기'로 되돌릴 수 있는 토스트를 띄운다
+    /// 하트 탭: 찜 토글. 삭제 시엔 '취소하기'로 되돌릴 수 있는 토스트를 띄운다
     @objc private func didTapLike() {
         likeButton.isEnabled = false
         // 찜 목록을 확보한 뒤 현재 상태를 판정한다 (받기 전엔 하트가 지도 응답 기준이라 어긋날 수 있음)
         PartnershipLikeManager.shared.ensureLoaded { [weak self] in
             guard let self else { return }
-            if self.isLiked {
-                self.setLiked(false)
-                return
-            }
-            PartnershipLikeManager.shared.fetchLikeLimit { [weak self] limit in
-                guard let self else { return }
-                if let limit, PartnershipLikeManager.shared.likedStoreCount >= limit {
-                    self.likeButton.isEnabled = true
-                    self.showToast(message: TextLiteral.Like.limitReached(limit), type: .warning)
-                    return
-                }
-                self.setLiked(true)
-            }
+            self.setLiked(!self.isLiked)
         }
     }
 

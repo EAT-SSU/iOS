@@ -80,11 +80,6 @@ final class PartnershipLikeManager {
         refresh { _ in completion() }
     }
 
-    /// 찜한 업체 수 (최대 개수 제한 판정용)
-    var likedStoreCount: Int {
-        likedStores.count
-    }
-
     // MARK: - Fetch
 
     /// 찜 목록을 서버에서 받아 상태를 갱신하고 최근 추가순으로 정렬해 돌려준다
@@ -116,28 +111,6 @@ final class PartnershipLikeManager {
                 completion(.success(self.likedStores))
             case .failure(let error):
                 completion(.failure(error))
-            }
-        }
-    }
-
-    /// 찜 가능 최대 개수 = 내 제휴 업체 수. nil이면 제한 없이 진행 (조회 실패 또는 DEBUG 목 데이터)
-    func fetchLikeLimit(completion: @escaping (Int?) -> Void) {
-        #if DEBUG
-        if usesMockData {
-            completion(nil)
-            return
-        }
-        #endif
-        NetworkService.shared.request(
-            MyRouter.getMyPartnerships,
-            responseType: [PartnershipDTO].self,
-            useAuth: true
-        ) { result in
-            switch result {
-            case .success(let stores):
-                completion(stores.count)
-            case .failure:
-                completion(nil)
             }
         }
     }

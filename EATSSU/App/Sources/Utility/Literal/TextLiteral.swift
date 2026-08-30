@@ -1396,10 +1396,6 @@ enum TextLiteral {
             Localization.localized("like.removedToast", fallback: "찜한 제휴에서 삭제했어요.")
         }
 
-        /// "찜은 내 제휴 개수(3개)까지만 담을 수 있어요."
-        static func limitReached(_ limit: Int) -> String {
-            Localization.formatted("like.limitReached", fallback: "찜은 내 제휴 개수(%d개)까지만 담을 수 있어요.", limit)
-        }
 
         /// "찜 처리에 실패했어요. 다시 시도해 주세요."
         static var updateFailed: String {

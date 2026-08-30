@@ -692,8 +692,6 @@
 "like.addedToast" = "Added to liked partners.";
 /// "찜한 제휴에서 삭제했어요."
 "like.removedToast" = "Removed from liked partners.";
-/// "찜은 내 제휴 개수(%d개)까지만 담을 수 있어요."
-"like.limitReached" = "You can like up to %d partners (your partner count).";
 /// "찜 처리에 실패했어요. 다시 시도해 주세요."
 "like.updateFailed" = "Couldn't update. Please try again.";
 /// "찜한 제휴를 불러오지 못했어요."
