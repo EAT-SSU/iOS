@@ -634,3 +634,36 @@
 "academic.department.자유전공학부" = "Nghiên cứu Tự do";
 /// "차세대반도체학과"
 "academic.department.차세대반도체학과" = "Bán dẫn Thế hệ Mới";
+
+// MARK: - Restaurant Info (식당 정보 시트: 위치/운영시간/비고, 키는 Restaurant.rawValue)
+
+/// "학생회관 3층"
+"restaurantInfo.studentRestaurant.location" = "Tòa Student Union, tầng 3";
+/// "08:00~09:00(천원의아침밥)\n11:20~14:00(점심)\n14:00~17:00(공간 개방)"
+"restaurantInfo.studentRestaurant.time" = "08:00~09:00(Bữa sáng 1.000 won)\n11:20~14:00(Bữa trưa)\n14:00~17:00(Giờ mở không gian)";
+/// "3개 코너 운영\n뚝배기, 덮밥, 양식\n주말 휴무"
+"restaurantInfo.studentRestaurant.etc" = "3 quầy phục vụ\nMón kiểu ttukbaegi, cơm tô, món Âu\nĐóng cửa cuối tuần";
+/// "신양관 2층"
+"restaurantInfo.dodamRestaurant.location" = "Tòa Shinyang, tầng 2";
+/// "평일\n11:20~14:00(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)"
+"restaurantInfo.dodamRestaurant.time" = "Ngày thường\n11:20~14:00(Bữa trưa)\n17:00~18:30(Bữa tối)\n \nCuối tuần\n11:20~13:30(Bữa trưa)";
+/// "2개 코너 운영\n일반식, 웰빙코너"
+"restaurantInfo.dodamRestaurant.etc" = "2 quầy phục vụ\nSuất ăn thường, suất ăn lành mạnh";
+/// "레지던스홀 지하 1층"
+"restaurantInfo.dormitoryRestaurant.location" = "Residence Hall, tầng B1";
+/// "평일\n11:20~13:50(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)\n17:00~18:20(저녁)"
+"restaurantInfo.dormitoryRestaurant.time" = "Ngày thường\n11:20~13:50(Bữa trưa)\n17:00~18:30(Bữa tối)\n \nCuối tuần\n11:20~13:30(Bữa trưa)\n17:00~18:20(Bữa tối)";
+/// "조식 미운영"
+"restaurantInfo.dormitoryRestaurant.etc" = "Không phục vụ bữa sáng";
+/// "전산관 지하 1층"
+"restaurantInfo.facultyRestaurant.location" = "Tòa Jeonsan, tầng B1";
+/// "11:30~14:00(점심)\n14:00~17:00(공간개방)"
+"restaurantInfo.facultyRestaurant.time" = "11:30~14:00(Bữa trưa)\n14:00~17:00(Giờ mở không gian)";
+/// "주말 휴무"
+"restaurantInfo.facultyRestaurant.etc" = "Đóng cửa cuối tuần";
+/// "학생회관 3층"
+"restaurantInfo.snackCorner.location" = "Tòa Student Union, tầng 3";
+/// "11:00~15:30(점심)"
+"restaurantInfo.snackCorner.time" = "11:00~15:30(Bữa trưa)";
+/// "분식류, 옛날도시락, 컵밥 등\n주말 휴무"
+"restaurantInfo.snackCorner.etc" = "Bunsik(đồ ăn vặt Hàn Quốc), cơm hộp kiểu xưa, cơm ly, v.v.\nĐóng cửa cuối tuần";
