@@ -20,13 +20,19 @@ final class FilterChipBar: BaseUIView {
     private enum Layout {
         static let chipHeight: CGFloat = 36
         static let chipSpacing: CGFloat = 8
-        static let horizontalInset: CGFloat = 16
-        static let chipHorizontalPadding: CGFloat = 16
+        static let chipHorizontalPadding: CGFloat = 14
     }
 
     // MARK: - Properties
 
     var onSelect: ((Int) -> Void)?
+
+    /// 첫/마지막 칩과 화면 가장자리 사이 여백 (지도 16, 찜 목록 24)
+    var horizontalInset: CGFloat = 16 {
+        didSet {
+            scrollView.contentInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
+        }
+    }
 
     /// 선택 칩 배경색 (축제 필터 등 모드에 따라 변경 가능)
     var highlightColor: UIColor = .primary {
@@ -50,12 +56,7 @@ final class FilterChipBar: BaseUIView {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = true
         scrollView.clipsToBounds = false
-        scrollView.contentInset = UIEdgeInsets(
-            top: 0,
-            left: Layout.horizontalInset,
-            bottom: 0,
-            right: Layout.horizontalInset
-        )
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
 
         stackView.axis = .horizontal
         stackView.spacing = Layout.chipSpacing

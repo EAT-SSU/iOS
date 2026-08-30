@@ -16,9 +16,11 @@ final class LikedPartnershipViewController: BaseViewController {
 
     // MARK: - Constants
 
+    /// 디자인: 탭 밑줄과 칩 사이 12, 좌우 24, 칩과 첫 행 사이 7
     private enum Layout {
-        static let chipBarTop: CGFloat = 16
-        static let horizontalInset: CGFloat = 20
+        static let chipBarTop: CGFloat = 12
+        static let horizontalInset: CGFloat = 24
+        static let listTop: CGFloat = 7
     }
 
     /// 찜 목록 필터 (축제 제외)
@@ -46,19 +48,20 @@ final class LikedPartnershipViewController: BaseViewController {
     override func configureUI() {
         view.backgroundColor = .white
 
+        filterChipBar.horizontalInset = Layout.horizontalInset
         filterChipBar.configure(titles: Self.filters.map { $0.title })
 
         editButton.setTitle(TextLiteral.Like.edit, for: .normal)
         editButton.titleLabel?.font = .body2
-        editButton.setTitleColor(.gray700, for: .normal)
+        editButton.setTitleColor(.gray500, for: .normal)
 
         tableView.register(LikedPartnershipCell.self, forCellReuseIdentifier: LikedPartnershipCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorInset = UIEdgeInsets(top: 0, left: Layout.horizontalInset, bottom: 0, right: Layout.horizontalInset)
-        tableView.separatorColor = .gray200
+        tableView.separatorColor = .gray100
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 84
+        tableView.estimatedRowHeight = 77
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
 
@@ -81,7 +84,7 @@ final class LikedPartnershipViewController: BaseViewController {
         }
 
         tableView.snp.makeConstraints {
-            $0.top.equalTo(filterChipBar.snp.bottom).offset(12)
+            $0.top.equalTo(filterChipBar.snp.bottom).offset(Layout.listTop)
             $0.leading.trailing.bottom.equalToSuperview()
         }
 
@@ -244,14 +247,14 @@ extension LikedPartnershipViewController: UITableViewDelegate {
         return configuration
     }
 
-    /// 빨간 원 안에 흰 휴지통 (디자인의 스와이프 삭제 아이콘)
+    /// 빨간 원(36, danger) 안에 흰 휴지통 (디자인의 스와이프 삭제 아이콘)
     private static let deleteActionImage: UIImage = {
-        let size = CGSize(width: 48, height: 48)
+        let size = CGSize(width: 36, height: 36)
         let icon = EATSSUDesignAsset.Images.icDelete.image.withTintColor(.white, renderingMode: .alwaysOriginal)
         return UIGraphicsImageRenderer(size: size).image { context in
-            UIColor.error.setFill()
+            UIColor.danger.setFill()
             context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
-            let iconSize = CGSize(width: 24, height: 24)
+            let iconSize = CGSize(width: 20, height: 20)
             icon.draw(in: CGRect(
                 origin: CGPoint(x: (size.width - iconSize.width) / 2, y: (size.height - iconSize.height) / 2),
                 size: iconSize

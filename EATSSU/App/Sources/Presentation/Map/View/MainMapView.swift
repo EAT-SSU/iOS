@@ -67,12 +67,10 @@ final class MainMapView: BaseUIView {
         let button = UIButton(type: .custom)
         button.backgroundColor = .white
         button.layer.cornerRadius = 18
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.12
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 6
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.gray300.cgColor
         button.setImage(EATSSUDesignAsset.Images.icLikeLine.image, for: .normal)
-        button.tintColor = .label
+        button.tintColor = .gray700
         return button
     }()
 

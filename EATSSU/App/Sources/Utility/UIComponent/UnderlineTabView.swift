@@ -15,6 +15,14 @@ import EATSSUDesign
 /// 밑줄 인디케이터가 있는 상단 탭. 지도(학교 제휴/착한 가격)와 찜(메뉴/제휴) 공용
 final class UnderlineTabView: BaseUIView {
 
+    // MARK: - Constants
+
+    /// 디자인: 탭 높이 52, 밑줄 3pt (비활성 gray400 / 활성 primary)
+    private enum Layout {
+        static let tabHeight: CGFloat = 52
+        static let lineHeight: CGFloat = 3
+    }
+
     // MARK: - Properties
 
     var onSelect: ((Int) -> Void)?
@@ -44,7 +52,7 @@ final class UnderlineTabView: BaseUIView {
         // setLayout()은 버튼 추가 전에 호출되므로 여기서 탭 개수 기준으로 다시 잡는다
         indicatorView.snp.remakeConstraints {
             $0.bottom.leading.equalToSuperview()
-            $0.height.equalTo(2)
+            $0.height.equalTo(Layout.lineHeight)
             $0.width.equalToSuperview().dividedBy(max(buttons.count, 1))
         }
         select(index: 0, animated: false)
@@ -63,7 +71,7 @@ final class UnderlineTabView: BaseUIView {
         stackView.distribution = .fillEqually
         stackView.alignment = .fill
 
-        bottomLine.backgroundColor = .gray300
+        bottomLine.backgroundColor = .gray400
         indicatorView.backgroundColor = .primary
 
         addSubviews(stackView, bottomLine, indicatorView)
@@ -72,18 +80,18 @@ final class UnderlineTabView: BaseUIView {
     override func setLayout() {
         stackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(44)
+            $0.height.equalTo(Layout.tabHeight)
         }
 
         bottomLine.snp.makeConstraints {
             $0.top.equalTo(stackView.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(Layout.lineHeight)
         }
 
         indicatorView.snp.makeConstraints {
             $0.bottom.leading.equalToSuperview()
-            $0.height.equalTo(2)
+            $0.height.equalTo(Layout.lineHeight)
             $0.width.equalToSuperview()
         }
     }
@@ -95,7 +103,7 @@ final class UnderlineTabView: BaseUIView {
         selectedIndex = index
 
         for (buttonIndex, button) in buttons.enumerated() {
-            button.setTitleColor(buttonIndex == index ? .primary : .gray500, for: .normal)
+            button.setTitleColor(buttonIndex == index ? .primary : .gray400, for: .normal)
         }
 
         if animated {

@@ -25,11 +25,17 @@ final class LikedPartnershipCell: UITableViewCell {
 
     static let identifier = "LikedPartnershipCell"
 
+    /// 디자인(390pt 기준): 좌우 24, 아이콘 36, 텍스트 간격 12, 행 높이 77, 화살표 8×12 trailing 28
     private enum Layout {
-        static let horizontalInset: CGFloat = 20
-        static let iconSize: CGFloat = 48
-        static let checkSize: CGFloat = 24
-        static let verticalInset: CGFloat = 16
+        static let horizontalInset: CGFloat = 24
+        static let iconSize: CGFloat = 36
+        static let checkSize: CGFloat = 18
+        static let checkLeading: CGFloat = 27
+        static let textSpacing: CGFloat = 12
+        static let checkTextSpacing: CGFloat = 15
+        static let topInset: CGFloat = 18
+        static let bottomInset: CGFloat = 16
+        static let chevronTrailing: CGFloat = 28
     }
 
     // MARK: - UI Components
@@ -72,12 +78,12 @@ final class LikedPartnershipCell: UITableViewCell {
         nameLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 
         typeLabel.font = .caption2
-        typeLabel.textColor = .gray500
+        typeLabel.textColor = .gray600
         typeLabel.setContentHuggingPriority(.required, for: .horizontal)
         typeLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         descriptionLabel.font = .body3
-        descriptionLabel.textColor = .gray700
+        descriptionLabel.textColor = .gray600
         descriptionLabel.numberOfLines = 1
         descriptionLabel.lineBreakMode = .byTruncatingTail
 
@@ -86,13 +92,13 @@ final class LikedPartnershipCell: UITableViewCell {
 
         titleStackView.axis = .horizontal
         titleStackView.alignment = .lastBaseline
-        titleStackView.spacing = 6
+        titleStackView.spacing = 8
         titleStackView.addArrangedSubview(nameLabel)
         titleStackView.addArrangedSubview(typeLabel)
 
         textStackView.axis = .vertical
         textStackView.alignment = .leading
-        textStackView.spacing = 6
+        textStackView.spacing = 8
         textStackView.addArrangedSubview(titleStackView)
         textStackView.addArrangedSubview(descriptionLabel)
 
@@ -101,7 +107,7 @@ final class LikedPartnershipCell: UITableViewCell {
 
     private func setLayout() {
         checkImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(Layout.horizontalInset)
+            $0.leading.equalToSuperview().inset(Layout.checkLeading)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(Layout.checkSize)
         }
@@ -113,16 +119,17 @@ final class LikedPartnershipCell: UITableViewCell {
         }
 
         chevronImageView.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(Layout.horizontalInset)
+            $0.trailing.equalToSuperview().inset(Layout.chevronTrailing)
             $0.centerY.equalToSuperview()
-            $0.width.equalTo(10)
-            $0.height.equalTo(16)
+            $0.width.equalTo(8)
+            $0.height.equalTo(12)
         }
 
         textStackView.snp.makeConstraints {
-            $0.leading.equalTo(iconImageView.snp.trailing).offset(16)
-            $0.trailing.lessThanOrEqualTo(chevronImageView.snp.leading).offset(-12)
-            $0.top.bottom.equalToSuperview().inset(Layout.verticalInset)
+            $0.leading.equalTo(iconImageView.snp.trailing).offset(Layout.textSpacing)
+            $0.trailing.lessThanOrEqualTo(chevronImageView.snp.leading).offset(-16)
+            $0.top.equalToSuperview().inset(Layout.topInset)
+            $0.bottom.equalToSuperview().inset(Layout.bottomInset)
         }
     }
 
@@ -137,11 +144,13 @@ final class LikedPartnershipCell: UITableViewCell {
         iconImageView.image = MainMapViewController.partnershipIcon(for: store.restaurantType, isFestival: false)
 
         let leadingAnchor: ConstraintItem
+        let spacing: CGFloat
         switch mode {
         case .normal:
             checkImageView.isHidden = true
             iconImageView.isHidden = false
             leadingAnchor = iconImageView.snp.trailing
+            spacing = Layout.textSpacing
         case .editing(let isSelected):
             // 편집 모드에서는 업종 아이콘 대신 체크박스를 보여준다
             checkImageView.isHidden = false
@@ -150,11 +159,13 @@ final class LikedPartnershipCell: UITableViewCell {
                 ? EATSSUDesignAsset.Images.icCheck.image
                 : EATSSUDesignAsset.Images.icUncheck.image
             leadingAnchor = checkImageView.snp.trailing
+            spacing = Layout.checkTextSpacing
         }
         textStackView.snp.remakeConstraints {
-            $0.leading.equalTo(leadingAnchor).offset(16)
-            $0.trailing.lessThanOrEqualTo(chevronImageView.snp.leading).offset(-12)
-            $0.top.bottom.equalToSuperview().inset(Layout.verticalInset)
+            $0.leading.equalTo(leadingAnchor).offset(spacing)
+            $0.trailing.lessThanOrEqualTo(chevronImageView.snp.leading).offset(-16)
+            $0.top.equalToSuperview().inset(Layout.topInset)
+            $0.bottom.equalToSuperview().inset(Layout.bottomInset)
         }
     }
 }

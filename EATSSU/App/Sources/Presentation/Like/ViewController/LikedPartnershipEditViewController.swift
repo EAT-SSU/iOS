@@ -16,9 +16,14 @@ final class LikedPartnershipEditViewController: BaseViewController {
 
     // MARK: - Constants
 
+    /// 디자인: 전체 선택 행 52, 체크 18 (leading 35), 구분선 2pt, 삭제 버튼 52/r8, 하단 safe area + 6
     private enum Layout {
-        static let horizontalInset: CGFloat = 20
-        static let headerHeight: CGFloat = 56
+        static let horizontalInset: CGFloat = 24
+        static let headerHeight: CGFloat = 52
+        static let headerLeading: CGFloat = 35
+        static let buttonHeight: CGFloat = 52
+        static let buttonCornerRadius: CGFloat = 8
+        static let buttonBottomInset: CGFloat = 6
     }
 
     // MARK: - Properties
@@ -59,8 +64,8 @@ final class LikedPartnershipEditViewController: BaseViewController {
         view.backgroundColor = .white
 
         var config = UIButton.Configuration.plain()
-        config.image = EATSSUDesignAsset.Images.icUncheck.image
-        config.imagePadding = 12
+        config.image = EATSSUDesignAsset.Images.icUncheck.image.resize(newWidth: 18)
+        config.imagePadding = 15
         config.baseForegroundColor = .label
         config.contentInsets = .zero
         config.attributedTitle = AttributedString(
@@ -70,19 +75,20 @@ final class LikedPartnershipEditViewController: BaseViewController {
         selectAllButton.configuration = config
         selectAllButton.contentHorizontalAlignment = .leading
 
-        headerSeparator.backgroundColor = .gray200
+        headerSeparator.backgroundColor = .gray100
 
         tableView.register(LikedPartnershipCell.self, forCellReuseIdentifier: LikedPartnershipCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorInset = UIEdgeInsets(top: 0, left: Layout.horizontalInset, bottom: 0, right: Layout.horizontalInset)
-        tableView.separatorColor = .gray200
+        tableView.separatorColor = .gray100
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 84
+        tableView.estimatedRowHeight = 77
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
 
         deleteButton.title = TextLiteral.Like.delete
+        deleteButton.layer.cornerRadius = Layout.buttonCornerRadius
         updateDeleteButton()
 
         view.addSubviews(selectAllButton, headerSeparator, tableView, deleteButton)
@@ -91,19 +97,23 @@ final class LikedPartnershipEditViewController: BaseViewController {
     override func setLayout() {
         selectAllButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.equalToSuperview().inset(Layout.horizontalInset)
+            $0.leading.equalToSuperview().inset(Layout.headerLeading)
+            $0.trailing.equalToSuperview().inset(Layout.horizontalInset)
             $0.height.equalTo(Layout.headerHeight)
         }
 
         headerSeparator.snp.makeConstraints {
             $0.top.equalTo(selectAllButton.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(2)
         }
 
         deleteButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(Layout.horizontalInset)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(Layout.buttonBottomInset)
+        }
+        deleteButton.snp.updateConstraints {
+            $0.height.equalTo(Layout.buttonHeight)
         }
 
         tableView.snp.makeConstraints {
@@ -139,13 +149,13 @@ final class LikedPartnershipEditViewController: BaseViewController {
         let count = selectedKeys.count
         deleteButton.title = count == 0 ? TextLiteral.Like.delete : TextLiteral.Like.deleteCount(count)
         deleteButton.isEnabled = count > 0
-        deleteButton.backgroundColor = count > 0 ? .error : .gray300
+        deleteButton.backgroundColor = count > 0 ? .error : .gray200
     }
 
     private func updateSelectAllButton() {
-        selectAllButton.configuration?.image = isAllSelected
+        selectAllButton.configuration?.image = (isAllSelected
             ? EATSSUDesignAsset.Images.icCheck.image
-            : EATSSUDesignAsset.Images.icUncheck.image
+            : EATSSUDesignAsset.Images.icUncheck.image).resize(newWidth: 18)
     }
 
     // MARK: - Actions

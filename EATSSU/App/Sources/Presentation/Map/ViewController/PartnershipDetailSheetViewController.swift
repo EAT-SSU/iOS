@@ -56,7 +56,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         storeNameLabel.font = .header2
         storeNameLabel.textColor = .label
 
-        likeButton.tintColor = .label
+        likeButton.tintColor = .gray700
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
         updateLikeButton()
 
