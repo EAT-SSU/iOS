@@ -524,6 +524,8 @@
 "academic.college.자유전공학부" = "자유전공학부";
 /// "차세대반도체학과"
 "academic.college.차세대반도체학과" = "차세대반도체학과";
+/// "총학생회"
+"academic.department.총학생회" = "총학생회";
 /// "컴퓨터학부"
 "academic.department.컴퓨터학부" = "컴퓨터학부";
 /// "전자정보공학부(전자공학전공)"

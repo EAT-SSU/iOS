@@ -524,6 +524,8 @@
 "academic.college.자유전공학부" = "Khoa Nghiên cứu Tự do";
 /// "차세대반도체학과"
 "academic.college.차세대반도체학과" = "Khoa Bán dẫn Thế hệ Mới";
+/// "총학생회"
+"academic.department.총학생회" = "Hội Sinh viên";
 /// "컴퓨터학부"
 "academic.department.컴퓨터학부" = "Khoa học và Kỹ thuật Máy tính";
 /// "전자정보공학부(전자공학전공)"

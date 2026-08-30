@@ -208,8 +208,8 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     
     /// 제휴 정보 카드 뷰 생성
     private func makeInfoCard(info: PartnershipInfoDTO, isLast: Bool) -> UIView {
-        let labelText = info.collegeName.map { TextLiteral.Academic.college($0) }
-            ?? info.departmentName.map { TextLiteral.Academic.department($0) }
+        let labelText = TextLiteral.Academic.college(info.collegeName)
+            ?? TextLiteral.Academic.department(info.departmentName)
             ?? TextLiteral.Map.noDepartmentInfo
         
         let start = String(info.startDate.dropFirst(2))

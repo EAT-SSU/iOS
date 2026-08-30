@@ -1224,21 +1224,33 @@ enum TextLiteral {
             localizedName(prefix: "academic.college", koreanName: koreanName)
         }
 
+        /// 단과대명 (옵셔널) - nil이면 nil 반환
+        static func college(_ koreanName: String?) -> String? {
+            koreanName.map { college($0) }
+        }
+
         /// 학과명 - "컴퓨터학부" → "Computer Science & Engineering"
         static func department(_ koreanName: String) -> String {
             localizedName(prefix: "academic.department", koreanName: koreanName)
         }
 
-        private static func localizedName(prefix: String, koreanName: String) -> String {
-            // 한국어는 서버 원본 표기(가운뎃점 등)를 그대로 노출
-            guard AppLanguageManager.shared.currentLanguage != .korean else { return koreanName }
-            return Localization.localized("\(prefix).\(lookupKey(koreanName))", fallback: koreanName)
+        /// 학과명 (옵셔널) - nil이면 nil 반환
+        static func department(_ koreanName: String?) -> String? {
+            koreanName.map { department($0) }
         }
 
-        /// 서버 표기 차이(가운뎃점·공백·괄호 등)를 흡수하기 위해 문자/숫자만 남겨 키 생성
+        /// 서버 표기 차이(가운뎃점·공백·괄호 등)를 흡수하기 위해 문자/숫자만 남긴 비교용 키
         /// 한글 아래아(ㆍ U+318D)는 문자로 분류되지만 구분자로 쓰이므로 함께 제거
-        private static func lookupKey(_ name: String) -> String {
+        static func normalizedKey(_ name: String) -> String {
             String(name.filter { ($0.isLetter || $0.isNumber) && $0 != "\u{318D}" })
+        }
+
+        private static func localizedName(prefix: String, koreanName: String) -> String {
+            // 한국어는 서버 원본 표기(가운뎃점 등)를 그대로 노출
+            // 빈 문자열은 localizedString이 키 자체를 돌려주므로 그대로 반환
+            guard !koreanName.isEmpty,
+                  AppLanguageManager.shared.currentLanguage != .korean else { return koreanName }
+            return Localization.localized("\(prefix).\(normalizedKey(koreanName))", fallback: koreanName)
         }
     }
 }

@@ -523,6 +523,8 @@
 "academic.college.자유전공학부" = "School of Liberal Studies";
 /// "차세대반도체학과"
 "academic.college.차세대반도체학과" = "Department of Next-Generation Semiconductor";
+/// "총학생회"
+"academic.department.총학생회" = "Student Council";
 /// "컴퓨터학부"
 "academic.department.컴퓨터학부" = "Computer Science & Engineering";
 /// "전자정보공학부(전자공학전공)"

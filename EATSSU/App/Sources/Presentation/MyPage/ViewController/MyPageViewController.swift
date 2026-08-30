@@ -54,8 +54,8 @@ final class MyPageViewController: BaseViewController {
 
         mypageView.setUserInfo(
             nickname: nickName,
-            collegeName: userInfo?.collegeName.map { TextLiteral.Academic.college($0) },
-            departmentName: userInfo?.departmentName.map { TextLiteral.Academic.department($0) }
+            collegeName: TextLiteral.Academic.college(userInfo?.collegeName),
+            departmentName: TextLiteral.Academic.department(userInfo?.departmentName)
         )
     }
     
