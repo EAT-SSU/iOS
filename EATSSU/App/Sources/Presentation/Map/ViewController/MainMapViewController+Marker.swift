@@ -156,7 +156,11 @@ extension MainMapViewController {
             partnerId: partnership.partnershipInfos.first?.id ?? -1
         )
 
-        let detailVC = PartnershipDetailSheetViewController(partnership: partnership, likeTarget: likeTarget)
+        let detailVC = PartnershipDetailSheetViewController(
+            partnership: partnership,
+            likeTarget: likeTarget,
+            isLikeEnabled: hasDepartment
+        )
         detailVC.loadViewIfNeeded()
         presentSheet(detailVC, heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() })
     }

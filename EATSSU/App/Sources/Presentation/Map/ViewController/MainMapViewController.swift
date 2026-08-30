@@ -312,6 +312,7 @@ final class MainMapViewController: BaseViewController {
         case .partnership:
             refreshPartnershipTab()
         case .goodPrice:
+            root.setMapBlurred(false)
             applyTabUI()
             MapAnalyticsManager.shared.logClickMapGoodPrice(
                 collegeId: currentCollegeId,
@@ -365,13 +366,8 @@ final class MainMapViewController: BaseViewController {
 
     // MARK: - Partnership Tab
 
-    /// 학교 제휴 탭 마커 로드. 학과 미입력이면 학과 입력 시트를 띄우고 마커는 비움
+    /// 학교 제휴 탭 마커 로드. 학과 미입력이면 지도를 흐리게 하고 학과 입력 시트를 띄운다 (축제 포함 모든 필터)
     func loadPartnershipMarkers() {
-        if partnershipFilter == .festival {
-            refreshAllPartnerships()
-            return
-        }
-
         guard hasDepartment else {
             switch departmentLoadState {
             case .loading:
@@ -382,9 +378,16 @@ final class MainMapViewController: BaseViewController {
                 return
             case .loaded:
                 displayMarkers([])
+                root.setMapBlurred(true)
                 presentNoDepartmentSheetIfNeeded()
                 return
             }
+        }
+        root.setMapBlurred(false)
+
+        if partnershipFilter == .festival {
+            refreshAllPartnerships()
+            return
         }
         fetchMyPartnerships()
     }

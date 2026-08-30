@@ -19,6 +19,8 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     private let partnership: PartnershipDTO
     /// 찜 토글 대상 업체 (필터와 무관한 전체 제휴 항목). 업체 찜은 항상 모든 항목을 함께 다룬다
     private let likeTarget: PartnershipDTO
+    /// 학과 미입력 시 찜 사용 불가 (기획). false면 하트를 숨긴다
+    private let isLikeEnabled: Bool
     private let mapAppLauncher: MapAppLauncher
 
     // MARK: - UI Components
@@ -33,9 +35,10 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Init
 
-    init(partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil) {
+    init(partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil, isLikeEnabled: Bool = true) {
         self.partnership = partnership
         self.likeTarget = likeTarget ?? partnership
+        self.isLikeEnabled = isLikeEnabled
         self.mapAppLauncher = MapAppLauncher(destination: .init(
             name: partnership.storeName,
             latitude: partnership.latitude,
@@ -61,6 +64,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         storeNameLabel.textColor = .label
 
         likeButton.tintColor = .gray700
+        likeButton.isHidden = !isLikeEnabled
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
         updateLikeButton()
 

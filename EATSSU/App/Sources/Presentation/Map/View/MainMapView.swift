@@ -59,6 +59,15 @@ final class MainMapView: BaseUIView {
     // MARK: - UI Components
 
     let mapView = NMFNaverMapView()
+
+    /// 학과 미입력 상태의 학교 제휴 탭에서 지도를 흐리게 덮는 뷰 (디자인 Map-Partnership-Blur)
+    private let blurView: UIVisualEffectView = {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        view.isHidden = true
+        view.isUserInteractionEnabled = false
+        return view
+    }()
+
     let topTabView = UnderlineTabView(titles: MapTab.allCases.map { $0.title })
     let filterChipBar = FilterChipBar()
 
@@ -83,7 +92,7 @@ final class MainMapView: BaseUIView {
         mapView.showLocationButton = true
         mapView.mapView.positionMode = .disabled
 
-        addSubviews(mapView, topTabView, filterChipBar, likeButton)
+        addSubviews(mapView, blurView, topTabView, filterChipBar, likeButton)
     }
 
     // MARK: - Layout Setup
@@ -99,6 +108,10 @@ final class MainMapView: BaseUIView {
             $0.leading.trailing.bottom.equalToSuperview()
         }
 
+        blurView.snp.makeConstraints {
+            $0.edges.equalTo(mapView)
+        }
+
         likeButton.snp.makeConstraints {
             $0.top.equalTo(mapView).offset(12)
             $0.trailing.equalToSuperview().inset(16)
@@ -110,6 +123,11 @@ final class MainMapView: BaseUIView {
             $0.leading.equalToSuperview()
             $0.trailing.equalTo(likeButton.snp.leading).offset(-8)
         }
+    }
+
+    /// 학과 미입력 안내 중 지도 블러 표시/해제
+    func setMapBlurred(_ blurred: Bool) {
+        blurView.isHidden = !blurred
     }
 
     /// 하트 노출 여부에 따라 칩 바 폭을 조정한다 (숨기면 칩이 오른쪽 끝까지 스크롤)
