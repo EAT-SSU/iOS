@@ -59,8 +59,22 @@ final class MainMapView: BaseUIView {
     // MARK: - UI Components
 
     let mapView = NMFNaverMapView()
-    let topTabView = MapTopTabView(titles: MapTab.allCases.map { $0.title })
-    let filterChipBar = MapFilterChipBar()
+    let topTabView = UnderlineTabView(titles: MapTab.allCases.map { $0.title })
+    let filterChipBar = FilterChipBar()
+
+    /// 찜 탭으로 이동하는 플로팅 하트 버튼 (탭바 지도 탭에서만 노출)
+    let likeButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 24
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.12
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 6
+        button.setImage(EATSSUDesignAsset.Images.icLikeLine.image, for: .normal)
+        button.tintColor = .label
+        return button
+    }()
 
     // MARK: - UI Setup
 
@@ -71,7 +85,7 @@ final class MainMapView: BaseUIView {
         mapView.showLocationButton = true
         mapView.mapView.positionMode = .disabled
 
-        addSubviews(mapView, topTabView, filterChipBar)
+        addSubviews(mapView, topTabView, filterChipBar, likeButton)
     }
 
     // MARK: - Layout Setup
@@ -90,6 +104,12 @@ final class MainMapView: BaseUIView {
         filterChipBar.snp.makeConstraints {
             $0.top.equalTo(mapView).offset(12)
             $0.leading.trailing.equalToSuperview()
+        }
+
+        likeButton.snp.makeConstraints {
+            $0.top.equalTo(filterChipBar.snp.bottom).offset(12)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.width.height.equalTo(48)
         }
     }
 

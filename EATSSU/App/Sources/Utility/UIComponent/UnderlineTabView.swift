@@ -1,5 +1,5 @@
 //
-//  MapTopTabView.swift
+//  UnderlineTabView.swift
 //  EATSSU
 //
 //  Created by 황상환 on 8/23/26.
@@ -12,7 +12,8 @@ import SnapKit
 import EATSSUDesign
 
 /// 지도 상단 "학교 제휴 / 착한 가격" 언더라인 탭
-final class MapTopTabView: BaseUIView {
+/// 밑줄 인디케이터가 있는 상단 탭. 지도(학교 제휴/착한 가격)와 찜(메뉴/제휴) 공용
+final class UnderlineTabView: BaseUIView {
 
     // MARK: - Properties
 

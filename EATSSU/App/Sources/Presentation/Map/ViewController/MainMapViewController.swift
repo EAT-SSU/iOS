@@ -27,11 +27,21 @@ final class MainMapViewController: BaseViewController {
     }
 
     /// 화면 진입 형태
-    enum Mode {
+    enum Mode: Equatable {
         /// 탭바 안의 지도 탭: 상단에 학교 제휴 / 착한 가격 탭 노출
         case tabbed
         /// 로그인 화면에서 바로 진입하는 착한가격업소 지도 (탭 없음)
         case standaloneGoodPrice
+        /// 찜 목록에서 진입: 해당 업체 마커만 표시하고 상세 시트를 펼친 상태로 시작 (탭·필터 없음)
+        case partnershipDetail(PartnershipDTO)
+
+        static func == (lhs: Mode, rhs: Mode) -> Bool {
+            switch (lhs, rhs) {
+            case (.tabbed, .tabbed), (.standaloneGoodPrice, .standaloneGoodPrice): return true
+            case let (.partnershipDetail(l), .partnershipDetail(r)): return l.storeKey == r.storeKey
+            default: return false
+            }
+        }
     }
 
     // MARK: - Properties
@@ -99,6 +109,14 @@ final class MainMapViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    /// 찜 목록에서 진입한 경우의 대상 업체
+    private var detailPartnership: PartnershipDTO? {
+        if case let .partnershipDetail(store) = mode { return store }
+        return nil
+    }
+
+    override var shouldHideTabBar: Bool { detailPartnership != nil }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -108,6 +126,8 @@ final class MainMapViewController: BaseViewController {
     override func configureUI() {
         view.addSubview(root)
         root.setTopTabVisible(mode == .tabbed)
+        root.filterChipBar.isHidden = detailPartnership != nil
+        root.likeButton.isHidden = mode != .tabbed
     }
 
     override func setLayout() {
@@ -122,6 +142,7 @@ final class MainMapViewController: BaseViewController {
         root.filterChipBar.onSelect = { [weak self] index in
             self?.didSelectFilter(at: index)
         }
+        root.likeButton.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
     }
 
     // MARK: - Life Cycle
@@ -138,13 +159,13 @@ final class MainMapViewController: BaseViewController {
         applyTabUI()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        logScreenView(screenID: FirebaseScreenID.Map.map1)
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if let store = detailPartnership {
+            showSingleStore(store)
+            return
+        }
 
         switch currentTab {
         case .partnership:
@@ -152,6 +173,30 @@ final class MainMapViewController: BaseViewController {
         case .goodPrice:
             loadGoodPriceMarkers()
         }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        logScreenView(screenID: FirebaseScreenID.Map.map1)
+
+        // 찜 목록에서 진입: 시트를 펼친 상태로 바로 보여준다 (한 번만)
+        if let store = detailPartnership, !didPresentDetailSheet {
+            didPresentDetailSheet = true
+            showPartnershipDetail(for: store, expanded: true)
+        }
+    }
+
+    private var didPresentDetailSheet = false
+
+    /// 찜 상세 진입: 해당 업체 마커만 올리고 카메라를 그 위치로
+    private func showSingleStore(_ store: PartnershipDTO) {
+        _ = beginLoad()
+        displayMarkers([makeMarkerItem(for: store)])
+        moveCamera(to: NMGLatLng(lat: store.latitude, lng: store.longitude), animated: false)
+    }
+
+    @objc private func didTapLikeButton() {
+        (tabBarController as? CustomTabBarContainerController)?.showLikedPartnerships(fromMap: true)
     }
 
     /// 학과 정보를 다시 받아온 뒤 학교 제휴 마커 로드. 축제 노출 여부가 바뀌었을 수 있어 칩도 재구성
@@ -205,6 +250,8 @@ final class MainMapViewController: BaseViewController {
     /// 현재 탭에 맞춰 필터 칩과 선택 상태를 갱신
     private func applyTabUI() {
         root.topTabView.select(index: currentTab.rawValue, animated: false)
+        // 찜은 학교 제휴 전용이라 착한 가격 탭에서는 플로팅 하트를 숨긴다
+        root.likeButton.isHidden = mode != .tabbed || currentTab != .partnership
 
         switch currentTab {
         case .partnership:
@@ -337,13 +384,15 @@ final class MainMapViewController: BaseViewController {
     }
 
     func setInitialCameraPosition(animated: Bool) {
-        let cameraUpdate = NMFCameraUpdate(
-            scrollTo: NMGLatLng(
-                lat: CameraConstants.initialLatitude,
-                lng: CameraConstants.initialLongitude
-            ),
-            zoomTo: CameraConstants.initialZoom
+        moveCamera(
+            to: NMGLatLng(lat: CameraConstants.initialLatitude, lng: CameraConstants.initialLongitude),
+            animated: animated
         )
+    }
+
+    /// 지정 좌표로 카메라 이동 (줌은 초기값 고정)
+    func moveCamera(to position: NMGLatLng, animated: Bool) {
+        let cameraUpdate = NMFCameraUpdate(scrollTo: position, zoomTo: CameraConstants.initialZoom)
 
         if animated {
             cameraUpdate.animation = .easeIn

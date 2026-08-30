@@ -29,6 +29,18 @@ struct PartnershipInfoDTO: Codable {
     let periodType: PartnershipPeriodType
 }
 
+extension PartnershipDTO {
+    /// 업체 식별 키. 서버 응답에 업체 id가 없어 이름 + 좌표로 구성한다
+    var storeKey: String {
+        "\(storeName)|\(latitude)|\(longitude)"
+    }
+
+    /// 업체에 속한 제휴 항목 id 목록 (찜은 항목 단위 API라 업체 찜 = 모든 항목 찜)
+    var partnershipIds: [Int] {
+        partnershipInfos.map(\.id)
+    }
+}
+
 enum PartnershipPeriodType: String, Codable {
     case normal = "NORMAL"
     case festival = "FESTIVAL"

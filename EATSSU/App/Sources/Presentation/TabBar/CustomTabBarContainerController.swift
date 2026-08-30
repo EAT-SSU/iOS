@@ -18,7 +18,7 @@ final class CustomTabBarContainerController: UITabBarController {
     private enum Tab: Int {
         case home = 0
         case map = 1
-        case coffee = 2
+        case like = 2
         case myPage = 3
     }
 
@@ -27,21 +27,10 @@ final class CustomTabBarContainerController: UITabBarController {
     private lazy var tabViewControllers: [UIViewController] = [
         UINavigationController(rootViewController: HomeViewController()),
         UINavigationController(rootViewController: MainMapViewController()),
-        UIViewController(),
+        UINavigationController(rootViewController: LikeViewController()),
         UINavigationController(rootViewController: MyPageViewController())
     ]
-    
-    private let eventBadgeImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = EATSSUDesignAsset.Images.iconEventTooltip.image
-        imageView.contentMode = .scaleAspectFit
-        imageView.isUserInteractionEnabled = false
-        return imageView
-    }()
-    
-    /// 이벤트 배지 뷰를 이미 화면에 추가했는지 여부
-    private var didSetupEventBadge = false
-    
+
     // MARK: - Life Cycle
 
     override func viewDidLoad() {
@@ -50,19 +39,6 @@ final class CustomTabBarContainerController: UITabBarController {
         setupTabBar()
         setupViewControllers()
         delegate = self
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        // setupEventBadgeIfNeeded()
-        // updateEventBadgePosition()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-            
-        // updateEventBadgePosition()
     }
     
     // MARK: - Setup
@@ -84,7 +60,7 @@ final class CustomTabBarContainerController: UITabBarController {
         let tabConfigurations: [(title: String, normal: UIImage, selected: UIImage, size: CGSize)] = [
             (TextLiteral.TabBar.meal, EATSSUDesignAsset.Images.tabMeal.image, EATSSUDesignAsset.Images.tabMealSelected.image, CGSize(width: 23, height: 23)),
             (TextLiteral.TabBar.map, EATSSUDesignAsset.Images.tabMap.image, EATSSUDesignAsset.Images.tabMapSelected.image, CGSize(width: 23, height: 23)),
-            (TextLiteral.TabBar.coffee, EATSSUDesignAsset.Images.coffee.image, EATSSUDesignAsset.Images.coffeeSelected.image, CGSize(width: 23, height: 23)),
+            (TextLiteral.TabBar.like, Self.likeTabIcon(selected: false), Self.likeTabIcon(selected: true), CGSize(width: 23, height: 23)),
             (TextLiteral.TabBar.my, EATSSUDesignAsset.Images.tabMypage.image, EATSSUDesignAsset.Images.tabMypageSelected.image, CGSize(width: 44, height: 23))
         ]
 
@@ -123,13 +99,19 @@ final class CustomTabBarContainerController: UITabBarController {
     /// 외부에서 탭 전환 요청 시 사용
     public func setTab(index: Int) {
         guard index < tabViewControllers.count else { return }
-        
-        if Tab(rawValue: index) == .coffee {
-            presentCoffeeWebView()
-            return
-        }
-        
         selectedIndex = index
+    }
+
+    /// 지도 탭 → 찜 탭(제휴 찜)으로 전환. 찜 화면의 뒤로가기로 지도 탭에 복귀할 수 있게 표시한다
+    public func showLikedPartnerships(fromMap: Bool) {
+        guard let likeVC = getNavController(at: Tab.like.rawValue)?.viewControllers.first as? LikeViewController else { return }
+        likeVC.prepare(tab: .partnership, showsBackToMap: fromMap)
+        setTab(index: Tab.like.rawValue)
+    }
+
+    /// 찜 탭의 뒤로가기 → 지도 탭 복귀
+    public func returnToMapTab() {
+        setTab(index: Tab.map.rawValue)
     }
     
     /// 특정 인덱스의 네비게이션 컨트롤러를 반환
@@ -224,14 +206,13 @@ final class CustomTabBarContainerController: UITabBarController {
         present(alert, animated: true)
     }
 
-    /// 커피 웹뷰를 전체화면 모달로 표시
-    private func presentCoffeeWebView() {
-        guard presentedViewController == nil else { return }
-        let coffeeVC = CoffeeWebViewController()
-        coffeeVC.modalPresentationStyle = .overFullScreen
-        present(coffeeVC, animated: true)
+    /// 찜 탭 아이콘: 템플릿 하트를 탭바 색으로 칠해 다른 탭과 같은 원본 렌더링 방식으로 맞춘다
+    private static func likeTabIcon(selected: Bool) -> UIImage {
+        let image = selected ? EATSSUDesignAsset.Images.icLikeFilled.image : EATSSUDesignAsset.Images.icLikeLine.image
+        let color: UIColor = selected ? EATSSUDesignAsset.Color.Main.primary.color : .gray500
+        return image.withTintColor(color, renderingMode: .alwaysOriginal)
     }
-    
+
     /// 로그인 화면으로 전환
     private func navigateToLogin() {
         let loginVC = LoginViewController()
@@ -253,19 +234,9 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
             return true
         }
         
-        // 커피 탭: 전체화면 모달로 웹뷰 표시
-        if selectedTab == .coffee {
-            let userInfo = UserInfoManager.shared.getCurrentUserInfo()
-            var params: [String: Any] = [:]
-            if let collegeId = userInfo?.collegeId { params["college"] = collegeId }
-            if let majorId = userInfo?.departmentId { params["major"] = majorId }
-            AnalyticsService.logEvent("click_plz_not_me", parameters: params)
-            presentCoffeeWebView()
-            return false
-        }
-        
-        // 마이페이지와 지도는 로그인 필요
-        if (selectedTab == .map || selectedTab == .myPage), RealmService.shared.isAccessTokenPresent() == false {
+        // 지도·찜·마이페이지는 로그인 필요
+        if (selectedTab == .map || selectedTab == .like || selectedTab == .myPage),
+           RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
             return false
         }
@@ -290,87 +261,16 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
                 if let mapVC = navController.viewControllers.first as? MainMapViewController {
                     mapVC.reloadContent()
                 }
-            case .coffee, .myPage:
+            case .like:
+                if let likeVC = navController.viewControllers.first as? LikeViewController {
+                    likeVC.reloadContent()
+                }
+            case .myPage:
                 break
             }
         }
         
         return true
-    }
-}
-
-// MARK: - Event Badge
-
-extension CustomTabBarContainerController {
-    private func setupEventBadgeIfNeeded() {
-        guard !didSetupEventBadge else { return }
-        didSetupEventBadge = true
-        
-        tabBar.addSubview(eventBadgeImageView)
-        tabBar.bringSubviewToFront(eventBadgeImageView)
-        
-        eventBadgeImageView.frame = CGRect(x: 0, y: 0, width: 66, height: 32)
-    }
-    
-    private func allSubviews(of view: UIView) -> [UIView] {
-        view.subviews + view.subviews.flatMap { allSubviews(of: $0) }
-    }
-
-    private func tabBarButtons() -> [UIView] {
-        let topLevelButtons = tabBar.subviews.filter {
-            let className = String(describing: type(of: $0))
-            return className == "UITabBarButton" || className == "_UITabButton"
-        }
-        
-        if !topLevelButtons.isEmpty {
-            return topLevelButtons
-        }
-        
-        return allSubviews(of: tabBar).filter {
-            let className = String(describing: type(of: $0))
-            return className == "UITabBarButton" || className == "_UITabButton"
-        }
-    }
-
-    private func coffeeTabButton() -> UIView? {
-        tabBarButtons().first { button in
-            allSubviews(of: button).contains {
-                guard let label = $0 as? UILabel else { return false }
-                return label.text == TextLiteral.TabBar.coffee
-            }
-        }
-    }
-
-    /// coffee 탭 위치 위에 말풍선 배치
-    private func updateEventBadgePosition() {
-        guard let coffeeButton = coffeeTabButton() else { return }
-        
-        let badgeSize = CGSize(width: 66, height: 32)
-        
-        let iconView = allSubviews(of: coffeeButton).first {
-            let className = String(describing: type(of: $0))
-            return className == "UITabBarSwappableImageView" || $0 is UIImageView
-        }
-        
-        if let iconView {
-            let iconFrameInTabBar = iconView.superview?.convert(iconView.frame, to: tabBar) ?? iconView.frame
-            
-            eventBadgeImageView.frame = CGRect(
-                x: iconFrameInTabBar.midX - badgeSize.width / 2,
-                y: iconFrameInTabBar.minY - badgeSize.height - 1,
-                width: badgeSize.width,
-                height: badgeSize.height
-            )
-        } else {
-            let coffeeButtonFrameInTabBar = coffeeButton.superview?.convert(coffeeButton.frame, to: tabBar) ?? coffeeButton.frame
-            
-            eventBadgeImageView.frame = CGRect(
-                x: coffeeButtonFrameInTabBar.midX - badgeSize.width / 2,
-                y: coffeeButtonFrameInTabBar.minY - badgeSize.height - 1,
-                width: badgeSize.width,
-                height: badgeSize.height
-            )
-        }
     }
 }
 

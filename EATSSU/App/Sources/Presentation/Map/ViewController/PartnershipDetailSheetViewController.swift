@@ -21,6 +21,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     // MARK: - UI Components
 
     private let storeNameLabel = UILabel()
+    private let likeButton = UIButton(type: .custom)
     private let typeStackView = UIStackView()
     private let typeIconImageView = UIImageView()
     private let typeTextLabel = UILabel()
@@ -55,6 +56,10 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         storeNameLabel.font = .header2
         storeNameLabel.textColor = .label
 
+        likeButton.tintColor = .label
+        likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
+        updateLikeButton()
+
         typeIconImageView.contentMode = .scaleAspectFit
         typeIconImageView.snp.makeConstraints { $0.width.height.equalTo(18) }
 
@@ -77,7 +82,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         mapAppButtonBar.onKakaoMapTap = { [weak self] in self?.mapAppLauncher.openKakaoMap() }
         mapAppButtonBar.onNaverMapTap = { [weak self] in self?.mapAppLauncher.openNaverMap() }
 
-        [storeNameLabel, typeStackView, infoListStackView, mapAppButtonBar].forEach {
+        [storeNameLabel, likeButton, typeStackView, infoListStackView, mapAppButtonBar].forEach {
             view.addSubview($0)
         }
     }
@@ -85,7 +90,14 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     override func setLayout() {
         storeNameLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.leading.equalToSuperview().inset(24)
+            $0.trailing.lessThanOrEqualTo(likeButton.snp.leading).offset(-12)
+        }
+
+        likeButton.snp.makeConstraints {
+            $0.centerY.equalTo(storeNameLabel)
+            $0.trailing.equalToSuperview().inset(24)
+            $0.width.height.equalTo(32)
         }
 
         typeStackView.snp.makeConstraints {
@@ -144,6 +156,61 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             let isLast = index == partnership.partnershipInfos.count - 1
             let card = makeInfoCard(info: info, isLast: isLast)
             infoListStackView.addArrangedSubview(card)
+        }
+    }
+
+    // MARK: - Like
+
+    private var isLiked: Bool {
+        PartnershipLikeManager.shared.isLiked(partnership)
+    }
+
+    private func updateLikeButton() {
+        let image = isLiked ? EATSSUDesignAsset.Images.icLikeFilled.image : EATSSUDesignAsset.Images.icLikeLine.image
+        likeButton.setImage(image, for: .normal)
+    }
+
+    /// 하트 탭: 찜 추가 시 최대 개수(내 제휴 업체 수)를 확인하고, 삭제 시엔 '취소하기'로 되돌릴 수 있는 토스트를 띄운다
+    @objc private func didTapLike() {
+        likeButton.isEnabled = false
+        if isLiked {
+            setLiked(false)
+            return
+        }
+
+        PartnershipLikeManager.shared.fetchLikeLimit { [weak self] limit in
+            guard let self else { return }
+            if let limit, PartnershipLikeManager.shared.likedStoreCount >= limit {
+                self.likeButton.isEnabled = true
+                self.showToast(message: TextLiteral.Like.limitReached(limit), type: .warning)
+                return
+            }
+            self.setLiked(true)
+        }
+    }
+
+    private func setLiked(_ liked: Bool) {
+        PartnershipLikeManager.shared.setLiked(liked, store: partnership) { [weak self] result in
+            guard let self else { return }
+            self.likeButton.isEnabled = true
+            self.updateLikeButton()
+
+            switch result {
+            case .success:
+                if liked {
+                    self.showToast(message: TextLiteral.Like.addedToast, type: .success)
+                } else {
+                    self.showToast(
+                        message: TextLiteral.Like.removedToast,
+                        type: .success,
+                        actionTitle: TextLiteral.Like.undo
+                    ) { [weak self] in
+                        self?.setLiked(true)
+                    }
+                }
+            case .failure:
+                self.showToast(message: TextLiteral.Like.updateFailed, type: .danger)
+            }
         }
     }
 

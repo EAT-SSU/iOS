@@ -147,7 +147,8 @@ extension MainMapViewController {
     }
 
     /// 제휴점 상세 바텀시트 표시
-    func showPartnershipDetail(for partnership: PartnershipDTO) {
+    /// - Parameter expanded: true면 펼친(large) 상태로 시작 (찜 목록에서 진입 시)
+    func showPartnershipDetail(for partnership: PartnershipDTO, expanded: Bool = false) {
         MapAnalyticsManager.shared.logClickPartnerRestaurant(
             collegeId: currentCollegeId,
             majorId: currentDepartmentId,
@@ -156,7 +157,11 @@ extension MainMapViewController {
 
         let detailVC = PartnershipDetailSheetViewController(partnership: partnership)
         detailVC.loadViewIfNeeded()
-        presentSheet(detailVC, heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() })
+        presentSheet(
+            detailVC,
+            heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() },
+            expanded: expanded
+        )
     }
 
     /// 착한가격업소 상세 바텀시트 표시
@@ -169,7 +174,11 @@ extension MainMapViewController {
     }
 
     /// 커스텀 detent 시트 공통 표시. 표시 후 safe area 확정 시 invalidateDetents()로 높이가 보정됨
-    private func presentSheet(_ viewController: UIViewController, heightProvider: @escaping () -> CGFloat?) {
+    private func presentSheet(
+        _ viewController: UIViewController,
+        heightProvider: @escaping () -> CGFloat?,
+        expanded: Bool = false
+    ) {
         if let sheet = viewController.sheetPresentationController {
             if #available(iOS 16.0, *) {
                 let customDetent = UISheetPresentationController.Detent.custom { _ in heightProvider() }
@@ -178,6 +187,9 @@ extension MainMapViewController {
                 sheet.detents = [.medium(), .large()]
             }
             sheet.prefersGrabberVisible = true
+            if expanded {
+                sheet.selectedDetentIdentifier = .large
+            }
         }
         present(viewController, animated: true)
     }
