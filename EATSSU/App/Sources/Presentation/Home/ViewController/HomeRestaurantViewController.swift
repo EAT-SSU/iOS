@@ -19,7 +19,7 @@ protocol ReviewMenuTypeInfoDelegate: AnyObject {
 
 // 식당 정보 버튼 탭 이벤트를 처리하는 델리게이트 프로토콜
 protocol RestaurantInfoDelegate: AnyObject {
-    func didTappedRestaurantInfo(restaurantName: String)
+    func didTappedRestaurantInfo(restaurant: Restaurant)
 }
 
 final class HomeRestaurantViewController: BaseViewController {
@@ -364,13 +364,14 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         }
 
         let restaurantName = sectionHeaderRestaurant[section]
-        let koreanName = koreanRestaurantName(from: restaurantName)
+        let restaurant = Restaurant(title: restaurantName)
         header.titleLabel.text = restaurantName
 
-        if let info = RestaurantInfoData.restaurantInfoData.first(where: { $0.name == koreanName }) {
+        if let restaurant {
             var container = AttributeContainer()
             container.font = EATSSUDesignFontFamily.Pretendard.medium.font(size: 10)
-            header.infoButton.configuration?.attributedTitle = AttributedString(info.location, attributes: container)
+            let location = RestaurantInfoData.localized(for: restaurant).location
+            header.infoButton.configuration?.attributedTitle = AttributedString(location, attributes: container)
         }
 
         // 재사용 헤더의 이전 액션 제거
@@ -379,7 +380,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         // 다시 액션 등록
         header.infoButton.addAction(
             UIAction(title: "", image: nil, identifier: Self.infoActionID, handler: { [weak self] _ in
-                guard let self else { return }
+                guard let self, let restaurant else { return }
                 // firebase - click_restaurant_info 이벤트 호출
                 HomeAnalyticsManager.shared.logClickRestaurantInfo(restaurantName: restaurantName)
                 let vc = RestaurantInfoViewController()
@@ -387,7 +388,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
 
                 vc.loadViewIfNeeded()
                 self.infoDelegate = vc
-                self.infoDelegate?.didTappedRestaurantInfo(restaurantName: restaurantName)
+                self.infoDelegate?.didTappedRestaurantInfo(restaurant: restaurant)
 
                 if let sheet = vc.sheetPresentationController {
                     if #available(iOS 16.0, *) {
@@ -407,24 +408,6 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         return header
     }
     
-    // TODO: - 추후 삭제 필요: RestaurantInfoData 관련 Firebase 반환 값에서 id 추가로 받아서 이름 말고 id로 매칭하는 방식으로 변경 필요
-    
-    private func koreanRestaurantName(from name: String) -> String {
-        switch name {
-        case TextLiteral.Restaurant.dodamRestaurant:
-            return "도담 식당"
-        case TextLiteral.Restaurant.studentRestaurant:
-            return "학생 식당"
-        case TextLiteral.Restaurant.snackCorner:
-            return "스낵 코너"
-        case TextLiteral.Restaurant.dormitoryRestaurant:
-            return "기숙사 식당"
-        case TextLiteral.Restaurant.facultyRestaurant:
-            return "FACULTY (교직원 전용)"
-        default:
-            return name
-        }
-    }
 }
 
 // MARK: - UITableViewDelegate

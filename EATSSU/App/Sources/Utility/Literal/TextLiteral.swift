@@ -36,6 +36,9 @@ private enum Localization {
     }
 }
 
+/// `TextLiteral.Restaurant`(문구 네임스페이스)과 이름이 겹치는 전역 식당 enum을 가리키기 위한 별칭
+typealias RestaurantKind = Restaurant
+
 enum TextLiteral {
     // MARK: - KakaoChannel
 
@@ -1250,6 +1253,56 @@ enum TextLiteral {
             // 빈 문자열은 localizedString이 키 자체를 돌려주므로 그대로 반환
             guard !koreanName.isEmpty else { return koreanName }
             return Localization.localized("\(prefix).\(normalizedKey(koreanName))", fallback: koreanName)
+        }
+    }
+
+    // MARK: - RestaurantInfo
+
+    /// 학식탭 식당 정보 시트(위치/운영시간/비고). 키는 `Restaurant.infoKey` 기준
+    enum RestaurantInfo {
+        /// 위치 - "학생회관 3층"
+        static func location(_ restaurant: RestaurantKind) -> String {
+            Localization.localized("restaurantInfo.\(restaurant.infoKey).location", fallback: fallbackLocation(restaurant))
+        }
+
+        /// 운영시간 - "11:20~14:00(점심)"
+        static func time(_ restaurant: RestaurantKind) -> String {
+            Localization.localized("restaurantInfo.\(restaurant.infoKey).time", fallback: fallbackTime(restaurant))
+        }
+
+        /// 비고 - "주말 휴무"
+        static func etc(_ restaurant: RestaurantKind) -> String {
+            Localization.localized("restaurantInfo.\(restaurant.infoKey).etc", fallback: fallbackEtc(restaurant))
+        }
+
+        private static func fallbackLocation(_ restaurant: RestaurantKind) -> String {
+            switch restaurant {
+            case .studentRestaurant: "학생회관 3층"
+            case .dodamRestaurant: "신양관 2층"
+            case .dormitoryRestaurant: "레지던스홀 지하 1층"
+            case .facultyRestaurant: "전산관 지하 1층"
+            case .snackCorner: "학생회관 3층"
+            }
+        }
+
+        private static func fallbackTime(_ restaurant: RestaurantKind) -> String {
+            switch restaurant {
+            case .studentRestaurant: "08:00~09:00(천원의아침밥)\n11:20~14:00(점심)\n14:00~17:00(공간 개방)"
+            case .dodamRestaurant: "평일\n11:20~14:00(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)"
+            case .dormitoryRestaurant: "평일\n11:20~13:50(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)\n17:00~18:20(저녁)"
+            case .facultyRestaurant: "11:30~14:00(점심)\n14:00~17:00(공간개방)"
+            case .snackCorner: "11:00~15:30(점심)"
+            }
+        }
+
+        private static func fallbackEtc(_ restaurant: RestaurantKind) -> String {
+            switch restaurant {
+            case .studentRestaurant: "3개 코너 운영\n뚝배기, 덮밥, 양식\n주말 휴무"
+            case .dodamRestaurant: "2개 코너 운영\n일반식, 웰빙코너"
+            case .dormitoryRestaurant: "조식 미운영"
+            case .facultyRestaurant: "주말 휴무"
+            case .snackCorner: "분식류, 옛날도시락, 컵밥 등\n주말 휴무"
+            }
         }
     }
 }

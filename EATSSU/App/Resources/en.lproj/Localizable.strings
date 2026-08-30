@@ -633,3 +633,36 @@
 "academic.department.자유전공학부" = "Liberal Studies";
 /// "차세대반도체학과"
 "academic.department.차세대반도체학과" = "Next-Generation Semiconductor";
+
+// MARK: - Restaurant Info (식당 정보 시트: 위치/운영시간/비고)
+
+/// "학생회관 3층"
+"restaurantInfo.student.location" = "Student Union Building, 3F";
+/// "08:00~09:00(천원의아침밥)\n11:20~14:00(점심)\n14:00~17:00(공간 개방)"
+"restaurantInfo.student.time" = "08:00~09:00(1,000-Won Breakfast)\n11:20~14:00(Lunch)\n14:00~17:00(Open Space Hours)";
+/// "3개 코너 운영\n뚝배기, 덮밥, 양식\n주말 휴무"
+"restaurantInfo.student.etc" = "3 Food Stations\nHot Pot(Ttukbaegi-style Meals), Rice Bowls, Western food\nClosed on weekends";
+/// "신양관 2층"
+"restaurantInfo.dodam.location" = "Shinyang Hall, 2F";
+/// "평일\n11:20~14:00(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)"
+"restaurantInfo.dodam.time" = "Weekdays\n11:20~14:00(Lunch)\n17:00~18:30(Dinner)\n\nWeekends\n11:20~13:30(Lunch)";
+/// "2개 코너 운영\n일반식, 웰빙코너"
+"restaurantInfo.dodam.etc" = "2 Food Stations\nStandard Meals, Healthy Meals";
+/// "레지던스홀 지하 1층"
+"restaurantInfo.dormitory.location" = "Residence Hall, B1";
+/// "평일\n11:20~13:50(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)\n17:00~18:20(저녁)"
+"restaurantInfo.dormitory.time" = "Weekdays\n11:20~13:50(Lunch)\n17:00~18:30(Dinner)\n\nWeekends\n11:20~13:30(Lunch)\n17:00~18:20(Dinner)";
+/// "조식 미운영"
+"restaurantInfo.dormitory.etc" = "Breakfast Not Available";
+/// "전산관 지하 1층"
+"restaurantInfo.faculty.location" = "Jeonsan Hall, B1";
+/// "11:30~14:00(점심)\n14:00~17:00(공간개방)"
+"restaurantInfo.faculty.time" = "11:30~14:00(Lunch)\n14:00~17:00(Open Space Hours)";
+/// "주말 휴무"
+"restaurantInfo.faculty.etc" = "Closed on weekends";
+/// "학생회관 3층"
+"restaurantInfo.snackCorner.location" = "Student Union Building, 3F";
+/// "11:00~15:30(점심)"
+"restaurantInfo.snackCorner.time" = "11:00~15:30(Lunch)";
+/// "분식류, 옛날도시락, 컵밥 등\n주말 휴무"
+"restaurantInfo.snackCorner.etc" = "Bunsik(Korean Snacks), Old-school Lunch Box, Cup Rice, etc.\nClosed on weekends";
