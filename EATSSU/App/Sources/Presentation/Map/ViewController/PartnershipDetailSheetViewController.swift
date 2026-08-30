@@ -123,6 +123,10 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureData()
+        // 찜 탭을 열기 전에 지도에서 시트를 열어도 하트가 서버 찜 상태를 반영하도록
+        PartnershipLikeManager.shared.ensureLoaded { [weak self] in
+            self?.updateLikeButton()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -178,14 +182,17 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             return
         }
 
-        PartnershipLikeManager.shared.fetchLikeLimit { [weak self] limit in
-            guard let self else { return }
-            if let limit, PartnershipLikeManager.shared.likedStoreCount >= limit {
-                self.likeButton.isEnabled = true
-                self.showToast(message: TextLiteral.Like.limitReached(limit), type: .warning)
-                return
+        // 찜 목록과 최대 개수를 확보한 뒤 추가
+        PartnershipLikeManager.shared.ensureLoaded { [weak self] in
+            PartnershipLikeManager.shared.fetchLikeLimit { [weak self] limit in
+                guard let self else { return }
+                if let limit, PartnershipLikeManager.shared.likedStoreCount >= limit {
+                    self.likeButton.isEnabled = true
+                    self.showToast(message: TextLiteral.Like.limitReached(limit), type: .warning)
+                    return
+                }
+                self.setLiked(true)
             }
-            self.setLiked(true)
         }
     }
 

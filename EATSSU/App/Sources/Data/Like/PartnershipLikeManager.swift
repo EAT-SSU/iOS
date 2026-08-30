@@ -50,7 +50,19 @@ final class PartnershipLikeManager {
 
     func isLiked(_ store: PartnershipDTO) -> Bool {
         let ids = store.partnershipIds
-        return !ids.isEmpty && ids.allSatisfy { likedPartnershipIds.contains($0) }
+        guard !ids.isEmpty else { return false }
+        // 서버 찜 목록을 아직 받기 전이면 지도 응답에 실린 항목별 isLiked로 판정
+        guard hasLoaded else { return store.partnershipInfos.allSatisfy(\.isLiked) }
+        return ids.allSatisfy { likedPartnershipIds.contains($0) }
+    }
+
+    /// 찜 상태를 한 번은 서버에서 받아온 뒤 이어서 실행. 이미 받아왔으면 즉시 실행
+    func ensureLoaded(completion: @escaping () -> Void) {
+        guard !hasLoaded else {
+            completion()
+            return
+        }
+        refresh { _ in completion() }
     }
 
     /// 찜한 업체 수 (최대 개수 제한 판정용)
