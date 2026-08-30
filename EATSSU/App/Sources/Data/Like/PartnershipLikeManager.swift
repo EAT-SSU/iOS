@@ -41,6 +41,11 @@ final class PartnershipLikeManager {
     /// 업체별 찜한 시각 (최근 추가순 정렬용, 로컬 보관)
     private var likedAtByStoreKey: [String: Double]
 
+    #if DEBUG
+    /// 서버에 찜 데이터가 없는 동안 목 데이터로 대체된 상태. 이때 찜 토글은 서버를 호출하지 않고 로컬에서만 처리한다 (DEBUG 전용)
+    private(set) var usesMockData = false
+    #endif
+
     // MARK: - Query
 
     func isLiked(_ store: PartnershipDTO) -> Bool {
@@ -65,6 +70,18 @@ final class PartnershipLikeManager {
             guard let self else { return }
             switch result {
             case .success(let stores):
+                #if DEBUG
+                if stores.isEmpty, !self.hasLoaded {
+                    self.applyMockData()
+                    completion(.success(self.likedStores))
+                    return
+                }
+                if self.usesMockData {
+                    // 목 상태에서는 서버 목록을 덮어쓰지 않는다
+                    completion(.success(self.likedStores))
+                    return
+                }
+                #endif
                 self.likedPartnershipIds = Set(stores.flatMap(\.partnershipIds))
                 self.likedStores = self.sortedByRecent(stores)
                 self.hasLoaded = true
@@ -96,6 +113,18 @@ final class PartnershipLikeManager {
 
     /// 업체 단위 찜 설정. 완료 시 로컬 상태(항목 id, 목록, 순서)까지 반영한다
     func setLiked(_ liked: Bool, store: PartnershipDTO, completion: @escaping (Result<Void, Error>) -> Void) {
+        #if DEBUG
+        // 목 데이터(음수 id)는 서버에 없으므로 로컬에서만 토글
+        if usesMockData || store.partnershipIds.contains(where: { $0 < 0 }) {
+            for id in store.partnershipIds {
+                if liked { likedPartnershipIds.insert(id) } else { likedPartnershipIds.remove(id) }
+            }
+            applyLocalState(liked: liked, store: store)
+            DispatchQueue.main.async { completion(.success(())) }
+            return
+        }
+        #endif
+
         let targets = store.partnershipIds.filter { likedPartnershipIds.contains($0) != liked }
         guard !targets.isEmpty else {
             applyLocalState(liked: liked, store: store)
@@ -156,6 +185,22 @@ final class PartnershipLikeManager {
     }
 
     // MARK: - Private
+
+    #if DEBUG
+    /// 찜 목록 목 데이터 적용 (DEBUG 전용). 최근 추가순 확인을 위해 순서대로 시각을 부여한다
+    private func applyMockData() {
+        usesMockData = true
+        hasLoaded = true
+        let stores = LikedPartnershipMockData.samples
+        likedPartnershipIds = Set(stores.flatMap(\.partnershipIds))
+        let now = Date().timeIntervalSince1970
+        for (index, store) in stores.enumerated() where likedAtByStoreKey[store.storeKey] == nil {
+            likedAtByStoreKey[store.storeKey] = now - Double(index)
+        }
+        likedStores = sortedByRecent(stores)
+        persistOrder()
+    }
+    #endif
 
     private func applyLocalState(liked: Bool, store: PartnershipDTO) {
         if liked {

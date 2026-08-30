@@ -62,11 +62,11 @@ final class MainMapView: BaseUIView {
     let topTabView = UnderlineTabView(titles: MapTab.allCases.map { $0.title })
     let filterChipBar = FilterChipBar()
 
-    /// 찜 탭으로 이동하는 플로팅 하트 버튼 (탭바 지도 탭에서만 노출)
+    /// 찜 탭으로 이동하는 플로팅 하트 버튼. 필터 칩과 같은 줄 오른쪽에 두고, 칩은 그 왼쪽 영역에서 스크롤된다
     let likeButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .white
-        button.layer.cornerRadius = 24
+        button.layer.cornerRadius = 18
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOpacity = 0.12
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
@@ -101,15 +101,30 @@ final class MainMapView: BaseUIView {
             $0.leading.trailing.bottom.equalToSuperview()
         }
 
-        filterChipBar.snp.makeConstraints {
+        likeButton.snp.makeConstraints {
             $0.top.equalTo(mapView).offset(12)
-            $0.leading.trailing.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
+            $0.width.height.equalTo(36)
         }
 
-        likeButton.snp.makeConstraints {
-            $0.top.equalTo(filterChipBar.snp.bottom).offset(12)
-            $0.trailing.equalToSuperview().inset(16)
-            $0.width.height.equalTo(48)
+        filterChipBar.snp.makeConstraints {
+            $0.top.equalTo(mapView).offset(12)
+            $0.leading.equalToSuperview()
+            $0.trailing.equalTo(likeButton.snp.leading).offset(-8)
+        }
+    }
+
+    /// 하트 노출 여부에 따라 칩 바 폭을 조정한다 (숨기면 칩이 오른쪽 끝까지 스크롤)
+    func setLikeButtonVisible(_ visible: Bool) {
+        likeButton.isHidden = !visible
+        filterChipBar.snp.remakeConstraints {
+            $0.top.equalTo(mapView).offset(12)
+            $0.leading.equalToSuperview()
+            if visible {
+                $0.trailing.equalTo(likeButton.snp.leading).offset(-8)
+            } else {
+                $0.trailing.equalToSuperview()
+            }
         }
     }
 

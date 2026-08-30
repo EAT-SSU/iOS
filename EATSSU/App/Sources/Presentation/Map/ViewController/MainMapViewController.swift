@@ -127,7 +127,7 @@ final class MainMapViewController: BaseViewController {
         view.addSubview(root)
         root.setTopTabVisible(mode == .tabbed)
         root.filterChipBar.isHidden = detailPartnership != nil
-        root.likeButton.isHidden = mode != .tabbed
+        root.setLikeButtonVisible(mode == .tabbed)
     }
 
     override func setLayout() {
@@ -251,7 +251,7 @@ final class MainMapViewController: BaseViewController {
     private func applyTabUI() {
         root.topTabView.select(index: currentTab.rawValue, animated: false)
         // 찜은 학교 제휴 전용이라 착한 가격 탭에서는 플로팅 하트를 숨긴다
-        root.likeButton.isHidden = mode != .tabbed || currentTab != .partnership
+        root.setLikeButtonVisible(mode == .tabbed && currentTab == .partnership)
 
         switch currentTab {
         case .partnership:
