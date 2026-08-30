@@ -22,9 +22,10 @@ extension ChangeMenuTableResponse {
 
     /// 화면에 표시할 메뉴 목록
     ///
-    /// - 번역 지원 언어(영어): 서버가 번역해 준 대표메뉴(`isMain == true`)만 표시한다.
-    ///   대표메뉴 데이터가 아직 없는 식단은 전부 `isMain == false`로 내려오므로 전체를 그대로(한국어) 표시한다.
-    /// - 그 외 언어: 전체 메뉴를 표시한다.
+    /// - 번역 요청 언어(한국어 외): 서버가 번역해 준 대표메뉴(`isMain == true`)만 표시한다.
+    ///   대표메뉴 데이터가 없거나 서버가 해당 언어를 아직 지원하지 않는 식단은 전부 `isMain == false`로
+    ///   내려오므로 전체를 그대로(한국어) 표시한다.
+    /// - 한국어: 전체 메뉴를 표시한다.
     var displayMenus: [BriefMenus] {
         guard Self.usesTranslatedMainMenus else { return briefMenus }
 

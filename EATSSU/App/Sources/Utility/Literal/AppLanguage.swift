@@ -18,9 +18,13 @@ enum AppLanguage: String, CaseIterable {
         rawValue.uppercased()
     }
 
-    /// 서버가 번역(리뷰 AI 번역, 변동식단 대표메뉴 영문명)을 제공하는 언어인지. 현재 영어만 지원
+    /// 서버에 번역을 요청할 언어인지 (한국어 제외 전부)
+    ///
+    /// 실제 지원 범위는 API마다 다르다: 리뷰 AI 번역·`/menus`는 EN/JA/VI, `/meals`·`menus-info`는 EN만.
+    /// 미지원 조합은 서버가 한국어를 그대로 돌려주고, 대표메뉴 표시는 `isMain` 폴백으로 전체 한국어가 보이므로 안전하다.
+    /// 서버가 지원 언어를 넓히면 앱 수정 없이 반영된다.
     var isServerTranslationSupported: Bool {
-        self == .english
+        self != .korean
     }
 
     var title: String {
