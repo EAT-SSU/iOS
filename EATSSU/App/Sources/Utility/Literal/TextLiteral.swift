@@ -1212,4 +1212,32 @@ enum TextLiteral {
             Localization.localized("restaurant.facultyRestaurant", fallback: "FACULTY (교직원 전용)")
         }
     }
+
+    // MARK: - Academic
+
+    /// 서버가 내려주는 한국어 단과대/학과명을 현재 앱 언어 표기로 변환
+    /// 서버 응답·Realm 저장값은 한국어 원본을 유지하고 표시 시점에만 사용한다.
+    /// 등록되지 않은 이름은 원본을 그대로 반환한다.
+    enum Academic {
+        /// 단과대명 - "인문대학" → "College of Humanities"
+        static func college(_ koreanName: String) -> String {
+            localizedName(prefix: "academic.college", koreanName: koreanName)
+        }
+
+        /// 학과명 - "컴퓨터학부" → "Computer Science & Engineering"
+        static func department(_ koreanName: String) -> String {
+            localizedName(prefix: "academic.department", koreanName: koreanName)
+        }
+
+        private static func localizedName(prefix: String, koreanName: String) -> String {
+            // 한국어는 서버 원본 표기(가운뎃점 등)를 그대로 노출
+            guard AppLanguageManager.shared.currentLanguage != .korean else { return koreanName }
+            return Localization.localized("\(prefix).\(lookupKey(koreanName))", fallback: koreanName)
+        }
+
+        /// 서버 표기 차이(가운뎃점·공백·괄호 등)를 흡수하기 위해 문자/숫자만 남겨 키 생성
+        private static func lookupKey(_ name: String) -> String {
+            String(name.filter { $0.isLetter || $0.isNumber })
+        }
+    }
 }
