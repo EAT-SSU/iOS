@@ -85,16 +85,14 @@ final class PromotionPopupViewController: BaseViewController {
         UIApplication.shared.open(nabatdaePostURL)
     }
     
-    /// 팝업의 그 외 영역 클릭 -> 나아돼 탭으로 이동
+    /// 팝업의 그 외 영역 클릭 -> 닫기 (이동하던 '나만아니면돼' 탭은 제거됨)
     @objc
     private func didTapPopupContent() {
         AnalyticsService.logEvent("popup_event", parameters: [
             "popup_name": "plz_not_me",
             "popup_action": "click_popup_image"
         ])
-        dismiss(animated: true) { [weak self] in
-            self?.tabBarContainer?.setTab(index: 2)
-        }
+        dismiss(animated: true)
     }
     
     /// 다시 보지 않기 -> 평생 안 뜸

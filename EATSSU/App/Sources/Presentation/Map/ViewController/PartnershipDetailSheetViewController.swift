@@ -15,7 +15,10 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Properties
 
+    /// 시트에 표시할 업체 (지도 필터에 맞춰 제휴 항목이 걸러진 DTO)
     private let partnership: PartnershipDTO
+    /// 찜 토글 대상 업체 (필터와 무관한 전체 제휴 항목). 업체 찜은 항상 모든 항목을 함께 다룬다
+    private let likeTarget: PartnershipDTO
     private let mapAppLauncher: MapAppLauncher
 
     // MARK: - UI Components
@@ -30,8 +33,9 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Init
 
-    init(partnership: PartnershipDTO) {
+    init(partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil) {
         self.partnership = partnership
+        self.likeTarget = likeTarget ?? partnership
         self.mapAppLauncher = MapAppLauncher(destination: .init(
             name: partnership.storeName,
             latitude: partnership.latitude,
@@ -166,7 +170,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     // MARK: - Like
 
     private var isLiked: Bool {
-        PartnershipLikeManager.shared.isLiked(partnership)
+        PartnershipLikeManager.shared.isLiked(likeTarget)
     }
 
     private func updateLikeButton() {
@@ -177,13 +181,13 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     /// 하트 탭: 찜 추가 시 최대 개수(내 제휴 업체 수)를 확인하고, 삭제 시엔 '취소하기'로 되돌릴 수 있는 토스트를 띄운다
     @objc private func didTapLike() {
         likeButton.isEnabled = false
-        if isLiked {
-            setLiked(false)
-            return
-        }
-
-        // 찜 목록과 최대 개수를 확보한 뒤 추가
+        // 찜 목록을 확보한 뒤 현재 상태를 판정한다 (받기 전엔 하트가 지도 응답 기준이라 어긋날 수 있음)
         PartnershipLikeManager.shared.ensureLoaded { [weak self] in
+            guard let self else { return }
+            if self.isLiked {
+                self.setLiked(false)
+                return
+            }
             PartnershipLikeManager.shared.fetchLikeLimit { [weak self] limit in
                 guard let self else { return }
                 if let limit, PartnershipLikeManager.shared.likedStoreCount >= limit {
@@ -197,7 +201,8 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     }
 
     private func setLiked(_ liked: Bool) {
-        PartnershipLikeManager.shared.setLiked(liked, store: partnership) { [weak self] result in
+        likeButton.isEnabled = false
+        PartnershipLikeManager.shared.setLiked(liked, store: likeTarget) { [weak self] result in
             guard let self else { return }
             self.likeButton.isEnabled = true
             self.updateLikeButton()
@@ -207,11 +212,15 @@ final class PartnershipDetailSheetViewController: BaseViewController {
                 if liked {
                     self.showToast(message: TextLiteral.Like.addedToast, type: .success)
                 } else {
+                    // 취소하기는 한 번만 동작 (토글 API라 두 번 누르면 원복이 뒤집힘)
+                    var didUndo = false
                     self.showToast(
                         message: TextLiteral.Like.removedToast,
                         type: .success,
                         actionTitle: TextLiteral.Like.undo
                     ) { [weak self] in
+                        guard !didUndo else { return }
+                        didUndo = true
                         self?.setLiked(true)
                     }
                 }

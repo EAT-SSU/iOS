@@ -20,6 +20,9 @@ final class CustomTabBarContainerController: UITabBarController {
         case map = 1
         case like = 2
         case myPage = 3
+
+        /// 지도·찜·마이페이지는 로그인 필요
+        var requiresLogin: Bool { self != .home }
     }
 
     // MARK: - Properties
@@ -96,9 +99,13 @@ final class CustomTabBarContainerController: UITabBarController {
     
     // MARK: - Public Interface
     
-    /// 외부에서 탭 전환 요청 시 사용
+    /// 외부에서 탭 전환 요청 시 사용. 탭바 탭과 같은 로그인 조건을 적용한다
     public func setTab(index: Int) {
-        guard index < tabViewControllers.count else { return }
+        guard index < tabViewControllers.count, let tab = Tab(rawValue: index) else { return }
+        if tab.requiresLogin, RealmService.shared.isAccessTokenPresent() == false {
+            presentLoginAlert()
+            return
+        }
         selectedIndex = index
     }
 
@@ -242,9 +249,7 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
             return true
         }
         
-        // 지도·찜·마이페이지는 로그인 필요
-        if (selectedTab == .map || selectedTab == .like || selectedTab == .myPage),
-           RealmService.shared.isAccessTokenPresent() == false {
+        if selectedTab.requiresLogin, RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
             return false
         }

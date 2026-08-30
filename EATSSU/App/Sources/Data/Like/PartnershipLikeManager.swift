@@ -42,9 +42,24 @@ final class PartnershipLikeManager {
     private var likedAtByStoreKey: [String: Double]
 
     #if DEBUG
-    /// 서버에 찜 데이터가 없는 동안 목 데이터로 대체된 상태. 이때 찜 토글은 서버를 호출하지 않고 로컬에서만 처리한다 (DEBUG 전용)
+    /// 서버 찜 목록이 비어 있을 때 목 데이터로 대체할지 (DEBUG 전용). 실제 API 경로를 검증할 땐 false로
+    static let isMockEnabled = true
+
+    /// 목 데이터로 대체된 상태. 이때 찜 토글은 서버를 호출하지 않고 로컬에서만 처리한다
     private(set) var usesMockData = false
     #endif
+
+    /// 로그아웃·탈퇴·세션 만료 시 호출. 다른 계정의 찜 상태가 남지 않도록 메모리와 로컬 순서 기록을 모두 비운다
+    func reset() {
+        likedPartnershipIds = []
+        likedStores = []
+        hasLoaded = false
+        likedAtByStoreKey = [:]
+        UserDefaults.standard.removeObject(forKey: Constant.likedOrderKey)
+        #if DEBUG
+        usesMockData = false
+        #endif
+    }
 
     // MARK: - Query
 
@@ -83,7 +98,7 @@ final class PartnershipLikeManager {
             switch result {
             case .success(let stores):
                 #if DEBUG
-                if stores.isEmpty, !self.hasLoaded {
+                if Self.isMockEnabled, stores.isEmpty, !self.hasLoaded {
                     self.applyMockData()
                     completion(.success(self.likedStores))
                     return
@@ -94,7 +109,7 @@ final class PartnershipLikeManager {
                     return
                 }
                 #endif
-                self.likedPartnershipIds = Set(stores.flatMap(\.partnershipIds))
+                self.likedPartnershipIds = Set(stores.flatMap(Self.likedIds(in:)))
                 self.likedStores = self.sortedByRecent(stores)
                 self.hasLoaded = true
                 self.pruneOrder(keeping: stores)
@@ -143,7 +158,18 @@ final class PartnershipLikeManager {
         }
         #endif
 
-        let targets = store.partnershipIds.filter { likedPartnershipIds.contains($0) != liked }
+        // 찜 목록을 받기 전에 토글하면 빈 집합 기준으로 잘못 판단하므로 먼저 확보한다
+        ensureLoaded { [weak self] in
+            guard let self else { return }
+            self.toggle(liked: liked, store: store, completion: completion)
+        }
+    }
+
+    /// 항목별 현재 찜 상태와 다른 것만 서버 토글. 목록 확보에 실패한 경우엔 지도 응답의 isLiked를 기준으로 삼는다
+    private func toggle(liked: Bool, store: PartnershipDTO, completion: @escaping (Result<Void, Error>) -> Void) {
+        let targets = store.partnershipInfos
+            .filter { currentlyLiked($0) != liked }
+            .map(\.id)
         guard !targets.isEmpty else {
             applyLocalState(liked: liked, store: store)
             completion(.success(()))
@@ -203,6 +229,16 @@ final class PartnershipLikeManager {
     }
 
     // MARK: - Private
+
+    private func currentlyLiked(_ info: PartnershipInfoDTO) -> Bool {
+        hasLoaded ? likedPartnershipIds.contains(info.id) : info.isLiked
+    }
+
+    /// 찜 목록 응답에서 실제 찜된 항목 id. 플래그가 하나도 없으면(구버전 응답) 소속 항목 전부로 간주
+    private static func likedIds(in store: PartnershipDTO) -> [Int] {
+        let flagged = store.partnershipInfos.filter(\.isLiked).map(\.id)
+        return flagged.isEmpty ? store.partnershipIds : flagged
+    }
 
     #if DEBUG
     /// 찜 목록 목 데이터 적용 (DEBUG 전용). 최근 추가순 확인을 위해 순서대로 시각을 부여한다

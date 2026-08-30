@@ -167,7 +167,8 @@ final class MainMapViewController: BaseViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        // 다른 탭으로 옮겨가면 찜 복귀 상태를 해제
+        // 다른 탭으로 옮겨가면 찜 복귀 상태와 아직 못 띄운 상세를 함께 버린다 (나중에 엉뚱하게 뜨지 않도록)
+        pendingDetailStore = nil
         if returnsToLikeTab {
             returnsToLikeTab = false
             updateLikeReturnButton()

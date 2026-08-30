@@ -83,7 +83,9 @@ extension MainMapViewController {
         if let type = partnershipFilter.restaurantType {
             filtered = filtered.filter { $0.restaurantType == type }
         }
-        displayMarkers(filtered.map { makeMarkerItem(for: $0) })
+        // 시트는 필터된 항목만 보여주되, 찜은 업체의 전체 항목을 대상으로 해야 하므로 원본을 함께 넘긴다
+        let fullByKey = Dictionary(partnerships.map { ($0.storeKey, $0) }, uniquingKeysWith: { first, _ in first })
+        displayMarkers(filtered.map { makeMarkerItem(for: $0, likeTarget: fullByKey[$0.storeKey]) })
     }
 
     private static func filterPartnerships(

@@ -161,11 +161,15 @@ final class LikedPartnershipViewController: BaseViewController {
             guard let self else { return }
             switch result {
             case .success:
+                // 취소하기는 한 번만 동작 (토글 API라 두 번 누르면 원복이 뒤집힘)
+                var didUndo = false
                 self.showToast(
                     message: TextLiteral.Like.removedToast,
                     type: .success,
                     actionTitle: TextLiteral.Like.undo
                 ) { [weak self] in
+                    guard !didUndo else { return }
+                    didUndo = true
                     self?.restoreStore(store)
                 }
             case .failure:

@@ -48,6 +48,8 @@ class RealmService {
         try! realm.write {
             realm.deleteAll()
         }
+        // 계정 단위 상태도 함께 초기화 (찜 목록·순서)
+        PartnershipLikeManager.shared.reset()
     }
 
     func deleteAll(_ objectType: (some Object).Type) {

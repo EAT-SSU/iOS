@@ -77,6 +77,16 @@ final class LikeViewController: BaseViewController {
         tabView.select(index: currentTab.rawValue, animated: false)
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        // 탭바로 다른 탭에 갔다 오면 지도 복귀 뒤로가기를 없앤다 (편집 화면 push는 같은 탭이므로 유지)
+        let leftTab = tabBarController?.selectedViewController !== navigationController
+        if showsBackToMap, leftTab {
+            showsBackToMap = false
+            updateBackButton()
+        }
+    }
+
     // MARK: - Public
 
     /// 탭 전환 전에 호출해 표시할 하위 탭과 뒤로가기 동작을 정한다
