@@ -344,7 +344,8 @@ final class MainMapViewController: BaseViewController {
         setInitialCameraPosition(animated: true)
     }
 
-    /// 축제 → click_map_festival, 그 외(내 학과 제휴 기준) → 학과 있으면 click_map_mine, 없으면 click_map_all
+    /// 축제 → click_map_festival, 그 외 → click_map_mine
+    /// 학교 제휴는 곧 내 학과 제휴이고 학과 없이는 칩까지 도달할 수 없으므로 전체 제휴(click_map_all) 분기는 없다
     private func logPartnershipFilterClick(_ filter: PartnershipFilter) {
         switch filter {
         case .festival:
@@ -353,14 +354,8 @@ final class MainMapViewController: BaseViewController {
                 majorId: currentDepartmentId
             )
         case .all, .restaurant, .cafe, .pub:
-            if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
-                MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
-            } else {
-                MapAnalyticsManager.shared.logClickMapAll(
-                    collegeId: currentCollegeId,
-                    majorId: currentDepartmentId
-                )
-            }
+            guard let collegeId = currentCollegeId, let majorId = currentDepartmentId else { return }
+            MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
         }
     }
 
