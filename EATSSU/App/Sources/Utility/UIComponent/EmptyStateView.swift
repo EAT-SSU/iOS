@@ -48,7 +48,7 @@ final class EmptyStateView: BaseUIView {
     override func setLayout() {
         stackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            // 정중앙(1.0)보다 위로: 디자인의 문구 위치(화면 약 53%)에 맞춤
+            // 정중앙(1.0)보다 위로: 컨테이너 높이의 약 45% 지점 (디자인 기준)
             $0.centerY.equalTo(snp.centerY).multipliedBy(0.9)
             $0.leading.trailing.equalToSuperview().inset(24)
         }

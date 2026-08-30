@@ -80,6 +80,7 @@ final class MainMapView: BaseUIView {
         button.layer.borderColor = UIColor.gray300.cgColor
         button.setImage(EATSSUDesignAsset.Images.icLikeLine.image, for: .normal)
         button.tintColor = .gray700
+        button.accessibilityLabel = TextLiteral.Like.partnershipTab
         return button
     }()
 

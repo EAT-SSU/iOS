@@ -104,10 +104,9 @@ final class NoDepartmentSheetViewController: BaseViewController {
             return
         }
 
-        // "내 정보" 탭으로 전환
-        tabContainer.setTab(index: 3)
-
-        guard let myNav = tabContainer.getNavController(at: 3) else {
+        // "내 정보" 탭으로 전환 (로그인 필요로 막히면 알림만 뜨고 화면 전환은 하지 않는다)
+        guard tabContainer.setTab(index: 3),
+              let myNav = tabContainer.getNavController(at: 3) else {
             dismiss(animated: true)
             return
         }

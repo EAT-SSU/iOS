@@ -125,6 +125,8 @@ final class PartnershipLikeManager {
             return
         }
 
+        // 요청 시작 시점에 버전을 올려, 이보다 먼저 시작된 목록 조회 응답이 토글 전 상태를 되살리지 못하게 한다
+        stateVersion += 1
         let group = DispatchGroup()
         var toggledIds: [Int] = []
         var firstError: Error?
@@ -153,7 +155,6 @@ final class PartnershipLikeManager {
                 self.toggledStates[id] = liked
                 if liked { self.likedPartnershipIds.insert(id) } else { self.likedPartnershipIds.remove(id) }
             }
-            self.stateVersion += 1
             if let firstError {
                 // 일부만 성공한 경우에도 목록/순서를 항목 상태와 일치시킨다 (전부 찜일 때만 목록에 남김)
                 self.applyLocalState(liked: self.isLiked(store), store: store)
@@ -196,6 +197,7 @@ final class PartnershipLikeManager {
     }
 
     private func applyLocalState(liked: Bool, store: PartnershipDTO) {
+        stateVersion += 1
         if liked {
             likedAtByStoreKey[store.storeKey] = Date().timeIntervalSince1970
             likedStores.removeAll { $0.storeKey == store.storeKey }

@@ -180,6 +180,9 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     private func updateLikeButton() {
         let image = isLiked ? EATSSUDesignAsset.Images.icLikeFilled.image : EATSSUDesignAsset.Images.icLikeLine.image
         likeButton.setImage(image, for: .normal)
+        // VoiceOver: 이름은 '찜', 상태는 selected 트레이트로 전달
+        likeButton.accessibilityLabel = TextLiteral.Like.title
+        likeButton.accessibilityTraits = isLiked ? [.button, .selected] : [.button]
     }
 
     /// 하트 탭: 찜 토글. 삭제 시엔 '취소하기'로 되돌릴 수 있는 토스트를 띄운다

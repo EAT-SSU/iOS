@@ -100,13 +100,16 @@ final class CustomTabBarContainerController: UITabBarController {
     // MARK: - Public Interface
     
     /// 외부에서 탭 전환 요청 시 사용. 탭바 탭과 같은 로그인 조건을 적용한다
-    public func setTab(index: Int) {
-        guard index < tabViewControllers.count, let tab = Tab(rawValue: index) else { return }
+    /// - Returns: 실제로 전환됐으면 true. 로그인 필요로 막히면 알림만 띄우고 false
+    @discardableResult
+    public func setTab(index: Int) -> Bool {
+        guard index < tabViewControllers.count, let tab = Tab(rawValue: index) else { return false }
         if tab.requiresLogin, RealmService.shared.isAccessTokenPresent() == false {
             presentLoginAlert()
-            return
+            return false
         }
         selectedIndex = index
+        return true
     }
 
     /// 지도 탭 → 찜 탭(제휴 찜)으로 전환. 찜 화면의 뒤로가기로 지도 탭에 복귀할 수 있게 표시한다

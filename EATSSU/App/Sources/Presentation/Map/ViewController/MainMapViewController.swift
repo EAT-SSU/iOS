@@ -201,8 +201,8 @@ final class MainMapViewController: BaseViewController {
         if currentTab != .partnership {
             switchTab(to: .partnership)
         }
-        // 학과가 없으면 학교 제휴 자체를 볼 수 없으므로 상세 대신 학과 입력 안내로 이어진다
-        pendingDetailStore = hasDepartment ? store : nil
+        // 학과 확인이 끝난 뒤 판단한다 (Realm에 없어도 서버 조회로 학과가 확인될 수 있음)
+        pendingDetailStore = store
         returnsToLikeTab = true
         updateLikeReturnButton()
         presentPendingDetailIfNeeded()
@@ -212,6 +212,11 @@ final class MainMapViewController: BaseViewController {
         guard let store = pendingDetailStore,
               viewIfLoaded?.window != nil,
               presentedViewController == nil else { return }
+        guard hasDepartment else {
+            // 학과가 없으면 학교 제휴 자체를 볼 수 없으므로 학과 안내가 대신 뜬다. 조회가 끝나기 전엔 보류
+            if departmentLoadState == .loaded { pendingDetailStore = nil }
+            return
+        }
         pendingDetailStore = nil
         moveCamera(to: NMGLatLng(lat: store.latitude, lng: store.longitude), animated: false)
         showPartnershipDetail(for: store)
@@ -257,6 +262,8 @@ final class MainMapViewController: BaseViewController {
             guard let self, self.isCurrentLoad(generation) else { return }
             self.departmentLoadState = .loaded
             self.loadPartnershipMarkers()
+            // 학과 확인을 기다리던 찜 상세가 있으면 이제 띄운다
+            self.presentPendingDetailIfNeeded()
         }
     }
 
