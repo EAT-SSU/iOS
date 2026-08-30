@@ -33,13 +33,16 @@ final class HomeAnalyticsManager {
     // MARK: - Mappers
 
     // 식당 이름(한글) -> 영문 소문자 파라미터로 변환
-    private let restaurantNameMap: [String: String] = [
+    /// 표시 이름(현재 언어) → 이벤트 파라미터. 앱 내 언어 변경 후에도 매칭되도록 호출 시점에 계산한다
+    private var restaurantNameMap: [String: String] {
+        [
         TextLiteral.Restaurant.studentRestaurant: "haksik",
         TextLiteral.Restaurant.dodamRestaurant: "dodam",
         TextLiteral.Restaurant.dormitoryRestaurant: "dormitory",
         TextLiteral.Restaurant.facultyRestaurant: "faculty",
         TextLiteral.Restaurant.snackCorner: "snack_corner"
-    ]
+        ]
+    }
 
     // 식사 유형(한글) -> 영문 소문자 파라미터로 변환
     private let mealTimeMap: [String: String] = [

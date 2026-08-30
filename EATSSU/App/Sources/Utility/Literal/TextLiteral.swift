@@ -1283,4 +1283,88 @@ enum TextLiteral {
             Localization.localized("restaurant.facultyRestaurant", fallback: "FACULTY (교직원 전용)")
         }
     }
+
+    // MARK: - Academic
+
+    /// 서버가 내려주는 한국어 단과대/학과명을 현재 앱 언어 표기로 변환
+    /// 서버 응답·Realm 저장값은 한국어 원본을 유지하고 표시 시점에만 사용한다.
+    /// 한국어도 ko.lproj 값을 사용하므로 표기(가운뎃점·공백 등)는 strings 파일이 기준이 된다.
+    /// 등록되지 않은 이름은 서버 원본을 그대로 반환한다.
+    enum Academic {
+        /// 단과대명 - "인문대학" → "College of Humanities"
+        static func college(_ koreanName: String) -> String {
+            localizedName(prefix: "academic.college", koreanName: koreanName)
+        }
+
+        /// 단과대명 (옵셔널) - nil이면 nil 반환
+        static func college(_ koreanName: String?) -> String? {
+            koreanName.map { college($0) }
+        }
+
+        /// 학과명 - "컴퓨터학부" → "Computer Science & Engineering"
+        static func department(_ koreanName: String) -> String {
+            localizedName(prefix: "academic.department", koreanName: koreanName)
+        }
+
+        /// 학과명 (옵셔널) - nil이면 nil 반환
+        static func department(_ koreanName: String?) -> String? {
+            koreanName.map { department($0) }
+        }
+
+        /// 서버 표기 차이(가운뎃점·공백·괄호 등)를 흡수하기 위해 문자/숫자만 남긴 비교용 키
+        /// 한글 아래아(ㆍ U+318D)는 문자로 분류되지만 구분자로 쓰이므로 함께 제거
+        static func normalizedKey(_ name: String) -> String {
+            String(name.filter { ($0.isLetter || $0.isNumber) && $0 != "\u{318D}" })
+        }
+
+        private static func localizedName(prefix: String, koreanName: String) -> String {
+            // 빈 문자열은 localizedString이 키 자체를 돌려주므로 그대로 반환
+            guard !koreanName.isEmpty else { return koreanName }
+            return Localization.localized("\(prefix).\(normalizedKey(koreanName))", fallback: koreanName)
+        }
+    }
+
+    // MARK: - RestaurantInfo
+
+    /// 학식탭 식당 정보 시트(위치/운영시간/비고). `key`는 `Restaurant.rawValue`
+    enum RestaurantInfo {
+        /// 위치 - "학생회관 3층"
+        static func location(restaurantKey key: String) -> String {
+            Localization.localized("restaurantInfo.\(key).location", fallback: fallbackLocation[key] ?? "")
+        }
+
+        /// 운영시간 - "11:20~14:00(점심)"
+        static func time(restaurantKey key: String) -> String {
+            Localization.localized("restaurantInfo.\(key).time", fallback: fallbackTime[key] ?? "")
+        }
+
+        /// 비고 - "주말 휴무"
+        static func etc(restaurantKey key: String) -> String {
+            Localization.localized("restaurantInfo.\(key).etc", fallback: fallbackEtc[key] ?? "")
+        }
+
+        private static let fallbackLocation: [String: String] = [
+            "studentRestaurant": "학생회관 3층",
+            "dodamRestaurant": "신양관 2층",
+            "dormitoryRestaurant": "레지던스홀 지하 1층",
+            "facultyRestaurant": "전산관 지하 1층",
+            "snackCorner": "학생회관 3층",
+        ]
+
+        private static let fallbackTime: [String: String] = [
+            "studentRestaurant": "08:00~09:00(천원의아침밥)\n11:20~14:00(점심)\n14:00~17:00(공간 개방)",
+            "dodamRestaurant": "평일\n11:20~14:00(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)",
+            "dormitoryRestaurant": "평일\n11:20~13:50(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)\n17:00~18:20(저녁)",
+            "facultyRestaurant": "11:30~14:00(점심)\n14:00~17:00(공간개방)",
+            "snackCorner": "11:00~15:30(점심)",
+        ]
+
+        private static let fallbackEtc: [String: String] = [
+            "studentRestaurant": "3개 코너 운영\n뚝배기, 덮밥, 양식\n주말 휴무",
+            "dodamRestaurant": "2개 코너 운영\n일반식, 웰빙코너",
+            "dormitoryRestaurant": "조식 미운영",
+            "facultyRestaurant": "주말 휴무",
+            "snackCorner": "분식류, 옛날도시락, 컵밥 등\n주말 휴무",
+        ]
+    }
 }

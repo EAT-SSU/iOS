@@ -21,6 +21,9 @@ final class SetNickNameViewController: BaseViewController {
     var source: SetNickNameSource = .signup
     override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
+
+    /// 소속 선택 드롭다운에서 제외할 항목 (서버 lookup 목록에 포함되어 내려옴)
+    private static let excludedAffiliationName = "총학생회"
     
     private var originalNickname: String?
     private var originalDepartmentName: String?
@@ -80,15 +83,21 @@ final class SetNickNameViewController: BaseViewController {
     
     override func setCustomNavigationBar() {
         super.setCustomNavigationBar()
-        navigationItem.title = TextLiteral.Auth.setNickname
+        // 회원가입 시에는 "닉네임 설정", 마이페이지에서 진입 시에는 "내 정보"
+        switch source {
+        case .signup:
+            navigationItem.title = TextLiteral.Auth.setNickname
+        case .mypage:
+            navigationItem.title = TextLiteral.MyPage.myInfo
+        }
     }
     
     private func bindUI() {
         setNickNameView.completeSettingNickNameButton.addTarget(self, action: #selector(tappedCompleteNickNameButton), for: .touchUpInside)
         setNickNameView.nicknameDoubleCheckButton.addTarget(self, action: #selector(tappedCheckButton), for: .touchUpInside)
-        setNickNameView.onSelectCollege = { [weak self] collegeName in
+        setNickNameView.onSelectCollege = { [weak self] collegeTitle in
             guard let self,
-                  let id = self.colleges.first(where: { $0.name == collegeName })?.id
+                  let id = self.college(matchingTitle: collegeTitle)?.id
             else { return }
             self.fetchDepartments(collegeId: id)
             self.updateSaveButtonState()
@@ -112,6 +121,20 @@ final class SetNickNameViewController: BaseViewController {
             return
         }
 
+        // 드롭다운 타이틀은 현재 앱 언어 표기이므로 원본(한국어) DTO로 되돌려 저장
+        // 닉네임 요청을 보내기 전에 먼저 해석해, 실패 시 닉네임만 반영되는 상황을 막는다
+        var selectedDepartment: (department: LookupItemDTO, college: LookupItemDTO?)?
+        if departmentChanged {
+            guard let departmentTitle = setNickNameView.departmentDropDownView.getSelectedTitle(),
+                  let department = self.department(matchingTitle: departmentTitle) else {
+                print(TextLiteral.Auth.invalidDepartment)
+                return
+            }
+            let college = setNickNameView.collegeDropDownView.getSelectedTitle()
+                .flatMap { self.college(matchingTitle: $0) }
+            selectedDepartment = (department, college)
+        }
+
         let dispatchGroup = DispatchGroup()
         var isNicknameUpdateSuccess = true
         var isDepartmentUpdateSuccess = true
@@ -124,18 +147,12 @@ final class SetNickNameViewController: BaseViewController {
             }
         }
 
-        if departmentChanged {
-            guard let departmentName = setNickNameView.departmentDropDownView.getSelectedTitle(),
-                  let departmentId = self.departments.first(where: { $0.name == departmentName })?.id else {
-                print(TextLiteral.Auth.invalidDepartment)
-                return
-            }
-            let collegeName = setNickNameView.collegeDropDownView.getSelectedTitle()
-            let collegeId = self.colleges.first(where: { $0.name == collegeName })?.id
-           
+        if let selectedDepartment {
             dispatchGroup.enter()
-            setUserDepartment(departmentInfo: (id: departmentId, name: departmentName),
-                             collegeInfo: (id: collegeId, name: collegeName)) { success in
+            setUserDepartment(departmentInfo: (id: selectedDepartment.department.id,
+                                               name: selectedDepartment.department.name),
+                             collegeInfo: (id: selectedDepartment.college?.id,
+                                           name: selectedDepartment.college?.name)) { success in
                 isDepartmentUpdateSuccess = success
                 dispatchGroup.leave()
             }
@@ -179,16 +196,35 @@ final class SetNickNameViewController: BaseViewController {
     // MARK: - Private Methods
     
     /// 학과 변경 여부를 명확하게 판단하는 헬퍼 메서드
+    /// 드롭다운 타이틀(앱 언어 표기)과 저장된 원본(한국어)을 같은 표기로 맞춰 비교
     private func isDepartmentChanged() -> Bool {
         guard let selectedDepartment = setNickNameView.departmentDropDownView.getSelectedTitle(),
               selectedDepartment != TextLiteral.Auth.department
         else {
             return false
         }
-        return selectedDepartment != originalDepartmentName
+        let originalTitle = originalDepartmentName.map { TextLiteral.Academic.department($0) }
+        return selectedDepartment != originalTitle
+    }
+
+    /// 총학생회는 소속 선택 대상이 아니므로 lookup 목록에서 제외 (표기 차이 흡수를 위해 정규화 비교)
+    private func selectableItems(_ list: [LookupItemDTO]) -> [LookupItemDTO] {
+        list.filter { TextLiteral.Academic.normalizedKey($0.name) != Self.excludedAffiliationName }
+    }
+
+    /// 드롭다운에 표시된 단과대 타이틀(앱 언어 표기)에 해당하는 원본 DTO
+    private func college(matchingTitle title: String) -> LookupItemDTO? {
+        colleges.first { TextLiteral.Academic.college($0.name) == title }
+    }
+
+    /// 드롭다운에 표시된 학과 타이틀(앱 언어 표기)에 해당하는 원본 DTO
+    private func department(matchingTitle title: String) -> LookupItemDTO? {
+        departments.first { TextLiteral.Academic.department($0.name) == title }
     }
     
-    private func populateUIWithSavedData() {
+    /// 저장된 소속을 드롭다운에 프리셋
+    /// - Parameter allColleges: 필터 전 전체 목록. 이미 총학생회로 저장된 계정도 프리셋되도록 원본 목록에서 조회
+    private func populateUIWithSavedData(allColleges: [LookupItemDTO]) {
         guard let userInfo = UserInfoManager.shared.getCurrentUserInfo() else { return }
             
         self.originalNickname = userInfo.nickname
@@ -198,12 +234,12 @@ final class SetNickNameViewController: BaseViewController {
         setNickNameView.nicknameDoubleCheckButton.isEnabled = false
                 
         if let collegeName = userInfo.collegeName,
-           let collegeId = self.colleges.first(where: { $0.name == collegeName })?.id {
-            setNickNameView.collegeDropDownView.setTitle(collegeName)
+           let collegeId = allColleges.first(where: { $0.name == collegeName })?.id {
+            setNickNameView.collegeDropDownView.setTitle(TextLiteral.Academic.college(collegeName))
             
             fetchDepartments(collegeId: collegeId) { [weak self] in
                 if let departmentName = userInfo.departmentName {
-                    self?.setNickNameView.departmentDropDownView.setTitle(departmentName)
+                    self?.setNickNameView.departmentDropDownView.setTitle(TextLiteral.Academic.department(departmentName))
                     self?.updateSaveButtonState() // 학과 정보까지 로드 후 버튼 상태 최종 업데이트
                 }
             }
@@ -386,9 +422,9 @@ extension SetNickNameViewController {
             
             switch result {
             case .success(let list):
-                self.colleges = list
-                self.setNickNameView.updateCollegeItems(list.map(\.name))
-                self.populateUIWithSavedData()
+                self.colleges = self.selectableItems(list)
+                self.setNickNameView.updateCollegeItems(self.colleges.map { TextLiteral.Academic.college($0.name) })
+                self.populateUIWithSavedData(allColleges: list)
                 
             case .failure(let error):
                 print("단과대 조회 실패: \(error.localizedDescription)")
@@ -406,8 +442,8 @@ extension SetNickNameViewController {
             
             switch result {
             case .success(let list):
-                self.departments = list
-                self.setNickNameView.updateDepartmentItems(list.map(\.name))
+                self.departments = self.selectableItems(list)
+                self.setNickNameView.updateDepartmentItems(self.departments.map { TextLiteral.Academic.department($0.name) })
                 completion?()
                 
             case .failure(let error):

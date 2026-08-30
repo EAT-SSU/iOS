@@ -23,8 +23,10 @@ final class NetworkMonitor {
     /// 네트워크 경로 감지 객체
     private let monitor: NWPathMonitor
 
-    /// 현재 네트워크 연결 상태 (`true`: 연결됨, `false`: 연결되지 않음)
-    public private(set) var isConnected: Bool = false
+    /// 현재 네트워크 연결 상태 (`true`: 연결됨, `false`: 연결되지 않음, `nil`: 첫 경로 콜백 전이라 아직 모름)
+    ///
+    /// 모르는 상태를 연결/단절 어느 쪽으로도 단정하지 않는다. 얼럿 등 단절 대응은 `false`일 때만 수행할 것.
+    public private(set) var isConnected: Bool?
 
     /// 현재 네트워크 연결 유형
     public private(set) var connectionType: ConnectionType = .unknown
@@ -54,19 +56,24 @@ final class NetworkMonitor {
     /// 네트워크 상태가 변경될 때마다 `pathUpdateHandler`를 통해 연결 상태 및 유형을 업데이트합니다.
     public func startMonitoring() {
         print("startMonitoring 호출")
-        monitor.start(queue: queue)
+        // NWPathMonitor는 start() 시점에 현재 경로를 한 번 알려주고 이후엔 변화가 있을 때만 알려준다.
+        // 핸들러를 start() 뒤에 달면 그 첫 콜백을 놓쳐 isConnected가 false에 갇힐 수 있으므로 반드시 먼저 설정한다.
         monitor.pathUpdateHandler = { [weak self] path in
             print("path :\(path)")
 
-            self?.isConnected = path.status == .satisfied
-            self?.getConenctionType(path)
+            // 상태는 메인 스레드에서 읽히므로(BaseViewController.viewWillAppear) 갱신도 메인에서 수행
+            DispatchQueue.main.async {
+                self?.isConnected = path.status == .satisfied
+                self?.getConenctionType(path)
 
-            if self?.isConnected == true {
-                print("연결 성공")
-            } else {
-                print("연결 실패")
+                if self?.isConnected == true {
+                    print("연결 성공")
+                } else {
+                    print("연결 실패")
+                }
             }
         }
+        monitor.start(queue: queue)
     }
 
     /// 네트워크 모니터링을 중지합니다.

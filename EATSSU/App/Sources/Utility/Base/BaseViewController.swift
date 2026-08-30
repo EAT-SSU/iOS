@@ -63,7 +63,8 @@ class BaseViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if !NetworkMonitor.shared.isConnected {
+        // nil(아직 모름)은 단절로 취급하지 않는다
+        if NetworkMonitor.shared.isConnected == false {
             print("네트워크 오류")
             showAlertController(
                 title: TextLiteral.Common.error,
