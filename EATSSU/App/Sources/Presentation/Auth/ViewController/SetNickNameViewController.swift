@@ -22,8 +22,8 @@ final class SetNickNameViewController: BaseViewController {
     override var shouldHideTabBar: Bool { true }
     // MARK: - Properties
 
-    /// 단과대 드롭다운에서 제외할 항목 (서버 목록에 포함되어 내려옴)
-    private static let excludedCollegeName = "총학생회"
+    /// 소속 선택 드롭다운에서 제외할 항목 (서버 lookup 목록에 포함되어 내려옴)
+    private static let excludedAffiliationName = "총학생회"
     
     private var originalNickname: String?
     private var originalDepartmentName: String?
@@ -403,7 +403,7 @@ extension SetNickNameViewController {
             switch result {
             case .success(let list):
                 // 총학생회는 소속 선택 대상이 아니므로 목록에서 제외
-                self.colleges = list.filter { $0.name != Self.excludedCollegeName }
+                self.colleges = list.filter { $0.name != Self.excludedAffiliationName }
                 self.setNickNameView.updateCollegeItems(self.colleges.map { TextLiteral.Academic.college($0.name) })
                 self.populateUIWithSavedData()
                 
@@ -423,8 +423,8 @@ extension SetNickNameViewController {
             
             switch result {
             case .success(let list):
-                self.departments = list
-                self.setNickNameView.updateDepartmentItems(list.map { TextLiteral.Academic.department($0.name) })
+                self.departments = list.filter { $0.name != Self.excludedAffiliationName }
+                self.setNickNameView.updateDepartmentItems(self.departments.map { TextLiteral.Academic.department($0.name) })
                 completion?()
                 
             case .failure(let error):
