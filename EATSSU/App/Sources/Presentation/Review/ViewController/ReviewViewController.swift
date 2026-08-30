@@ -50,9 +50,9 @@ final class ReviewViewController: BaseViewController {
     /// 식사(Meal) 통계 데이터
     private var mealStatistics: ReviewMealStatisticsResponse?
 
-    /// 식사(Meal) 메뉴 목록 (`/meals/{mealId}/menus-info`). 헤더 "오늘의 메뉴" 표시용
-    /// 홈과 달리 전체 메뉴를 보여주되, 번역이 제공되는 대표메뉴만 영문으로 오고 나머지는 한국어 그대로다
-    private var mealMenus: ChangeMenuTableResponse?
+    /// 헤더 "오늘의 메뉴"에 표시할 메뉴 이름 (`/meals/{mealId}/menus-info`, 번역 지원 언어에서만 조회)
+    /// 전체 메뉴를 보여주되 번역이 제공되는 대표메뉴만 영문으로 온다. nil이면 통계 응답의 메뉴 목록을 사용
+    private var mealMenuNames: [String]?
     
     /// 메뉴(Menu) 통계 데이터
     private var menuStatistics: ReviewMenuStatisticsResponse?
@@ -74,7 +74,7 @@ final class ReviewViewController: BaseViewController {
 
     /// 번역 기능 노출 여부 (현재 서버가 EN 번역만 지원 + 번역 API는 인증 필수)
     private var isTranslationAvailable: Bool {
-        AppLanguageManager.shared.currentLanguage == .english
+        AppLanguageManager.shared.currentLanguage.isServerTranslationSupported
             && RealmService.shared.isAccessTokenPresent()
     }
     
@@ -505,10 +505,7 @@ extension ReviewViewController: UITableViewDataSource {
             }
         } else {
             if let statistics = mealStatistics {
-                cell.configureWithMealStatistics(
-                    statistics,
-                    menuNames: mealMenus?.briefMenus.map(\.name)
-                )
+                cell.configureWithMealStatistics(statistics, menuNames: mealMenuNames ?? menuNameList)
             }
         }
         
@@ -614,11 +611,16 @@ extension ReviewViewController {
         }
     }
 
-    /// 식사 메뉴 목록 조회 (헤더 표시용)
-    /// 통계 API의 menuList는 번역을 지원하지 않으므로 별도 조회. 전체 메뉴를 표시하며 대표메뉴만 영문 (예: Beef Shabu Rice Noodles, 팔춘권튀김, 미니밥)
+    /// 헤더 표시용 메뉴 이름 조회
+    /// 통계 API의 menuList는 번역을 지원하지 않으므로 번역 지원 언어에서만 별도 조회한다.
+    /// 메뉴 이름은 식사 단위로 고정이므로 한 번만 받고, 실패·빈 응답 시에는 통계 응답의 메뉴 목록으로 폴백한다.
     private func getMealMenusInfo() {
+        guard let language = ChangeMenuTableResponse.mealLanguageParameter,
+              menuID != 0,
+              mealMenuNames == nil else { return }
+
         NetworkService.shared.request(
-            HomeRouter.getMealMenusInfo(mealId: menuID, language: ChangeMenuTableResponse.mealLanguageParameter),
+            HomeRouter.getMealMenusInfo(mealId: menuID, language: language),
             responseType: ChangeMenuTableResponse.self,
             useAuth: false
         ) { [weak self] result in
@@ -626,11 +628,15 @@ extension ReviewViewController {
 
             switch result {
             case .success(let data):
-                self.mealMenus = data
-                self.reviewTableView.reloadData()
+                let names = data.briefMenus.map(\.name)
+                guard !names.isEmpty else { return }
+                self.mealMenuNames = names
+                // 통계가 아직 안 왔으면 통계 도착 시 함께 그려지므로 여기서는 갱신하지 않는다
+                if self.mealStatistics != nil {
+                    self.reviewTableView.reloadData()
+                }
 
             case .failure(let error):
-                // 실패 시 통계 응답의 메뉴 목록(한국어)으로 폴백
                 print("❌ Meal Menus Info Error: \(error.localizedDescription)")
             }
         }
@@ -787,7 +793,7 @@ extension ReviewViewController {
         translationSourceContents[reviewId] = reviewList.first(where: { $0.reviewId == reviewId })?.content ?? ""
         reloadReviewRow(reviewId: reviewId)
 
-        let language = AppLanguageManager.shared.currentLanguage.rawValue.uppercased()
+        let language = AppLanguageManager.shared.currentLanguage.serverCode
 
         NetworkService.shared.request(
             ReviewRouter.translateReview(reviewId, language: language),

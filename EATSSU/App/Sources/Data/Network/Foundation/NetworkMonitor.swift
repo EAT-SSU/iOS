@@ -24,7 +24,10 @@ final class NetworkMonitor {
     private let monitor: NWPathMonitor
 
     /// 현재 네트워크 연결 상태 (`true`: 연결됨, `false`: 연결되지 않음)
-    public private(set) var isConnected: Bool = false
+    ///
+    /// 첫 경로 콜백이 오기 전에는 연결된 것으로 간주한다. 실제 단절은 콜백으로 곧 반영되고,
+    /// 반대로 `false`로 시작하면 앱 진입 직후 화면에서 잘못된 네트워크 오류 얼럿이 뜰 수 있다.
+    public private(set) var isConnected: Bool = true
 
     /// 현재 네트워크 연결 유형
     public private(set) var connectionType: ConnectionType = .unknown
@@ -59,13 +62,16 @@ final class NetworkMonitor {
         monitor.pathUpdateHandler = { [weak self] path in
             print("path :\(path)")
 
-            self?.isConnected = path.status == .satisfied
-            self?.getConenctionType(path)
+            // 상태는 메인 스레드에서 읽히므로(BaseViewController.viewWillAppear) 갱신도 메인에서 수행
+            DispatchQueue.main.async {
+                self?.isConnected = path.status == .satisfied
+                self?.getConenctionType(path)
 
-            if self?.isConnected == true {
-                print("연결 성공")
-            } else {
-                print("연결 실패")
+                if self?.isConnected == true {
+                    print("연결 성공")
+                } else {
+                    print("연결 실패")
+                }
             }
         }
         monitor.start(queue: queue)

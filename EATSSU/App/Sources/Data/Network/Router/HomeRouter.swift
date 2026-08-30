@@ -44,14 +44,14 @@ extension HomeRouter: TargetType {
     var task: Task {
         switch self {
         case let .getChangeMenuTableResponse(date, restaurant, time, language):
+            // language가 nil이면 키 자체가 빠져 기존 요청과 동일해진다
             var parameters: [String: Any] = ["date": date, "restaurant": restaurant, "time": time]
-            if let language {
-                parameters["language"] = language
-            }
+            parameters["language"] = language
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         case let .getMealMenusInfo(_, language):
-            guard let language else { return .requestPlain }
-            return .requestParameters(parameters: ["language": language], encoding: URLEncoding.queryString)
+            var parameters: [String: Any] = [:]
+            parameters["language"] = language
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         case let .getFixedMenuTableResponse(restaurant):
             return .requestParameters(parameters: ["restaurant": restaurant],
                                       encoding: URLEncoding.queryString)

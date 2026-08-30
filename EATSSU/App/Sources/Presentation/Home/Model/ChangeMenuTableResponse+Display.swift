@@ -9,14 +9,15 @@ import Foundation
 
 extension ChangeMenuTableResponse {
 
-    /// 서버가 대표메뉴 번역을 제공하는 앱 언어인지 (현재 영어만 지원)
+    /// 현재 앱 언어에서 서버가 대표메뉴 번역을 제공하는지 (규칙은 `AppLanguage.isServerTranslationSupported`)
     static var usesTranslatedMainMenus: Bool {
-        AppLanguageManager.shared.currentLanguage == .english
+        AppLanguageManager.shared.currentLanguage.isServerTranslationSupported
     }
 
     /// 변동식단 조회 시 서버에 넘길 `language` 파라미터. 번역 미지원 언어는 nil(한국어 응답)
     static var mealLanguageParameter: String? {
-        usesTranslatedMainMenus ? AppLanguage.english.rawValue.uppercased() : nil
+        let language = AppLanguageManager.shared.currentLanguage
+        return language.isServerTranslationSupported ? language.serverCode : nil
     }
 
     /// 화면에 표시할 메뉴 목록
