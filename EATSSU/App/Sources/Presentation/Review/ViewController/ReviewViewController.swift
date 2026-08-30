@@ -50,7 +50,8 @@ final class ReviewViewController: BaseViewController {
     /// 식사(Meal) 통계 데이터
     private var mealStatistics: ReviewMealStatisticsResponse?
 
-    /// 식사(Meal) 메뉴 목록 (`/meals/{mealId}/menus-info`). 헤더 "오늘의 메뉴" 표시용이며 언어별 대표메뉴 번역이 반영된다
+    /// 식사(Meal) 메뉴 목록 (`/meals/{mealId}/menus-info`). 헤더 "오늘의 메뉴" 표시용
+    /// 홈과 달리 전체 메뉴를 보여주되, 번역이 제공되는 대표메뉴만 영문으로 오고 나머지는 한국어 그대로다
     private var mealMenus: ChangeMenuTableResponse?
     
     /// 메뉴(Menu) 통계 데이터
@@ -506,7 +507,7 @@ extension ReviewViewController: UITableViewDataSource {
             if let statistics = mealStatistics {
                 cell.configureWithMealStatistics(
                     statistics,
-                    menuNames: mealMenus?.displayMenus.map(\.name)
+                    menuNames: mealMenus?.briefMenus.map(\.name)
                 )
             }
         }
@@ -614,7 +615,7 @@ extension ReviewViewController {
     }
 
     /// 식사 메뉴 목록 조회 (헤더 표시용)
-    /// 통계 API의 menuList는 번역을 지원하지 않으므로, 홈 식단표와 같은 규칙(영어면 대표메뉴만)으로 표시하기 위해 별도 조회
+    /// 통계 API의 menuList는 번역을 지원하지 않으므로 별도 조회. 전체 메뉴를 표시하며 대표메뉴만 영문 (예: Beef Shabu Rice Noodles, 팔춘권튀김, 미니밥)
     private func getMealMenusInfo() {
         NetworkService.shared.request(
             HomeRouter.getMealMenusInfo(mealId: menuID, language: ChangeMenuTableResponse.mealLanguageParameter),
