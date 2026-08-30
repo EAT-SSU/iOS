@@ -1217,7 +1217,8 @@ enum TextLiteral {
 
     /// 서버가 내려주는 한국어 단과대/학과명을 현재 앱 언어 표기로 변환
     /// 서버 응답·Realm 저장값은 한국어 원본을 유지하고 표시 시점에만 사용한다.
-    /// 등록되지 않은 이름은 원본을 그대로 반환한다.
+    /// 한국어도 ko.lproj 값을 사용하므로 표기(가운뎃점·공백 등)는 strings 파일이 기준이 된다.
+    /// 등록되지 않은 이름은 서버 원본을 그대로 반환한다.
     enum Academic {
         /// 단과대명 - "인문대학" → "College of Humanities"
         static func college(_ koreanName: String) -> String {
@@ -1246,10 +1247,8 @@ enum TextLiteral {
         }
 
         private static func localizedName(prefix: String, koreanName: String) -> String {
-            // 한국어는 서버 원본 표기(가운뎃점 등)를 그대로 노출
             // 빈 문자열은 localizedString이 키 자체를 돌려주므로 그대로 반환
-            guard !koreanName.isEmpty,
-                  AppLanguageManager.shared.currentLanguage != .korean else { return koreanName }
+            guard !koreanName.isEmpty else { return koreanName }
             return Localization.localized("\(prefix).\(normalizedKey(koreanName))", fallback: koreanName)
         }
     }
