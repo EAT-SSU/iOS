@@ -249,7 +249,7 @@ extension LikedPartnershipViewController: UITableViewDelegate {
         let size = CGSize(width: 48, height: 48)
         let icon = EATSSUDesignAsset.Images.icDelete.image.withTintColor(.white, renderingMode: .alwaysOriginal)
         return UIGraphicsImageRenderer(size: size).image { context in
-            UIColor.danger.setFill()
+            UIColor.error.setFill()
             context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
             let iconSize = CGSize(width: 24, height: 24)
             icon.draw(in: CGRect(

@@ -139,7 +139,7 @@ final class LikedPartnershipEditViewController: BaseViewController {
         let count = selectedKeys.count
         deleteButton.title = count == 0 ? TextLiteral.Like.delete : TextLiteral.Like.deleteCount(count)
         deleteButton.isEnabled = count > 0
-        deleteButton.backgroundColor = count > 0 ? .danger : .gray300
+        deleteButton.backgroundColor = count > 0 ? .error : .gray300
     }
 
     private func updateSelectAllButton() {
