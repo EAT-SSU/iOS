@@ -13,6 +13,16 @@ enum AppLanguage: String, CaseIterable {
     case japanese = "ja"
     case vietnamese = "vi"
 
+    /// 서버 API에 전달하는 언어 코드 (예: "EN")
+    var serverCode: String {
+        rawValue.uppercased()
+    }
+
+    /// 서버가 번역(리뷰 AI 번역, 변동식단 대표메뉴 영문명)을 제공하는 언어인지. 현재 영어만 지원
+    var isServerTranslationSupported: Bool {
+        self == .english
+    }
+
     var title: String {
         switch self {
         case .korean:

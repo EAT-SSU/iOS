@@ -456,7 +456,12 @@ extension HomeRestaurantViewController {
             // 비동기 네트워크 요청을 통해 메뉴 데이터 가져오기
             let menus: [ChangeMenuTableResponse] = try await withCheckedThrowingContinuation { continuation in
                 NetworkService.shared.request(
-                    HomeRouter.getChangeMenuTableResponse(date: date, restaurant: restaurant, time: time),
+                    HomeRouter.getChangeMenuTableResponse(
+                        date: date,
+                        restaurant: restaurant,
+                        time: time,
+                        language: ChangeMenuTableResponse.mealLanguageParameter
+                    ),
                     responseType: [ChangeMenuTableResponse].self
                 ) { result in
                     continuation.resume(with: result)
@@ -490,7 +495,10 @@ extension HomeRestaurantViewController {
         do {
             let response: FixedMenuTableResponse = try await withCheckedThrowingContinuation { continuation in
                 NetworkService.shared.request(
-                    HomeRouter.getFixedMenuTableResponse(restaurant: restaurant),
+                    HomeRouter.getFixedMenuTableResponse(
+                        restaurant: restaurant,
+                        language: ChangeMenuTableResponse.mealLanguageParameter
+                    ),
                     responseType: FixedMenuTableResponse.self
                 ) { result in
                     continuation.resume(with: result)

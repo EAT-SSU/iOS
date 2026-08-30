@@ -90,7 +90,8 @@ final class RestaurantMenuItemView: BaseUIView {
     func bind(_ model: MenuTypeInfo) {
         switch model {
         case let .change(data):
-            nameLabel.text = data.briefMenus.map(\.name).joined(separator: ", ")
+            // 영어 모드에서는 번역된 대표메뉴만 노출 (규칙은 ChangeMenuTableResponse.displayMenus 참고)
+            nameLabel.text = data.displayMenus.map(\.name).joined(separator: ", ")
             priceLabel.text = data.price?.formattedWithCommas ?? ""
             ratingLabel.text = data.rating != nil ? String(format: "%.1f", data.rating!) : "-"
         case let .fix(data):

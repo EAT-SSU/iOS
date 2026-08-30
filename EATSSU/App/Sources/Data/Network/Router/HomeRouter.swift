@@ -9,8 +9,12 @@ import Foundation
 import Moya
 
 enum HomeRouter {
-    case getChangeMenuTableResponse(date: String, restaurant: String, time: String)
-    case getFixedMenuTableResponse(restaurant: String)
+    /// 변동식단 조회. `language`를 주면 대표메뉴(isMain) 이름이 해당 언어로 내려온다 (현재 서버는 EN만 지원, nil이면 한국어)
+    case getChangeMenuTableResponse(date: String, restaurant: String, time: String, language: String? = nil)
+    /// 특정 식사(mealId)의 메뉴 목록 조회. 응답 구조는 `/meals` 항목과 동일하며 `language` 동작도 같다
+    case getMealMenusInfo(mealId: Int, language: String? = nil)
+    /// 고정메뉴(스낵코너) 조회. `language`를 주면 번역이 있는 메뉴명만 해당 언어로 내려온다 (카테고리·미번역 메뉴는 한국어)
+    case getFixedMenuTableResponse(restaurant: String, language: String? = nil)
 }
 
 extension HomeRouter: TargetType {
@@ -22,6 +26,8 @@ extension HomeRouter: TargetType {
         switch self {
         case .getChangeMenuTableResponse:
             "/meals"
+        case let .getMealMenusInfo(mealId, _):
+            "/meals/\(mealId)/menus-info"
         case .getFixedMenuTableResponse:
             "/menus"
         }
@@ -30,6 +36,7 @@ extension HomeRouter: TargetType {
     var method: Moya.Method {
         switch self {
         case .getChangeMenuTableResponse,
+             .getMealMenusInfo,
              .getFixedMenuTableResponse:
             .get
         }
@@ -37,12 +44,19 @@ extension HomeRouter: TargetType {
 
     var task: Task {
         switch self {
-        case let .getChangeMenuTableResponse(date, restaurant, time):
-            .requestParameters(parameters: ["date": date, "restaurant": restaurant, "time": time],
-                               encoding: URLEncoding.queryString)
-        case let .getFixedMenuTableResponse(restaurant):
-            .requestParameters(parameters: ["restaurant": restaurant],
-                               encoding: URLEncoding.queryString)
+        case let .getChangeMenuTableResponse(date, restaurant, time, language):
+            // language가 nil이면 키를 넣지 않아 기존 요청과 동일해진다
+            var parameters: [String: Any] = ["date": date, "restaurant": restaurant, "time": time]
+            if let language { parameters["language"] = language }
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
+        case let .getMealMenusInfo(_, language):
+            var parameters: [String: Any] = [:]
+            if let language { parameters["language"] = language }
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
+        case let .getFixedMenuTableResponse(restaurant, language):
+            var parameters: [String: Any] = ["restaurant": restaurant]
+            if let language { parameters["language"] = language }
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         }
     }
 
