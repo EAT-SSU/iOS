@@ -48,6 +48,8 @@ final class MainMapViewController: BaseViewController {
 
     /// 가장 최근에 받아온 전체 제휴 목록 (축제 필터용 캐시)
     var cachedAllPartnerships: [PartnershipDTO] = []
+    /// 내 학과 제휴 캐시 (업종 칩 필터용). 탭바 재탭·학과 변경 시 비움
+    var cachedMyPartnerships: [PartnershipDTO] = []
     /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
     var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
 
@@ -86,6 +88,11 @@ final class MainMapViewController: BaseViewController {
         return PartnershipFilter.allCases.filter { $0 != .festival || festivalEnabled }
     }
 
+    /// 탭바에서 지도 탭 진입 시 보이게 될 화면이 축제인지 (click_map default_type용)
+    var isShowingFestival: Bool {
+        currentTab == .partnership && partnershipFilter == .festival
+    }
+
     /// 클러스터 색상: 축제 필터일 때만 축제 색
     var clusterColor: UIColor {
         (currentTab == .partnership && partnershipFilter == .festival) ? .festivalPrimary : .primary
@@ -97,6 +104,18 @@ final class MainMapViewController: BaseViewController {
         self.mode = mode
         self.currentTab = (mode == .standaloneGoodPrice) ? .goodPrice : .partnership
         super.init(nibName: nil, bundle: nil)
+        // 서버 조회 전에도 로그인 시 저장된 학과로 판정할 수 있게 미리 채운다
+        seedDepartmentFromRealmIfNeeded()
+    }
+
+    /// 학과 정보가 비어 있으면 Realm 저장값으로 채운다 (서버 조회 실패 시 폴백)
+    func seedDepartmentFromRealmIfNeeded() {
+        guard currentDepartmentName == nil,
+              let userInfo = UserInfoManager.shared.getCurrentUserInfo(),
+              let name = userInfo.departmentName, !name.isEmpty else { return }
+        currentDepartmentName = name
+        currentDepartmentId = userInfo.departmentId
+        currentCollegeId = userInfo.collegeId
     }
 
     /// 찜 목록에서 넘어온 업체. 지도 탭이 화면에 나타난 뒤 시트로 띄우고 비운다
@@ -182,7 +201,8 @@ final class MainMapViewController: BaseViewController {
         if currentTab != .partnership {
             switchTab(to: .partnership)
         }
-        pendingDetailStore = store
+        // 학과가 없으면 학교 제휴 자체를 볼 수 없으므로 상세 대신 학과 입력 안내로 이어진다
+        pendingDetailStore = hasDepartment ? store : nil
         returnsToLikeTab = true
         updateLikeReturnButton()
         presentPendingDetailIfNeeded()
@@ -234,9 +254,8 @@ final class MainMapViewController: BaseViewController {
         let generation = beginLoad()
         departmentLoadState = .loading
         fetchDepartment { [weak self] in
-            guard let self else { return }
+            guard let self, self.isCurrentLoad(generation) else { return }
             self.departmentLoadState = .loaded
-            guard self.isCurrentLoad(generation) else { return }
             self.loadPartnershipMarkers()
         }
     }
@@ -392,7 +411,10 @@ final class MainMapViewController: BaseViewController {
     }
 
     private func presentNoDepartmentSheetIfNeeded() {
-        guard mode == .tabbed, currentTab == .partnership, presentedViewController == nil else { return }
+        // 비동기 응답 시점에 다른 탭에 있으면 띄우지 않는다 (다음 진입 시 viewWillAppear가 다시 판단)
+        guard mode == .tabbed, currentTab == .partnership,
+              presentedViewController == nil,
+              viewIfLoaded?.window != nil else { return }
         present(NoDepartmentSheetViewController(), animated: true)
     }
 
@@ -403,6 +425,7 @@ final class MainMapViewController: BaseViewController {
         switch currentTab {
         case .partnership:
             cachedAllPartnerships = []
+            cachedMyPartnerships = []
             refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []

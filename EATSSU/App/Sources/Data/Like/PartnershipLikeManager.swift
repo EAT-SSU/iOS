@@ -41,23 +41,27 @@ final class PartnershipLikeManager {
     /// 업체별 찜한 시각 (최근 추가순 정렬용, 로컬 보관)
     private var likedAtByStoreKey: [String: Double]
 
+    /// 이 세션에서 토글에 성공한 항목의 최신 상태. 찜 목록 조회가 실패했거나 아직 안 됐을 때도 하트가 서버와 일치하게 한다
+    private var toggledStates: [Int: Bool] = [:]
+
+    /// 토글이 반영될 때마다 증가. 토글 이전에 시작된 목록 조회 응답이 최신 로컬 상태를 덮어쓰지 않게 한다
+    private var stateVersion = 0
+
     /// 로그아웃·탈퇴·세션 만료 시 호출. 다른 계정의 찜 상태가 남지 않도록 메모리와 로컬 순서 기록을 모두 비운다
     func reset() {
         likedPartnershipIds = []
         likedStores = []
         hasLoaded = false
         likedAtByStoreKey = [:]
+        toggledStates = [:]
+        stateVersion += 1
         UserDefaults.standard.removeObject(forKey: Constant.likedOrderKey)
     }
 
     // MARK: - Query
 
     func isLiked(_ store: PartnershipDTO) -> Bool {
-        let ids = store.partnershipIds
-        guard !ids.isEmpty else { return false }
-        // 서버 찜 목록을 아직 받기 전이면 지도 응답에 실린 항목별 isLiked로 판정
-        guard hasLoaded else { return store.partnershipInfos.allSatisfy(\.isLiked) }
-        return ids.allSatisfy { likedPartnershipIds.contains($0) }
+        !store.partnershipInfos.isEmpty && store.partnershipInfos.allSatisfy(currentlyLiked)
     }
 
     /// 찜 상태를 한 번은 서버에서 받아온 뒤 이어서 실행. 이미 받아왔으면 즉시 실행
@@ -73,6 +77,7 @@ final class PartnershipLikeManager {
 
     /// 찜 목록을 서버에서 받아 상태를 갱신하고 최근 추가순으로 정렬해 돌려준다
     func refresh(completion: @escaping (Result<[PartnershipDTO], Error>) -> Void) {
+        let version = stateVersion
         NetworkService.shared.request(
             MyRouter.getLikedPartnerships,
             responseType: [PartnershipDTO].self,
@@ -81,6 +86,12 @@ final class PartnershipLikeManager {
             guard let self else { return }
             switch result {
             case .success(let stores):
+                // 조회 중에 토글이 있었으면 이 응답은 이미 낡은 것이므로 로컬 상태를 유지한다
+                guard version == self.stateVersion else {
+                    completion(.success(self.likedStores))
+                    return
+                }
+                self.toggledStates = [:]
                 self.likedPartnershipIds = Set(stores.flatMap(Self.likedIds(in:)))
                 self.likedStores = self.sortedByRecent(stores)
                 self.hasLoaded = true
@@ -139,9 +150,13 @@ final class PartnershipLikeManager {
             guard let self else { return }
             // 성공한 항목만 로컬에 반영해 서버 상태와 어긋나지 않게 한다
             for id in toggledIds {
+                self.toggledStates[id] = liked
                 if liked { self.likedPartnershipIds.insert(id) } else { self.likedPartnershipIds.remove(id) }
             }
+            self.stateVersion += 1
             if let firstError {
+                // 일부만 성공한 경우에도 목록/순서를 항목 상태와 일치시킨다 (전부 찜일 때만 목록에 남김)
+                self.applyLocalState(liked: self.isLiked(store), store: store)
                 completion(.failure(firstError))
                 return
             }
@@ -168,8 +183,10 @@ final class PartnershipLikeManager {
 
     // MARK: - Private
 
+    /// 항목 찜 상태: 이 세션의 토글 결과 > 서버 찜 목록 > (목록 미확보 시) 지도 응답의 isLiked
     private func currentlyLiked(_ info: PartnershipInfoDTO) -> Bool {
-        hasLoaded ? likedPartnershipIds.contains(info.id) : info.isLiked
+        if let toggled = toggledStates[info.id] { return toggled }
+        return hasLoaded ? likedPartnershipIds.contains(info.id) : info.isLiked
     }
 
     /// 찜 목록 응답에서 실제 찜된 항목 id. 플래그가 하나도 없으면(구버전 응답) 소속 항목 전부로 간주

@@ -257,9 +257,11 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
         // 지도 탭 클릭 시 Firebase 이벤트 호출 (로그인된 상태에서만)
         if selectedTab == .map {
             let userInfo = UserInfoManager.shared.getCurrentUserInfo()
+            let mapVC = (viewController as? UINavigationController)?.viewControllers.first as? MainMapViewController
             MapAnalyticsManager.shared.logClickMap(
                 collegeId: userInfo?.collegeId,
-                majorId: userInfo?.departmentId
+                majorId: userInfo?.departmentId,
+                isFestival: mapVC?.isShowingFestival ?? false
             )
         }
         
