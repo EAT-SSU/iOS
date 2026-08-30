@@ -39,13 +39,6 @@ final class HomeRestaurantViewController: BaseViewController {
     }
     
     // MARK: - Properties
-
-    /// 변동식단 조회 시 넘길 언어 파라미터. 서버가 대표메뉴 영문명만 지원하므로 영어 모드에서만 "EN" 전달, 그 외는 nil(한국어)
-    private static var mealMenuLanguageParameter: String? {
-        AppLanguageManager.shared.currentLanguage == .english
-            ? AppLanguage.english.rawValue.uppercased()
-            : nil
-    }
     
     // Combine 요청을 관리하기 위한 Set
     private var cancellables = Set<AnyCancellable>()
@@ -467,7 +460,7 @@ extension HomeRestaurantViewController {
                         date: date,
                         restaurant: restaurant,
                         time: time,
-                        language: Self.mealMenuLanguageParameter
+                        language: ChangeMenuTableResponse.mealLanguageParameter
                     ),
                     responseType: [ChangeMenuTableResponse].self
                 ) { result in
