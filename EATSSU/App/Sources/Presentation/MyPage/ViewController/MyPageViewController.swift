@@ -54,8 +54,8 @@ final class MyPageViewController: BaseViewController {
 
         mypageView.setUserInfo(
             nickname: nickName,
-            collegeName: userInfo?.collegeName,
-            departmentName: userInfo?.departmentName
+            collegeName: userInfo?.collegeName.map { AcademicNameLocalizer.college($0) },
+            departmentName: userInfo?.departmentName.map { AcademicNameLocalizer.department($0) }
         )
     }
     
