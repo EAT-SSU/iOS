@@ -54,7 +54,8 @@ final class NetworkMonitor {
     /// 네트워크 상태가 변경될 때마다 `pathUpdateHandler`를 통해 연결 상태 및 유형을 업데이트합니다.
     public func startMonitoring() {
         print("startMonitoring 호출")
-        monitor.start(queue: queue)
+        // NWPathMonitor는 start() 시점에 현재 경로를 한 번 알려주고 이후엔 변화가 있을 때만 알려준다.
+        // 핸들러를 start() 뒤에 달면 그 첫 콜백을 놓쳐 isConnected가 false에 갇힐 수 있으므로 반드시 먼저 설정한다.
         monitor.pathUpdateHandler = { [weak self] path in
             print("path :\(path)")
 
@@ -67,6 +68,7 @@ final class NetworkMonitor {
                 print("연결 실패")
             }
         }
+        monitor.start(queue: queue)
     }
 
     /// 네트워크 모니터링을 중지합니다.
