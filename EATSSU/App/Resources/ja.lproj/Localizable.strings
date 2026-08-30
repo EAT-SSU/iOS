@@ -635,32 +635,32 @@
 /// "차세대반도체학과"
 "academic.department.차세대반도체학과" = "次世代半導体";
 
-// MARK: - Restaurant Info (식당 정보 시트: 위치/운영시간/비고)
+// MARK: - Restaurant Info (식당 정보 시트: 위치/운영시간/비고, 키는 Restaurant.rawValue)
 
 /// "학생회관 3층"
-"restaurantInfo.student.location" = "学生会館 3階";
+"restaurantInfo.studentRestaurant.location" = "学生会館 3階";
 /// "08:00~09:00(천원의아침밥)\n11:20~14:00(점심)\n14:00~17:00(공간 개방)"
-"restaurantInfo.student.time" = "08:00~09:00(千ウォン朝食)\n11:20~14:00(昼食)\n14:00~17:00(スペース開放)";
+"restaurantInfo.studentRestaurant.time" = "08:00~09:00(千ウォン朝食)\n11:20~14:00(昼食)\n14:00~17:00(スペース開放)";
 /// "3개 코너 운영\n뚝배기, 덮밥, 양식\n주말 휴무"
-"restaurantInfo.student.etc" = "3つのコーナーを運営\nトゥッペギ料理、丼もの、洋食\n週末休業";
+"restaurantInfo.studentRestaurant.etc" = "3つのコーナーを運営\nトゥッペギ料理、丼もの、洋食\n週末休業";
 /// "신양관 2층"
-"restaurantInfo.dodam.location" = "信陽館 2階";
+"restaurantInfo.dodamRestaurant.location" = "信陽館 2階";
 /// "평일\n11:20~14:00(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)"
-"restaurantInfo.dodam.time" = "平日\n11:20~14:00(昼食)\n17:00~18:30(夕食)\n \n週末\n11:20~13:30(昼食)";
+"restaurantInfo.dodamRestaurant.time" = "平日\n11:20~14:00(昼食)\n17:00~18:30(夕食)\n \n週末\n11:20~13:30(昼食)";
 /// "2개 코너 운영\n일반식, 웰빙코너"
-"restaurantInfo.dodam.etc" = "2つのコーナーを運営\n一般食、ヘルシーメニュー";
+"restaurantInfo.dodamRestaurant.etc" = "2つのコーナーを運営\n一般食、ヘルシーメニュー";
 /// "레지던스홀 지하 1층"
-"restaurantInfo.dormitory.location" = "レジデンスホール 地下1階";
+"restaurantInfo.dormitoryRestaurant.location" = "レジデンスホール 地下1階";
 /// "평일\n11:20~13:50(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)\n17:00~18:20(저녁)"
-"restaurantInfo.dormitory.time" = "平日\n11:20~13:50(昼食)\n17:00~18:30(夕食)\n \n週末\n11:20~13:30(昼食)\n17:00~18:20(夕食)";
+"restaurantInfo.dormitoryRestaurant.time" = "平日\n11:20~13:50(昼食)\n17:00~18:30(夕食)\n \n週末\n11:20~13:30(昼食)\n17:00~18:20(夕食)";
 /// "조식 미운영"
-"restaurantInfo.dormitory.etc" = "朝食の提供なし";
+"restaurantInfo.dormitoryRestaurant.etc" = "朝食の提供なし";
 /// "전산관 지하 1층"
-"restaurantInfo.faculty.location" = "電算館 地下1階";
+"restaurantInfo.facultyRestaurant.location" = "電算館 地下1階";
 /// "11:30~14:00(점심)\n14:00~17:00(공간개방)"
-"restaurantInfo.faculty.time" = "11:30~14:00(昼食)\n14:00~17:00(スペース開放)";
+"restaurantInfo.facultyRestaurant.time" = "11:30~14:00(昼食)\n14:00~17:00(スペース開放)";
 /// "주말 휴무"
-"restaurantInfo.faculty.etc" = "週末休業";
+"restaurantInfo.facultyRestaurant.etc" = "週末休業";
 /// "학생회관 3층"
 "restaurantInfo.snackCorner.location" = "学生会館 3階";
 /// "11:00~15:30(점심)"

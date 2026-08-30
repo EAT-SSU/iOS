@@ -12,7 +12,8 @@ enum RestaurantType {
     case fix
 }
 
-enum Restaurant: CaseIterable {
+/// rawValue는 Localizable.strings `restaurantInfo.<rawValue>.*` 키로도 사용된다
+enum Restaurant: String, CaseIterable {
     case dodamRestaurant
     case dormitoryRestaurant
     case studentRestaurant
@@ -73,22 +74,6 @@ enum Restaurant: CaseIterable {
             "스낵 코너"
         case .facultyRestaurant:
             "FACULTY (교직원 전용)"
-        }
-    }
-
-    /// Localizable.strings `restaurantInfo.<infoKey>.*` 키
-    var infoKey: String {
-        switch self {
-        case .dodamRestaurant:
-            "dodam"
-        case .dormitoryRestaurant:
-            "dormitory"
-        case .studentRestaurant:
-            "student"
-        case .snackCorner:
-            "snackCorner"
-        case .facultyRestaurant:
-            "faculty"
         }
     }
 
