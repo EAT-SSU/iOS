@@ -20,11 +20,18 @@ enum AppLanguage: String, CaseIterable {
 
     /// 서버에 번역을 요청할 언어인지 (한국어 제외 전부)
     ///
-    /// 실제 지원 범위는 API마다 다르다: 리뷰 AI 번역·`/menus`는 EN/JA/VI, `/meals`·`menus-info`는 EN만.
-    /// 미지원 조합은 서버가 한국어를 그대로 돌려주고, 대표메뉴 표시는 `isMain` 폴백으로 전체 한국어가 보이므로 안전하다.
-    /// 서버가 지원 언어를 넓히면 앱 수정 없이 반영된다.
+    /// 리뷰 AI 번역(`/v2/reviews/{id}/translate`)과 고정메뉴(`/menus`)가 EN/JA/VI를 지원한다.
+    /// (`/menus`의 VI는 서버가 영어로 폴백)
     var isServerTranslationSupported: Bool {
         self != .korean
+    }
+
+    /// 변동식단(`/meals`, `/meals/{mealId}/menus-info`) 대표메뉴 번역을 서버가 제공하는 언어인지. 현재 영어만
+    ///
+    /// 미지원 언어를 보내면 서버가 한국어를 돌려주긴 하지만, 대표메뉴만 표시하는 규칙이 잘못 켜지지 않도록
+    /// 식단 API는 이 조건으로만 언어를 전달한다. 서버가 지원을 넓히면 여기만 수정한다.
+    var supportsMealTranslation: Bool {
+        self == .english
     }
 
     var title: String {

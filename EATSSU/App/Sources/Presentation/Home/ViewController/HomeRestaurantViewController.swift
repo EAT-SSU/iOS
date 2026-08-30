@@ -480,7 +480,7 @@ extension HomeRestaurantViewController {
                 NetworkService.shared.request(
                     HomeRouter.getFixedMenuTableResponse(
                         restaurant: restaurant,
-                        language: ChangeMenuTableResponse.mealLanguageParameter
+                        language: ChangeMenuTableResponse.fixedMenuLanguageParameter
                     ),
                     responseType: FixedMenuTableResponse.self
                 ) { result in
