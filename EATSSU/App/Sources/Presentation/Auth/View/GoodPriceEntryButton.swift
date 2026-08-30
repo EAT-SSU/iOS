@@ -17,7 +17,10 @@ final class GoodPriceEntryButton: UIControl {
     // MARK: - UI Components
 
     private let iconBackgroundView = UIView()
-    private let iconImageView = UIImageView(image: EATSSUDesignAsset.Images.restaurantPin.image)
+    /// 에셋이 템플릿이 아니라서 tintColor(흰색)가 먹도록 렌더링 모드를 지정
+    private let iconImageView = UIImageView(
+        image: EATSSUDesignAsset.Images.restaurantPin.image.withRenderingMode(.alwaysTemplate)
+    )
     private let titleLabel = UILabel()
     private let subTitleLabel = UILabel()
     private let textStackView = UIStackView()

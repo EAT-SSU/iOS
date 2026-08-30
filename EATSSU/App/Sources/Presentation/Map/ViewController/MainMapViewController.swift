@@ -65,6 +65,15 @@ final class MainMapViewController: BaseViewController {
         generation == loadGeneration
     }
 
+    /// 학과 조회 상태. 조회가 끝나기 전에 필터를 탭해도 "학과 없음"으로 오판하지 않도록 구분
+    private enum DepartmentLoadState {
+        case idle, loading, loaded
+    }
+    private var departmentLoadState: DepartmentLoadState = .idle
+
+    /// 현재 칩 바에 그려진 필터 목록. 탭 시 Remote Config를 다시 읽지 않고 이 스냅샷의 인덱스를 사용
+    private var displayedPartnershipFilters: [PartnershipFilter] = []
+
     // MARK: - State
 
     private(set) var currentTab: MapTab
@@ -149,8 +158,11 @@ final class MainMapViewController: BaseViewController {
     private func refreshPartnershipTab() {
         applyTabUI()
         let generation = beginLoad()
-        fetchDepartmentAndUpdateButton { [weak self] in
-            guard let self, self.isCurrentLoad(generation) else { return }
+        departmentLoadState = .loading
+        fetchDepartment { [weak self] in
+            guard let self else { return }
+            self.departmentLoadState = .loaded
+            guard self.isCurrentLoad(generation) else { return }
             self.loadPartnershipMarkers()
         }
     }
@@ -198,6 +210,7 @@ final class MainMapViewController: BaseViewController {
         case .partnership:
             let filters = visiblePartnershipFilters
             if !filters.contains(partnershipFilter) { partnershipFilter = .all }
+            displayedPartnershipFilters = filters
             root.filterChipBar.highlightColor = clusterColor
             root.filterChipBar.configure(
                 titles: filters.map { $0.title },
@@ -235,7 +248,7 @@ final class MainMapViewController: BaseViewController {
     private func didSelectFilter(at index: Int) {
         switch currentTab {
         case .partnership:
-            let filters = visiblePartnershipFilters
+            let filters = displayedPartnershipFilters
             guard filters.indices.contains(index) else { return }
             partnershipFilter = filters[index]
             root.filterChipBar.highlightColor = clusterColor
@@ -249,6 +262,9 @@ final class MainMapViewController: BaseViewController {
             MapAnalyticsManager.shared.logClickGoodPriceCategory(category: goodPriceCategory)
             loadGoodPriceMarkers()
         }
+
+        // 필터가 바뀌면 캠퍼스 주변으로 되돌려 새 마커가 바로 보이게 한다 (필터 전환 전 동작과 동일)
+        setInitialCameraPosition(animated: true)
     }
 
     /// 축제 → click_map_festival, 그 외(내 학과 제휴 기준) → 학과 있으면 click_map_mine, 없으면 click_map_all
@@ -281,9 +297,18 @@ final class MainMapViewController: BaseViewController {
         }
 
         guard hasDepartment else {
-            displayMarkers([])
-            presentNoDepartmentSheetIfNeeded()
-            return
+            switch departmentLoadState {
+            case .loading:
+                // 조회가 끝나면 refreshPartnershipTab 완료 블록이 현재 필터로 이어서 로드한다
+                return
+            case .idle:
+                refreshPartnershipTab()
+                return
+            case .loaded:
+                displayMarkers([])
+                presentNoDepartmentSheetIfNeeded()
+                return
+            }
         }
         fetchMyPartnerships()
     }
@@ -303,6 +328,7 @@ final class MainMapViewController: BaseViewController {
     func reloadContent() {
         switch currentTab {
         case .partnership:
+            cachedAllPartnerships = []
             refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []

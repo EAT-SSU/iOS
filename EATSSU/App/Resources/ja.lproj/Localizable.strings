@@ -178,8 +178,8 @@
 "map.map" = "マップ";
 /// MainMapView - "전체"
 "map.all" = "すべて";
-/// MainMapView - "내 제휴"
-"map.myPartner" = "自分の提携";
+/// "축제"
+"map.festival" = "学園祭";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
 "map.inputDepartment" = "学科を入力して\n自分だけの提携を確認してみましょう！";
 /// NoDepartmentSheetVC - "학과 입력하기"

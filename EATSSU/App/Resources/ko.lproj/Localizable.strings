@@ -178,8 +178,8 @@
 "map.map" = "지도";
 /// MainMapView - "전체"
 "map.all" = "전체";
-/// MainMapView - "내 제휴"
-"map.myPartner" = "내 제휴";
+/// "축제"
+"map.festival" = "축제";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
 "map.inputDepartment" = "학과를 입력하고\n나만의 제휴를 확인해보세요!";
 /// NoDepartmentSheetVC - "학과 입력하기"

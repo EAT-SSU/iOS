@@ -29,6 +29,8 @@ extension MainMapViewController {
 
         let clusterUpdater = MapClusterMarkerUpdater()
         clusterUpdater.viewController = self
+        // 응답 대기 중 필터가 바뀌어도 기존 클러스터는 표시 당시 색을 유지하도록 색을 고정
+        clusterUpdater.color = clusterColor
         builder.clusterMarkerUpdater = clusterUpdater
 
         let newClusterer = builder.build()
@@ -99,8 +101,7 @@ extension MainMapViewController {
     // MARK: - Cluster Image
 
     /// 클러스터 마커용 원형 이미지 생성 (개수 표시). 줌/팬마다 재호출되므로 (색상, 개수)별로 캐시
-    func makeClusterImage(count: Int) -> UIImage {
-        let color = clusterColor
+    func makeClusterImage(count: Int, color: UIColor) -> UIImage {
         let cacheKey = "\(color.hashValue)-\(count)"
         if let cached = Self.clusterImageCache[cacheKey] {
             return cached

@@ -12,7 +12,14 @@ import Foundation
 extension MainMapViewController {
 
     /// 전체 제휴 데이터를 받아 캐시에 저장하고 축제 제휴 마커를 표시
+    /// 캐시가 있으면 재요청 없이 사용한다 (탭바 재탭 시 reloadContent가 캐시를 비움)
     func refreshAllPartnerships() {
+        if !cachedAllPartnerships.isEmpty {
+            _ = beginLoad()
+            applyPartnershipMarkers(from: cachedAllPartnerships, periodType: .festival)
+            return
+        }
+
         let generation = beginLoad()
         NetworkService.shared.request(
             PartnershipRouter.getAllPartnerships,
@@ -28,12 +35,14 @@ extension MainMapViewController {
             case .failure(let error):
                 print("제휴 조회 실패: \(error.localizedDescription)")
                 self.cachedAllPartnerships = []
+                #if !DEBUG
                 self.displayMarkers([])
                 self.showStoreLoadFailedToast()
+                #endif
             }
 
             #if DEBUG
-            // 서버에 제휴 데이터가 없는 동안 Mock으로 대체 (DEBUG 빌드 전용)
+            // 서버에 제휴 데이터가 없거나 실패한 동안 Mock으로 대체 (DEBUG 빌드 전용, 실패 토스트는 띄우지 않음)
             if self.cachedAllPartnerships.isEmpty {
                 self.cachedAllPartnerships = PartnershipMockData.samples
                 self.applyPartnershipMarkers(from: self.cachedAllPartnerships, periodType: .festival)
@@ -96,7 +105,7 @@ extension MainMapViewController {
         }
     }
 
-    func fetchDepartmentAndUpdateButton(completion: (() -> Void)? = nil) {
+    func fetchDepartment(completion: (() -> Void)? = nil) {
         NetworkService.shared.request(
             MyRouter.getDepartment,
             responseType: GetDepartmentResponse.self,

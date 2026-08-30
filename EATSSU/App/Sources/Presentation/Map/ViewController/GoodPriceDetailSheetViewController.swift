@@ -185,9 +185,7 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
         menuLabel.text = Self.menuText(menu: detail.mainMenu, price: detail.price)
         menuLabel.isHidden = menuLabel.text == nil
 
-        if let urlString = detail.imageUrl, let url = URL(string: urlString) {
-            storeImageView.kf.setImage(with: url)
-        }
+        storeImageView.kfSetImage(url: detail.imageUrl)
 
         if #available(iOS 16.0, *) {
             sheetPresentationController?.animateChanges {

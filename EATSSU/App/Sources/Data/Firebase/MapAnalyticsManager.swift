@@ -35,24 +35,19 @@ final class MapAnalyticsManager {
         static let goodPriceStoreId = "good_price_store_id"
     }
 
-    enum MapDefaultType: String {
-        case general
-        case festival
-    }
-
     // MARK: - Logging Methods
 
     /**
      #1 하단 탭바에서 '지도'를 클릭했을 때 호출
      - Parameter collegeId: 사용자의 단과대 ID (학과 미설정 시 nil)
      - Parameter majorId: 사용자의 학과 ID (학과 미설정 시 nil)
-     - Parameter defaultType: 지도 진입 시 디폴트 화면
+     - Note: 지도는 항상 학교 제휴 > 전체 필터로 진입하므로 default_type은 "general" 고정 (대시보드 호환용 파라미터 유지)
      */
-    func logClickMap(collegeId: Int?, majorId: Int?, defaultType: MapDefaultType) {
+    func logClickMap(collegeId: Int?, majorId: Int?) {
         AnalyticsService.logEvent(
             Event.clickMap,
             parameters: makeParameters(collegeId: collegeId, majorId: majorId, extra: [
-                Parameter.defaultType: defaultType.rawValue
+                Parameter.defaultType: "general"
             ])
         )
     }
