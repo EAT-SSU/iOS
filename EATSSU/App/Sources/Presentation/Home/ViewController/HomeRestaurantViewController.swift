@@ -495,7 +495,10 @@ extension HomeRestaurantViewController {
         do {
             let response: FixedMenuTableResponse = try await withCheckedThrowingContinuation { continuation in
                 NetworkService.shared.request(
-                    HomeRouter.getFixedMenuTableResponse(restaurant: restaurant),
+                    HomeRouter.getFixedMenuTableResponse(
+                        restaurant: restaurant,
+                        language: ChangeMenuTableResponse.mealLanguageParameter
+                    ),
                     responseType: FixedMenuTableResponse.self
                 ) { result in
                     continuation.resume(with: result)

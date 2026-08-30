@@ -13,7 +13,8 @@ enum HomeRouter {
     case getChangeMenuTableResponse(date: String, restaurant: String, time: String, language: String? = nil)
     /// 특정 식사(mealId)의 메뉴 목록 조회. 응답 구조는 `/meals` 항목과 동일하며 `language` 동작도 같다
     case getMealMenusInfo(mealId: Int, language: String? = nil)
-    case getFixedMenuTableResponse(restaurant: String)
+    /// 고정메뉴(스낵코너) 조회. `language`를 주면 번역이 있는 메뉴명만 해당 언어로 내려온다 (카테고리·미번역 메뉴는 한국어)
+    case getFixedMenuTableResponse(restaurant: String, language: String? = nil)
 }
 
 extension HomeRouter: TargetType {
@@ -52,9 +53,10 @@ extension HomeRouter: TargetType {
             var parameters: [String: Any] = [:]
             parameters["language"] = language
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
-        case let .getFixedMenuTableResponse(restaurant):
-            return .requestParameters(parameters: ["restaurant": restaurant],
-                                      encoding: URLEncoding.queryString)
+        case let .getFixedMenuTableResponse(restaurant, language):
+            var parameters: [String: Any] = ["restaurant": restaurant]
+            parameters["language"] = language
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         }
     }
 
