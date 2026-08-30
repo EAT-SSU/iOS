@@ -496,3 +496,140 @@
 "review.translationDisclaimer" = "AI translations may not always be accurate.";
 /// "AI 번역이 일시적으로 불가능해요. 잠시 후 다시 시도해 주세요."
 "review.translationFailedTooltip" = "AI translation is temporarily unavailable. Please try again later.";
+
+// MARK: - Academic (단과대/학과명, 서버 한국어 이름 기준)
+
+/// "총학생회"
+"academic.college.총학생회" = "Student Council";
+/// "AI대학"
+"academic.college.AI대학" = "College of AI";
+/// "IT대학"
+"academic.college.IT대학" = "College of IT";
+/// "경영대학"
+"academic.college.경영대학" = "College of Business Administration";
+/// "경제통상대학"
+"academic.college.경제통상대학" = "College of Economics and International Commerce";
+/// "공과대학"
+"academic.college.공과대학" = "College of Engineering";
+/// "법과대학"
+"academic.college.법과대학" = "College of Law";
+/// "사회과학대학"
+"academic.college.사회과학대학" = "College of Social Sciences";
+/// "인문대학"
+"academic.college.인문대학" = "College of Humanities";
+/// "자연과학대학"
+"academic.college.자연과학대학" = "College of Natural Sciences";
+/// "자유전공학부"
+"academic.college.자유전공학부" = "School of Liberal Studies";
+/// "차세대반도체학과"
+"academic.college.차세대반도체학과" = "Department of Next-Generation Semiconductor";
+/// "총학생회"
+"academic.department.총학생회" = "Student Council";
+/// "컴퓨터학부"
+"academic.department.컴퓨터학부" = "Computer Science & Engineering";
+/// "전자정보공학부(전자공학전공)"
+"academic.department.전자정보공학부전자공학전공" = "Electronic Engineering(Electronic Engineering major)";
+/// "전자정보공학부(IT융합전공)"
+"academic.department.전자정보공학부IT융합전공" = "Electronic Engineering(IT convergence major)";
+/// "글로벌미디어학부"
+"academic.department.글로벌미디어학부" = "Global School of Media";
+/// "소프트웨어학부"
+"academic.department.소프트웨어학부" = "Software";
+/// "AI융합학부"
+"academic.department.AI융합학부" = "AI Convergence";
+/// "AI소프트웨어학부"
+"academic.department.AI소프트웨어학부" = "AI Software";
+/// "정보보호학과"
+"academic.department.정보보호학과" = "Information Security";
+/// "디지털미디어학과"
+"academic.department.디지털미디어학과" = "Digital Media";
+/// "경영학부"
+"academic.department.경영학부" = "Business Administration";
+/// "벤처중소기업학과"
+"academic.department.벤처중소기업학과" = "Entrepreneurship & Small Business";
+/// "회계학과"
+"academic.department.회계학과" = "Accounting";
+/// "금융학부"
+"academic.department.금융학부" = "Finance";
+/// "벤처경영학과"
+"academic.department.벤처경영학과" = "Venture Management";
+/// "혁신경영학과"
+"academic.department.혁신경영학과" = "Innovation Management";
+/// "복지경영학과"
+"academic.department.복지경영학과" = "Welfare & Management";
+/// "회계세무학과"
+"academic.department.회계세무학과" = "Accounting & Tax";
+/// "경제학과"
+"academic.department.경제학과" = "Economics";
+/// "글로벌통상학과"
+"academic.department.글로벌통상학과" = "Global Commerce";
+/// "금융경제학과"
+"academic.department.금융경제학과" = "Ecofinance";
+/// "국제무역학과"
+"academic.department.국제무역학과" = "International Trade & Transaction";
+/// "화학공학과"
+"academic.department.화학공학과" = "Chemical Engineering";
+/// "신소재공학과"
+"academic.department.신소재공학과" = "Materials Science & Engineering";
+/// "전기공학부"
+"academic.department.전기공학부" = "Electrical Engineering";
+/// "기계공학부"
+"academic.department.기계공학부" = "Mechanical Engineering";
+/// "산업정보시스템공학과"
+"academic.department.산업정보시스템공학과" = "Industrial & Information Systems Engineering";
+/// "건축학부"
+"academic.department.건축학부" = "Architecture";
+/// "법학과"
+"academic.department.법학과" = "Law";
+/// "국제법무학과"
+"academic.department.국제법무학과" = "Global Law";
+/// "사회복지학부"
+"academic.department.사회복지학부" = "Social Welfare";
+/// "행정학부"
+"academic.department.행정학부" = "Public Administration";
+/// "정치외교학과"
+"academic.department.정치외교학과" = "Political Science & International Relations";
+/// "정보사회학과"
+"academic.department.정보사회학과" = "Information Sociology";
+/// "언론홍보학과"
+"academic.department.언론홍보학과" = "Journalism, Public Relations, and Advertising";
+/// "평생교육학과"
+"academic.department.평생교육학과" = "Lifelong Education";
+/// "기독교학과"
+"academic.department.기독교학과" = "Christian Studies";
+/// "국어국문학과"
+"academic.department.국어국문학과" = "Korean Language & Literature";
+/// "영어영문학과"
+"academic.department.영어영문학과" = "English Language & Literature";
+/// "독어독문학과"
+"academic.department.독어독문학과" = "German Language & Literature";
+/// "불어불문학과"
+"academic.department.불어불문학과" = "French Language & Literature";
+/// "중어중문학과"
+"academic.department.중어중문학과" = "Chinese Language & Literature";
+/// "일어일문학과"
+"academic.department.일어일문학과" = "Japanese Language & Literature";
+/// "철학과"
+"academic.department.철학과" = "Philosophy";
+/// "사학과"
+"academic.department.사학과" = "History";
+/// "문예창작전공"
+"academic.department.문예창작전공" = "Creative Writing";
+/// "영화예술전공"
+"academic.department.영화예술전공" = "Film Arts";
+/// "스포츠학부"
+"academic.department.스포츠학부" = "Sports";
+/// "수학과"
+"academic.department.수학과" = "Mathematics";
+/// "물리학과"
+"academic.department.물리학과" = "Physics";
+/// "화학과"
+"academic.department.화학과" = "Chemistry";
+/// "정보통계보험수리학과"
+"academic.department.정보통계보험수리학과" = "Actuarial Science";
+/// "의생명시스템학부"
+"academic.department.의생명시스템학부" = "Biomedical Science";
+/// "자유전공학부"
+"academic.department.자유전공학부" = "Liberal Studies";
+/// "차세대반도체학과"
+"academic.department.차세대반도체학과" = "Next-Generation Semiconductor";

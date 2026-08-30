@@ -1212,4 +1212,44 @@ enum TextLiteral {
             Localization.localized("restaurant.facultyRestaurant", fallback: "FACULTY (교직원 전용)")
         }
     }
+
+    // MARK: - Academic
+
+    /// 서버가 내려주는 한국어 단과대/학과명을 현재 앱 언어 표기로 변환
+    /// 서버 응답·Realm 저장값은 한국어 원본을 유지하고 표시 시점에만 사용한다.
+    /// 한국어도 ko.lproj 값을 사용하므로 표기(가운뎃점·공백 등)는 strings 파일이 기준이 된다.
+    /// 등록되지 않은 이름은 서버 원본을 그대로 반환한다.
+    enum Academic {
+        /// 단과대명 - "인문대학" → "College of Humanities"
+        static func college(_ koreanName: String) -> String {
+            localizedName(prefix: "academic.college", koreanName: koreanName)
+        }
+
+        /// 단과대명 (옵셔널) - nil이면 nil 반환
+        static func college(_ koreanName: String?) -> String? {
+            koreanName.map { college($0) }
+        }
+
+        /// 학과명 - "컴퓨터학부" → "Computer Science & Engineering"
+        static func department(_ koreanName: String) -> String {
+            localizedName(prefix: "academic.department", koreanName: koreanName)
+        }
+
+        /// 학과명 (옵셔널) - nil이면 nil 반환
+        static func department(_ koreanName: String?) -> String? {
+            koreanName.map { department($0) }
+        }
+
+        /// 서버 표기 차이(가운뎃점·공백·괄호 등)를 흡수하기 위해 문자/숫자만 남긴 비교용 키
+        /// 한글 아래아(ㆍ U+318D)는 문자로 분류되지만 구분자로 쓰이므로 함께 제거
+        static func normalizedKey(_ name: String) -> String {
+            String(name.filter { ($0.isLetter || $0.isNumber) && $0 != "\u{318D}" })
+        }
+
+        private static func localizedName(prefix: String, koreanName: String) -> String {
+            // 빈 문자열은 localizedString이 키 자체를 돌려주므로 그대로 반환
+            guard !koreanName.isEmpty else { return koreanName }
+            return Localization.localized("\(prefix).\(normalizedKey(koreanName))", fallback: koreanName)
+        }
+    }
 }
