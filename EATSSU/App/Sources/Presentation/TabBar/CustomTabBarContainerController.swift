@@ -113,6 +113,14 @@ final class CustomTabBarContainerController: UITabBarController {
     public func returnToMapTab() {
         setTab(index: Tab.map.rawValue)
     }
+
+    /// 찜 목록에서 업체 선택 → 지도 탭으로 전환해 해당 업체 상세 시트를 띄운다
+    public func showPartnershipDetailOnMap(_ store: PartnershipDTO) {
+        guard let mapVC = getNavController(at: Tab.map.rawValue)?.viewControllers.first as? MainMapViewController else { return }
+        getNavController(at: Tab.map.rawValue)?.popToRootViewController(animated: false)
+        mapVC.showDetailFromLikes(store)
+        setTab(index: Tab.map.rawValue)
+    }
     
     /// 특정 인덱스의 네비게이션 컨트롤러를 반환
     public func getNavController(at index: Int) -> UINavigationController? {

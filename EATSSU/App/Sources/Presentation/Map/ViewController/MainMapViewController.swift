@@ -27,21 +27,11 @@ final class MainMapViewController: BaseViewController {
     }
 
     /// 화면 진입 형태
-    enum Mode: Equatable {
+    enum Mode {
         /// 탭바 안의 지도 탭: 상단에 학교 제휴 / 착한 가격 탭 노출
         case tabbed
         /// 로그인 화면에서 바로 진입하는 착한가격업소 지도 (탭 없음)
         case standaloneGoodPrice
-        /// 찜 목록에서 진입: 해당 업체 마커만 표시하고 상세 시트를 펼친 상태로 시작 (탭·필터 없음)
-        case partnershipDetail(PartnershipDTO)
-
-        static func == (lhs: Mode, rhs: Mode) -> Bool {
-            switch (lhs, rhs) {
-            case (.tabbed, .tabbed), (.standaloneGoodPrice, .standaloneGoodPrice): return true
-            case let (.partnershipDetail(l), .partnershipDetail(r)): return l.storeKey == r.storeKey
-            default: return false
-            }
-        }
     }
 
     // MARK: - Properties
@@ -109,13 +99,11 @@ final class MainMapViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    /// 찜 목록에서 진입한 경우의 대상 업체
-    private var detailPartnership: PartnershipDTO? {
-        if case let .partnershipDetail(store) = mode { return store }
-        return nil
-    }
+    /// 찜 목록에서 넘어온 업체. 지도 탭이 화면에 나타난 뒤 시트로 띄우고 비운다
+    private var pendingDetailStore: PartnershipDTO?
 
-    override var shouldHideTabBar: Bool { detailPartnership != nil }
+    /// 찜 목록에서 넘어온 상태. 네비게이션 바 뒤로가기가 찜 탭 복귀로 동작한다
+    private var returnsToLikeTab = false
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -126,7 +114,6 @@ final class MainMapViewController: BaseViewController {
     override func configureUI() {
         view.addSubview(root)
         root.setTopTabVisible(mode == .tabbed)
-        root.filterChipBar.isHidden = detailPartnership != nil
         root.setLikeButtonVisible(mode == .tabbed)
     }
 
@@ -162,11 +149,6 @@ final class MainMapViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let store = detailPartnership {
-            showSingleStore(store)
-            return
-        }
-
         switch currentTab {
         case .partnership:
             refreshPartnershipTab()
@@ -179,20 +161,66 @@ final class MainMapViewController: BaseViewController {
         super.viewDidAppear(animated)
         logScreenView(screenID: FirebaseScreenID.Map.map1)
 
-        // 찜 목록에서 진입: 마커 탭과 같은 내용 높이 시트를 바로 띄운다 (한 번만)
-        if let store = detailPartnership, !didPresentDetailSheet {
-            didPresentDetailSheet = true
-            showPartnershipDetail(for: store)
+        // 찜 목록에서 넘어온 업체가 있으면 화면이 붙은 뒤 시트를 띄운다
+        presentPendingDetailIfNeeded()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        // 다른 탭으로 옮겨가면 찜 복귀 상태를 해제
+        if returnsToLikeTab {
+            returnsToLikeTab = false
+            updateLikeReturnButton()
         }
     }
 
-    private var didPresentDetailSheet = false
+    // MARK: - Like
 
-    /// 찜 상세 진입: 해당 업체 마커만 올리고 카메라를 그 위치로
-    private func showSingleStore(_ store: PartnershipDTO) {
-        _ = beginLoad()
-        displayMarkers([makeMarkerItem(for: store)])
+    /// 찜 목록에서 업체를 선택했을 때: 학교 제휴 탭으로 맞추고, 지도가 나타나면 해당 업체 시트를 띄운다
+    func showDetailFromLikes(_ store: PartnershipDTO) {
+        if currentTab != .partnership {
+            switchTab(to: .partnership)
+        }
+        pendingDetailStore = store
+        returnsToLikeTab = true
+        updateLikeReturnButton()
+        presentPendingDetailIfNeeded()
+    }
+
+    private func presentPendingDetailIfNeeded() {
+        guard let store = pendingDetailStore,
+              viewIfLoaded?.window != nil,
+              presentedViewController == nil else { return }
+        pendingDetailStore = nil
         moveCamera(to: NMGLatLng(lat: store.latitude, lng: store.longitude), animated: false)
+        showPartnershipDetail(for: store)
+    }
+
+    /// 찜 목록에서 넘어온 경우에만 뒤로가기(찜 탭 복귀) 버튼을 보여준다
+    private func updateLikeReturnButton() {
+        guard returnsToLikeTab else {
+            navigationItem.leftBarButtonItem = nil
+            return
+        }
+        let backItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapReturnToLikes)
+        )
+        backItem.tintColor = .gray500
+        navigationItem.leftBarButtonItem = backItem
+    }
+
+    @objc private func didTapReturnToLikes() {
+        returnsToLikeTab = false
+        updateLikeReturnButton()
+        let container = tabBarController as? CustomTabBarContainerController
+        if let presented = presentedViewController {
+            presented.dismiss(animated: true) { container?.showLikedPartnerships(fromMap: false) }
+        } else {
+            container?.showLikedPartnerships(fromMap: false)
+        }
     }
 
     @objc private func didTapLikeButton() {

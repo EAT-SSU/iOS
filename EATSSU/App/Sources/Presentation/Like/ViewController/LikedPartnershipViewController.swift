@@ -185,9 +185,9 @@ final class LikedPartnershipViewController: BaseViewController {
         }
     }
 
+    /// 지도 탭으로 전환해 해당 업체 시트를 띄운다. 지도의 뒤로가기로 이 화면에 복귀
     private func showDetail(for store: PartnershipDTO) {
-        let mapVC = MainMapViewController(mode: .partnershipDetail(store))
-        navigationController?.pushViewController(mapVC, animated: true)
+        (tabBarController as? CustomTabBarContainerController)?.showPartnershipDetailOnMap(store)
     }
 
     // MARK: - Actions

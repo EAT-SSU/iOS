@@ -93,8 +93,14 @@ final class PartnershipLikeManager {
         }
     }
 
-    /// 찜 가능 최대 개수 = 내 제휴 업체 수
+    /// 찜 가능 최대 개수 = 내 제휴 업체 수. nil이면 제한 없이 진행 (조회 실패 또는 DEBUG 목 데이터)
     func fetchLikeLimit(completion: @escaping (Int?) -> Void) {
+        #if DEBUG
+        if usesMockData {
+            completion(nil)
+            return
+        }
+        #endif
         NetworkService.shared.request(
             MyRouter.getMyPartnerships,
             responseType: [PartnershipDTO].self,
