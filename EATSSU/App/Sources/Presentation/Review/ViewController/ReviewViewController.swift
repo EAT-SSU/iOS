@@ -49,6 +49,9 @@ final class ReviewViewController: BaseViewController {
     
     /// 식사(Meal) 통계 데이터
     private var mealStatistics: ReviewMealStatisticsResponse?
+
+    /// 식사(Meal) 메뉴 목록 (`/meals/{mealId}/menus-info`). 헤더 "오늘의 메뉴" 표시용이며 언어별 대표메뉴 번역이 반영된다
+    private var mealMenus: ChangeMenuTableResponse?
     
     /// 메뉴(Menu) 통계 데이터
     private var menuStatistics: ReviewMenuStatisticsResponse?
@@ -501,7 +504,10 @@ extension ReviewViewController: UITableViewDataSource {
             }
         } else {
             if let statistics = mealStatistics {
-                cell.configureWithMealStatistics(statistics)
+                cell.configureWithMealStatistics(
+                    statistics,
+                    menuNames: mealMenus?.displayMenus.map(\.name)
+                )
             }
         }
         
@@ -603,6 +609,29 @@ extension ReviewViewController {
             getFixedMenuStatistics()
         } else {
             getMealStatistics()
+            getMealMenusInfo()
+        }
+    }
+
+    /// 식사 메뉴 목록 조회 (헤더 표시용)
+    /// 통계 API의 menuList는 번역을 지원하지 않으므로, 홈 식단표와 같은 규칙(영어면 대표메뉴만)으로 표시하기 위해 별도 조회
+    private func getMealMenusInfo() {
+        NetworkService.shared.request(
+            HomeRouter.getMealMenusInfo(mealId: menuID, language: ChangeMenuTableResponse.mealLanguageParameter),
+            responseType: ChangeMenuTableResponse.self,
+            useAuth: false
+        ) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let data):
+                self.mealMenus = data
+                self.reviewTableView.reloadData()
+
+            case .failure(let error):
+                // 실패 시 통계 응답의 메뉴 목록(한국어)으로 폴백
+                print("❌ Meal Menus Info Error: \(error.localizedDescription)")
+            }
         }
     }
     

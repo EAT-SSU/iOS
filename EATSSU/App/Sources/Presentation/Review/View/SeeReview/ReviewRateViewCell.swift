@@ -318,10 +318,12 @@ final class ReviewRateViewCell: UITableViewCell {
     // MARK: - Public Methods
     
     /// 식사(Meal) 통계 데이터로 셀 구성
-    /// - Parameter data: 식사 통계 응답 데이터
-    func configureWithMealStatistics(_ data: ReviewMealStatisticsResponse) {
-        let menuNames = data.menuList.map { $0.name }
-        menuLabel.text = menuNames.joined(separator: ", ")
+    /// - Parameters:
+    ///   - data: 식사 통계 응답 데이터
+    ///   - menuNames: 헤더에 표시할 메뉴 이름. nil이면 통계 응답의 메뉴 목록을 사용
+    func configureWithMealStatistics(_ data: ReviewMealStatisticsResponse, menuNames: [String]? = nil) {
+        let names = menuNames ?? data.menuList.map { $0.name }
+        menuLabel.text = names.joined(separator: ", ")
         setRating(data.rating ?? 0)
         updateRatingChart(with: data.reviewRatingCount, totalCount: data.totalReviewCount)
     }
