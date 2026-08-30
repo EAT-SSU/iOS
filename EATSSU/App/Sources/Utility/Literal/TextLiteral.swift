@@ -1236,8 +1236,9 @@ enum TextLiteral {
         }
 
         /// 서버 표기 차이(가운뎃점·공백·괄호 등)를 흡수하기 위해 문자/숫자만 남겨 키 생성
+        /// 한글 아래아(ㆍ U+318D)는 문자로 분류되지만 구분자로 쓰이므로 함께 제거
         private static func lookupKey(_ name: String) -> String {
-            String(name.filter { $0.isLetter || $0.isNumber })
+            String(name.filter { ($0.isLetter || $0.isNumber) && $0 != "\u{318D}" })
         }
     }
 }

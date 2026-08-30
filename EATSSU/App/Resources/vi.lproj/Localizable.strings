@@ -538,6 +538,8 @@
 "academic.department.AI융합학부" = "Hội tụ AI";
 /// "AI소프트웨어학부"
 "academic.department.AI소프트웨어학부" = "Phần mềm AI";
+/// "정보보호학과"
+"academic.department.정보보호학과" = "An toàn Thông tin";
 /// "디지털미디어학과"
 "academic.department.디지털미디어학과" = "Truyền thông Kỹ thuật số";
 /// "경영학부"

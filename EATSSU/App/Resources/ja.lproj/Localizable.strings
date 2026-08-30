@@ -538,6 +538,8 @@
 "academic.department.AI융합학부" = "AI融合";
 /// "AI소프트웨어학부"
 "academic.department.AI소프트웨어학부" = "AIソフトウェア";
+/// "정보보호학과"
+"academic.department.정보보호학과" = "情報セキュリティ";
 /// "디지털미디어학과"
 "academic.department.디지털미디어학과" = "デジタルメディア";
 /// "경영학부"
