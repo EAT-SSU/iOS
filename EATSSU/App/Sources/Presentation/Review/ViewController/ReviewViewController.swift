@@ -53,6 +53,9 @@ final class ReviewViewController: BaseViewController {
     /// 헤더 "오늘의 메뉴"에 표시할 메뉴 이름 (`/meals/{mealId}/menus-info`, 번역 지원 언어에서만 조회)
     /// 전체 메뉴를 보여주되 번역이 제공되는 대표메뉴만 영문으로 온다. nil이면 통계 응답의 메뉴 목록을 사용
     private var mealMenuNames: [String]?
+
+    /// 헤더 메뉴 이름 조회를 이미 시도했는지. 실패·빈 응답이어도 재시도하지 않고 통계 메뉴로 폴백한다
+    private var hasRequestedMealMenuNames = false
     
     /// 메뉴(Menu) 통계 데이터
     private var menuStatistics: ReviewMenuStatisticsResponse?
@@ -617,7 +620,8 @@ extension ReviewViewController {
     private func getMealMenusInfo() {
         guard let language = ChangeMenuTableResponse.mealLanguageParameter,
               menuID != 0,
-              mealMenuNames == nil else { return }
+              !hasRequestedMealMenuNames else { return }
+        hasRequestedMealMenuNames = true
 
         NetworkService.shared.request(
             HomeRouter.getMealMenusInfo(mealId: menuID, language: language),

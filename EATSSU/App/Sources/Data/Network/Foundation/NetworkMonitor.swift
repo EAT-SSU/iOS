@@ -23,11 +23,10 @@ final class NetworkMonitor {
     /// 네트워크 경로 감지 객체
     private let monitor: NWPathMonitor
 
-    /// 현재 네트워크 연결 상태 (`true`: 연결됨, `false`: 연결되지 않음)
+    /// 현재 네트워크 연결 상태 (`true`: 연결됨, `false`: 연결되지 않음, `nil`: 첫 경로 콜백 전이라 아직 모름)
     ///
-    /// 첫 경로 콜백이 오기 전에는 연결된 것으로 간주한다. 실제 단절은 콜백으로 곧 반영되고,
-    /// 반대로 `false`로 시작하면 앱 진입 직후 화면에서 잘못된 네트워크 오류 얼럿이 뜰 수 있다.
-    public private(set) var isConnected: Bool = true
+    /// 모르는 상태를 연결/단절 어느 쪽으로도 단정하지 않는다. 얼럿 등 단절 대응은 `false`일 때만 수행할 것.
+    public private(set) var isConnected: Bool?
 
     /// 현재 네트워크 연결 유형
     public private(set) var connectionType: ConnectionType = .unknown
