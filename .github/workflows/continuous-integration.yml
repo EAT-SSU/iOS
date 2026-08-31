@@ -70,13 +70,13 @@ jobs:
           data = json.load(sys.stdin)["devices"]
           for runtime in sorted(data, reverse=True):
               for device in data[runtime]:
-                  if device.get("isAvailable") and "iPhone" in device.get("name", ""):
+                  if device.get("isAvailable") and device.get("name") == "iPhone 17 Pro":
                       print(device["udid"]); sys.exit(0)
           ')
           if [ -z "$DEVICE_ID" ]; then
-            echo "No available simulator, creating one"
+            echo "No iPhone 17 Pro simulator, creating one"
             RUNTIME=$(xcrun simctl list runtimes -j | python3 -c 'import json,sys; rts=[r for r in json.load(sys.stdin)["runtimes"] if r["platform"]=="iOS" and r["isAvailable"]]; print(rts[-1]["identifier"])')
-            DEVICE_ID=$(xcrun simctl create "ci-iphone" "iPhone 16" "$RUNTIME")
+            DEVICE_ID=$(xcrun simctl create "ci-iphone-17-pro" "iPhone 17 Pro" "$RUNTIME")
           fi
           echo "Using simulator $DEVICE_ID"
           echo "device_id=$DEVICE_ID" >> "$GITHUB_OUTPUT"

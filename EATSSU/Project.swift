@@ -320,6 +320,7 @@ let project = Project(
             sources: ["Tests/UnitTests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
+                .external(name: "SnapshotTesting"),
             ],
             settings: .settings(base: [
                 // 프로젝트 공통 -all_load/-ObjC가 테스트 번들에 상속되면 호스트 앱의 정적 라이브러리를

@@ -70,6 +70,7 @@ let package = Package(
         .package(url: "https://github.com/realm/realm-swift", from: "20.0.0"),
         .package(url: "https://github.com/navermaps/SPM-NMapsMap", from: "3.20.0"),
         .package(url: "https://github.com/PostHog/posthog-ios", from: "3.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.0"),
 
     ]
 )
