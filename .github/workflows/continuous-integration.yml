@@ -16,6 +16,13 @@ jobs:
       # .mise.toml에 고정된 tuist 설치
       - uses: jdx/mise-action@v2
 
+      # 러너 기본 Xcode(최신)에서는 고정된 realm-core가 컴파일되지 않아 로컬과 같은 26.1로 고정
+      - name: Select Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          sudo xcode-select -s /Applications/Xcode_26.1.app
+          xcodebuild -version
+
       - name: Create secret xcconfig files
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
