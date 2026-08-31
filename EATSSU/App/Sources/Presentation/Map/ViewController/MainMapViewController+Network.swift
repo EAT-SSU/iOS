@@ -51,10 +51,16 @@ extension MainMapViewController {
         }
     }
 
-    /// 내 학과 제휴를 받아 현재 업종 필터에 맞춰 마커 표시
+    /// 내 학과 제휴를 받아 현재 업종 필터에 맞춰 마커 표시. 캐시가 있으면 재요청 없이 필터만 적용
     func fetchMyPartnerships() {
         guard hasDepartment else {
             displayMarkers([])
+            return
+        }
+
+        if !cachedMyPartnerships.isEmpty {
+            _ = beginLoad()
+            applyPartnershipMarkers(from: cachedMyPartnerships, periodType: .normal)
             return
         }
 
@@ -67,6 +73,7 @@ extension MainMapViewController {
             guard let self, self.isCurrentLoad(generation) else { return }
             switch result {
             case .success(let partnerships):
+                self.cachedMyPartnerships = partnerships
                 self.applyPartnershipMarkers(from: partnerships, periodType: .normal)
 
             case .failure(let error):
@@ -83,7 +90,9 @@ extension MainMapViewController {
         if let type = partnershipFilter.restaurantType {
             filtered = filtered.filter { $0.restaurantType == type }
         }
-        displayMarkers(filtered.map { makeMarkerItem(for: $0) })
+        // 시트는 필터된 항목만 보여주되, 찜은 업체의 전체 항목을 대상으로 해야 하므로 원본을 함께 넘긴다
+        let fullByKey = Dictionary(partnerships.map { ($0.storeKey, $0) }, uniquingKeysWith: { first, _ in first })
+        displayMarkers(filtered.map { makeMarkerItem(for: $0, likeTarget: fullByKey[$0.storeKey]) })
     }
 
     private static func filterPartnerships(
@@ -115,6 +124,10 @@ extension MainMapViewController {
 
             switch result {
             case .success(let department):
+                if self.currentDepartmentId != department.departmentId {
+                    // 학과가 바뀌면 내 제휴 캐시는 더 이상 유효하지 않다
+                    self.cachedMyPartnerships = []
+                }
                 self.currentDepartmentName = department.departmentName
                 self.currentDepartmentId = department.departmentId
                 self.currentCollegeId = department.collegeId
@@ -131,20 +144,9 @@ extension MainMapViewController {
                 }
 
             case .failure(let error):
+                // 일시적 조회 실패를 '학과 없음'으로 오판하지 않도록 기존 값(없으면 Realm 저장값)을 유지한다
                 print("학과 조회 실패: \(error.localizedDescription)")
-                self.currentDepartmentName = nil
-                self.currentDepartmentId = nil
-                self.currentCollegeId = nil
-
-                if let userInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                    UserInfoManager.shared.updateDepartment(
-                        for: userInfo,
-                        collegeId: nil,
-                        collegeName: nil,
-                        departmentId: nil,
-                        departmentName: nil
-                    )
-                }
+                self.seedDepartmentFromRealmIfNeeded()
             }
 
             completion?()

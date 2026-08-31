@@ -52,9 +52,6 @@ enum FirebaseScreenID {
     }
     
     /// 나만아니면돼~ (커피 이벤트)
-    enum AnyoneButMeActivity {
-            static let abm1 = "ABM_001000"
-    }
 
     /// 마이페이지
     enum MyPage {

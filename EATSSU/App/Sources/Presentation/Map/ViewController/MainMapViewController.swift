@@ -48,6 +48,8 @@ final class MainMapViewController: BaseViewController {
 
     /// 가장 최근에 받아온 전체 제휴 목록 (축제 필터용 캐시)
     var cachedAllPartnerships: [PartnershipDTO] = []
+    /// 내 학과 제휴 캐시 (업종 칩 필터용). 탭바 재탭·학과 변경 시 비움
+    var cachedMyPartnerships: [PartnershipDTO] = []
     /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
     var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
 
@@ -86,6 +88,11 @@ final class MainMapViewController: BaseViewController {
         return PartnershipFilter.allCases.filter { $0 != .festival || festivalEnabled }
     }
 
+    /// 탭바에서 지도 탭 진입 시 보이게 될 화면이 축제인지 (click_map default_type용)
+    var isShowingFestival: Bool {
+        currentTab == .partnership && partnershipFilter == .festival
+    }
+
     /// 클러스터 색상: 축제 필터일 때만 축제 색
     var clusterColor: UIColor {
         (currentTab == .partnership && partnershipFilter == .festival) ? .festivalPrimary : .primary
@@ -97,7 +104,25 @@ final class MainMapViewController: BaseViewController {
         self.mode = mode
         self.currentTab = (mode == .standaloneGoodPrice) ? .goodPrice : .partnership
         super.init(nibName: nil, bundle: nil)
+        // 서버 조회 전에도 로그인 시 저장된 학과로 판정할 수 있게 미리 채운다
+        seedDepartmentFromRealmIfNeeded()
     }
+
+    /// 학과 정보가 비어 있으면 Realm 저장값으로 채운다 (서버 조회 실패 시 폴백)
+    func seedDepartmentFromRealmIfNeeded() {
+        guard currentDepartmentName == nil,
+              let userInfo = UserInfoManager.shared.getCurrentUserInfo(),
+              let name = userInfo.departmentName, !name.isEmpty else { return }
+        currentDepartmentName = name
+        currentDepartmentId = userInfo.departmentId
+        currentCollegeId = userInfo.collegeId
+    }
+
+    /// 찜 목록에서 넘어온 업체. 지도 탭이 화면에 나타난 뒤 시트로 띄우고 비운다
+    private var pendingDetailStore: PartnershipDTO?
+
+    /// 찜 목록에서 넘어온 상태. 네비게이션 바 뒤로가기가 찜 탭 복귀로 동작한다
+    private var returnsToLikeTab = false
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -108,6 +133,7 @@ final class MainMapViewController: BaseViewController {
     override func configureUI() {
         view.addSubview(root)
         root.setTopTabVisible(mode == .tabbed)
+        root.setLikeButtonVisible(mode == .tabbed)
     }
 
     override func setLayout() {
@@ -122,6 +148,7 @@ final class MainMapViewController: BaseViewController {
         root.filterChipBar.onSelect = { [weak self] index in
             self?.didSelectFilter(at: index)
         }
+        root.likeButton.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
     }
 
     // MARK: - Life Cycle
@@ -138,11 +165,6 @@ final class MainMapViewController: BaseViewController {
         applyTabUI()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        logScreenView(screenID: FirebaseScreenID.Map.map1)
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -154,16 +176,94 @@ final class MainMapViewController: BaseViewController {
         }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        logScreenView(screenID: FirebaseScreenID.Map.map1)
+
+        // 찜 목록에서 넘어온 업체가 있으면 화면이 붙은 뒤 시트를 띄운다
+        presentPendingDetailIfNeeded()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        // 다른 탭으로 옮겨가면 찜 복귀 상태와 아직 못 띄운 상세를 함께 버린다 (나중에 엉뚱하게 뜨지 않도록)
+        pendingDetailStore = nil
+        if returnsToLikeTab {
+            returnsToLikeTab = false
+            updateLikeReturnButton()
+        }
+    }
+
+    // MARK: - Like
+
+    /// 찜 목록에서 업체를 선택했을 때: 학교 제휴 탭으로 맞추고, 지도가 나타나면 해당 업체 시트를 띄운다
+    func showDetailFromLikes(_ store: PartnershipDTO) {
+        if currentTab != .partnership {
+            switchTab(to: .partnership)
+        }
+        // 학과 확인이 끝난 뒤 판단한다 (Realm에 없어도 서버 조회로 학과가 확인될 수 있음)
+        pendingDetailStore = store
+        returnsToLikeTab = true
+        updateLikeReturnButton()
+        presentPendingDetailIfNeeded()
+    }
+
+    private func presentPendingDetailIfNeeded() {
+        guard let store = pendingDetailStore,
+              viewIfLoaded?.window != nil,
+              presentedViewController == nil else { return }
+        guard hasDepartment else {
+            // 학과가 없으면 학교 제휴 자체를 볼 수 없으므로 학과 안내가 대신 뜬다. 조회가 끝나기 전엔 보류
+            if departmentLoadState == .loaded { pendingDetailStore = nil }
+            return
+        }
+        pendingDetailStore = nil
+        moveCamera(to: NMGLatLng(lat: store.latitude, lng: store.longitude), animated: false)
+        showPartnershipDetail(for: store)
+    }
+
+    /// 찜 목록에서 넘어온 경우에만 뒤로가기(찜 탭 복귀) 버튼을 보여준다
+    private func updateLikeReturnButton() {
+        guard returnsToLikeTab else {
+            navigationItem.leftBarButtonItem = nil
+            return
+        }
+        let backItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapReturnToLikes)
+        )
+        backItem.tintColor = .gray500
+        navigationItem.leftBarButtonItem = backItem
+    }
+
+    @objc private func didTapReturnToLikes() {
+        returnsToLikeTab = false
+        updateLikeReturnButton()
+        let container = tabBarController as? CustomTabBarContainerController
+        if let presented = presentedViewController {
+            presented.dismiss(animated: true) { container?.showLikedPartnerships(fromMap: false) }
+        } else {
+            container?.showLikedPartnerships(fromMap: false)
+        }
+    }
+
+    @objc private func didTapLikeButton() {
+        (tabBarController as? CustomTabBarContainerController)?.showLikedPartnerships(fromMap: true)
+    }
+
     /// 학과 정보를 다시 받아온 뒤 학교 제휴 마커 로드. 축제 노출 여부가 바뀌었을 수 있어 칩도 재구성
     private func refreshPartnershipTab() {
         applyTabUI()
         let generation = beginLoad()
         departmentLoadState = .loading
         fetchDepartment { [weak self] in
-            guard let self else { return }
+            guard let self, self.isCurrentLoad(generation) else { return }
             self.departmentLoadState = .loaded
-            guard self.isCurrentLoad(generation) else { return }
             self.loadPartnershipMarkers()
+            // 학과 확인을 기다리던 찜 상세가 있으면 이제 띄운다
+            self.presentPendingDetailIfNeeded()
         }
     }
 
@@ -205,6 +305,8 @@ final class MainMapViewController: BaseViewController {
     /// 현재 탭에 맞춰 필터 칩과 선택 상태를 갱신
     private func applyTabUI() {
         root.topTabView.select(index: currentTab.rawValue, animated: false)
+        // 찜은 학교 제휴 전용이라 착한 가격 탭에서는 플로팅 하트를 숨긴다
+        root.setLikeButtonVisible(mode == .tabbed && currentTab == .partnership)
 
         switch currentTab {
         case .partnership:
@@ -236,6 +338,7 @@ final class MainMapViewController: BaseViewController {
         case .partnership:
             refreshPartnershipTab()
         case .goodPrice:
+            root.setMapBlurred(false)
             applyTabUI()
             MapAnalyticsManager.shared.logClickMapGoodPrice(
                 collegeId: currentCollegeId,
@@ -267,7 +370,8 @@ final class MainMapViewController: BaseViewController {
         setInitialCameraPosition(animated: true)
     }
 
-    /// 축제 → click_map_festival, 그 외(내 학과 제휴 기준) → 학과 있으면 click_map_mine, 없으면 click_map_all
+    /// 축제 → click_map_festival, 그 외 → click_map_mine
+    /// 학교 제휴는 곧 내 학과 제휴이고 학과 없이는 칩까지 도달할 수 없으므로 전체 제휴(click_map_all) 분기는 없다
     private func logPartnershipFilterClick(_ filter: PartnershipFilter) {
         switch filter {
         case .festival:
@@ -276,26 +380,15 @@ final class MainMapViewController: BaseViewController {
                 majorId: currentDepartmentId
             )
         case .all, .restaurant, .cafe, .pub:
-            if let collegeId = currentCollegeId, let majorId = currentDepartmentId {
-                MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
-            } else {
-                MapAnalyticsManager.shared.logClickMapAll(
-                    collegeId: currentCollegeId,
-                    majorId: currentDepartmentId
-                )
-            }
+            guard let collegeId = currentCollegeId, let majorId = currentDepartmentId else { return }
+            MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
         }
     }
 
     // MARK: - Partnership Tab
 
-    /// 학교 제휴 탭 마커 로드. 학과 미입력이면 학과 입력 시트를 띄우고 마커는 비움
+    /// 학교 제휴 탭 마커 로드. 학과 미입력이면 지도를 흐리게 하고 학과 입력 시트를 띄운다 (축제 포함 모든 필터)
     func loadPartnershipMarkers() {
-        if partnershipFilter == .festival {
-            refreshAllPartnerships()
-            return
-        }
-
         guard hasDepartment else {
             switch departmentLoadState {
             case .loading:
@@ -306,9 +399,16 @@ final class MainMapViewController: BaseViewController {
                 return
             case .loaded:
                 displayMarkers([])
+                root.setMapBlurred(true)
                 presentNoDepartmentSheetIfNeeded()
                 return
             }
+        }
+        root.setMapBlurred(false)
+
+        if partnershipFilter == .festival {
+            refreshAllPartnerships()
+            return
         }
         fetchMyPartnerships()
     }
@@ -318,7 +418,10 @@ final class MainMapViewController: BaseViewController {
     }
 
     private func presentNoDepartmentSheetIfNeeded() {
-        guard mode == .tabbed, currentTab == .partnership, presentedViewController == nil else { return }
+        // 비동기 응답 시점에 다른 탭에 있으면 띄우지 않는다 (다음 진입 시 viewWillAppear가 다시 판단)
+        guard mode == .tabbed, currentTab == .partnership,
+              presentedViewController == nil,
+              viewIfLoaded?.window != nil else { return }
         present(NoDepartmentSheetViewController(), animated: true)
     }
 
@@ -329,6 +432,7 @@ final class MainMapViewController: BaseViewController {
         switch currentTab {
         case .partnership:
             cachedAllPartnerships = []
+            cachedMyPartnerships = []
             refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []
@@ -337,13 +441,15 @@ final class MainMapViewController: BaseViewController {
     }
 
     func setInitialCameraPosition(animated: Bool) {
-        let cameraUpdate = NMFCameraUpdate(
-            scrollTo: NMGLatLng(
-                lat: CameraConstants.initialLatitude,
-                lng: CameraConstants.initialLongitude
-            ),
-            zoomTo: CameraConstants.initialZoom
+        moveCamera(
+            to: NMGLatLng(lat: CameraConstants.initialLatitude, lng: CameraConstants.initialLongitude),
+            animated: animated
         )
+    }
+
+    /// 지정 좌표로 카메라 이동 (줌은 초기값 고정)
+    func moveCamera(to position: NMGLatLng, animated: Bool) {
+        let cameraUpdate = NMFCameraUpdate(scrollTo: position, zoomTo: CameraConstants.initialZoom)
 
         if animated {
             cameraUpdate.animation = .easeIn

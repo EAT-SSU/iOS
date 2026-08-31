@@ -1,5 +1,5 @@
 //
-//  MapFilterChipBar.swift
+//  FilterChipBar.swift
 //  EATSSU
 //
 //  Created by 황상환 on 8/23/26.
@@ -12,20 +12,27 @@ import SnapKit
 import EATSSUDesign
 
 /// 지도 위에 떠 있는 가로 스크롤 필터 칩 바 (단일 선택)
-final class MapFilterChipBar: BaseUIView {
+/// 가로 스크롤 필터 칩 바 (단일 선택). 지도 필터와 찜 목록 필터 공용
+final class FilterChipBar: BaseUIView {
 
     // MARK: - Constants
 
     private enum Layout {
         static let chipHeight: CGFloat = 36
         static let chipSpacing: CGFloat = 8
-        static let horizontalInset: CGFloat = 16
-        static let chipHorizontalPadding: CGFloat = 16
+        static let chipHorizontalPadding: CGFloat = 14
     }
 
     // MARK: - Properties
 
     var onSelect: ((Int) -> Void)?
+
+    /// 첫/마지막 칩과 화면 가장자리 사이 여백 (지도 16, 찜 목록 24)
+    var horizontalInset: CGFloat = 16 {
+        didSet {
+            scrollView.contentInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
+        }
+    }
 
     /// 선택 칩 배경색 (축제 필터 등 모드에 따라 변경 가능)
     var highlightColor: UIColor = .primary {
@@ -34,6 +41,7 @@ final class MapFilterChipBar: BaseUIView {
 
     private(set) var selectedIndex: Int = 0
     private var chips: [UIButton] = []
+    private var titles: [String] = []
 
     // MARK: - UI Components
 
@@ -48,12 +56,7 @@ final class MapFilterChipBar: BaseUIView {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = true
         scrollView.clipsToBounds = false
-        scrollView.contentInset = UIEdgeInsets(
-            top: 0,
-            left: Layout.horizontalInset,
-            bottom: 0,
-            right: Layout.horizontalInset
-        )
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
 
         stackView.axis = .horizontal
         stackView.spacing = Layout.chipSpacing
@@ -80,6 +83,7 @@ final class MapFilterChipBar: BaseUIView {
     /// 칩 목록을 교체하고 첫 칩을 선택 상태로 둔다
     func configure(titles: [String], selectedIndex: Int = 0) {
         chips.forEach { $0.removeFromSuperview() }
+        self.titles = titles
         chips = titles.enumerated().map { index, title in
             let chip = makeChip(title: title, index: index)
             stackView.addArrangedSubview(chip)
@@ -115,10 +119,7 @@ final class MapFilterChipBar: BaseUIView {
             bottom: 0,
             trailing: Layout.chipHorizontalPadding
         )
-        config.attributedTitle = AttributedString(
-            title,
-            attributes: AttributeContainer([.font: UIFont.button2])
-        )
+        config.attributedTitle = Self.chipTitle(title, isSelected: false)
         chip.configuration = config
 
         chip.snp.makeConstraints { $0.height.equalTo(Layout.chipHeight) }
@@ -131,7 +132,15 @@ final class MapFilterChipBar: BaseUIView {
             chip.backgroundColor = isSelected ? highlightColor : .white
             chip.layer.borderColor = isSelected ? highlightColor.cgColor : UIColor.gray300.cgColor
             chip.configuration?.baseForegroundColor = isSelected ? .white : .gray500
+            if titles.indices.contains(index) {
+                chip.configuration?.attributedTitle = Self.chipTitle(titles[index], isSelected: isSelected)
+            }
         }
+    }
+
+    /// 선택 시 볼드(button2), 미선택 시 미디엄(body2) — 선택 칩은 배경과 같은 색 보더라 보더가 사라진 것처럼 보인다
+    private static func chipTitle(_ title: String, isSelected: Bool) -> AttributedString {
+        AttributedString(title, attributes: AttributeContainer([.font: isSelected ? UIFont.button2 : UIFont.body2]))
     }
 
     /// 선택된 칩이 화면 밖에 있으면 보이도록 스크롤

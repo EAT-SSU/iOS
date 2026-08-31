@@ -15,12 +15,18 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Properties
 
+    /// 시트에 표시할 업체 (지도 필터에 맞춰 제휴 항목이 걸러진 DTO)
     private let partnership: PartnershipDTO
+    /// 찜 토글 대상 업체 (필터와 무관한 전체 제휴 항목). 업체 찜은 항상 모든 항목을 함께 다룬다
+    private let likeTarget: PartnershipDTO
+    /// 학과 미입력 시 찜 사용 불가 (기획). false면 하트를 숨긴다
+    private let isLikeEnabled: Bool
     private let mapAppLauncher: MapAppLauncher
 
     // MARK: - UI Components
 
     private let storeNameLabel = UILabel()
+    private let likeButton = UIButton(type: .custom)
     private let typeStackView = UIStackView()
     private let typeIconImageView = UIImageView()
     private let typeTextLabel = UILabel()
@@ -29,8 +35,10 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
     // MARK: - Init
 
-    init(partnership: PartnershipDTO) {
+    init(partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil, isLikeEnabled: Bool = true) {
         self.partnership = partnership
+        self.likeTarget = likeTarget ?? partnership
+        self.isLikeEnabled = isLikeEnabled
         self.mapAppLauncher = MapAppLauncher(destination: .init(
             name: partnership.storeName,
             latitude: partnership.latitude,
@@ -55,6 +63,11 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         storeNameLabel.font = .header2
         storeNameLabel.textColor = .label
 
+        likeButton.tintColor = .gray700
+        likeButton.isHidden = !isLikeEnabled
+        likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
+        updateLikeButton()
+
         typeIconImageView.contentMode = .scaleAspectFit
         typeIconImageView.snp.makeConstraints { $0.width.height.equalTo(18) }
 
@@ -77,7 +90,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         mapAppButtonBar.onKakaoMapTap = { [weak self] in self?.mapAppLauncher.openKakaoMap() }
         mapAppButtonBar.onNaverMapTap = { [weak self] in self?.mapAppLauncher.openNaverMap() }
 
-        [storeNameLabel, typeStackView, infoListStackView, mapAppButtonBar].forEach {
+        [storeNameLabel, likeButton, typeStackView, infoListStackView, mapAppButtonBar].forEach {
             view.addSubview($0)
         }
     }
@@ -85,7 +98,14 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     override func setLayout() {
         storeNameLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.leading.equalToSuperview().inset(24)
+            $0.trailing.lessThanOrEqualTo(likeButton.snp.leading).offset(-12)
+        }
+
+        likeButton.snp.makeConstraints {
+            $0.centerY.equalTo(storeNameLabel)
+            $0.trailing.equalToSuperview().inset(24)
+            $0.width.height.equalTo(32)
         }
 
         typeStackView.snp.makeConstraints {
@@ -111,6 +131,10 @@ final class PartnershipDetailSheetViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureData()
+        // 찜 탭을 열기 전에 지도에서 시트를 열어도 하트가 서버 찜 상태를 반영하도록
+        PartnershipLikeManager.shared.ensureLoaded { [weak self] in
+            self?.updateLikeButton()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -144,6 +168,60 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             let isLast = index == partnership.partnershipInfos.count - 1
             let card = makeInfoCard(info: info, isLast: isLast)
             infoListStackView.addArrangedSubview(card)
+        }
+    }
+
+    // MARK: - Like
+
+    private var isLiked: Bool {
+        PartnershipLikeManager.shared.isLiked(likeTarget)
+    }
+
+    private func updateLikeButton() {
+        let image = isLiked ? EATSSUDesignAsset.Images.icLikeFilled.image : EATSSUDesignAsset.Images.icLikeLine.image
+        likeButton.setImage(image, for: .normal)
+        // VoiceOver: 이름은 '찜', 상태는 selected 트레이트로 전달
+        likeButton.accessibilityLabel = TextLiteral.Like.title
+        likeButton.accessibilityTraits = isLiked ? [.button, .selected] : [.button]
+    }
+
+    /// 하트 탭: 찜 토글. 삭제 시엔 '취소하기'로 되돌릴 수 있는 토스트를 띄운다
+    @objc private func didTapLike() {
+        likeButton.isEnabled = false
+        // 찜 목록을 확보한 뒤 현재 상태를 판정한다 (받기 전엔 하트가 지도 응답 기준이라 어긋날 수 있음)
+        PartnershipLikeManager.shared.ensureLoaded { [weak self] in
+            guard let self else { return }
+            self.setLiked(!self.isLiked)
+        }
+    }
+
+    private func setLiked(_ liked: Bool) {
+        likeButton.isEnabled = false
+        PartnershipLikeManager.shared.setLiked(liked, store: likeTarget) { [weak self] result in
+            guard let self else { return }
+            self.likeButton.isEnabled = true
+            self.updateLikeButton()
+
+            switch result {
+            case .success:
+                if liked {
+                    self.showToast(message: TextLiteral.Like.addedToast, type: .success)
+                } else {
+                    // 취소하기는 한 번만 동작 (토글 API라 두 번 누르면 원복이 뒤집힘)
+                    var didUndo = false
+                    self.showToast(
+                        message: TextLiteral.Like.removedToast,
+                        type: .success,
+                        actionTitle: TextLiteral.Like.undo
+                    ) { [weak self] in
+                        guard !didUndo else { return }
+                        didUndo = true
+                        self?.setLiked(true)
+                    }
+                }
+            case .failure:
+                self.showToast(message: TextLiteral.Like.updateFailed, type: .danger)
+            }
         }
     }
 

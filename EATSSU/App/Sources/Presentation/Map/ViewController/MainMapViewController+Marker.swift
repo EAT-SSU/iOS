@@ -51,14 +51,15 @@ extension MainMapViewController {
 
     // MARK: - Marker Items
 
-    func makeMarkerItem(for partnership: PartnershipDTO) -> MapMarkerItem {
+    /// - Parameter likeTarget: 찜 토글 대상 원본 업체 (필터로 항목이 걸러진 `partnership`과 구분). nil이면 partnership 그대로
+    func makeMarkerItem(for partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil) -> MapMarkerItem {
         let isFestival = partnershipFilter == .festival
         return MapMarkerItem(
             title: partnership.storeName,
             latitude: partnership.latitude,
             longitude: partnership.longitude,
             icon: Self.partnershipIcon(for: partnership.restaurantType, isFestival: isFestival),
-            onTap: { [weak self] in self?.showPartnershipDetail(for: partnership) }
+            onTap: { [weak self] in self?.showPartnershipDetail(for: partnership, likeTarget: likeTarget) }
         )
     }
 
@@ -147,14 +148,19 @@ extension MainMapViewController {
     }
 
     /// 제휴점 상세 바텀시트 표시
-    func showPartnershipDetail(for partnership: PartnershipDTO) {
+    /// - Parameter likeTarget: 찜 토글 대상 원본 업체. nil이면 partnership 자체
+    func showPartnershipDetail(for partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil) {
         MapAnalyticsManager.shared.logClickPartnerRestaurant(
             collegeId: currentCollegeId,
             majorId: currentDepartmentId,
             partnerId: partnership.partnershipInfos.first?.id ?? -1
         )
 
-        let detailVC = PartnershipDetailSheetViewController(partnership: partnership)
+        let detailVC = PartnershipDetailSheetViewController(
+            partnership: partnership,
+            likeTarget: likeTarget,
+            isLikeEnabled: hasDepartment
+        )
         detailVC.loadViewIfNeeded()
         presentSheet(detailVC, heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() })
     }

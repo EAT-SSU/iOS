@@ -50,8 +50,8 @@
 "tabBar.meal" = "Nhà ăn";
 /// "지도"
 "tabBar.map" = "Bản đồ";
-/// "나만아니면돼~"
-"tabBar.coffee" = "Trò chơi may mắn";
+/// "찜"
+"tabBar.like" = "Yêu thích";
 /// "마이"
 "tabBar.my" = "Trang của tôi";
 
@@ -427,18 +427,6 @@
 "review.characterCount" = "%d / %d";
 
 
-// MARK: - Coffee
-
-/// "나가시겠어요?"
-"coffee.askLeave" = "Bạn có muốn rời đi không?";
-/// "지금 나가면 진행 상황이\n저장되지 않습니다."
-"coffee.leaveWarning" = "Nếu rời đi bây giờ, tiến trình sẽ\nkhông được lưu.";
-/// "나가기"
-"coffee.leave" = "Rời đi";
-/// "계속하기"
-"coffee.continueEvent" = "Tiếp tục";
-
-
 // MARK: - Splash
 
 /// NoticeSplashVC - "긴급 서버 점검 안내"
@@ -682,3 +670,38 @@
 "restaurantInfo.snackCorner.time" = "11:00~15:30(Bữa trưa)";
 /// "분식류, 옛날도시락, 컵밥 등\n주말 휴무"
 "restaurantInfo.snackCorner.etc" = "Bunsik(đồ ăn vặt Hàn Quốc), cơm hộp kiểu xưa, cơm ly, v.v.\nĐóng cửa cuối tuần";
+
+// MARK: - Like
+
+/// "찜"
+"like.title" = "Yêu thích";
+/// "메뉴 찜"
+"like.menuTab" = "Món ăn";
+/// "제휴 찜"
+"like.partnershipTab" = "Ưu đãi";
+/// "편집"
+"like.edit" = "Chỉnh sửa";
+/// "전체 선택"
+"like.selectAll" = "Chọn tất cả";
+/// "삭제"
+"like.delete" = "Xóa";
+/// "삭제 %d"
+"like.deleteCount" = "Xóa %d";
+/// "취소하기"
+"like.undo" = "Hoàn tác";
+/// "찜한 제휴에 추가했어요."
+"like.addedToast" = "Đã thêm vào ưu đãi yêu thích.";
+/// "찜한 제휴에서 삭제했어요."
+"like.removedToast" = "Đã xóa khỏi ưu đãi yêu thích.";
+/// "찜 처리에 실패했어요. 다시 시도해 주세요."
+"like.updateFailed" = "Xử lý thất bại. Vui lòng thử lại.";
+/// "찜한 제휴를 불러오지 못했어요."
+"like.loadFailed" = "Không thể tải ưu đãi yêu thích.";
+/// "아직 찜한 제휴가 없어요."
+"like.emptyTitle" = "Chưa có ưu đãi yêu thích.";
+/// "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!"
+"like.emptySubtitle" = "Hãy thêm ưu đãi bạn quan tâm để xem nhanh!";
+/// "메뉴 찜은 준비 중이에요."
+"like.menuComingSoonTitle" = "Món ăn yêu thích đang được chuẩn bị.";
+/// "곧 만나볼 수 있어요!"
+"like.menuComingSoonSubtitle" = "Sắp ra mắt!";

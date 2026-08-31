@@ -146,9 +146,9 @@ enum TextLiteral {
             Localization.localized("tabBar.map", fallback: "지도")
         }
         
-        /// "나만아니면돼~"
-        static var coffee: String {
-            Localization.localized("tabBar.coffee", fallback: "나만아니면돼~")
+        /// "찜"
+        static var like: String {
+            Localization.localized("tabBar.like", fallback: "찜")
         }
 
         /// "마이"
@@ -1132,29 +1132,6 @@ enum TextLiteral {
         }
     }
     
-    // MARK: - Coffee
-
-    enum Coffee {
-        /// "나가시겠어요?"
-        static var askLeave: String {
-            Localization.localized("coffee.askLeave", fallback: "나가시겠어요?")
-        }
-
-        /// "지금 나가면 진행 상황이\n저장되지 않습니다."
-        static var leaveWarning: String {
-            Localization.localized("coffee.leaveWarning", fallback: "지금 나가면 진행 상황이\n저장되지 않습니다.")
-        }
-
-        /// "나가기"
-        static var leave: String {
-            Localization.localized("coffee.leave", fallback: "나가기")
-        }
-
-        /// "계속하기"
-        static var continueEvent: String {
-            Localization.localized("coffee.continueEvent", fallback: "계속하기")
-        }
-    }
 
     // MARK: - Splash
     
@@ -1365,5 +1342,89 @@ enum TextLiteral {
             "facultyRestaurant": "주말 휴무",
             "snackCorner": "분식류, 옛날도시락, 컵밥 등\n주말 휴무",
         ]
+    }
+    // MARK: - Like
+
+    enum Like {
+        /// "찜"
+        static var title: String {
+            Localization.localized("like.title", fallback: "찜")
+        }
+
+        /// "메뉴 찜"
+        static var menuTab: String {
+            Localization.localized("like.menuTab", fallback: "메뉴 찜")
+        }
+
+        /// "제휴 찜"
+        static var partnershipTab: String {
+            Localization.localized("like.partnershipTab", fallback: "제휴 찜")
+        }
+
+        /// "편집"
+        static var edit: String {
+            Localization.localized("like.edit", fallback: "편집")
+        }
+
+        /// "전체 선택"
+        static var selectAll: String {
+            Localization.localized("like.selectAll", fallback: "전체 선택")
+        }
+
+        /// "삭제"
+        static var delete: String {
+            Localization.localized("like.delete", fallback: "삭제")
+        }
+
+        /// "삭제 2"
+        static func deleteCount(_ count: Int) -> String {
+            Localization.formatted("like.deleteCount", fallback: "삭제 %d", count)
+        }
+
+        /// "취소하기"
+        static var undo: String {
+            Localization.localized("like.undo", fallback: "취소하기")
+        }
+
+        /// "찜한 제휴에 추가했어요."
+        static var addedToast: String {
+            Localization.localized("like.addedToast", fallback: "찜한 제휴에 추가했어요.")
+        }
+
+        /// "찜한 제휴에서 삭제했어요."
+        static var removedToast: String {
+            Localization.localized("like.removedToast", fallback: "찜한 제휴에서 삭제했어요.")
+        }
+
+
+        /// "찜 처리에 실패했어요. 다시 시도해 주세요."
+        static var updateFailed: String {
+            Localization.localized("like.updateFailed", fallback: "찜 처리에 실패했어요. 다시 시도해 주세요.")
+        }
+
+        /// "찜한 제휴를 불러오지 못했어요."
+        static var loadFailed: String {
+            Localization.localized("like.loadFailed", fallback: "찜한 제휴를 불러오지 못했어요.")
+        }
+
+        /// "아직 찜한 제휴가 없어요."
+        static var emptyTitle: String {
+            Localization.localized("like.emptyTitle", fallback: "아직 찜한 제휴가 없어요.")
+        }
+
+        /// "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!"
+        static var emptySubtitle: String {
+            Localization.localized("like.emptySubtitle", fallback: "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!")
+        }
+
+        /// "메뉴 찜은 준비 중이에요."
+        static var menuComingSoonTitle: String {
+            Localization.localized("like.menuComingSoonTitle", fallback: "메뉴 찜은 준비 중이에요.")
+        }
+
+        /// "곧 만나볼 수 있어요!"
+        static var menuComingSoonSubtitle: String {
+            Localization.localized("like.menuComingSoonSubtitle", fallback: "곧 만나볼 수 있어요!")
+        }
     }
 }

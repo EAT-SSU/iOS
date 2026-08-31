@@ -11,6 +11,8 @@ import Moya
 
 enum PartnershipRouter {
     case getAllPartnerships
+    /// 제휴 항목 단위 찜 토글 (등록 ↔ 취소)
+    case toggleLike(partnershipId: Int)
 }
 
 extension PartnershipRouter: TargetType {
@@ -22,11 +24,18 @@ extension PartnershipRouter: TargetType {
         switch self {
         case .getAllPartnerships:
             return "/partnerships"
+        case let .toggleLike(partnershipId):
+            return "/partnerships/\(partnershipId)/like"
         }
     }
 
     var method: Moya.Method {
-        return .get
+        switch self {
+        case .getAllPartnerships:
+            return .get
+        case .toggleLike:
+            return .post
+        }
     }
 
     var task: Task {

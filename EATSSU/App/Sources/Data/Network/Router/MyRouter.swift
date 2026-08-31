@@ -19,6 +19,8 @@ enum MyRouter {
     case inquiry(param: InquiryRequest)
     case getDepartment
     case getMyPartnerships
+    /// 유저가 찜한 제휴 조회
+    case getLikedPartnerships
     case colleges
     case departments(collegeId: Int)
 }
@@ -42,6 +44,8 @@ extension MyRouter: TargetType {
             "/users/department"
         case .getMyPartnerships:
             "/users/department/partnerships"
+        case .getLikedPartnerships:
+            "/users/partnerships"
         case .colleges:
             "/users/lookup/colleges"
         case .departments:
@@ -53,7 +57,7 @@ extension MyRouter: TargetType {
         switch self {
         case .getMyReviewList, .departments, .colleges:
             .get
-        case .myInfo, .getDepartment, .getMyPartnerships:
+        case .myInfo, .getDepartment, .getMyPartnerships, .getLikedPartnerships:
             .get
         case .signOut:
             .delete
@@ -90,6 +94,8 @@ extension MyRouter: TargetType {
         case .getDepartment:
                 .requestPlain
         case .getMyPartnerships:
+                .requestPlain
+        case .getLikedPartnerships:
                 .requestPlain
         case .colleges:
                 .requestPlain
