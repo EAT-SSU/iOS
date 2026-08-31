@@ -40,6 +40,11 @@ jobs:
             } > "EATSSU/App/Resources/Secrets/$config.xcconfig"
           done
 
+      - name: Create GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > EATSSU/App/Resources/GoogleService-Info.plist
+
       - name: Install dependencies
         run: tuist install
 
