@@ -3,41 +3,50 @@ name: Continuous Integration
 on:
   pull_request:
     branches:
-      - qa 
+      - develop
 
 jobs:
-  Continuous_Integration:
+  unit-tests:
+    name: Unit Tests
     runs-on: macos-latest
     environment: Configuration Files
     steps:
       - uses: actions/checkout@v4
+
+      # .mise.toml에 고정된 tuist 설치
       - uses: jdx/mise-action@v2
 
-      - name: Install Tuist
-        run: |
-          bash <(curl -Ls https://install.tuist.io)
-
-      - name: Create Release & Debug Configuration Files
+      - name: Create secret xcconfig files
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
         run: |
-          cd EATSSU_MVC/EATSSU_MVC/Resources
-          mkdir Secrets
-          cd Secrets
+          mkdir -p EATSSU/App/Resources/Secrets
+          for config in Release Debug; do
+            {
+              echo "BASE_URL = $BASE_URL"
+              echo "KAKAO_API_KEY = $KAKAO_API_KEY"
+            } > "EATSSU/App/Resources/Secrets/$config.xcconfig"
+          done
 
-          echo "BASE_URL = $BASE_URL" >> Release.xcconfig
-          echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Release.xcconfig
-          cat Release.xcconfig
+      - name: Install dependencies
+        run: tuist install
 
-          echo "BASE_URL = $BASE_URL" >> Debug.xcconfig
-          echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Debug.xcconfig
-          cat Debug.xcconfig
+      - name: Generate project
+        run: tuist generate --no-open
 
-      - name: Install Dependencies
+      - name: Run unit tests
         run: |
-          tuist install
-      
-      - name: Build Project
-        run: |
-          tuist build
+          DEVICE_ID=$(xcrun simctl list devices available | grep -oE '[0-9A-F-]{36}' | head -1)
+          echo "Using simulator $DEVICE_ID"
+          set -o pipefail
+          xcodebuild test \
+            -workspace EATSSU_WORKSPACE.xcworkspace \
+            -scheme EATSSUUnitTests \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions || \
+          xcodebuild test \
+            -workspace EATSSU_WORKSPACE.xcworkspace \
+            -scheme EATSSUUnitTests \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            CODE_SIGNING_ALLOWED=NO

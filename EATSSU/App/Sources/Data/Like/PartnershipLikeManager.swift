@@ -116,9 +116,7 @@ final class PartnershipLikeManager {
 
     /// 항목별 현재 찜 상태와 다른 것만 서버 토글. 목록 확보에 실패한 경우엔 지도 응답의 isLiked를 기준으로 삼는다
     private func toggle(liked: Bool, store: PartnershipDTO, completion: @escaping (Result<Void, Error>) -> Void) {
-        let targets = store.partnershipInfos
-            .filter { currentlyLiked($0) != liked }
-            .map(\.id)
+        let targets = Self.toggleTargets(in: store, toBe: liked, isCurrentlyLiked: currentlyLiked)
         guard !targets.isEmpty else {
             applyLocalState(liked: liked, store: store)
             completion(.success(()))
@@ -190,8 +188,19 @@ final class PartnershipLikeManager {
         return hasLoaded ? likedPartnershipIds.contains(info.id) : info.isLiked
     }
 
+    /// 현재 상태와 목표 상태가 다른 항목만 토글 대상 (서버 API가 토글 방식이라 같은 상태를 다시 호출하면 뒤집힌다)
+    static func toggleTargets(
+        in store: PartnershipDTO,
+        toBe liked: Bool,
+        isCurrentlyLiked: (PartnershipInfoDTO) -> Bool
+    ) -> [Int] {
+        store.partnershipInfos
+            .filter { isCurrentlyLiked($0) != liked }
+            .map(\.id)
+    }
+
     /// 찜 목록 응답에서 실제 찜된 항목 id. 플래그가 하나도 없으면(구버전 응답) 소속 항목 전부로 간주
-    private static func likedIds(in store: PartnershipDTO) -> [Int] {
+    static func likedIds(in store: PartnershipDTO) -> [Int] {
         let flagged = store.partnershipInfos.filter(\.isLiked).map(\.id)
         return flagged.isEmpty ? store.partnershipIds : flagged
     }
@@ -209,12 +218,16 @@ final class PartnershipLikeManager {
         persistOrder()
     }
 
-    /// 로컬에 기록된 찜 시각 기준 최근순. 기록이 없는 항목(다른 기기에서 찜 등)은 서버 순서대로 뒤에 둔다
     private func sortedByRecent(_ stores: [PartnershipDTO]) -> [PartnershipDTO] {
+        Self.sortedByRecent(stores, likedAt: likedAtByStoreKey)
+    }
+
+    /// 로컬에 기록된 찜 시각 기준 최근순. 기록이 없는 항목(다른 기기에서 찜 등)은 서버 순서대로 뒤에 둔다
+    static func sortedByRecent(_ stores: [PartnershipDTO], likedAt: [String: Double]) -> [PartnershipDTO] {
         let indexed = stores.enumerated().map { ($0.offset, $0.element) }
         return indexed.sorted { lhs, rhs in
-            let lhsTime = likedAtByStoreKey[lhs.1.storeKey]
-            let rhsTime = likedAtByStoreKey[rhs.1.storeKey]
+            let lhsTime = likedAt[lhs.1.storeKey]
+            let rhsTime = likedAt[rhs.1.storeKey]
             switch (lhsTime, rhsTime) {
             case let (l?, r?): return l > r
             case (_?, nil): return true
