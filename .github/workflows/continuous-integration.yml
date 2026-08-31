@@ -35,18 +35,31 @@ jobs:
       - name: Generate project
         run: tuist generate --no-open
 
+      - name: Select or create simulator
+        id: simulator
+        run: |
+          xcrun simctl list runtimes
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          data = json.load(sys.stdin)["devices"]
+          for runtime in sorted(data, reverse=True):
+              for device in data[runtime]:
+                  if device.get("isAvailable") and "iPhone" in device.get("name", ""):
+                      print(device["udid"]); sys.exit(0)
+          ')
+          if [ -z "$DEVICE_ID" ]; then
+            echo "No available simulator, creating one"
+            RUNTIME=$(xcrun simctl list runtimes -j | python3 -c 'import json,sys; rts=[r for r in json.load(sys.stdin)["runtimes"] if r["platform"]=="iOS" and r["isAvailable"]]; print(rts[-1]["identifier"])')
+            DEVICE_ID=$(xcrun simctl create "ci-iphone" "iPhone 16" "$RUNTIME")
+          fi
+          echo "Using simulator $DEVICE_ID"
+          echo "device_id=$DEVICE_ID" >> "$GITHUB_OUTPUT"
+
       - name: Run unit tests
         run: |
-          DEVICE_ID=$(xcrun simctl list devices available | grep -oE '[0-9A-F-]{36}' | head -1)
-          echo "Using simulator $DEVICE_ID"
           set -o pipefail
           xcodebuild test \
             -workspace EATSSU_WORKSPACE.xcworkspace \
             -scheme EATSSUUnitTests \
-            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
-            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions || \
-          xcodebuild test \
-            -workspace EATSSU_WORKSPACE.xcworkspace \
-            -scheme EATSSUUnitTests \
-            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
-            CODE_SIGNING_ALLOWED=NO
+            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.device_id }}" \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tail -100
