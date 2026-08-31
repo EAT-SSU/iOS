@@ -31,12 +31,22 @@ jobs:
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          HOLIDAY_API_KEY: ${{ secrets.HOLIDAY_API_KEY }}
+          APP_GROUP_ID: ${{ secrets.APP_GROUP_ID }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: |
           mkdir -p EATSSU/App/Resources/Secrets
           for config in Release Debug; do
             {
               echo "BASE_URL = $BASE_URL"
               echo "KAKAO_API_KEY = $KAKAO_API_KEY"
+              echo "KAKAO_REST_API_KEY = $KAKAO_REST_API_KEY"
+              echo "NAVER_CLIENT_ID = $NAVER_CLIENT_ID"
+              echo "HOLIDAY_API_KEY = $HOLIDAY_API_KEY"
+              echo "APP_GROUP_ID = $APP_GROUP_ID"
+              echo "POSTHOG_API_KEY = $POSTHOG_API_KEY"
             } > "EATSSU/App/Resources/Secrets/$config.xcconfig"
           done
 
