@@ -320,7 +320,12 @@ let project = Project(
             sources: ["Tests/UnitTests/**"],
             dependencies: [
                 .target(name: "EATSSU-DEV"),
-            ]
+            ],
+            settings: .settings(base: [
+                // 프로젝트 공통 -all_load/-ObjC가 테스트 번들에 상속되면 호스트 앱의 정적 라이브러리를
+                // 강제 로드하다 링크가 깨진다. 테스트 번들은 호스트 앱 심볼을 쓰므로 비워둔다
+                "OTHER_LDFLAGS": ""
+            ])
         ),
     ],
     schemes: [
@@ -328,7 +333,7 @@ let project = Project(
             name: "EATSSU-DEV",
             shared: true,
             buildAction: .buildAction(targets: [.target("EATSSU-DEV")]),
-            testAction: .targets(["EATSSU-DEV"]),
+            testAction: .targets(["EATSSUUnitTests"]),
             runAction: .runAction(configuration: "Debug"),
             archiveAction: .archiveAction(configuration: "Release"),
             profileAction: .profileAction(configuration: "Release"),

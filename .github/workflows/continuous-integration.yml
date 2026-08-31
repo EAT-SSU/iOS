@@ -3,41 +3,89 @@ name: Continuous Integration
 on:
   pull_request:
     branches:
-      - qa 
+      - develop
 
 jobs:
-  Continuous_Integration:
+  unit-tests:
+    name: Unit Tests
     runs-on: macos-latest
     environment: Configuration Files
     steps:
       - uses: actions/checkout@v4
+
+      # .mise.toml에 고정된 tuist 설치
       - uses: jdx/mise-action@v2
 
-      - name: Install Tuist
+      # 러너 기본 Xcode(최신)에서는 고정된 realm-core가 컴파일되지 않아 로컬과 같은 26.1로 고정
+      - name: Select Xcode
         run: |
-          bash <(curl -Ls https://install.tuist.io)
+          ls -d /Applications/Xcode*.app
+          sudo xcode-select -s /Applications/Xcode_26.1.app
+          xcodebuild -version
 
-      - name: Create Release & Debug Configuration Files
+      # 러너 이미지에는 기본 Xcode용 런타임만 있어, 고정한 Xcode에 맞는 iOS 시뮬레이터 런타임을 내려받는다
+      - name: Download iOS simulator runtime
+        run: sudo xcodebuild -downloadPlatform iOS
+
+      - name: Create secret xcconfig files
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          HOLIDAY_API_KEY: ${{ secrets.HOLIDAY_API_KEY }}
+          APP_GROUP_ID: ${{ secrets.APP_GROUP_ID }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: |
-          cd EATSSU_MVC/EATSSU_MVC/Resources
-          mkdir Secrets
-          cd Secrets
+          mkdir -p EATSSU/App/Resources/Secrets
+          for config in Release Debug; do
+            {
+              echo "BASE_URL = $BASE_URL"
+              echo "KAKAO_API_KEY = $KAKAO_API_KEY"
+              echo "KAKAO_REST_API_KEY = $KAKAO_REST_API_KEY"
+              echo "NAVER_CLIENT_ID = $NAVER_CLIENT_ID"
+              echo "HOLIDAY_API_KEY = $HOLIDAY_API_KEY"
+              echo "APP_GROUP_ID = $APP_GROUP_ID"
+              echo "POSTHOG_API_KEY = $POSTHOG_API_KEY"
+            } > "EATSSU/App/Resources/Secrets/$config.xcconfig"
+          done
 
-          echo "BASE_URL = $BASE_URL" >> Release.xcconfig
-          echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Release.xcconfig
-          cat Release.xcconfig
+      - name: Create GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > EATSSU/App/Resources/GoogleService-Info.plist
 
-          echo "BASE_URL = $BASE_URL" >> Debug.xcconfig
-          echo "KAKAO_API_KEY = $KAKAO_API_KEY" >> Debug.xcconfig
-          cat Debug.xcconfig
+      - name: Install dependencies
+        run: tuist install
 
-      - name: Install Dependencies
+      - name: Generate project
+        run: tuist generate --no-open
+
+      - name: Select or create simulator
+        id: simulator
         run: |
-          tuist install
-      
-      - name: Build Project
+          xcrun simctl list runtimes
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          data = json.load(sys.stdin)["devices"]
+          for runtime in sorted(data, reverse=True):
+              for device in data[runtime]:
+                  if device.get("isAvailable") and "iPhone" in device.get("name", ""):
+                      print(device["udid"]); sys.exit(0)
+          ')
+          if [ -z "$DEVICE_ID" ]; then
+            echo "No available simulator, creating one"
+            RUNTIME=$(xcrun simctl list runtimes -j | python3 -c 'import json,sys; rts=[r for r in json.load(sys.stdin)["runtimes"] if r["platform"]=="iOS" and r["isAvailable"]]; print(rts[-1]["identifier"])')
+            DEVICE_ID=$(xcrun simctl create "ci-iphone" "iPhone 16" "$RUNTIME")
+          fi
+          echo "Using simulator $DEVICE_ID"
+          echo "device_id=$DEVICE_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Run unit tests
         run: |
-          tuist build
+          set -o pipefail
+          xcodebuild test \
+            -workspace EATSSU_WORKSPACE.xcworkspace \
+            -scheme EATSSUUnitTests \
+            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.device_id }}" \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tail -100
