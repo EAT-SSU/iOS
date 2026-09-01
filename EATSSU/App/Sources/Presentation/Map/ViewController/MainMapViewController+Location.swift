@@ -8,6 +8,8 @@
 import UIKit
 import CoreLocation
 
+import NMapsMap
+
 // MARK: - Location Management
 
 extension MainMapViewController: CLLocationManagerDelegate {
@@ -55,10 +57,39 @@ extension MainMapViewController: CLLocationManagerDelegate {
         return nil
     }
     
+    /// 비로그인 진입 시 현위치로 카메라 이동
+    /// 권한 미결정이면 요청하고, 거부 상태면 아무것도 하지 않는다(숭실대 유지, 설정 유도 알럿도 띄우지 않음)
+    func moveToCurrentLocationIfAvailable() {
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            root.mapView.mapView.positionMode = .direction
+            if let location = locationManager.location {
+                moveCamera(to: NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude), animated: false)
+            } else {
+                wantsInitialCurrentLocation = true
+                locationManager.requestLocation()
+            }
+        case .notDetermined:
+            wantsInitialCurrentLocation = true
+            locationManager.requestWhenInUseAuthorization()
+        default:
+            break
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard wantsInitialCurrentLocation, let location = locations.last else { return }
+        wantsInitialCurrentLocation = false
+        moveCamera(to: NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude), animated: true)
+    }
+
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
             root.mapView.mapView.positionMode = .direction
+            if wantsInitialCurrentLocation {
+                locationManager.requestLocation()
+            }
             
         case .denied, .restricted:
             if hasRequestedLocationPermission {
@@ -96,6 +127,8 @@ extension MainMapViewController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // 진입 시 현위치 조회 실패는 조용히 포기하고 기본 위치(숭실대)를 유지한다
+        wantsInitialCurrentLocation = false
         if let clError = error as? CLError {
             switch clError.code {
             case .denied:

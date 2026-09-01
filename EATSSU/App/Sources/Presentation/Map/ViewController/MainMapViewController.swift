@@ -43,6 +43,8 @@ final class MainMapViewController: BaseViewController {
     var currentDepartmentId: Int?
     var currentCollegeId: Int?
     var hasRequestedLocationPermission = false
+    /// 비로그인 진입 시 현위치로 이동하기 위해 권한/위치 응답을 기다리는 중인지
+    var wantsInitialCurrentLocation = false
 
     var clusterer: NMCClusterer<MapMarkerKey>?
 
@@ -159,7 +161,7 @@ final class MainMapViewController: BaseViewController {
         locationManager.delegate = self
 
         configureNavigationBar()
-        setInitialCameraPosition(animated: false)
+        setEntryCameraPosition()
         setupLocationButtonObserver()
         setupMarkerTapHandler()
         applyTabUI()
@@ -436,6 +438,13 @@ final class MainMapViewController: BaseViewController {
             cachedGoodPriceStores = []
             loadGoodPriceMarkers()
         }
+    }
+
+    /// 진입 시 카메라 위치. 로그인(탭 지도)은 숭실대 상권, 비로그인(단독 착한가격)은 현위치(권한 없으면 숭실대)
+    private func setEntryCameraPosition() {
+        setInitialCameraPosition(animated: false)
+        guard mode == .standaloneGoodPrice else { return }
+        moveToCurrentLocationIfAvailable()
     }
 
     func setInitialCameraPosition(animated: Bool) {
