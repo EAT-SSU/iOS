@@ -34,6 +34,12 @@ final class MealMenuDisplayTests: XCTestCase {
         )
     }
 
+    func test_일본어에서도_대표메뉴만_표시한다() {
+        languageSandbox.set(.japanese)
+        let meal = makeMeal([("Pork Cutlet", true), ("김치", false)])
+        XCTAssertEqual(meal.displayMenus.map(\.name), ["Pork Cutlet"])
+    }
+
     func test_영어에서는_대표메뉴만_표시한다() {
         languageSandbox.set(.english)
         let meal = makeMeal([("Pork Cutlet", true), ("김치", false), ("밥", false)])
@@ -53,12 +59,16 @@ final class MealMenuDisplayTests: XCTestCase {
         XCTAssertEqual(meal.displayMenus.count, 2)
     }
 
-    func test_변동식단_언어_파라미터는_영어만_전달한다() {
+    func test_변동식단_언어_파라미터는_비한국어_전부_EN을_전달한다() {
+        // 서버가 변동식단 번역을 영어로만 제공하므로 ja/vi도 EN을 요청한다 (QA)
         languageSandbox.set(.english)
         XCTAssertEqual(ChangeMenuTableResponse.mealLanguageParameter, "EN")
 
         languageSandbox.set(.japanese)
-        XCTAssertNil(ChangeMenuTableResponse.mealLanguageParameter)
+        XCTAssertEqual(ChangeMenuTableResponse.mealLanguageParameter, "EN")
+
+        languageSandbox.set(.vietnamese)
+        XCTAssertEqual(ChangeMenuTableResponse.mealLanguageParameter, "EN")
 
         languageSandbox.set(.korean)
         XCTAssertNil(ChangeMenuTableResponse.mealLanguageParameter)

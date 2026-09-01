@@ -29,8 +29,9 @@ final class LikedPartnershipCell: UITableViewCell {
     private enum Layout {
         static let horizontalInset: CGFloat = 24
         static let iconSize: CGFloat = 36
-        static let checkSize: CGFloat = 18
-        static let checkLeading: CGFloat = 27
+        // 에셋은 24pt 캔버스에 원 20pt(여백 2pt)라, 22pt로 렌더해야 디자인의 18pt 원 크기가 된다
+        static let checkSize: CGFloat = 22
+        static let checkLeading: CGFloat = 25
         static let textSpacing: CGFloat = 12
         static let checkTextSpacing: CGFloat = 15
         static let topInset: CGFloat = 18

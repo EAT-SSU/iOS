@@ -55,7 +55,8 @@ final class FilterChipBar: BaseUIView {
 
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = true
-        scrollView.clipsToBounds = false
+        // 우측에 고정 요소(편집 버튼, 찜 하트)가 있는 화면에서 칩이 그 위로 넘쳐 그려지지 않도록 잘라낸다
+        scrollView.clipsToBounds = true
         scrollView.contentInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
 
         stackView.axis = .horizontal

@@ -16,11 +16,14 @@ final class LikedPartnershipEditViewController: BaseViewController {
 
     // MARK: - Constants
 
-    /// 디자인: 전체 선택 행 52, 체크 18 (leading 35), 구분선 2pt, 삭제 버튼 52/r8, 하단 safe area + 6
+    /// 디자인: 전체 선택 행 52, 구분선 2pt, 삭제 버튼 52/r8, 하단 safe area + 6
+    /// 체크 아이콘은 셀 체크(centerX 36)와 일직선이 되도록 leading을 맞춘다
     private enum Layout {
         static let horizontalInset: CGFloat = 24
         static let headerHeight: CGFloat = 52
-        static let headerLeading: CGFloat = 35
+        static let headerLeading: CGFloat = 25
+        /// 셀과 동일 (에셋 24pt 캔버스의 원 20pt → 22pt 렌더 시 디자인 18pt)
+        static let checkIconWidth: CGFloat = 22
         static let buttonHeight: CGFloat = 52
         static let buttonCornerRadius: CGFloat = 8
         static let buttonBottomInset: CGFloat = 6
@@ -50,7 +53,8 @@ final class LikedPartnershipEditViewController: BaseViewController {
     // MARK: - Init
 
     init(stores: [PartnershipDTO]) {
-        self.stores = stores
+        // 목록이 중복 행을 담고 있어도 전체 선택 판정이 어긋나지 않도록 업소 단위로 병합해 받는다
+        self.stores = PartnershipLikeManager.mergedByStore(stores)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -64,7 +68,7 @@ final class LikedPartnershipEditViewController: BaseViewController {
         view.backgroundColor = .white
 
         var config = UIButton.Configuration.plain()
-        config.image = EATSSUDesignAsset.Images.icUncheck.image.resize(newWidth: 18)
+        config.image = EATSSUDesignAsset.Images.icUncheck.image.resize(newWidth: Layout.checkIconWidth)
         config.imagePadding = 15
         config.baseForegroundColor = .label
         config.contentInsets = .zero
@@ -155,7 +159,7 @@ final class LikedPartnershipEditViewController: BaseViewController {
     private func updateSelectAllButton() {
         selectAllButton.configuration?.image = (isAllSelected
             ? EATSSUDesignAsset.Images.icCheck.image
-            : EATSSUDesignAsset.Images.icUncheck.image).resize(newWidth: 18)
+            : EATSSUDesignAsset.Images.icUncheck.image).resize(newWidth: Layout.checkIconWidth)
     }
 
     // MARK: - Actions

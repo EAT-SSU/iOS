@@ -365,9 +365,7 @@ final class MainMapViewController: BaseViewController {
             MapAnalyticsManager.shared.logClickGoodPriceCategory(category: goodPriceCategory)
             loadGoodPriceMarkers()
         }
-
-        // 필터가 바뀌면 캠퍼스 주변으로 되돌려 새 마커가 바로 보이게 한다 (필터 전환 전 동작과 동일)
-        setInitialCameraPosition(animated: true)
+        // 필터 전환 시 카메라는 보고 있던 위치를 그대로 유지한다 (QA)
     }
 
     /// 축제 → click_map_festival, 그 외 → click_map_mine
