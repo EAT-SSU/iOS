@@ -276,8 +276,8 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
         let contentStack = UIStackView(arrangedSubviews: [titleDateLabel, descriptionLabel])
         contentStack.axis = .vertical
-        // 설명 내부 줄간격(6)보다 확실히 넓혀 단과대 제목 블록이 구분되게 한다
-        contentStack.spacing = 10
+        // 설명 내부 줄간격(6)보다 확실히 넓혀 단과대 제목 블록이 구분되게 한다 (Frame 43540 기준 + 여백 보강)
+        contentStack.spacing = 12
 
         let separator = UIView()
         separator.backgroundColor = EATSSUDesignColors.Color.gray300
@@ -288,12 +288,12 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
         let container = UIStackView(arrangedSubviews: [contentStack, separator])
         container.axis = .vertical
-        container.spacing = 10
+        container.spacing = 12
 
         let paddedContainer = UIView()
         paddedContainer.addSubview(container)
         container.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0))
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
         }
 
         return paddedContainer
