@@ -25,4 +25,6 @@ struct GoodPriceStoreDetailDTO: Codable {
     let price: Int?
     let roadAddress: String?
     let imageUrl: String?
+    let naverMapUrl: String?
+    let kakaoMapUrl: String?
 }
