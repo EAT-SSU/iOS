@@ -276,7 +276,8 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
         let contentStack = UIStackView(arrangedSubviews: [titleDateLabel, descriptionLabel])
         contentStack.axis = .vertical
-        contentStack.spacing = 4
+        // 설명 내부 줄간격(6)보다 확실히 넓혀 단과대 제목 블록이 구분되게 한다
+        contentStack.spacing = 10
 
         let separator = UIView()
         separator.backgroundColor = EATSSUDesignColors.Color.gray300
