@@ -221,7 +221,10 @@ final class MainMapViewController: BaseViewController {
         }
         pendingDetailStore = nil
         moveCamera(to: NMGLatLng(lat: store.latitude, lng: store.longitude), animated: false)
-        showPartnershipDetail(for: store)
+        // 찜 원본 DTO는 모든 단과대 제휴를 담고 있어, 지도 마커와 동일하게 내 제휴 데이터로 표시한다
+        // (내 제휴에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
+        let display = cachedMyPartnerships.first { $0.storeKey == store.storeKey } ?? store
+        showPartnershipDetail(for: display, likeTarget: store)
     }
 
     /// 찜 목록에서 넘어온 경우에만 뒤로가기(찜 탭 복귀) 버튼을 보여준다

@@ -164,8 +164,17 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             .first { $0.restaurantType == partnership.restaurantType }?
             .title ?? partnership.restaurantType
 
-        for (index, info) in partnership.partnershipInfos.enumerated() {
-            let isLast = index == partnership.partnershipInfos.count - 1
+        // 서버 데이터에 같은 제휴가 다른 id로 중복 존재할 수 있어 내용 기준으로 걸러 표시한다
+        var seen = Set<String>()
+        let displayInfos = partnership.partnershipInfos.filter { info in
+            let key = [
+                info.collegeName ?? "", info.departmentName ?? "",
+                info.description, info.startDate, info.endDate
+            ].joined(separator: "|")
+            return seen.insert(key).inserted
+        }
+        for (index, info) in displayInfos.enumerated() {
+            let isLast = index == displayInfos.count - 1
             let card = makeInfoCard(info: info, isLast: isLast)
             infoListStackView.addArrangedSubview(card)
         }
