@@ -138,7 +138,7 @@ final class LikedPartnershipEditViewController: BaseViewController {
         navigationItem.hidesBackButton = true
         // 선택 중이어도 확인 없이 즉시 닫는다 (기획)
         let closeItem = UIBarButtonItem(
-            image: EATSSUDesignAsset.Images.icClose.image.resize(newWidth: 24),
+            image: EATSSUDesignAsset.Images.icClose.image.resize(newWidth: 12), // 디자인 12x12 (stroke gray500)
             style: .plain,
             target: self,
             action: #selector(didTapClose)
