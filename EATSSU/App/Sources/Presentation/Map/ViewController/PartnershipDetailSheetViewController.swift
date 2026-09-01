@@ -72,7 +72,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         typeIconImageView.snp.makeConstraints { $0.width.height.equalTo(18) }
 
         typeTextLabel.font = .body2
-        typeTextLabel.textColor = .gray
+        typeTextLabel.textColor = .gray500 // 디자인 #9D9D9D (시스템 .gray는 더 어두움)
 
         typeStackView.axis = .horizontal
         typeStackView.alignment = .center
