@@ -79,6 +79,22 @@ final class MapAppButtonBar: BaseUIView {
         }
     }
 
+    // MARK: - State
+
+    /// 서버에 해당 지도 링크가 없는 업소는 버튼을 비활성(흐림 + 탭 무시) 처리한다
+    func setKakaoMapEnabled(_ isEnabled: Bool) {
+        apply(isEnabled, to: kakaoMapButton)
+    }
+
+    func setNaverMapEnabled(_ isEnabled: Bool) {
+        apply(isEnabled, to: naverMapButton)
+    }
+
+    private func apply(_ isEnabled: Bool, to button: UIButton) {
+        button.isEnabled = isEnabled
+        button.alpha = isEnabled ? 1.0 : 0.35
+    }
+
     // MARK: - Actions
 
     @objc private func kakaoMapButtonTapped() {

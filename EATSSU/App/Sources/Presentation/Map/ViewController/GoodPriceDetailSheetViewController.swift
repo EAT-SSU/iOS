@@ -185,14 +185,18 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
         menuLabel.text = Self.menuText(menu: detail.mainMenu, price: detail.price)
         menuLabel.isHidden = menuLabel.text == nil
 
-        // 상세 응답의 지도 URL로 런처 교체. URL이 없는 업소는 기존 검색 폴백 그대로 동작한다
+        // 상세 응답의 지도 URL로 런처 교체. URL이 없는 지도 버튼은 비활성 처리한다
+        let kakaoMapUrl = Self.nonEmpty(detail.kakaoMapUrl)
+        let naverMapUrl = Self.nonEmpty(detail.naverMapUrl)
         mapAppLauncher = MapAppLauncher(destination: .init(
             name: detail.storeName,
             latitude: store.latitude,
             longitude: store.longitude,
-            kakaoMapUrl: Self.nonEmpty(detail.kakaoMapUrl),
-            naverMapUrl: Self.nonEmpty(detail.naverMapUrl)
+            kakaoMapUrl: kakaoMapUrl,
+            naverMapUrl: naverMapUrl
         ))
+        mapAppButtonBar.setKakaoMapEnabled(kakaoMapUrl != nil)
+        mapAppButtonBar.setNaverMapEnabled(naverMapUrl != nil)
 
         if let imageUrl = Self.nonEmpty(detail.imageUrl) {
             storeImageView.contentMode = .scaleAspectFill
