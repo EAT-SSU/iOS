@@ -264,10 +264,15 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         titleDateLabel.attributedText = attrText
 
         let descriptionLabel = UILabel()
-        descriptionLabel.font = .body3
         descriptionLabel.textColor = EATSSUDesignColors.Color.gray700
         descriptionLabel.numberOfLines = 0
-        descriptionLabel.text = info.description
+        // 여러 줄 설명은 줄간격을 벌려 가독성을 확보한다 (피그마 수치 확정 시 조정)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 6
+        descriptionLabel.attributedText = NSAttributedString(
+            string: info.description,
+            attributes: [.paragraphStyle: paragraphStyle, .font: UIFont.body3]
+        )
 
         let contentStack = UIStackView(arrangedSubviews: [titleDateLabel, descriptionLabel])
         contentStack.axis = .vertical
