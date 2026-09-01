@@ -256,7 +256,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
         attrText.addAttributes([
             .font: UIFont.caption2,
-            .foregroundColor: EATSSUDesignColors.Color.gray700,
+            .foregroundColor: EATSSUDesignColors.Color.gray500, // 디자인 #9D9D9D
             .baselineOffset: +1
         ], range: dateRange)
 
@@ -264,7 +264,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         titleDateLabel.attributedText = attrText
 
         let descriptionLabel = UILabel()
-        descriptionLabel.textColor = EATSSUDesignColors.Color.gray700
+        descriptionLabel.textColor = EATSSUDesignColors.Color.gray600 // 디자인 #565656
         descriptionLabel.numberOfLines = 0
         // 여러 줄 설명은 줄간격을 벌려 가독성을 확보한다 (피그마 수치 확정 시 조정)
         let paragraphStyle = NSMutableParagraphStyle()
