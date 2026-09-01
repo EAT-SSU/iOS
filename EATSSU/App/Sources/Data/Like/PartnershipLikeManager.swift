@@ -142,6 +142,9 @@ final class PartnershipLikeManager {
                 case .success:
                     toggledIds.append(id)
                 case .failure(let error):
+                    #if DEBUG
+                    print("찜 토글 실패 partnershipId=\(id):", error)
+                    #endif
                     if firstError == nil { firstError = error }
                 }
                 group.leave()

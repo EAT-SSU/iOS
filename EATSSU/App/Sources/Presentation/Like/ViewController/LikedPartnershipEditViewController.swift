@@ -186,7 +186,10 @@ final class LikedPartnershipEditViewController: BaseViewController {
             case .success:
                 self.navigationController?.popViewController(animated: true)
                 self.onDidDelete?()
-            case .failure:
+            case .failure(let error):
+                #if DEBUG
+                print("찜 삭제 실패:", error)
+                #endif
                 self.deleteButton.isEnabled = true
                 self.showToast(message: TextLiteral.Like.updateFailed, type: .danger)
             }
