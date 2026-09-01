@@ -26,7 +26,7 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
     // MARK: - Properties
 
     private let store: GoodPriceStoreDTO
-    private let mapAppLauncher: MapAppLauncher
+    private var mapAppLauncher: MapAppLauncher
 
     // MARK: - UI Components
 
@@ -44,7 +44,7 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
 
     init(store: GoodPriceStoreDTO) {
         self.store = store
-        // 착한가격업소는 서버가 지도 URL을 주지 않으므로 상호명 + 좌표 기반 검색으로 연결
+        // 지도 URL은 상세 응답에만 있어, 상세 로드 전까지는 상호명 + 좌표 기반 검색으로 연결
         self.mapAppLauncher = MapAppLauncher(destination: .init(
             name: store.storeName,
             latitude: store.latitude,
@@ -185,13 +185,41 @@ final class GoodPriceDetailSheetViewController: BaseViewController {
         menuLabel.text = Self.menuText(menu: detail.mainMenu, price: detail.price)
         menuLabel.isHidden = menuLabel.text == nil
 
-        storeImageView.kfSetImage(url: detail.imageUrl)
+        // 상세 응답의 지도 URL로 런처 교체. URL이 없는 지도 버튼은 비활성 처리한다
+        let kakaoMapUrl = Self.nonEmpty(detail.kakaoMapUrl)
+        let naverMapUrl = Self.nonEmpty(detail.naverMapUrl)
+        mapAppLauncher = MapAppLauncher(destination: .init(
+            name: detail.storeName,
+            latitude: store.latitude,
+            longitude: store.longitude,
+            kakaoMapUrl: kakaoMapUrl,
+            naverMapUrl: naverMapUrl
+        ))
+        mapAppButtonBar.setKakaoMapEnabled(kakaoMapUrl != nil)
+        mapAppButtonBar.setNaverMapEnabled(naverMapUrl != nil)
+
+        if let imageUrl = Self.nonEmpty(detail.imageUrl) {
+            storeImageView.contentMode = .scaleAspectFill
+            storeImageView.kfSetImage(url: imageUrl)
+        } else {
+            // 이미지가 없는 업소는 카테고리 아이콘을 회색으로 중앙에 표시
+            storeImageView.contentMode = .center
+            storeImageView.tintColor = .gray400
+            storeImageView.image = MainMapViewController.goodPriceIcon(for: detail.category)
+                .withRenderingMode(.alwaysTemplate)
+        }
 
         if #available(iOS 16.0, *) {
             sheetPresentationController?.animateChanges {
                 self.sheetPresentationController?.invalidateDetents()
             }
         }
+    }
+
+    /// 빈 문자열을 nil로 정규화
+    private static func nonEmpty(_ value: String?) -> String? {
+        guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines), !value.isEmpty else { return nil }
+        return value
     }
 
     /// "메뉴명 가격원" 형태로 조합. 둘 다 없으면 nil
