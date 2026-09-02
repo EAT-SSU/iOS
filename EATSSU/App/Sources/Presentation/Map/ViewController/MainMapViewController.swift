@@ -23,6 +23,8 @@ final class MainMapViewController: BaseViewController {
         static let initialLatitude = 37.4960
         static let initialLongitude = 126.9555
         static let initialZoom: Double = 14.7
+        /// 특정 업체를 보여줄 때의 줌. 이웃 마커와 클러스터로 뭉치지 않을 만큼 당긴다
+        static let detailZoom: Double = 17
         static let animationDuration: TimeInterval = 0.3
     }
 
@@ -220,7 +222,11 @@ final class MainMapViewController: BaseViewController {
             return
         }
         pendingDetailStore = nil
-        moveCamera(to: NMGLatLng(lat: store.latitude, lng: store.longitude), animated: false)
+        moveCamera(
+            to: NMGLatLng(lat: store.latitude, lng: store.longitude),
+            zoom: CameraConstants.detailZoom,
+            animated: false
+        )
         // 찜 원본 DTO는 모든 단과대 제휴를 담고 있어, 지도 마커와 동일하게 내 제휴 데이터로 표시한다
         // (내 제휴에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
         let display = cachedMyPartnerships.first { $0.storeKey == store.storeKey } ?? store
@@ -457,9 +463,9 @@ final class MainMapViewController: BaseViewController {
         )
     }
 
-    /// 지정 좌표로 카메라 이동 (줌은 초기값 고정)
-    func moveCamera(to position: NMGLatLng, animated: Bool) {
-        let cameraUpdate = NMFCameraUpdate(scrollTo: position, zoomTo: CameraConstants.initialZoom)
+    /// 지정 좌표로 카메라 이동
+    func moveCamera(to position: NMGLatLng, zoom: Double = CameraConstants.initialZoom, animated: Bool) {
+        let cameraUpdate = NMFCameraUpdate(scrollTo: position, zoomTo: zoom)
 
         if animated {
             cameraUpdate.animation = .easeIn
