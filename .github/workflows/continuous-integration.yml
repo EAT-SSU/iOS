@@ -24,8 +24,17 @@ jobs:
           xcodebuild -version
 
       # 러너 이미지에는 기본 Xcode용 런타임만 있어, 고정한 Xcode에 맞는 iOS 시뮬레이터 런타임을 내려받는다
+      # 러너의 일시적 다운로드 실패("Unable to connect to simulator")가 있어 재시도한다
       - name: Download iOS simulator runtime
-        run: sudo xcodebuild -downloadPlatform iOS
+        run: |
+          for attempt in 1 2 3; do
+            if sudo xcodebuild -downloadPlatform iOS; then
+              exit 0
+            fi
+            echo "downloadPlatform failed (attempt $attempt), retrying in 30s"
+            sleep 30
+          done
+          exit 1
 
       - name: Create secret xcconfig files
         env:
