@@ -343,7 +343,14 @@ final class MainMapViewController: BaseViewController {
     private func switchTab(to tab: MapTab) {
         guard currentTab != tab else { return }
         currentTab = tab
-        setInitialCameraPosition(animated: true)
+        switch tab {
+        case .partnership:
+            // 학교 제휴는 숭실대 상권 기준
+            setInitialCameraPosition(animated: true)
+        case .goodPrice:
+            // 착한가격은 위치 권한이 있으면 항상 현위치 기준, 없으면 숭실대
+            moveToCurrentLocationIfAvailable(animated: true)
+        }
 
         switch tab {
         case .partnership:

@@ -57,14 +57,14 @@ extension MainMapViewController: CLLocationManagerDelegate {
         return nil
     }
     
-    /// 비로그인 진입 시 현위치로 카메라 이동
-    /// 권한 미결정이면 요청하고, 거부 상태면 아무것도 하지 않는다(숭실대 유지, 설정 유도 알럿도 띄우지 않음)
-    func moveToCurrentLocationIfAvailable() {
+    /// 착한가격 지도에서 현위치로 카메라 이동 (진입·탭 전환 공통)
+    /// 권한 미결정이면 요청하고, 거부 상태면 숭실대 상권으로 이동한다 (설정 유도 알럿은 띄우지 않음)
+    func moveToCurrentLocationIfAvailable(animated: Bool = false) {
         switch locationManager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
             root.mapView.mapView.positionMode = .direction
             if let location = locationManager.location {
-                moveCamera(to: NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude), animated: false)
+                moveCamera(to: NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude), animated: animated)
             } else {
                 wantsInitialCurrentLocation = true
                 locationManager.requestLocation()
@@ -73,7 +73,7 @@ extension MainMapViewController: CLLocationManagerDelegate {
             wantsInitialCurrentLocation = true
             locationManager.requestWhenInUseAuthorization()
         default:
-            break
+            setInitialCameraPosition(animated: animated)
         }
     }
 
