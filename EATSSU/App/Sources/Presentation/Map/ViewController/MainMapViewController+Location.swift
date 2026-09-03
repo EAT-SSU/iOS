@@ -78,7 +78,8 @@ extension MainMapViewController: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard wantsInitialCurrentLocation, let location = locations.last else { return }
+        // 착한가격 지도를 보고 있을 때만 이동 (다른 탭으로 간 뒤 늦게 온 응답이 카메라를 덮지 않게)
+        guard wantsInitialCurrentLocation, currentTab == .goodPrice, let location = locations.last else { return }
         wantsInitialCurrentLocation = false
         moveCamera(to: NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude), animated: true)
     }
@@ -139,6 +140,17 @@ extension MainMapViewController: CLLocationManagerDelegate {
             default:
                 break
             }
+        }
+    }
+}
+
+// MARK: - NMFMapViewCameraDelegate
+
+extension MainMapViewController: NMFMapViewCameraDelegate {
+    /// 사용자가 지도를 직접 움직이면 진입 시 걸어둔 현위치 이동을 취소한다 (늦은 응답이 조작을 덮지 않게)
+    func mapView(_ mapView: NMFMapView, cameraWillChangeByReason reason: Int, animated: Bool) {
+        if reason == NMFMapChangedByGesture {
+            wantsInitialCurrentLocation = false
         }
     }
 }

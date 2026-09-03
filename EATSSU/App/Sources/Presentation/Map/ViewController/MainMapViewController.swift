@@ -54,6 +54,9 @@ final class MainMapViewController: BaseViewController {
     var cachedAllPartnerships: [PartnershipDTO] = []
     /// 내 학과 제휴 캐시 (업종 칩 필터용). 탭바 재탭·학과 변경 시 비움
     var cachedMyPartnerships: [PartnershipDTO] = []
+    /// 내 제휴를 한 번이라도 받았는지 (찜 → 상세 진입 시 전체 단과대 원본이 노출되지 않게 대기 판단용)
+    var hasFetchedMyPartnerships = false
+    private var isLoadingMyPartnershipsForDetail = false
     /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
     var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
 
@@ -161,6 +164,7 @@ final class MainMapViewController: BaseViewController {
         super.viewDidLoad()
 
         locationManager.delegate = self
+        root.mapView.mapView.addCameraDelegate(delegate: self)
 
         configureNavigationBar()
         setEntryCameraPosition()
@@ -212,13 +216,18 @@ final class MainMapViewController: BaseViewController {
         presentPendingDetailIfNeeded()
     }
 
-    private func presentPendingDetailIfNeeded() {
+    func presentPendingDetailIfNeeded() {
         guard let store = pendingDetailStore,
               viewIfLoaded?.window != nil,
               presentedViewController == nil else { return }
         guard hasDepartment else {
             // 학과가 없으면 학교 제휴 자체를 볼 수 없으므로 학과 안내가 대신 뜬다. 조회가 끝나기 전엔 보류
             if departmentLoadState == .loaded { pendingDetailStore = nil }
+            return
+        }
+        // 내 제휴 응답 전이면 받아온 뒤 연다 (전체 단과대 원본 시트가 잠깐 노출되는 것 방지)
+        if !hasFetchedMyPartnerships, cachedMyPartnerships.isEmpty {
+            loadMyPartnershipsForPendingDetail()
             return
         }
         pendingDetailStore = nil
@@ -231,6 +240,26 @@ final class MainMapViewController: BaseViewController {
         // (내 제휴에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
         let display = cachedMyPartnerships.first { $0.storeKey == store.storeKey } ?? store
         showPartnershipDetail(for: display, likeTarget: store)
+    }
+
+    /// 찜 → 상세 진입용 내 제휴 확보. 마커 로드 세대에 영향을 주지 않도록 캐시만 채운다
+    /// 실패해도 완료 표시 후 다시 호출해, 시트가 원본(중복 제거) 폴백으로라도 열리게 한다
+    private func loadMyPartnershipsForPendingDetail() {
+        guard !isLoadingMyPartnershipsForDetail else { return }
+        isLoadingMyPartnershipsForDetail = true
+        NetworkService.shared.request(
+            MyRouter.getMyPartnerships,
+            responseType: [PartnershipDTO].self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self else { return }
+            self.isLoadingMyPartnershipsForDetail = false
+            if case .success(let partnerships) = result, self.cachedMyPartnerships.isEmpty {
+                self.cachedMyPartnerships = partnerships
+            }
+            self.hasFetchedMyPartnerships = true
+            self.presentPendingDetailIfNeeded()
+        }
     }
 
     /// 찜 목록에서 넘어온 경우에만 뒤로가기(찜 탭 복귀) 버튼을 보여준다
@@ -345,7 +374,8 @@ final class MainMapViewController: BaseViewController {
         currentTab = tab
         switch tab {
         case .partnership:
-            // 학교 제휴는 숭실대 상권 기준
+            // 학교 제휴는 숭실대 상권 기준. 착한가격에서 걸어둔 현위치 이동 대기도 취소한다
+            wantsInitialCurrentLocation = false
             setInitialCameraPosition(animated: true)
         case .goodPrice:
             // 착한가격은 위치 권한이 있으면 항상 현위치 기준, 없으면 숭실대
@@ -449,6 +479,7 @@ final class MainMapViewController: BaseViewController {
         case .partnership:
             cachedAllPartnerships = []
             cachedMyPartnerships = []
+            hasFetchedMyPartnerships = false
             refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []
