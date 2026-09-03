@@ -72,7 +72,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         typeIconImageView.snp.makeConstraints { $0.width.height.equalTo(18) }
 
         typeTextLabel.font = .body2
-        typeTextLabel.textColor = .gray
+        typeTextLabel.textColor = .gray500 // 디자인 #9D9D9D (시스템 .gray는 더 어두움)
 
         typeStackView.axis = .horizontal
         typeStackView.alignment = .center
@@ -164,8 +164,17 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             .first { $0.restaurantType == partnership.restaurantType }?
             .title ?? partnership.restaurantType
 
-        for (index, info) in partnership.partnershipInfos.enumerated() {
-            let isLast = index == partnership.partnershipInfos.count - 1
+        // 서버 데이터에 같은 제휴가 다른 id로 중복 존재할 수 있어 내용 기준으로 걸러 표시한다
+        var seen = Set<String>()
+        let displayInfos = partnership.partnershipInfos.filter { info in
+            let key = [
+                info.collegeName ?? "", info.departmentName ?? "",
+                info.description, info.startDate, info.endDate
+            ].joined(separator: "|")
+            return seen.insert(key).inserted
+        }
+        for (index, info) in displayInfos.enumerated() {
+            let isLast = index == displayInfos.count - 1
             let card = makeInfoCard(info: info, isLast: isLast)
             infoListStackView.addArrangedSubview(card)
         }
@@ -256,7 +265,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
         attrText.addAttributes([
             .font: UIFont.caption2,
-            .foregroundColor: EATSSUDesignColors.Color.gray700,
+            .foregroundColor: EATSSUDesignColors.Color.gray500, // 디자인 #9D9D9D
             .baselineOffset: +1
         ], range: dateRange)
 
@@ -264,14 +273,20 @@ final class PartnershipDetailSheetViewController: BaseViewController {
         titleDateLabel.attributedText = attrText
 
         let descriptionLabel = UILabel()
-        descriptionLabel.font = .body3
-        descriptionLabel.textColor = EATSSUDesignColors.Color.gray700
+        descriptionLabel.textColor = EATSSUDesignColors.Color.gray600 // 디자인 #565656
         descriptionLabel.numberOfLines = 0
-        descriptionLabel.text = info.description
+        // 여러 줄 설명은 줄간격을 벌려 가독성을 확보한다 (피그마 수치 확정 시 조정)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 6
+        descriptionLabel.attributedText = NSAttributedString(
+            string: info.description,
+            attributes: [.paragraphStyle: paragraphStyle, .font: UIFont.body3]
+        )
 
         let contentStack = UIStackView(arrangedSubviews: [titleDateLabel, descriptionLabel])
         contentStack.axis = .vertical
-        contentStack.spacing = 4
+        // 설명 내부 줄간격(6)보다 확실히 넓혀 단과대 제목 블록이 구분되게 한다 (Frame 43540 기준 + 여백 보강)
+        contentStack.spacing = 12
 
         let separator = UIView()
         separator.backgroundColor = EATSSUDesignColors.Color.gray300
@@ -282,12 +297,12 @@ final class PartnershipDetailSheetViewController: BaseViewController {
 
         let container = UIStackView(arrangedSubviews: [contentStack, separator])
         container.axis = .vertical
-        container.spacing = 10
+        container.spacing = 12
 
         let paddedContainer = UIView()
         paddedContainer.addSubview(container)
         container.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0))
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
         }
 
         return paddedContainer

@@ -85,12 +85,14 @@ final class PartnershipLikeManager {
         ) { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success(let stores):
+            case .success(let rawStores):
                 // 조회 중에 토글이 있었으면 이 응답은 이미 낡은 것이므로 로컬 상태를 유지한다
                 guard version == self.stateVersion else {
                     completion(.success(self.likedStores))
                     return
                 }
+                // 서버가 같은 업소를 찜 항목 단위로 여러 줄 반환할 수 있어 업소 단위로 병합한다
+                let stores = Self.mergedByStore(rawStores)
                 self.toggledStates = [:]
                 self.likedPartnershipIds = Set(stores.flatMap(Self.likedIds(in:)))
                 self.likedStores = self.sortedByRecent(stores)
@@ -140,6 +142,9 @@ final class PartnershipLikeManager {
                 case .success:
                     toggledIds.append(id)
                 case .failure(let error):
+                    #if DEBUG
+                    print("찜 토글 실패 partnershipId=\(id):", error)
+                    #endif
                     if firstError == nil { firstError = error }
                 }
                 group.leave()
@@ -197,6 +202,32 @@ final class PartnershipLikeManager {
         store.partnershipInfos
             .filter { isCurrentlyLiked($0) != liked }
             .map(\.id)
+    }
+
+    /// 같은 업소(storeKey)가 여러 줄로 온 응답을 한 줄로 병합. 첫 등장 순서를 유지하고 제휴 항목은 id 기준으로 합친다
+    static func mergedByStore(_ stores: [PartnershipDTO]) -> [PartnershipDTO] {
+        var order: [String] = []
+        var byKey: [String: PartnershipDTO] = [:]
+        for store in stores {
+            guard let existing = byKey[store.storeKey] else {
+                order.append(store.storeKey)
+                byKey[store.storeKey] = store
+                continue
+            }
+            let knownIds = Set(existing.partnershipInfos.map(\.id))
+            let mergedInfos = existing.partnershipInfos
+                + store.partnershipInfos.filter { !knownIds.contains($0.id) }
+            byKey[store.storeKey] = PartnershipDTO(
+                storeName: existing.storeName,
+                longitude: existing.longitude,
+                latitude: existing.latitude,
+                restaurantType: existing.restaurantType,
+                naverMapUrl: existing.naverMapUrl ?? store.naverMapUrl,
+                kakaoMapUrl: existing.kakaoMapUrl ?? store.kakaoMapUrl,
+                partnershipInfos: mergedInfos
+            )
+        }
+        return order.compactMap { byKey[$0] }
     }
 
     /// 찜 목록 응답에서 실제 찜된 항목 id. 플래그가 하나도 없으면(구버전 응답) 소속 항목 전부로 간주

@@ -74,7 +74,9 @@ extension MainMapViewController {
             switch result {
             case .success(let partnerships):
                 self.cachedMyPartnerships = partnerships
+                self.hasFetchedMyPartnerships = true
                 self.applyPartnershipMarkers(from: partnerships, periodType: .normal)
+                self.presentPendingDetailIfNeeded()
 
             case .failure(let error):
                 print("내 제휴 조회 실패: \(error.localizedDescription)")

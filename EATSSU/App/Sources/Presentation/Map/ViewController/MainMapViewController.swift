@@ -23,6 +23,8 @@ final class MainMapViewController: BaseViewController {
         static let initialLatitude = 37.4960
         static let initialLongitude = 126.9555
         static let initialZoom: Double = 14.7
+        /// 특정 업체를 보여줄 때의 줌. 이웃 마커와 클러스터로 뭉치지 않을 만큼 당긴다
+        static let detailZoom: Double = 17
         static let animationDuration: TimeInterval = 0.3
     }
 
@@ -43,6 +45,8 @@ final class MainMapViewController: BaseViewController {
     var currentDepartmentId: Int?
     var currentCollegeId: Int?
     var hasRequestedLocationPermission = false
+    /// 비로그인 진입 시 현위치로 이동하기 위해 권한/위치 응답을 기다리는 중인지
+    var wantsInitialCurrentLocation = false
 
     var clusterer: NMCClusterer<MapMarkerKey>?
 
@@ -50,6 +54,9 @@ final class MainMapViewController: BaseViewController {
     var cachedAllPartnerships: [PartnershipDTO] = []
     /// 내 학과 제휴 캐시 (업종 칩 필터용). 탭바 재탭·학과 변경 시 비움
     var cachedMyPartnerships: [PartnershipDTO] = []
+    /// 내 제휴를 한 번이라도 받았는지 (찜 → 상세 진입 시 전체 단과대 원본이 노출되지 않게 대기 판단용)
+    var hasFetchedMyPartnerships = false
+    private var isLoadingMyPartnershipsForDetail = false
     /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
     var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
 
@@ -157,9 +164,10 @@ final class MainMapViewController: BaseViewController {
         super.viewDidLoad()
 
         locationManager.delegate = self
+        root.mapView.mapView.addCameraDelegate(delegate: self)
 
         configureNavigationBar()
-        setInitialCameraPosition(animated: false)
+        setEntryCameraPosition()
         setupLocationButtonObserver()
         setupMarkerTapHandler()
         applyTabUI()
@@ -208,7 +216,7 @@ final class MainMapViewController: BaseViewController {
         presentPendingDetailIfNeeded()
     }
 
-    private func presentPendingDetailIfNeeded() {
+    func presentPendingDetailIfNeeded() {
         guard let store = pendingDetailStore,
               viewIfLoaded?.window != nil,
               presentedViewController == nil else { return }
@@ -217,9 +225,41 @@ final class MainMapViewController: BaseViewController {
             if departmentLoadState == .loaded { pendingDetailStore = nil }
             return
         }
+        // 내 제휴 응답 전이면 받아온 뒤 연다 (전체 단과대 원본 시트가 잠깐 노출되는 것 방지)
+        if !hasFetchedMyPartnerships, cachedMyPartnerships.isEmpty {
+            loadMyPartnershipsForPendingDetail()
+            return
+        }
         pendingDetailStore = nil
-        moveCamera(to: NMGLatLng(lat: store.latitude, lng: store.longitude), animated: false)
-        showPartnershipDetail(for: store)
+        moveCamera(
+            to: NMGLatLng(lat: store.latitude, lng: store.longitude),
+            zoom: CameraConstants.detailZoom,
+            animated: false
+        )
+        // 찜 원본 DTO는 모든 단과대 제휴를 담고 있어, 지도 마커와 동일하게 내 제휴 데이터로 표시한다
+        // (내 제휴에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
+        let display = cachedMyPartnerships.first { $0.storeKey == store.storeKey } ?? store
+        showPartnershipDetail(for: display, likeTarget: store)
+    }
+
+    /// 찜 → 상세 진입용 내 제휴 확보. 마커 로드 세대에 영향을 주지 않도록 캐시만 채운다
+    /// 실패해도 완료 표시 후 다시 호출해, 시트가 원본(중복 제거) 폴백으로라도 열리게 한다
+    private func loadMyPartnershipsForPendingDetail() {
+        guard !isLoadingMyPartnershipsForDetail else { return }
+        isLoadingMyPartnershipsForDetail = true
+        NetworkService.shared.request(
+            MyRouter.getMyPartnerships,
+            responseType: [PartnershipDTO].self,
+            useAuth: true
+        ) { [weak self] result in
+            guard let self else { return }
+            self.isLoadingMyPartnershipsForDetail = false
+            if case .success(let partnerships) = result, self.cachedMyPartnerships.isEmpty {
+                self.cachedMyPartnerships = partnerships
+            }
+            self.hasFetchedMyPartnerships = true
+            self.presentPendingDetailIfNeeded()
+        }
     }
 
     /// 찜 목록에서 넘어온 경우에만 뒤로가기(찜 탭 복귀) 버튼을 보여준다
@@ -332,7 +372,15 @@ final class MainMapViewController: BaseViewController {
     private func switchTab(to tab: MapTab) {
         guard currentTab != tab else { return }
         currentTab = tab
-        setInitialCameraPosition(animated: true)
+        switch tab {
+        case .partnership:
+            // 학교 제휴는 숭실대 상권 기준. 착한가격에서 걸어둔 현위치 이동 대기도 취소한다
+            wantsInitialCurrentLocation = false
+            setInitialCameraPosition(animated: true)
+        case .goodPrice:
+            // 착한가격은 위치 권한이 있으면 항상 현위치 기준, 없으면 숭실대
+            moveToCurrentLocationIfAvailable(animated: true)
+        }
 
         switch tab {
         case .partnership:
@@ -365,9 +413,7 @@ final class MainMapViewController: BaseViewController {
             MapAnalyticsManager.shared.logClickGoodPriceCategory(category: goodPriceCategory)
             loadGoodPriceMarkers()
         }
-
-        // 필터가 바뀌면 캠퍼스 주변으로 되돌려 새 마커가 바로 보이게 한다 (필터 전환 전 동작과 동일)
-        setInitialCameraPosition(animated: true)
+        // 필터 전환 시 카메라는 보고 있던 위치를 그대로 유지한다 (QA)
     }
 
     /// 축제 → click_map_festival, 그 외 → click_map_mine
@@ -433,11 +479,19 @@ final class MainMapViewController: BaseViewController {
         case .partnership:
             cachedAllPartnerships = []
             cachedMyPartnerships = []
+            hasFetchedMyPartnerships = false
             refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []
             loadGoodPriceMarkers()
         }
+    }
+
+    /// 진입 시 카메라 위치. 로그인(탭 지도)은 숭실대 상권, 비로그인(단독 착한가격)은 현위치(권한 없으면 숭실대)
+    private func setEntryCameraPosition() {
+        setInitialCameraPosition(animated: false)
+        guard mode == .standaloneGoodPrice else { return }
+        moveToCurrentLocationIfAvailable()
     }
 
     func setInitialCameraPosition(animated: Bool) {
@@ -447,9 +501,9 @@ final class MainMapViewController: BaseViewController {
         )
     }
 
-    /// 지정 좌표로 카메라 이동 (줌은 초기값 고정)
-    func moveCamera(to position: NMGLatLng, animated: Bool) {
-        let cameraUpdate = NMFCameraUpdate(scrollTo: position, zoomTo: CameraConstants.initialZoom)
+    /// 지정 좌표로 카메라 이동
+    func moveCamera(to position: NMGLatLng, zoom: Double = CameraConstants.initialZoom, animated: Bool) {
+        let cameraUpdate = NMFCameraUpdate(scrollTo: position, zoomTo: zoom)
 
         if animated {
             cameraUpdate.animation = .easeIn

@@ -31,7 +31,8 @@ enum AppLanguage: String, CaseIterable {
     /// 미지원 언어를 보내면 서버가 한국어를 돌려주긴 하지만, 대표메뉴만 표시하는 규칙이 잘못 켜지지 않도록
     /// 식단 API는 이 조건으로만 언어를 전달한다. 서버가 지원을 넓히면 여기만 수정한다.
     var supportsMealTranslation: Bool {
-        self == .english
+        // 변동식단은 서버가 영어 번역만 제공하므로, 비한국어 언어는 모두 영어 표기를 사용한다 (QA)
+        self != .korean
     }
 
     var title: String {

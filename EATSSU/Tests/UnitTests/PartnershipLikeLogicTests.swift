@@ -106,6 +106,39 @@ final class PartnershipLikeLogicTests: XCTestCase {
         XCTAssertEqual(sorted.map(\.storeName), ["기록됨", "미기록1", "미기록2"])
     }
 
+    // MARK: - mergedByStore (같은 업소가 여러 줄로 온 응답 병합)
+
+    func test_같은_업소가_여러_줄로_오면_한_줄로_병합된다() {
+        let row1 = makeStore(name: "A", infos: [makeInfo(id: 1, isLiked: true)])
+        let row2 = makeStore(name: "A", infos: [makeInfo(id: 2, isLiked: true)])
+        let other = makeStore(name: "B", infos: [makeInfo(id: 3)])
+
+        let merged = PartnershipLikeManager.mergedByStore([row1, other, row2])
+
+        XCTAssertEqual(merged.map(\.storeName), ["A", "B"])
+        XCTAssertEqual(merged[0].partnershipIds, [1, 2])
+    }
+
+    func test_병합시_중복_항목_id는_한_번만_남는다() {
+        let row1 = makeStore(name: "A", infos: [makeInfo(id: 1), makeInfo(id: 2)])
+        let row2 = makeStore(name: "A", infos: [makeInfo(id: 2), makeInfo(id: 3)])
+
+        let merged = PartnershipLikeManager.mergedByStore([row1, row2])
+
+        XCTAssertEqual(merged.count, 1)
+        XCTAssertEqual(merged[0].partnershipIds, [1, 2, 3])
+    }
+
+    func test_좌표가_다르면_다른_업소로_병합하지_않는다() {
+        let a = makeStore(name: "A", infos: [makeInfo(id: 1)])
+        let b = PartnershipDTO(
+            storeName: "A", longitude: 127.0, latitude: 37.5, restaurantType: "RESTAURANT",
+            naverMapUrl: nil, kakaoMapUrl: nil, partnershipInfos: [makeInfo(id: 2)]
+        )
+
+        XCTAssertEqual(PartnershipLikeManager.mergedByStore([a, b]).count, 2)
+    }
+
     // MARK: - storeKey
 
     func test_업체_키는_이름과_좌표로_구성된다() {

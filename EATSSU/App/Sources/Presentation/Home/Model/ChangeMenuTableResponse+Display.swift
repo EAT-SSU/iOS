@@ -14,10 +14,11 @@ extension ChangeMenuTableResponse {
         AppLanguageManager.shared.currentLanguage.supportsMealTranslation
     }
 
-    /// 변동식단(`/meals`, `menus-info`) 조회 시 서버에 넘길 `language` 파라미터. 번역 미지원 언어는 nil(한국어 응답)
+    /// 변동식단(`/meals`, `menus-info`) 조회 시 서버에 넘길 `language` 파라미터.
+    /// 서버가 영어 번역만 제공하므로 비한국어 언어는 모두 EN을 요청한다 (한국어는 nil)
     static var mealLanguageParameter: String? {
         let language = AppLanguageManager.shared.currentLanguage
-        return language.supportsMealTranslation ? language.serverCode : nil
+        return language.supportsMealTranslation ? AppLanguage.english.serverCode : nil
     }
 
     /// 고정메뉴(`/menus`) 조회 시 서버에 넘길 `language` 파라미터. 한국어 외 전부 전달 (EN/JA 번역, VI는 서버가 영어 폴백)
