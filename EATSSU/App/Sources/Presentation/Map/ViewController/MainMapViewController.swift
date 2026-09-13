@@ -54,8 +54,12 @@ final class MainMapViewController: BaseViewController {
     var cachedFestivalPartnerships: [PartnershipDTO] = []
     /// 내 학과 제휴 캐시 (업종 칩 필터용). 탭바 재탭·학과 변경 시 비움
     var cachedMyPartnerships: [PartnershipDTO] = []
-    /// 내 제휴를 한 번이라도 받았는지 (찜 → 상세 진입 시 전체 단과대 원본이 노출되지 않게 대기 판단용)
-    var hasFetchedMyPartnerships = false
+    /// 내 제휴 조회를 한 번이라도 시도했는지 (실패 포함). 찜 → 상세 진입이 무한정 대기하지 않도록 쓴다
+    var hasAttemptedMyPartnershipsFetch = false
+    /// 내 제휴를 성공적으로 받았는지 (빈 응답도 성공). 재요청 여부 판단용
+    var hasLoadedMyPartnerships = false
+    /// 축제 제휴를 성공적으로 받았는지 (빈 응답도 성공)
+    var hasLoadedFestivalPartnerships = false
     private var isLoadingMyPartnershipsForDetail = false
     /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
     var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
@@ -232,7 +236,7 @@ final class MainMapViewController: BaseViewController {
             return
         }
         // 내 제휴 응답 전이면 받아온 뒤 연다 (전체 단과대 원본 시트가 잠깐 노출되는 것 방지)
-        if !hasFetchedMyPartnerships, cachedMyPartnerships.isEmpty {
+        if !hasAttemptedMyPartnershipsFetch, cachedMyPartnerships.isEmpty {
             loadMyPartnershipsForPendingDetail()
             return
         }
@@ -262,8 +266,9 @@ final class MainMapViewController: BaseViewController {
             self.isLoadingMyPartnershipsForDetail = false
             if case .success(let partnerships) = result, self.cachedMyPartnerships.isEmpty {
                 self.cachedMyPartnerships = partnerships
+                self.hasLoadedMyPartnerships = true
             }
-            self.hasFetchedMyPartnerships = true
+            self.hasAttemptedMyPartnershipsFetch = true
             self.presentPendingDetailIfNeeded()
         }
     }
@@ -543,8 +548,10 @@ final class MainMapViewController: BaseViewController {
         switch currentTab {
         case .partnership:
             cachedFestivalPartnerships = []
+            hasLoadedFestivalPartnerships = false
             cachedMyPartnerships = []
-            hasFetchedMyPartnerships = false
+            hasLoadedMyPartnerships = false
+            hasAttemptedMyPartnershipsFetch = false
             refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []

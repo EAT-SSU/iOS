@@ -19,9 +19,9 @@ extension MainMapViewController {
             return
         }
 
-        // 캐시가 비어 있을 때만 요청한다 (찜 상세용 선조회가 실패한 경우에도 여기서 다시 받아온다)
-        let needsMy = cachedMyPartnerships.isEmpty
-        let needsFestival = isFestivalPartnershipEnabled && cachedFestivalPartnerships.isEmpty
+        // 성공적으로 받아온 적이 없을 때만 요청한다 (빈 응답도 성공으로 보고 반복 요청하지 않는다)
+        let needsMy = !hasLoadedMyPartnerships
+        let needsFestival = isFestivalPartnershipEnabled && !hasLoadedFestivalPartnerships
         let generation = beginLoad()
 
         guard needsMy || needsFestival else {
@@ -40,13 +40,15 @@ extension MainMapViewController {
                 useAuth: true
             ) { [weak self] result in
                 defer { group.leave() }
-                guard let self else { return }
+                guard let self, self.isCurrentLoad(generation) else { return }
                 switch result {
                 case .success(let partnerships):
                     self.cachedMyPartnerships = partnerships
-                    self.hasFetchedMyPartnerships = true
+                    self.hasLoadedMyPartnerships = true
+                    self.hasAttemptedMyPartnershipsFetch = true
                 case .failure(let error):
                     print("내 제휴 조회 실패: \(error.localizedDescription)")
+                    self.hasAttemptedMyPartnershipsFetch = true
                     myFailed = true
                 }
             }
@@ -60,10 +62,11 @@ extension MainMapViewController {
                 useAuth: true
             ) { [weak self] result in
                 defer { group.leave() }
-                guard let self else { return }
+                guard let self, self.isCurrentLoad(generation) else { return }
                 switch result {
                 case .success(let partnerships):
                     self.cachedFestivalPartnerships = Self.filterPartnerships(partnerships, by: .festival)
+                    self.hasLoadedFestivalPartnerships = true
                 case .failure(let error):
                     // 축제 제휴는 부가 정보이므로 실패해도 기존 제휴만으로 지도를 그린다
                     print("축제 제휴 조회 실패: \(error.localizedDescription)")
@@ -186,6 +189,7 @@ extension MainMapViewController {
                 if self.currentDepartmentId != department.departmentId {
                     // 학과가 바뀌면 내 제휴 캐시는 더 이상 유효하지 않다
                     self.cachedMyPartnerships = []
+                    self.hasLoadedMyPartnerships = false
                 }
                 self.currentDepartmentName = department.departmentName
                 self.currentDepartmentId = department.departmentId
