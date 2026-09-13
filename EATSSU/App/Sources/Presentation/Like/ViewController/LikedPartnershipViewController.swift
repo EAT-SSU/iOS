@@ -24,7 +24,7 @@ final class LikedPartnershipViewController: BaseViewController {
     }
 
     /// 찜 목록 필터 (축제 제외)
-    private static let filters: [PartnershipFilter] = PartnershipFilter.allCases.filter { $0 != .festival }
+    private static let filters: [PartnershipFilter] = PartnershipFilter.allCases
 
     // MARK: - Properties
 
