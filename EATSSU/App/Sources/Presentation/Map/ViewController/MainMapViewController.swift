@@ -95,6 +95,8 @@ final class MainMapViewController: BaseViewController {
 
     /// 자동 노출 예약을 무효화하기 위한 토큰 (연속 탭 시 이전 예약이 배너를 닫지 않도록)
     private var festivalBannerToken = 0
+    /// 말풍선 노출 상태. isHidden은 페이드가 끝난 뒤에야 바뀌므로 별도로 둔다
+    private var isFestivalBannerVisible = false
     /// 축제 안내 자동 노출은 앱 실행당 한 번만
     private static var hasAutoShownFestivalBanner = false
 
@@ -246,9 +248,13 @@ final class MainMapViewController: BaseViewController {
             zoom: CameraConstants.detailZoom,
             animated: false
         )
-        // 찜 원본 DTO는 모든 단과대 제휴를 담고 있어, 지도 마커와 동일하게 내 제휴 데이터로 표시한다
-        // (내 제휴에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
-        let display = cachedMyPartnerships.first { $0.storeKey == store.storeKey } ?? store
+        // 찜 원본 DTO는 모든 단과대 제휴를 담고 있어, 지도 마커와 동일한 병합 결과로 표시한다
+        // (병합 결과에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
+        let merged = Self.mergedPartnerships(
+            my: cachedMyPartnerships,
+            festival: isFestivalPartnershipEnabled ? cachedFestivalPartnerships : []
+        )
+        let display = merged.first { $0.storeKey == store.storeKey } ?? store
         showPartnershipDetail(for: display, likeTarget: Self.likeTarget(for: store))
     }
 
@@ -493,10 +499,10 @@ final class MainMapViewController: BaseViewController {
     }
 
     @objc private func didTapFestivalHelp() {
-        if root.festivalBannerView.isHidden {
-            showFestivalBanner()
-        } else {
+        if isFestivalBannerVisible {
             hideFestivalBanner()
+        } else {
+            showFestivalBanner()
         }
     }
 
@@ -510,6 +516,7 @@ final class MainMapViewController: BaseViewController {
 
         festivalBannerToken += 1
         let token = festivalBannerToken
+        isFestivalBannerVisible = true
         root.festivalBannerView.alpha = 0
         root.festivalBannerView.isHidden = false
         UIView.animate(withDuration: FestivalBanner.fadeDuration) {
@@ -524,12 +531,18 @@ final class MainMapViewController: BaseViewController {
     }
 
     func hideFestivalBanner() {
-        guard !root.festivalBannerView.isHidden else { return }
+        guard isFestivalBannerVisible else { return }
+        isFestivalBannerVisible = false
         festivalBannerToken += 1
+        let token = festivalBannerToken
         UIView.animate(
             withDuration: FestivalBanner.fadeDuration,
             animations: { self.root.festivalBannerView.alpha = 0 },
-            completion: { _ in self.root.festivalBannerView.isHidden = true }
+            completion: { [weak self] _ in
+                // 페이드 중에 다시 열렸다면 그대로 둔다
+                guard let self, self.festivalBannerToken == token else { return }
+                self.root.festivalBannerView.isHidden = true
+            }
         )
     }
 

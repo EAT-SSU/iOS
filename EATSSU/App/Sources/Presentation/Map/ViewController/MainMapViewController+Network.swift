@@ -24,10 +24,10 @@ extension MainMapViewController {
         let needsFestival = isFestivalPartnershipEnabled && !hasLoadedFestivalPartnerships
         let generation = beginLoad()
 
-        guard needsMy || needsFestival else {
-            applyPartnershipMarkers()
-            return
-        }
+        // 이미 받아둔 데이터로 먼저 그린다 (업종 필터 전환이 네트워크 응답을 기다리지 않도록)
+        applyPartnershipMarkers()
+
+        guard needsMy || needsFestival else { return }
 
         let group = DispatchGroup()
         var myFailed = false
@@ -47,8 +47,8 @@ extension MainMapViewController {
                     self.hasLoadedMyPartnerships = true
                     self.hasAttemptedMyPartnershipsFetch = true
                 case .failure(let error):
+                    // 실패는 "시도함"으로 남기지 않는다. 찜 상세 진입 시 다시 조회해 전체 단과대 원본이 노출되지 않게 한다
                     print("내 제휴 조회 실패: \(error.localizedDescription)")
-                    self.hasAttemptedMyPartnershipsFetch = true
                     myFailed = true
                 }
             }
@@ -84,13 +84,11 @@ extension MainMapViewController {
             }
             #endif
 
-            guard !(myFailed && self.cachedMyPartnerships.isEmpty) else {
-                self.displayMarkers([])
-                self.showStoreLoadFailedToast()
-                return
-            }
-
+            // 한쪽이 실패해도 받아온 쪽은 그대로 그린다 (축제만 성공한 경우 지도가 비지 않도록)
             self.applyPartnershipMarkers()
+            if myFailed, self.cachedMyPartnerships.isEmpty {
+                self.showStoreLoadFailedToast()
+            }
             self.presentPendingDetailIfNeeded()
         }
     }
@@ -190,6 +188,7 @@ extension MainMapViewController {
                     // 학과가 바뀌면 내 제휴 캐시는 더 이상 유효하지 않다
                     self.cachedMyPartnerships = []
                     self.hasLoadedMyPartnerships = false
+                    self.hasAttemptedMyPartnershipsFetch = false
                 }
                 self.currentDepartmentName = department.departmentName
                 self.currentDepartmentId = department.departmentId

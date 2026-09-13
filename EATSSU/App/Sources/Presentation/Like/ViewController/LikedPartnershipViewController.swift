@@ -23,7 +23,6 @@ final class LikedPartnershipViewController: BaseViewController {
         static let listTop: CGFloat = 7
     }
 
-    /// 찜 목록 필터 (축제 제외)
     private static let filters: [PartnershipFilter] = PartnershipFilter.allCases
 
     // MARK: - Properties

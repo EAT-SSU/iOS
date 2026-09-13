@@ -154,8 +154,8 @@ extension MainMapViewController {
     }
 
     /// 제휴점 상세 바텀시트 표시
-    /// - Parameter likeTarget: 찜 토글 대상 원본 업체. nil이면 partnership 자체
-    func showPartnershipDetail(for partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil) {
+    /// - Parameter likeTarget: 찜 토글 대상 업체(일반 제휴 항목만). nil이면 찜 불가로 보고 하트를 숨긴다
+    func showPartnershipDetail(for partnership: PartnershipDTO, likeTarget: PartnershipDTO?) {
         MapAnalyticsManager.shared.logClickPartnerRestaurant(
             collegeId: currentCollegeId,
             majorId: currentDepartmentId,

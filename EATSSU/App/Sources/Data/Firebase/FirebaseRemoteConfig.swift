@@ -23,8 +23,8 @@ class FirebaseRemoteConfig {
     /// 구버전 앱이 쓰는 `festival_tab_enabled`와 분리해, 켜도 이전 버전 동작에 영향이 없도록 한다
     var isFestivalPartnershipEnabled: Bool {
         #if DEBUG
-        // 로컬 확인용: 개발 빌드에서는 항상 노출
-        return true
+        // 로컬 확인용: 개발 빌드는 기본 노출. 스킴 실행 인자 `-festivalPartnershipDisabled YES`로 종료 후 동작도 확인할 수 있다
+        return !UserDefaults.standard.bool(forKey: "festivalPartnershipDisabled")
         #else
         return remoteConfig["festival_partnership_enabled"].boolValue
         #endif
