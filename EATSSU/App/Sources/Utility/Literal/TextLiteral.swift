@@ -1328,11 +1328,11 @@ enum TextLiteral {
         ]
 
         private static let fallbackTime: [String: String] = [
-            "studentRestaurant": "08:00~09:00(천원의아침밥)\n11:20~14:00(점심)\n14:00~17:00(공간 개방)",
-            "dodamRestaurant": "평일\n11:20~14:00(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)",
-            "dormitoryRestaurant": "평일\n11:20~13:50(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)\n17:00~18:20(저녁)",
-            "facultyRestaurant": "11:30~14:00(점심)\n14:00~17:00(공간개방)",
-            "snackCorner": "11:00~15:30(점심)",
+            "studentRestaurant": "08:00~09:00(천원의아침밥)\n11:20~14:00(점심)\n16:00~23:00(도서관 대체열람실)",
+            "dodamRestaurant": "평일\n11:20~14:00(점심)\n17:00~18:30(저녁)\n19:30~23:00(도서관 대체열람실)\n\n주말\n11:20~13:30(점심)",
+            "dormitoryRestaurant": "평일\n11:00~13:50(점심)\n17:00~18:30(저녁)\n\n주말\n11:20~13:30(점심)\n17:00~18:20(저녁)",
+            "facultyRestaurant": "11:30~14:00(점심)",
+            "snackCorner": "11:00~15:30(점심)\n16:00~23:00(도서관 대체열람실)",
         ]
 
         private static let fallbackEtc: [String: String] = [

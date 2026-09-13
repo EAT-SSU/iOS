@@ -19,6 +19,9 @@ final class RestaurantInfoViewController: BaseViewController {
     // MARK: - Functions
 
     override func configureUI() {
+        // BaseViewController가 viewDidLoad 끝에서 view 배경을 systemBackground로 덮어쓰므로,
+        // 화면 전체를 덮는 루트 뷰에 흰색을 지정해 시트 뒤 화면이 비치지 않게 한다
+        restaurantInfoView.backgroundColor = .white
         view.addSubview(restaurantInfoView)
     }
     
