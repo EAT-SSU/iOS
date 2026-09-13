@@ -19,6 +19,8 @@ final class RestaurantInfoViewController: BaseViewController {
     // MARK: - Functions
 
     override func configureUI() {
+        // 시트 배경을 지정하지 않으면 뒤 화면이 비쳐 보인다 (다른 상세 시트와 동일하게 흰색 고정)
+        view.backgroundColor = .white
         view.addSubview(restaurantInfoView)
     }
     
