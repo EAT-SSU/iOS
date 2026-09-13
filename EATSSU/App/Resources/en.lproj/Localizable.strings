@@ -659,8 +659,8 @@
 "restaurantInfo.dormitoryRestaurant.etc" = "Breakfast Not Available";
 /// "전산관 지하 1층"
 "restaurantInfo.facultyRestaurant.location" = "Jeonsan Hall, B1";
-/// "11:20~14:00(점심)"
-"restaurantInfo.facultyRestaurant.time" = "11:20~14:00(Lunch)";
+/// "11:30~14:00(점심)"
+"restaurantInfo.facultyRestaurant.time" = "11:30~14:00(Lunch)";
 /// "주말 휴무"
 "restaurantInfo.facultyRestaurant.etc" = "Closed on weekends";
 /// "학생회관 3층"

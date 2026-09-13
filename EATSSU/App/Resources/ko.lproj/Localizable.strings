@@ -660,8 +660,8 @@
 "restaurantInfo.dormitoryRestaurant.etc" = "조식 미운영";
 /// "전산관 지하 1층"
 "restaurantInfo.facultyRestaurant.location" = "전산관 지하 1층";
-/// "11:20~14:00(점심)"
-"restaurantInfo.facultyRestaurant.time" = "11:20~14:00(점심)";
+/// "11:30~14:00(점심)"
+"restaurantInfo.facultyRestaurant.time" = "11:30~14:00(점심)";
 /// "주말 휴무"
 "restaurantInfo.facultyRestaurant.etc" = "주말 휴무";
 /// "학생회관 3층"

@@ -660,8 +660,8 @@
 "restaurantInfo.dormitoryRestaurant.etc" = "Không phục vụ bữa sáng";
 /// "전산관 지하 1층"
 "restaurantInfo.facultyRestaurant.location" = "Tòa Jeonsan, tầng B1";
-/// "11:20~14:00(점심)"
-"restaurantInfo.facultyRestaurant.time" = "11:20~14:00(Bữa trưa)";
+/// "11:30~14:00(점심)"
+"restaurantInfo.facultyRestaurant.time" = "11:30~14:00(Bữa trưa)";
 /// "주말 휴무"
 "restaurantInfo.facultyRestaurant.etc" = "Đóng cửa cuối tuần";
 /// "학생회관 3층"
