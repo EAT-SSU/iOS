@@ -56,13 +56,14 @@ final class MainMapView: BaseUIView {
 
     // MARK: - Constants
 
-    /// 디자인 실측: 도움말 28pt, 트레일링 24, 지도 하단에서 28
+    /// 디자인 실측: 도움말 28pt, 트레일링 24, 탭바 위로 28
     private enum Layout {
         static let festivalHelpSize: CGFloat = 28
         static let festivalHelpTrailing: CGFloat = 24
-        static let festivalHelpBottom: CGFloat = 28
-        /// 말풍선 꼬리가 아이콘에 살짝 겹치도록
-        static let festivalBannerOverlap: CGFloat = 2
+        /// safe area 하단은 탭바 상단과 같으므로(UITabBarController) 그 위로 띄운다 (디자인 실측 38)
+        static let festivalHelpBottom: CGFloat = 38
+        /// 말풍선 꼬리 끝과 아이콘 사이 간격 (디자인 실측 5.5)
+        static let festivalBannerGap: CGFloat = 6
     }
 
     // MARK: - UI Components
@@ -151,13 +152,13 @@ final class MainMapView: BaseUIView {
 
         festivalHelpButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(Layout.festivalHelpTrailing)
-            $0.bottom.equalTo(mapView.snp.bottom).inset(Layout.festivalHelpBottom)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(Layout.festivalHelpBottom)
             $0.width.height.equalTo(Layout.festivalHelpSize)
         }
 
         festivalBannerView.snp.makeConstraints {
             $0.centerY.equalTo(festivalHelpButton)
-            $0.trailing.equalTo(festivalHelpButton.snp.leading).offset(Layout.festivalBannerOverlap)
+            $0.trailing.equalTo(festivalHelpButton.snp.leading).offset(-Layout.festivalBannerGap)
             $0.leading.greaterThanOrEqualToSuperview().inset(Layout.festivalHelpTrailing)
         }
     }
