@@ -25,9 +25,8 @@ enum MapTab: Int, CaseIterable {
     }
 }
 
-/// 학교 제휴 탭 필터. festival은 Remote Config로 노출 여부 결정
+/// 학교 제휴 탭 필터 (축제 제휴는 별도 필터 없이 기존 제휴와 함께 표시된다)
 enum PartnershipFilter: CaseIterable {
-    case festival
     case all
     case restaurant
     case cafe
@@ -35,7 +34,6 @@ enum PartnershipFilter: CaseIterable {
 
     var title: String {
         switch self {
-        case .festival:   return TextLiteral.Map.festival
         case .all:        return TextLiteral.Map.all
         case .restaurant: return TextLiteral.Map.restaurant
         case .cafe:       return TextLiteral.Map.cafe
@@ -43,18 +41,30 @@ enum PartnershipFilter: CaseIterable {
         }
     }
 
-    /// 서버 restaurantType 값. 전체/축제는 nil
+    /// 서버 restaurantType 값. 전체는 nil
     var restaurantType: String? {
         switch self {
         case .restaurant: return "RESTAURANT"
         case .cafe:       return "CAFE"
         case .pub:        return "PUB"
-        case .festival, .all: return nil
+        case .all:        return nil
         }
     }
 }
 
 final class MainMapView: BaseUIView {
+
+    // MARK: - Constants
+
+    /// 디자인 실측: 도움말 28pt, 트레일링 24, 탭바 위로 28
+    private enum Layout {
+        static let festivalHelpSize: CGFloat = 28
+        static let festivalHelpTrailing: CGFloat = 24
+        /// safe area 하단은 탭바 상단과 같으므로(UITabBarController) 그 위로 띄운다 (디자인 실측 38)
+        static let festivalHelpBottom: CGFloat = 38
+        /// 말풍선 꼬리 끝과 아이콘 사이 간격 (디자인 실측 5.5)
+        static let festivalBannerGap: CGFloat = 6
+    }
 
     // MARK: - UI Components
 
@@ -70,6 +80,21 @@ final class MainMapView: BaseUIView {
 
     let topTabView = UnderlineTabView(titles: MapTab.allCases.map { $0.title })
     let filterChipBar = FilterChipBar()
+
+    /// 축제 제휴 안내 도움말 버튼 (축제 기간에만 노출)
+    let festivalHelpButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(EATSSUDesignAsset.Images.icFestivalInfo.image, for: .normal)
+        button.isHidden = true
+        return button
+    }()
+
+    /// 도움말 버튼을 눌렀을 때 나오는 안내 말풍선
+    let festivalBannerView: FestivalInfoBannerView = {
+        let view = FestivalInfoBannerView()
+        view.isHidden = true
+        return view
+    }()
 
     /// 찜 탭으로 이동하는 플로팅 하트 버튼. 필터 칩과 같은 줄 오른쪽에 두고, 칩은 그 왼쪽 영역에서 스크롤된다
     let likeButton: UIButton = {
@@ -93,7 +118,7 @@ final class MainMapView: BaseUIView {
         mapView.showLocationButton = true
         mapView.mapView.positionMode = .disabled
 
-        addSubviews(mapView, blurView, topTabView, filterChipBar, likeButton)
+        addSubviews(mapView, blurView, topTabView, filterChipBar, likeButton, festivalBannerView, festivalHelpButton)
     }
 
     // MARK: - Layout Setup
@@ -124,6 +149,24 @@ final class MainMapView: BaseUIView {
             $0.leading.equalToSuperview()
             $0.trailing.equalTo(likeButton.snp.leading).offset(-8)
         }
+
+        festivalHelpButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(Layout.festivalHelpTrailing)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(Layout.festivalHelpBottom)
+            $0.width.height.equalTo(Layout.festivalHelpSize)
+        }
+
+        festivalBannerView.snp.makeConstraints {
+            $0.centerY.equalTo(festivalHelpButton)
+            $0.trailing.equalTo(festivalHelpButton.snp.leading).offset(-Layout.festivalBannerGap)
+            $0.leading.greaterThanOrEqualToSuperview().inset(Layout.festivalHelpTrailing)
+        }
+    }
+
+    /// 축제 도움말 버튼/말풍선 노출 여부
+    func setFestivalHelpVisible(_ visible: Bool) {
+        festivalHelpButton.isHidden = !visible
+        if !visible { festivalBannerView.isHidden = true }
     }
 
     /// 학과 미입력 안내 중 지도 블러 표시/해제

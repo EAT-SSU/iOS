@@ -50,12 +50,16 @@ final class MainMapViewController: BaseViewController {
 
     var clusterer: NMCClusterer<MapMarkerKey>?
 
-    /// 가장 최근에 받아온 전체 제휴 목록 (축제 필터용 캐시)
-    var cachedAllPartnerships: [PartnershipDTO] = []
+    /// 축제 제휴 캐시 (전체 제휴 응답에서 FESTIVAL 항목만 추린 것)
+    var cachedFestivalPartnerships: [PartnershipDTO] = []
     /// 내 학과 제휴 캐시 (업종 칩 필터용). 탭바 재탭·학과 변경 시 비움
     var cachedMyPartnerships: [PartnershipDTO] = []
-    /// 내 제휴를 한 번이라도 받았는지 (찜 → 상세 진입 시 전체 단과대 원본이 노출되지 않게 대기 판단용)
-    var hasFetchedMyPartnerships = false
+    /// 내 제휴 조회를 한 번이라도 시도했는지 (실패 포함). 찜 → 상세 진입이 무한정 대기하지 않도록 쓴다
+    var hasAttemptedMyPartnershipsFetch = false
+    /// 내 제휴를 성공적으로 받았는지 (빈 응답도 성공). 재요청 여부 판단용
+    var hasLoadedMyPartnerships = false
+    /// 축제 제휴를 성공적으로 받았는지 (빈 응답도 성공)
+    var hasLoadedFestivalPartnerships = false
     private var isLoadingMyPartnershipsForDetail = false
     /// 착한가격업소 전체 목록 캐시 (카테고리 필터링용)
     var cachedGoodPriceStores: [GoodPriceStoreDTO] = []
@@ -89,21 +93,25 @@ final class MainMapViewController: BaseViewController {
     private(set) var partnershipFilter: PartnershipFilter = .all
     private(set) var goodPriceCategory: GoodPriceCategory = .all
 
-    /// 현재 노출 중인 학교 제휴 필터 목록 (축제 활성 여부에 따라 달라짐)
-    private var visiblePartnershipFilters: [PartnershipFilter] {
-        let festivalEnabled = FirebaseRemoteConfig.shared.isFestivalEnabled
-        return PartnershipFilter.allCases.filter { $0 != .festival || festivalEnabled }
+    /// 자동 노출 예약을 무효화하기 위한 토큰 (연속 탭 시 이전 예약이 배너를 닫지 않도록)
+    private var festivalBannerToken = 0
+    /// 말풍선 노출 상태. isHidden은 페이드가 끝난 뒤에야 바뀌므로 별도로 둔다
+    private var isFestivalBannerVisible = false
+    /// 축제 안내 자동 노출은 앱 실행당 한 번만
+    private static var hasAutoShownFestivalBanner = false
+
+    /// 축제 제휴를 함께 보여주는 기간인지 (Remote Config)
+    var isFestivalPartnershipEnabled: Bool {
+        FirebaseRemoteConfig.shared.isFestivalPartnershipEnabled
     }
 
-    /// 탭바에서 지도 탭 진입 시 보이게 될 화면이 축제인지 (click_map default_type용)
+    /// 지도 탭 진입 시 축제 제휴가 함께 보이는 상태인지 (click_map default_type용)
     var isShowingFestival: Bool {
-        currentTab == .partnership && partnershipFilter == .festival
+        currentTab == .partnership && isFestivalPartnershipEnabled
     }
 
-    /// 클러스터 색상: 축제 필터일 때만 축제 색
-    var clusterColor: UIColor {
-        (currentTab == .partnership && partnershipFilter == .festival) ? .festivalPrimary : .primary
-    }
+    /// 클러스터 색상: 기존 제휴와 축제 제휴가 한 클러스터에 섞이므로 기본 색을 쓴다
+    var clusterColor: UIColor { .primary }
 
     // MARK: - Init
 
@@ -170,6 +178,7 @@ final class MainMapViewController: BaseViewController {
         setEntryCameraPosition()
         setupLocationButtonObserver()
         setupMarkerTapHandler()
+        setupFestivalHelp()
         applyTabUI()
     }
 
@@ -182,6 +191,8 @@ final class MainMapViewController: BaseViewController {
         case .goodPrice:
             loadGoodPriceMarkers()
         }
+        // Remote Config 수신이 늦을 수 있어 진입할 때마다 다시 판단한다
+        updateFestivalHelpVisibility()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -190,6 +201,7 @@ final class MainMapViewController: BaseViewController {
 
         // 찜 목록에서 넘어온 업체가 있으면 화면이 붙은 뒤 시트를 띄운다
         presentPendingDetailIfNeeded()
+        showFestivalBannerOnFirstEntryIfNeeded()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -226,7 +238,7 @@ final class MainMapViewController: BaseViewController {
             return
         }
         // 내 제휴 응답 전이면 받아온 뒤 연다 (전체 단과대 원본 시트가 잠깐 노출되는 것 방지)
-        if !hasFetchedMyPartnerships, cachedMyPartnerships.isEmpty {
+        if !hasAttemptedMyPartnershipsFetch, cachedMyPartnerships.isEmpty {
             loadMyPartnershipsForPendingDetail()
             return
         }
@@ -236,10 +248,14 @@ final class MainMapViewController: BaseViewController {
             zoom: CameraConstants.detailZoom,
             animated: false
         )
-        // 찜 원본 DTO는 모든 단과대 제휴를 담고 있어, 지도 마커와 동일하게 내 제휴 데이터로 표시한다
-        // (내 제휴에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
-        let display = cachedMyPartnerships.first { $0.storeKey == store.storeKey } ?? store
-        showPartnershipDetail(for: display, likeTarget: store)
+        // 찜 원본 DTO는 모든 단과대 제휴를 담고 있어, 지도 마커와 동일한 병합 결과로 표시한다
+        // (병합 결과에 없으면 — 학과 변경 등 — 원본으로 폴백, 시트에서 내용 기준 중복 제거)
+        let merged = Self.mergedPartnerships(
+            my: cachedMyPartnerships,
+            festival: isFestivalPartnershipEnabled ? cachedFestivalPartnerships : []
+        )
+        let display = merged.first { $0.storeKey == store.storeKey } ?? store
+        showPartnershipDetail(for: display, likeTarget: Self.likeTarget(for: store))
     }
 
     /// 찜 → 상세 진입용 내 제휴 확보. 마커 로드 세대에 영향을 주지 않도록 캐시만 채운다
@@ -256,8 +272,9 @@ final class MainMapViewController: BaseViewController {
             self.isLoadingMyPartnershipsForDetail = false
             if case .success(let partnerships) = result, self.cachedMyPartnerships.isEmpty {
                 self.cachedMyPartnerships = partnerships
+                self.hasLoadedMyPartnerships = true
             }
-            self.hasFetchedMyPartnerships = true
+            self.hasAttemptedMyPartnershipsFetch = true
             self.presentPendingDetailIfNeeded()
         }
     }
@@ -293,7 +310,7 @@ final class MainMapViewController: BaseViewController {
         (tabBarController as? CustomTabBarContainerController)?.showLikedPartnerships(fromMap: true)
     }
 
-    /// 학과 정보를 다시 받아온 뒤 학교 제휴 마커 로드. 축제 노출 여부가 바뀌었을 수 있어 칩도 재구성
+    /// 학과 정보를 다시 받아온 뒤 학교 제휴 마커 로드
     private func refreshPartnershipTab() {
         applyTabUI()
         let generation = beginLoad()
@@ -347,10 +364,11 @@ final class MainMapViewController: BaseViewController {
         root.topTabView.select(index: currentTab.rawValue, animated: false)
         // 찜은 학교 제휴 전용이라 착한 가격 탭에서는 플로팅 하트를 숨긴다
         root.setLikeButtonVisible(mode == .tabbed && currentTab == .partnership)
+        updateFestivalHelpVisibility()
 
         switch currentTab {
         case .partnership:
-            let filters = visiblePartnershipFilters
+            let filters = PartnershipFilter.allCases
             if !filters.contains(partnershipFilter) { partnershipFilter = .all }
             displayedPartnershipFilters = filters
             root.filterChipBar.highlightColor = clusterColor
@@ -403,7 +421,7 @@ final class MainMapViewController: BaseViewController {
             guard filters.indices.contains(index) else { return }
             partnershipFilter = filters[index]
             root.filterChipBar.highlightColor = clusterColor
-            logPartnershipFilterClick(partnershipFilter)
+            logPartnershipFilterClick()
             loadPartnershipMarkers()
 
         case .goodPrice:
@@ -416,19 +434,10 @@ final class MainMapViewController: BaseViewController {
         // 필터 전환 시 카메라는 보고 있던 위치를 그대로 유지한다 (QA)
     }
 
-    /// 축제 → click_map_festival, 그 외 → click_map_mine
     /// 학교 제휴는 곧 내 학과 제휴이고 학과 없이는 칩까지 도달할 수 없으므로 전체 제휴(click_map_all) 분기는 없다
-    private func logPartnershipFilterClick(_ filter: PartnershipFilter) {
-        switch filter {
-        case .festival:
-            MapAnalyticsManager.shared.logClickMapFestival(
-                collegeId: currentCollegeId,
-                majorId: currentDepartmentId
-            )
-        case .all, .restaurant, .cafe, .pub:
-            guard let collegeId = currentCollegeId, let majorId = currentDepartmentId else { return }
-            MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
-        }
+    private func logPartnershipFilterClick() {
+        guard let collegeId = currentCollegeId, let majorId = currentDepartmentId else { return }
+        MapAnalyticsManager.shared.logClickMapMine(collegeId: collegeId, majorId: majorId)
     }
 
     // MARK: - Partnership Tab
@@ -446,17 +455,14 @@ final class MainMapViewController: BaseViewController {
             case .loaded:
                 displayMarkers([])
                 root.setMapBlurred(true)
+                updateFestivalHelpVisibility()
                 presentNoDepartmentSheetIfNeeded()
                 return
             }
         }
         root.setMapBlurred(false)
-
-        if partnershipFilter == .festival {
-            refreshAllPartnerships()
-            return
-        }
-        fetchMyPartnerships()
+        updateFestivalHelpVisibility()
+        fetchPartnerships()
     }
 
     var hasDepartment: Bool {
@@ -471,15 +477,94 @@ final class MainMapViewController: BaseViewController {
         present(NoDepartmentSheetViewController(), animated: true)
     }
 
+    // MARK: - Festival Help
+
+    private enum FestivalBanner {
+        static let autoHideDelay: TimeInterval = 2.5
+        static let fadeDuration: TimeInterval = 0.2
+    }
+
+    /// 축제 도움말은 학교 제휴 탭 + 축제 기간 + 학과 보유 시에만 노출 (학과 없으면 지도가 블러 처리된다)
+    func updateFestivalHelpVisibility() {
+        root.setFestivalHelpVisible(
+            currentTab == .partnership && isFestivalPartnershipEnabled && hasDepartment
+        )
+    }
+
+    private func setupFestivalHelp() {
+        root.festivalHelpButton.addTarget(self, action: #selector(didTapFestivalHelp), for: .touchUpInside)
+        root.festivalBannerView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(didTapFestivalBanner))
+        )
+    }
+
+    @objc private func didTapFestivalHelp() {
+        if isFestivalBannerVisible {
+            hideFestivalBanner()
+        } else {
+            showFestivalBanner()
+        }
+    }
+
+    @objc private func didTapFestivalBanner() {
+        hideFestivalBanner()
+    }
+
+    /// 안내 말풍선을 띄우고 일정 시간 뒤 자동으로 닫는다
+    private func showFestivalBanner() {
+        guard isFestivalPartnershipEnabled, currentTab == .partnership else { return }
+
+        festivalBannerToken += 1
+        let token = festivalBannerToken
+        isFestivalBannerVisible = true
+        root.festivalBannerView.alpha = 0
+        root.festivalBannerView.isHidden = false
+        UIView.animate(withDuration: FestivalBanner.fadeDuration) {
+            self.root.festivalBannerView.alpha = 1
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + FestivalBanner.autoHideDelay) { [weak self] in
+            // 그 사이에 다시 열거나 닫았으면 이 예약은 버린다
+            guard let self, self.festivalBannerToken == token else { return }
+            self.hideFestivalBanner()
+        }
+    }
+
+    func hideFestivalBanner() {
+        guard isFestivalBannerVisible else { return }
+        isFestivalBannerVisible = false
+        festivalBannerToken += 1
+        let token = festivalBannerToken
+        UIView.animate(
+            withDuration: FestivalBanner.fadeDuration,
+            animations: { self.root.festivalBannerView.alpha = 0 },
+            completion: { [weak self] _ in
+                // 페이드 중에 다시 열렸다면 그대로 둔다
+                guard let self, self.festivalBannerToken == token else { return }
+                self.root.festivalBannerView.isHidden = true
+            }
+        )
+    }
+
+    /// 축제 기간 중 지도 첫 진입 시 한 번 자동으로 안내한다 (앱 실행당 1회)
+    private func showFestivalBannerOnFirstEntryIfNeeded() {
+        guard isFestivalPartnershipEnabled, currentTab == .partnership, hasDepartment,
+              !Self.hasAutoShownFestivalBanner else { return }
+        Self.hasAutoShownFestivalBanner = true
+        showFestivalBanner()
+    }
+
     // MARK: - Helper Methods
 
     /// 탭바에서 지도 탭을 다시 눌렀을 때 현재 탭 데이터 갱신
     func reloadContent() {
         switch currentTab {
         case .partnership:
-            cachedAllPartnerships = []
+            cachedFestivalPartnerships = []
+            hasLoadedFestivalPartnerships = false
             cachedMyPartnerships = []
-            hasFetchedMyPartnerships = false
+            hasLoadedMyPartnerships = false
+            hasAttemptedMyPartnershipsFetch = false
             refreshPartnershipTab()
         case .goodPrice:
             cachedGoodPriceStores = []

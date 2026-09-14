@@ -72,6 +72,5 @@ final class StoreCategoryMappingTests: XCTestCase {
         XCTAssertEqual(PartnershipFilter.cafe.restaurantType, "CAFE")
         XCTAssertEqual(PartnershipFilter.pub.restaurantType, "PUB")
         XCTAssertNil(PartnershipFilter.all.restaurantType)
-        XCTAssertNil(PartnershipFilter.festival.restaurantType)
     }
 }

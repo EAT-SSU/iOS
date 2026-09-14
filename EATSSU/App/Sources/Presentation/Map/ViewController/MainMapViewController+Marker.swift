@@ -51,15 +51,21 @@ extension MainMapViewController {
 
     // MARK: - Marker Items
 
-    /// - Parameter likeTarget: 찜 토글 대상 원본 업체 (필터로 항목이 걸러진 `partnership`과 구분). nil이면 partnership 그대로
-    func makeMarkerItem(for partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil) -> MapMarkerItem {
-        let isFestival = partnershipFilter == .festival
+    /// 업체에 축제 제휴가 있으면 축제 색 마커로, 찜은 일반 제휴 항목만 대상으로 한다
+    func makeMarkerItem(for partnership: PartnershipDTO) -> MapMarkerItem {
+        let likeTarget = Self.likeTarget(for: partnership)
         return MapMarkerItem(
             title: partnership.storeName,
             latitude: partnership.latitude,
             longitude: partnership.longitude,
-            icon: Self.partnershipIcon(for: partnership.restaurantType, isFestival: isFestival),
-            onTap: { [weak self] in self?.showPartnershipDetail(for: partnership, likeTarget: likeTarget) }
+            icon: Self.partnershipIcon(
+                for: partnership.restaurantType,
+                isFestival: Self.isFestivalStore(partnership)
+            ),
+            onTap: { [weak self] in
+                self?.hideFestivalBanner()
+                self?.showPartnershipDetail(for: partnership, likeTarget: likeTarget)
+            }
         )
     }
 
@@ -148,8 +154,8 @@ extension MainMapViewController {
     }
 
     /// 제휴점 상세 바텀시트 표시
-    /// - Parameter likeTarget: 찜 토글 대상 원본 업체. nil이면 partnership 자체
-    func showPartnershipDetail(for partnership: PartnershipDTO, likeTarget: PartnershipDTO? = nil) {
+    /// - Parameter likeTarget: 찜 토글 대상 업체(일반 제휴 항목만). nil이면 찜 불가로 보고 하트를 숨긴다
+    func showPartnershipDetail(for partnership: PartnershipDTO, likeTarget: PartnershipDTO?) {
         MapAnalyticsManager.shared.logClickPartnerRestaurant(
             collegeId: currentCollegeId,
             majorId: currentDepartmentId,
@@ -159,7 +165,8 @@ extension MainMapViewController {
         let detailVC = PartnershipDetailSheetViewController(
             partnership: partnership,
             likeTarget: likeTarget,
-            isLikeEnabled: hasDepartment
+            // 축제 전용 업체는 찜할 수 없어 likeTarget이 없다
+            isLikeEnabled: hasDepartment && likeTarget != nil
         )
         detailVC.loadViewIfNeeded()
         presentSheet(detailVC, heightProvider: { [weak detailVC] in detailVC?.calculatePreferredHeight() })
@@ -194,6 +201,7 @@ extension MainMapViewController {
 extension MainMapViewController: NMFMapViewTouchDelegate {
 
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
+        hideFestivalBanner()
     }
 
     func mapView(_ mapView: NMFMapView, didTap symbol: NMFSymbol) -> Bool {

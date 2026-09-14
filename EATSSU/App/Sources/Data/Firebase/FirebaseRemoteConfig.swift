@@ -19,9 +19,15 @@ class FirebaseRemoteConfig {
         return remoteConfig["app_theme"].stringValue ?? "default"
     }
 
-    /// 축제 탭 노출 여부 (noticeCheck 이후 호출)
-    var isFestivalEnabled: Bool {
-        return remoteConfig["festival_tab_enabled"].boolValue
+    /// 축제 제휴(마커·도움말) 노출 여부. 행사 기간에만 Remote Config에서 켠다
+    /// 구버전 앱이 쓰는 `festival_tab_enabled`와 분리해, 켜도 이전 버전 동작에 영향이 없도록 한다
+    var isFestivalPartnershipEnabled: Bool {
+        #if DEBUG
+        // 로컬 확인용: 개발 빌드는 기본 노출. 스킴 실행 인자 `-festivalPartnershipDisabled YES`로 종료 후 동작도 확인할 수 있다
+        return !UserDefaults.standard.bool(forKey: "festivalPartnershipDisabled")
+        #else
+        return remoteConfig["festival_partnership_enabled"].boolValue
+        #endif
     }
 
     private init() {

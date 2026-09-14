@@ -177,6 +177,8 @@
 /// MainMapVC - "제휴 지도"
 "map.map" = "지도";
 /// MainMapView - "전체"
+/// 축제 제휴 안내 말풍선
+"map.festivalBannerMessage" = "2026 동연제 제휴 매장을 확인해보세요!\n기존 제휴와 중복 적용되지 않아요.";
 "map.all" = "전체";
 /// "축제"
 "map.festival" = "축제";

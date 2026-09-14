@@ -11,93 +11,151 @@ import Foundation
 
 extension MainMapViewController {
 
-    /// 전체 제휴 데이터를 받아 캐시에 저장하고 축제 제휴 마커를 표시
-    /// 캐시가 있으면 재요청 없이 사용한다 (탭바 재탭 시 reloadContent가 캐시를 비움)
-    func refreshAllPartnerships() {
-        if !cachedAllPartnerships.isEmpty {
-            _ = beginLoad()
-            applyPartnershipMarkers(from: cachedAllPartnerships, periodType: .festival)
-            return
-        }
-
-        let generation = beginLoad()
-        NetworkService.shared.request(
-            PartnershipRouter.getAllPartnerships,
-            responseType: [PartnershipDTO].self,
-            useAuth: true
-        ) { [weak self] result in
-            guard let self, self.isCurrentLoad(generation) else { return }
-            switch result {
-            case .success(let partnerships):
-                self.cachedAllPartnerships = partnerships
-                self.applyPartnershipMarkers(from: partnerships, periodType: .festival)
-
-            case .failure(let error):
-                print("제휴 조회 실패: \(error.localizedDescription)")
-                self.cachedAllPartnerships = []
-                #if !DEBUG
-                self.displayMarkers([])
-                self.showStoreLoadFailedToast()
-                #endif
-            }
-
-            #if DEBUG
-            // 서버에 제휴 데이터가 없거나 실패한 동안 Mock으로 대체 (DEBUG 빌드 전용, 실패 토스트는 띄우지 않음)
-            if self.cachedAllPartnerships.isEmpty {
-                self.cachedAllPartnerships = PartnershipMockData.samples
-                self.applyPartnershipMarkers(from: self.cachedAllPartnerships, periodType: .festival)
-            }
-            #endif
-        }
-    }
-
-    /// 내 학과 제휴를 받아 현재 업종 필터에 맞춰 마커 표시. 캐시가 있으면 재요청 없이 필터만 적용
-    func fetchMyPartnerships() {
+    /// 내 학과 제휴와 (축제 기간이면) 축제 제휴를 함께 받아 한 지도에 표시한다
+    /// 두 응답을 업체 단위로 합치고, 업종 필터는 합친 결과에 적용한다
+    func fetchPartnerships() {
         guard hasDepartment else {
             displayMarkers([])
             return
         }
 
-        if !cachedMyPartnerships.isEmpty {
-            _ = beginLoad()
-            applyPartnershipMarkers(from: cachedMyPartnerships, periodType: .normal)
-            return
-        }
-
+        // 성공적으로 받아온 적이 없을 때만 요청한다 (빈 응답도 성공으로 보고 반복 요청하지 않는다)
+        let needsMy = !hasLoadedMyPartnerships
+        let needsFestival = isFestivalPartnershipEnabled && !hasLoadedFestivalPartnerships
         let generation = beginLoad()
-        NetworkService.shared.request(
-            MyRouter.getMyPartnerships,
-            responseType: [PartnershipDTO].self,
-            useAuth: true
-        ) { [weak self] result in
-            guard let self, self.isCurrentLoad(generation) else { return }
-            switch result {
-            case .success(let partnerships):
-                self.cachedMyPartnerships = partnerships
-                self.hasFetchedMyPartnerships = true
-                self.applyPartnershipMarkers(from: partnerships, periodType: .normal)
-                self.presentPendingDetailIfNeeded()
 
-            case .failure(let error):
-                print("내 제휴 조회 실패: \(error.localizedDescription)")
-                self.displayMarkers([])
-                self.showStoreLoadFailedToast()
+        // 이미 받아둔 데이터로 먼저 그린다 (업종 필터 전환이 네트워크 응답을 기다리지 않도록)
+        applyPartnershipMarkers()
+
+        guard needsMy || needsFestival else { return }
+
+        let group = DispatchGroup()
+        var myFailed = false
+
+        if needsMy {
+            group.enter()
+            NetworkService.shared.request(
+                MyRouter.getMyPartnerships,
+                responseType: [PartnershipDTO].self,
+                useAuth: true
+            ) { [weak self] result in
+                defer { group.leave() }
+                guard let self, self.isCurrentLoad(generation) else { return }
+                switch result {
+                case .success(let partnerships):
+                    self.cachedMyPartnerships = partnerships
+                    self.hasLoadedMyPartnerships = true
+                    self.hasAttemptedMyPartnershipsFetch = true
+                case .failure(let error):
+                    // 실패는 "시도함"으로 남기지 않는다. 찜 상세 진입 시 다시 조회해 전체 단과대 원본이 노출되지 않게 한다
+                    print("내 제휴 조회 실패: \(error.localizedDescription)")
+                    myFailed = true
+                }
             }
         }
-    }
 
-    /// periodType + 현재 업종 필터로 걸러서 마커 표시
-    private func applyPartnershipMarkers(from partnerships: [PartnershipDTO], periodType: PartnershipPeriodType) {
-        var filtered = Self.filterPartnerships(partnerships, by: periodType)
-        if let type = partnershipFilter.restaurantType {
-            filtered = filtered.filter { $0.restaurantType == type }
+        if needsFestival {
+            group.enter()
+            NetworkService.shared.request(
+                PartnershipRouter.getAllPartnerships,
+                responseType: [PartnershipDTO].self,
+                useAuth: true
+            ) { [weak self] result in
+                defer { group.leave() }
+                guard let self, self.isCurrentLoad(generation) else { return }
+                switch result {
+                case .success(let partnerships):
+                    self.cachedFestivalPartnerships = Self.filterPartnerships(partnerships, by: .festival)
+                    self.hasLoadedFestivalPartnerships = true
+                case .failure(let error):
+                    // 축제 제휴는 부가 정보이므로 실패해도 기존 제휴만으로 지도를 그린다
+                    print("축제 제휴 조회 실패: \(error.localizedDescription)")
+                }
+            }
         }
-        // 시트는 필터된 항목만 보여주되, 찜은 업체의 전체 항목을 대상으로 해야 하므로 원본을 함께 넘긴다
-        let fullByKey = Dictionary(partnerships.map { ($0.storeKey, $0) }, uniquingKeysWith: { first, _ in first })
-        displayMarkers(filtered.map { makeMarkerItem(for: $0, likeTarget: fullByKey[$0.storeKey]) })
+
+        group.notify(queue: .main) { [weak self] in
+            guard let self, self.isCurrentLoad(generation) else { return }
+
+            #if DEBUG
+            // 서버에 축제 데이터가 없는 동안 Mock으로 확인 (개발 빌드 전용)
+            if self.isFestivalPartnershipEnabled, self.cachedFestivalPartnerships.isEmpty {
+                self.cachedFestivalPartnerships = Self.filterPartnerships(PartnershipMockData.samples, by: .festival)
+            }
+            #endif
+
+            // 한쪽이 실패해도 받아온 쪽은 그대로 그린다 (축제만 성공한 경우 지도가 비지 않도록)
+            self.applyPartnershipMarkers()
+            if myFailed, self.cachedMyPartnerships.isEmpty {
+                self.showStoreLoadFailedToast()
+            }
+            self.presentPendingDetailIfNeeded()
+        }
     }
 
-    private static func filterPartnerships(
+    /// 현재 업종 필터에 맞춰 합쳐진 제휴 마커를 표시
+    func applyPartnershipMarkers() {
+        var merged = Self.mergedPartnerships(
+            my: cachedMyPartnerships,
+            festival: isFestivalPartnershipEnabled ? cachedFestivalPartnerships : []
+        )
+        if let type = partnershipFilter.restaurantType {
+            merged = merged.filter { $0.restaurantType == type }
+        }
+        displayMarkers(merged.map { makeMarkerItem(for: $0) })
+    }
+
+    /// 내 학과 제휴 + 축제 제휴를 업체(storeKey) 단위로 합친다
+    /// 같은 업체가 양쪽에 있으면 제휴 항목을 합치고, 순서는 내 학과 제휴 → 축제 전용 업체 순으로 둔다
+    static func mergedPartnerships(
+        my: [PartnershipDTO],
+        festival: [PartnershipDTO]
+    ) -> [PartnershipDTO] {
+        var order: [String] = []
+        var byKey: [String: PartnershipDTO] = [:]
+
+        for store in my + festival {
+            guard let existing = byKey[store.storeKey] else {
+                order.append(store.storeKey)
+                byKey[store.storeKey] = store
+                continue
+            }
+            let knownIds = Set(existing.partnershipInfos.map(\.id))
+            byKey[store.storeKey] = PartnershipDTO(
+                storeName: existing.storeName,
+                longitude: existing.longitude,
+                latitude: existing.latitude,
+                restaurantType: existing.restaurantType,
+                naverMapUrl: existing.naverMapUrl ?? store.naverMapUrl,
+                kakaoMapUrl: existing.kakaoMapUrl ?? store.kakaoMapUrl,
+                partnershipInfos: existing.partnershipInfos
+                    + store.partnershipInfos.filter { !knownIds.contains($0.id) }
+            )
+        }
+        return order.compactMap { byKey[$0] }
+    }
+
+    /// 축제 제휴 항목이 하나라도 있으면 축제 마커로 표시한다 (기존 제휴와 겹치는 업체는 축제 우선)
+    static func isFestivalStore(_ store: PartnershipDTO) -> Bool {
+        store.partnershipInfos.contains { $0.periodType == .festival }
+    }
+
+    /// 찜 대상 업체. 축제 제휴는 찜할 수 없으므로 일반 제휴 항목만 남기고, 없으면 nil(하트 숨김)
+    static func likeTarget(for store: PartnershipDTO) -> PartnershipDTO? {
+        let normalInfos = store.partnershipInfos.filter { $0.periodType == .normal }
+        guard !normalInfos.isEmpty else { return nil }
+        return PartnershipDTO(
+            storeName: store.storeName,
+            longitude: store.longitude,
+            latitude: store.latitude,
+            restaurantType: store.restaurantType,
+            naverMapUrl: store.naverMapUrl,
+            kakaoMapUrl: store.kakaoMapUrl,
+            partnershipInfos: normalInfos
+        )
+    }
+
+    static func filterPartnerships(
         _ partnerships: [PartnershipDTO],
         by periodType: PartnershipPeriodType
     ) -> [PartnershipDTO] {
@@ -129,6 +187,8 @@ extension MainMapViewController {
                 if self.currentDepartmentId != department.departmentId {
                     // 학과가 바뀌면 내 제휴 캐시는 더 이상 유효하지 않다
                     self.cachedMyPartnerships = []
+                    self.hasLoadedMyPartnerships = false
+                    self.hasAttemptedMyPartnershipsFetch = false
                 }
                 self.currentDepartmentName = department.departmentName
                 self.currentDepartmentId = department.departmentId

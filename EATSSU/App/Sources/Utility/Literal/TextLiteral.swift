@@ -461,6 +461,14 @@ enum TextLiteral {
     // MARK: - Map
     
     enum Map {
+        /// 축제 제휴 안내 말풍선 문구 (2줄)
+        static var festivalBannerMessage: String {
+            Localization.localized(
+                "map.festivalBannerMessage",
+                fallback: "2026 동연제 제휴 매장을 확인해보세요!\n기존 제휴와 중복 적용되지 않아요."
+            )
+        }
+
         /// MainMapVC - "지도"
         static var map: String {
             Localization.localized("map.map", fallback: "지도")
