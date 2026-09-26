@@ -49,3 +49,10 @@ extension PartnershipRouter: TargetType {
         }
     }
 }
+
+extension PartnershipRouter {
+    // 401이 에러로 처리돼야 AuthInterceptor가 토큰을 재발급한다
+    var validationType: ValidationType {
+        .successCodes
+    }
+}
