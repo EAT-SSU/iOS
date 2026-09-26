@@ -397,7 +397,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // MARK: - Session Expiration Handler
 
     private func handleSessionExpired() {
-        RealmService.shared.deleteAll(Token.self)
-        transitionToLogin(withMessage: "세션이 만료되어 다시 로그인해주세요.")
+        // 동시에 실패한 요청들이 각각 이벤트를 보내므로 첫 번째만 처리
+        guard !RealmService.shared.getToken().isEmpty else { return }
+
+        // 로그아웃과 같은 기준으로 계정 상태 정리
+        AnalyticsIdentityManager.reset()
+        RealmService.shared.resetDB()
+        transitionToLogin(withMessage: TextLiteral.Common.sessionExpired)
     }
 }

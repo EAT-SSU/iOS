@@ -62,6 +62,9 @@ final class AuthInterceptor: RequestInterceptor {
               try await TokenRefresher.shared.refreshIfNeeded()
               await MainActor.run { completion(.retry) }
             } catch {
+              if case TokenRefresherError.sessionExpired = error {
+                  TokenRefresher.sessionExpiredPublisher.send()
+              }
               await MainActor.run { completion(.doNotRetryWithError(error)) }
             }
           }

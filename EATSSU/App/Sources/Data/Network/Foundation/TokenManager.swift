@@ -31,6 +31,9 @@ final class TokenManager {
 
     /// 재발급이 필요하면 TokenRefresher로 실행
     func refreshIfNeeded() async {
+        // 비로그인 상태면 재발급할 토큰이 없다
+        guard !RealmService.shared.getRefreshToken().isEmpty else { return }
+
         if isTokenExpiringSoon() {
             do {
                 try await TokenRefresher.shared.refreshIfNeeded()
