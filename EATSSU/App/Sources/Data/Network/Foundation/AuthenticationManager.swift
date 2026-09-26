@@ -36,10 +36,13 @@ final class AuthenticationManager {
         do {
             try await TokenManager.shared.refreshIfNeededWithThrow()
             return .authenticated
-        } catch {
-            // 3. 갱신 실패하면 토큰 삭제 후 세션 만료 처리
+        } catch TokenRefresherError.sessionExpired {
+            // 3. refreshToken까지 만료되면 토큰 삭제 후 세션 만료 처리
             RealmService.shared.deleteAll(Token.self)
             return .sessionExpired
+        } catch {
+            // 4. 오프라인·서버 오류는 기존 토큰으로 진입하고, 이후 401 재발급 흐름에 맡김
+            return .authenticated
         }
     }
     

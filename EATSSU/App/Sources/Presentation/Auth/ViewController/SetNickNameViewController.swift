@@ -300,19 +300,6 @@ final class SetNickNameViewController: BaseViewController {
         
         updateSaveButtonState()
     }
-    
-    private func navigateToLogin() {
-        let loginVC = LoginViewController()
-        loginVC.toastMessage = TextLiteral.Common.sessionExpired
-        loginVC.toastType = .info
-        
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
-            }
-        }
-    }
 }
 
 // MARK: - Network
@@ -322,9 +309,7 @@ extension SetNickNameViewController {
             UserNicknameRouter.setNickname(nickname: nickname),
             responseType: Bool.self,
             useAuth: true
-        ) { [weak self] result in
-            guard let self = self else { return }
-            
+        ) { result in
             switch result {
             case .success:
                 if let user = UserInfoManager.shared.getCurrentUserInfo() {
@@ -333,8 +318,7 @@ extension SetNickNameViewController {
                 completion(true)
                 
             case .failure:
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
+                // 실패 안내는 저장 버튼 처리부에서 한 번에 보여준다
                 completion(false)
             }
         }
@@ -371,13 +355,11 @@ extension SetNickNameViewController {
                         }
                     } catch {
                         print("닉네임 에러 응답 디코딩 실패: \(error.localizedDescription)")
-                        RealmService.shared.resetDB()
-                        self.navigateToLogin()
+                        self.showToast(message: TextLiteral.Common.errorOccured, type: .danger)
                     }
                 } else {
-                    // 그 외 모든 에러 처리
-                    RealmService.shared.resetDB()
-                    self.navigateToLogin()
+                    // 그 외 에러(네트워크·서버)는 안내만 하고 다시 확인할 수 있게 둔다
+                    self.showToast(message: TextLiteral.Common.errorOccured, type: .danger)
                 }
             }
         }
@@ -405,8 +387,6 @@ extension SetNickNameViewController {
                 
             case .failure(let error):
                 print("학과 등록 실패: \(error.localizedDescription)")
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
                 completion(false)
             }
         }
