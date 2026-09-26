@@ -37,6 +37,9 @@ final class TokenManager {
         if isTokenExpiringSoon() {
             do {
                 try await TokenRefresher.shared.refreshIfNeeded()
+            } catch TokenRefresherError.sessionExpired {
+                // 포그라운드 복귀 시점에 바로 로그인 화면으로 안내
+                TokenRefresher.sessionExpiredPublisher.send()
             } catch {
                 print("앱 시작/포그라운드 시 재발급 실패: \(error)")
             }

@@ -37,8 +37,12 @@ final class AuthenticationManager {
             try await TokenManager.shared.refreshIfNeededWithThrow()
             return .authenticated
         } catch TokenRefresherError.sessionExpired {
-            // 3. refreshToken까지 만료되면 토큰 삭제 후 세션 만료 처리
-            RealmService.shared.deleteAll(Token.self)
+            // 3. refreshToken까지 만료되면 로그아웃과 같은 기준으로 계정 상태 정리
+            // resetDB는 메인 전용 상태(찜 목록)도 비우므로 메인에서 실행
+            await MainActor.run {
+                AnalyticsIdentityManager.reset()
+                RealmService.shared.resetDB()
+            }
             return .sessionExpired
         } catch {
             // 4. 오프라인·서버 오류는 기존 토큰으로 진입하고, 이후 401 재발급 흐름에 맡김

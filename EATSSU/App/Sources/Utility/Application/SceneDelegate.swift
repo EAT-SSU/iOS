@@ -15,6 +15,8 @@ import KakaoSDKAuth
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     private var cancellables = Set<AnyCancellable>()
+    /// 앱 시작 인증 흐름이 끝나기 전의 세션 만료는 그 흐름이 직접 처리한다
+    private var hasFinishedLaunchAuthentication = false
 
     // MARK: - UIWindowSceneDelegate Methods
 
@@ -274,6 +276,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let result = await AuthenticationManager.shared.checkAuthentication()
             
             await MainActor.run {
+                hasFinishedLaunchAuthentication = true
+
                 switch result {
                 case .authenticated:
                     // 이미 로그인된 유저도 앱 실행 시 식별
@@ -397,6 +401,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // MARK: - Session Expiration Handler
 
     private func handleSessionExpired() {
+        // 스플래시 중이면 시작 인증 흐름이 로그인 화면으로 보낸다
+        guard hasFinishedLaunchAuthentication else { return }
         // 동시에 실패한 요청들이 각각 이벤트를 보내므로 첫 번째만 처리
         guard !RealmService.shared.getToken().isEmpty else { return }
 
