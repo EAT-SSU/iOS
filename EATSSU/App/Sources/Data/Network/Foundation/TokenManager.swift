@@ -31,9 +31,15 @@ final class TokenManager {
 
     /// 재발급이 필요하면 TokenRefresher로 실행
     func refreshIfNeeded() async {
+        // 비로그인 상태면 재발급할 토큰이 없다
+        guard !RealmService.shared.getRefreshToken().isEmpty else { return }
+
         if isTokenExpiringSoon() {
             do {
                 try await TokenRefresher.shared.refreshIfNeeded()
+            } catch TokenRefresherError.sessionExpired {
+                // 포그라운드 복귀 시점에 바로 로그인 화면으로 안내
+                TokenRefresher.sessionExpiredPublisher.send()
             } catch {
                 print("앱 시작/포그라운드 시 재발급 실패: \(error)")
             }

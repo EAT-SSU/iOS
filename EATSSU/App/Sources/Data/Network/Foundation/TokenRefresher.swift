@@ -63,14 +63,6 @@ actor TokenRefresher {
             provider.request(.reissuance) { result in
                 switch result {
                 case .success(let response):
-                    // 서버가 refreshToken도 만료된 경우
-                    if response.statusCode == 403 {
-                        // Publisher로 세션 만료 이벤트 발행
-                        Self.sessionExpiredPublisher.send()
-                        continuation.resume(throwing: TokenRefresherError.sessionExpired)
-                        return
-                    }
-
                     do {
                         let base = try response.map(BaseResponse<SignResponse>.self)
                         guard let result = base.result else {
@@ -83,6 +75,12 @@ actor TokenRefresher {
                     }
 
                 case .failure(let error):
+                    // ReissueRouter는 .successCodes라 2xx가 아닌 응답은 여기로 온다
+                    // refreshToken이 만료·무효면 서버가 401을 준다
+                    if let statusCode = error.response?.statusCode, [401, 403].contains(statusCode) {
+                        continuation.resume(throwing: TokenRefresherError.sessionExpired)
+                        return
+                    }
                     continuation.resume(throwing: error)
                 }
             }

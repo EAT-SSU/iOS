@@ -133,19 +133,6 @@ final class MyReviewViewController: BaseViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
     }
-    
-    private func navigateToLogin() {
-        let loginVC = LoginViewController()
-        loginVC.toastMessage = TextLiteral.Common.sessionExpired
-        loginVC.toastType = .info
-        
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginVC))
-            }
-        }
-    }
 }
 
 extension MyReviewViewController: UITableViewDelegate {
@@ -217,8 +204,7 @@ extension MyReviewViewController {
                 
             case .failure(let error):
                 print("내 리뷰 조회 실패: \(error.localizedDescription)")
-                RealmService.shared.resetDB()
-                self.navigateToLogin()
+                self.showToast(message: TextLiteral.Common.errorOccured, type: .danger)
             }
         }
     }
@@ -243,8 +229,7 @@ extension MyReviewViewController {
                     self.showToast(message: TextLiteral.MyPage.deleteMyReviewSuccess)
                 case .failure(let error):
                     print("리뷰 삭제 실패: \(error.localizedDescription)")
-                    RealmService.shared.resetDB()
-                    self.navigateToLogin()
+                    self.showToast(message: TextLiteral.Review.deleteReviewFail, type: .danger)
                 }
             }
         }
