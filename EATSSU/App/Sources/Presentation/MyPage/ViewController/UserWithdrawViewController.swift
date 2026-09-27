@@ -8,7 +8,6 @@
 import UIKit
 
 import Moya
-import Realm
 import SnapKit
 
 final class UserWithdrawViewController: BaseViewController {
@@ -142,7 +141,7 @@ extension UserWithdrawViewController {
         ) { result in
             switch result {
             case .success:
-                RealmService.shared.resetDB()
+                AccountStorage.reset()
                 let loginViewController = LoginViewController()
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })

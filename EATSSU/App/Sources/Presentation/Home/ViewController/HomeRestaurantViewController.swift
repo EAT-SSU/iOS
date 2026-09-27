@@ -271,7 +271,7 @@ extension HomeRestaurantViewController: UITableViewDataSource {
     }
 
     private func handleMenuTap(section: Int, menuIndex: Int) {
-        if RealmService.shared.isAccessTokenPresent() == false {
+        if !TokenStore.hasAccessToken {
             presentLoginAlert()
             return
         }

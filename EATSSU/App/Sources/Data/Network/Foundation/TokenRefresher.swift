@@ -39,7 +39,7 @@ actor TokenRefresher {
 
         do {
             let data = try await performReissuance()
-            RealmService.shared.addToken(
+            TokenStore.save(
                 accessToken: data.accessToken,
                 refreshToken: data.refreshToken
             )

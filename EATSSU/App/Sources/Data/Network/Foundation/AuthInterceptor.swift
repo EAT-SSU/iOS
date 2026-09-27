@@ -35,7 +35,7 @@ final class AuthInterceptor: RequestInterceptor {
         if request.requiresToken {
             request.headers.add(
                 name: "Authorization",
-                value: "Bearer \(RealmService.shared.getToken())"
+                value: "Bearer \(TokenStore.accessToken)"
             )
         }
         
@@ -61,7 +61,7 @@ final class AuthInterceptor: RequestInterceptor {
         }
 
         // 비로그인 상태면 재발급할 토큰이 없음
-        guard !RealmService.shared.getRefreshToken().isEmpty else {
+        guard !TokenStore.refreshToken.isEmpty else {
             return completion(.doNotRetryWithError(error))
         }
         

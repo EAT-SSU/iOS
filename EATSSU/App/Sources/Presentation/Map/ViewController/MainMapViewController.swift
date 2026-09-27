@@ -120,11 +120,11 @@ final class MainMapViewController: BaseViewController {
         self.currentTab = (mode == .standaloneGoodPrice) ? .goodPrice : .partnership
         super.init(nibName: nil, bundle: nil)
         // 서버 조회 전에도 로그인 시 저장된 학과로 판정할 수 있게 미리 채운다
-        seedDepartmentFromRealmIfNeeded()
+        seedDepartmentFromLocalIfNeeded()
     }
 
-    /// 학과 정보가 비어 있으면 Realm 저장값으로 채운다 (서버 조회 실패 시 폴백)
-    func seedDepartmentFromRealmIfNeeded() {
+    /// 학과 정보가 비어 있으면 로컬 저장값으로 채운다 (서버 조회 실패 시 폴백)
+    func seedDepartmentFromLocalIfNeeded() {
         guard currentDepartmentName == nil,
               let userInfo = UserInfoManager.shared.getCurrentUserInfo(),
               let name = userInfo.departmentName, !name.isEmpty else { return }
@@ -221,7 +221,7 @@ final class MainMapViewController: BaseViewController {
         if currentTab != .partnership {
             switchTab(to: .partnership)
         }
-        // 학과 확인이 끝난 뒤 판단한다 (Realm에 없어도 서버 조회로 학과가 확인될 수 있음)
+        // 학과 확인이 끝난 뒤 판단한다 (로컬에 없어도 서버 조회로 학과가 확인될 수 있음)
         pendingDetailStore = store
         returnsToLikeTab = true
         updateLikeReturnButton()

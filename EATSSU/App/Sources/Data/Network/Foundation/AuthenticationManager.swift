@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RealmSwift
 
 enum AuthResult {
     case authenticated
@@ -41,7 +40,7 @@ final class AuthenticationManager {
             // resetDB는 메인 전용 상태(찜 목록)도 비우므로 메인에서 실행
             await MainActor.run {
                 AnalyticsIdentityManager.reset()
-                RealmService.shared.resetDB()
+                AccountStorage.reset()
             }
             return .sessionExpired
         } catch {
@@ -51,6 +50,6 @@ final class AuthenticationManager {
     }
     
     private func hasStoredToken() -> Bool {
-        !RealmService.shared.getToken().isEmpty
+        !TokenStore.accessToken.isEmpty
     }
 }

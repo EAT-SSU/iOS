@@ -11,7 +11,6 @@ import UIKit
 import Firebase
 import KakaoSDKUser
 import Moya
-import RealmSwift
 import SnapKit
 
 final class LoginViewController: BaseViewController {
@@ -38,7 +37,7 @@ final class LoginViewController: BaseViewController {
         logScreenView(screenID: FirebaseScreenID.Login.log3)
 
         // 로그인 화면 진입 시 로컬 데이터 초기화 (데이터 불일치 방지)
-        RealmService.shared.resetDB()
+        AccountStorage.reset()
 
         configureFirebaseRemoteConfig()
         showLastLoginTooltipIfNeeded()
@@ -108,7 +107,7 @@ final class LoginViewController: BaseViewController {
     }
 
     private func hasStoredToken() -> Bool {
-        !RealmService.shared.getToken().isEmpty
+        !TokenStore.accessToken.isEmpty
     }
 
     private func changeIntoHomeViewController() {
@@ -124,17 +123,13 @@ final class LoginViewController: BaseViewController {
     private func handleNicknameCheck(info: MyInfoResponse) {
         if let nickname = info.nickname {
             // 사용자의 닉네임을 업데이트하고 홈 화면으로 이동
-            if let currentUserInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                UserInfoManager.shared.updateUserInfo(
-                    for: currentUserInfo,
-                    nickname: nickname,
-                    collegeId: info.collegeId,
-                    collegeName: info.collegeName,
-                    departmentId: info.departmentId,
-                    departmentName: info.departmentName
-                )
-
-            }
+            UserInfoManager.shared.updateUserInfo(
+                nickname: nickname,
+                collegeId: info.collegeId,
+                collegeName: info.collegeName,
+                departmentId: info.departmentId,
+                departmentName: info.departmentName
+            )
             // 로그인 성공 + 유저 정보 채운 뒤 식별
             AnalyticsIdentityManager.identify()
             changeIntoHomeViewController()
@@ -146,9 +141,9 @@ final class LoginViewController: BaseViewController {
         }
     }
 
-    /// 토큰을 Realm에 저장하고, 디버깅 로그를 출력한다.
+    /// 토큰을 Keychain에 저장하고, 디버깅 로그를 출력한다.
     private func storeTokensAndPrintDebugLogs(accessToken: String, refreshToken: String) {
-        RealmService.shared.addToken(accessToken: accessToken, refreshToken: refreshToken)
+        TokenStore.save(accessToken: accessToken, refreshToken: refreshToken)
         #if DEBUG
             print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️", accessToken)
         #endif

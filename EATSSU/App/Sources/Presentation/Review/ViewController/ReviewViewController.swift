@@ -78,7 +78,7 @@ final class ReviewViewController: BaseViewController {
     /// 번역 기능 노출 여부 (현재 서버가 EN 번역만 지원 + 번역 API는 인증 필수)
     private var isTranslationAvailable: Bool {
         AppLanguageManager.shared.currentLanguage.isServerTranslationSupported
-            && RealmService.shared.isAccessTokenPresent()
+            && TokenStore.hasAccessToken
     }
     
     // MARK: - UI Components
@@ -321,7 +321,7 @@ final class ReviewViewController: BaseViewController {
     
     /// 리뷰 작성 버튼 탭 처리 (로그인 체크 포함)
     func userTapReviewButton() {
-        if RealmService.shared.isAccessTokenPresent() {
+        if TokenStore.hasAccessToken {
             ReviewAnalyticsManager.shared.logWriteReviewV2(restaurantName: restaurantName)
             DispatchQueue.global().async {
                 DispatchQueue.main.async { [self] in
@@ -547,7 +547,7 @@ extension ReviewViewController: UITableViewDataSource {
                 for: indexPath
             ) as? ReviewEmptyViewCell ?? ReviewEmptyViewCell()
             
-            if RealmService.shared.getToken() == "" {
+            if TokenStore.accessToken == "" {
                 cell.configure(isTokenExist: false)
             } else {
                 cell.configure(isTokenExist: true)

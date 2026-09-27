@@ -11,7 +11,6 @@ import WebKit
 import KakaoSDKCommon
 import KakaoSDKTalk
 import Moya
-import Realm
 import SnapKit
 
 final class MyPageViewController: BaseViewController {
@@ -116,7 +115,7 @@ final class MyPageViewController: BaseViewController {
                                       style: .default,
                                       handler: { _ in
             AnalyticsIdentityManager.reset()
-            RealmService.shared.resetDB()
+            AccountStorage.reset()
 
             let loginViewController = LoginViewController()
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

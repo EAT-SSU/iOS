@@ -194,21 +194,18 @@ extension MainMapViewController {
                 self.currentDepartmentId = department.departmentId
                 self.currentCollegeId = department.collegeId
 
-                // Realm 데이터도 함께 동기화하여 서버-클라이언트 불일치 방지
-                if let userInfo = UserInfoManager.shared.getCurrentUserInfo() {
-                    UserInfoManager.shared.updateDepartment(
-                        for: userInfo,
-                        collegeId: department.collegeId,
-                        collegeName: department.collegeName,
-                        departmentId: department.departmentId,
-                        departmentName: department.departmentName
-                    )
-                }
+                // 로컬 사용자 정보도 함께 동기화하여 서버-클라이언트 불일치 방지
+                UserInfoManager.shared.updateDepartment(
+                    collegeId: department.collegeId,
+                    collegeName: department.collegeName,
+                    departmentId: department.departmentId,
+                    departmentName: department.departmentName
+                )
 
             case .failure(let error):
-                // 일시적 조회 실패를 '학과 없음'으로 오판하지 않도록 기존 값(없으면 Realm 저장값)을 유지한다
+                // 일시적 조회 실패를 '학과 없음'으로 오판하지 않도록 기존 값(없으면 로컬 저장값)을 유지한다
                 print("학과 조회 실패: \(error.localizedDescription)")
-                self.seedDepartmentFromRealmIfNeeded()
+                self.seedDepartmentFromLocalIfNeeded()
             }
 
             completion?()
