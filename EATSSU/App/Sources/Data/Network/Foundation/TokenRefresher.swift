@@ -54,7 +54,7 @@ actor TokenRefresher {
                 // 재발급을 기다리는 사이 로그아웃·재로그인됐다면 이전 계정 토큰을 되살리지 않는다
                 throw TokenRefresherError.discarded
             case .saveFailed:
-                // 저장에 실패하면 토큰이 비므로 재발급 실패와 같게 로그인 화면으로 보낸다
+                // 저장에 실패하면 토큰이 비므로 재발급 실패(세션 만료)로 처리한다
                 throw TokenRefresherError.sessionExpired
             }
 #if DEBUG
