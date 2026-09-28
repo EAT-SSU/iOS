@@ -36,7 +36,8 @@ enum TokenStore {
         !accessToken.isEmpty
     }
 
-    /// 토큰 두 개를 함께 저장한다. 하나라도 실패하면 false.
+    /// 토큰 두 개를 함께 저장한다.
+    /// 하나라도 실패하면 서로 다른 세대의 토큰이 섞이지 않도록 둘 다 지우고 false를 반환한다.
     @discardableResult
     static func save(accessToken: String, refreshToken: String) -> Bool {
         lock.lock()
@@ -44,9 +45,16 @@ enum TokenStore {
 
         let isAccessSaved = KeychainHelper.save(accessToken, forKey: Key.accessToken, accessibility: accessibility)
         let isRefreshSaved = KeychainHelper.save(refreshToken, forKey: Key.refreshToken, accessibility: accessibility)
-        cachedAccessToken = isAccessSaved ? accessToken : nil
-        cachedRefreshToken = isRefreshSaved ? refreshToken : nil
-        return isAccessSaved && isRefreshSaved
+        guard isAccessSaved && isRefreshSaved else {
+            KeychainHelper.delete(forKey: Key.accessToken)
+            KeychainHelper.delete(forKey: Key.refreshToken)
+            cachedAccessToken = ""
+            cachedRefreshToken = ""
+            return false
+        }
+        cachedAccessToken = accessToken
+        cachedRefreshToken = refreshToken
+        return true
     }
 
     static func clear() {

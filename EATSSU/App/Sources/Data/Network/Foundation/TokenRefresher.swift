@@ -12,6 +12,8 @@ import Moya
 enum TokenRefresherError: Error {
     case emptyResult
     case sessionExpired
+    /// 재발급 도중 로그아웃·재로그인되어 결과를 버림 (세션 만료 안내 대상 아님)
+    case discarded
 }
 
 actor TokenRefresher {
@@ -38,11 +40,17 @@ actor TokenRefresher {
         }
 
         do {
+            let requestedRefreshToken = TokenStore.refreshToken
             let data = try await performReissuance()
-            TokenStore.save(
-                accessToken: data.accessToken,
-                refreshToken: data.refreshToken
-            )
+
+            // 재발급을 기다리는 사이 로그아웃·재로그인됐다면 이전 계정 토큰을 되살리지 않는다
+            guard TokenStore.refreshToken == requestedRefreshToken else {
+                throw TokenRefresherError.discarded
+            }
+            // 저장에 실패하면 토큰이 비므로 재발급 실패와 같게 로그인 화면으로 보낸다
+            guard TokenStore.save(accessToken: data.accessToken, refreshToken: data.refreshToken) else {
+                throw TokenRefresherError.sessionExpired
+            }
 #if DEBUG
             print("⭐️⭐️ 재발급 완료 ⭐️⭐️ – 새 accessToken:", data.accessToken)
 #endif

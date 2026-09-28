@@ -142,11 +142,16 @@ final class LoginViewController: BaseViewController {
     }
 
     /// 토큰을 Keychain에 저장하고, 디버깅 로그를 출력한다.
-    private func storeTokensAndPrintDebugLogs(accessToken: String, refreshToken: String) {
-        TokenStore.save(accessToken: accessToken, refreshToken: refreshToken)
+    /// 저장에 실패하면 안내 후 false를 반환해 이후 로그인 흐름을 멈춘다.
+    private func storeTokensAndPrintDebugLogs(accessToken: String, refreshToken: String) -> Bool {
+        guard TokenStore.save(accessToken: accessToken, refreshToken: refreshToken) else {
+            showToast(message: TextLiteral.Common.errorOccured, type: .danger)
+            return false
+        }
         #if DEBUG
             print("⭐️⭐️ 토큰 저장 성공 ⭐️⭐️", accessToken)
         #endif
+        return true
     }
 
     // MARK: - 액션 메서드
@@ -228,7 +233,7 @@ extension LoginViewController {
             let refreshToken = data.refreshToken
                 
             // 토큰을 로컬에 저장
-            storeTokensAndPrintDebugLogs(accessToken: accessToken, refreshToken: refreshToken)
+            guard storeTokensAndPrintDebugLogs(accessToken: accessToken, refreshToken: refreshToken) else { return }
 
             // 로컬 매니저에 유저 정보 생성
             _ = UserInfoManager.shared.createUserInfo(accountType: accountType)
@@ -264,8 +269,8 @@ extension LoginViewController {
                 #if DEBUG
                     print("Kakao login success")
                 #endif
-                storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
-                                            refreshToken: signData.refreshToken)
+                guard storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
+                                                   refreshToken: signData.refreshToken) else { return }
                 _ = UserInfoManager.shared.createUserInfo(accountType: .kakao)
                 UserDefaults.standard.set(UserInfo.AccountType.kakao.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
                 AnalyticsService.logEvent("complete_login", parameters: ["method": "kakao"])
@@ -294,8 +299,8 @@ extension LoginViewController {
                 #if DEBUG
                     print("Apple 로그인 성공")
                 #endif
-                storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
-                                            refreshToken: signData.refreshToken)
+                guard storeTokensAndPrintDebugLogs(accessToken: signData.accessToken,
+                                                   refreshToken: signData.refreshToken) else { return }
                 _ = UserInfoManager.shared.createUserInfo(accountType: .apple)
                 UserDefaults.standard.set(UserInfo.AccountType.apple.rawValue, forKey: TextLiteral.Auth.lastLoginProviderKey)
                 AnalyticsService.logEvent("complete_login", parameters: ["method": "apple"])
