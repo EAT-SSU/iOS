@@ -41,7 +41,7 @@ extension ReissueRouter: TargetType, AccessTokenAuthorizable {
     var headers: [String: String]? {
         switch self {
         default:
-            let refreshToken = RealmService.shared.getRefreshToken()
+            let refreshToken = TokenStore.refreshToken
             return ["Content-Type": "application/json",
                     "Authorization": "Bearer \(refreshToken)"]
         }

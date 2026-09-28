@@ -404,11 +404,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 스플래시 중이면 시작 인증 흐름이 로그인 화면으로 보낸다
         guard hasFinishedLaunchAuthentication else { return }
         // 동시에 실패한 요청들이 각각 이벤트를 보내므로 첫 번째만 처리
-        guard !RealmService.shared.getToken().isEmpty else { return }
+        guard !TokenStore.accessToken.isEmpty else { return }
 
         // 로그아웃과 같은 기준으로 계정 상태 정리
         AnalyticsIdentityManager.reset()
-        RealmService.shared.resetDB()
+        AccountStorage.reset()
         transitionToLogin(withMessage: TextLiteral.Common.sessionExpired)
     }
 }

@@ -5,53 +5,18 @@
 //  Created by 박윤빈 on 2023/08/02.
 //
 
-import Realm
-import RealmSwift
+import Foundation
 
-class UserInfo: Object {
-    @Persisted(primaryKey: true) var id: String = UUID().uuidString
-    @Persisted var nickname: String = ""
-    @Persisted private var accountTypeRaw: String?
-    @Persisted var collegeId: Int?
-    @Persisted var collegeName: String?
-    @Persisted var departmentId: Int?
-    @Persisted var departmentName: String?
+/// 로그인한 사용자의 로컬 프로필. UserInfoManager가 UserDefaults에 저장한다.
+struct UserInfo: Codable, Equatable {
+    var nickname: String = ""
+    var accountType: AccountType?
+    var collegeId: Int?
+    var collegeName: String?
+    var departmentId: Int?
+    var departmentName: String?
 
-    var accountType: AccountType? {
-        get {
-            guard let rawValue = accountTypeRaw else { return nil }
-            return AccountType(rawValue: rawValue)
-        }
-        set {
-            accountTypeRaw = newValue?.rawValue
-        }
-    }
-
-    convenience init(accountType: AccountType) {
-        self.init()
-        self.accountType = accountType
-    }
-    
-    func updateUserInfo(nickname: String, collegeId: Int?, collegeName: String?, departmentId: Int?, departmentName: String?) {
-        self.nickname = nickname
-        self.collegeId = collegeId
-        self.collegeName = collegeName
-        self.departmentId = departmentId
-        self.departmentName = departmentName
-    }
-
-    func updateNickname(_ nickname: String) {
-        self.nickname = nickname
-    }
-    
-    func updateDepartment(collegeId: Int?, collegeName: String?, departmentId: Int?, departmentName: String?) {
-        self.collegeId = collegeId
-        self.collegeName = collegeName
-        self.departmentId = departmentId
-        self.departmentName = departmentName
-    }
-
-    enum AccountType: String {
+    enum AccountType: String, Codable {
         case apple = "Apple"
         case kakao = "Kakao"
     }

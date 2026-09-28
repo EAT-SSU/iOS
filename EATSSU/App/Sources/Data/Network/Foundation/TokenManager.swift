@@ -20,7 +20,7 @@ final class TokenManager {
     
     /// accessToken 디코딩하여 만료 여부 판단
     func isTokenExpiringSoon() -> Bool {
-        let token = RealmService.shared.getToken()
+        let token = TokenStore.accessToken
         guard let payload = decodePayload(token: token) else {
             return true // 디코딩 실패 시 만료로 간주
         }
@@ -32,7 +32,7 @@ final class TokenManager {
     /// 재발급이 필요하면 TokenRefresher로 실행
     func refreshIfNeeded() async {
         // 비로그인 상태면 재발급할 토큰이 없다
-        guard !RealmService.shared.getRefreshToken().isEmpty else { return }
+        guard !TokenStore.refreshToken.isEmpty else { return }
 
         if isTokenExpiringSoon() {
             do {

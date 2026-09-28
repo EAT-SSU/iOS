@@ -104,7 +104,7 @@ final class CustomTabBarContainerController: UITabBarController {
     @discardableResult
     public func setTab(index: Int) -> Bool {
         guard index < tabViewControllers.count, let tab = Tab(rawValue: index) else { return false }
-        if tab.requiresLogin, RealmService.shared.isAccessTokenPresent() == false {
+        if tab.requiresLogin, !TokenStore.hasAccessToken {
             presentLoginAlert()
             return false
         }
@@ -252,7 +252,7 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
             return true
         }
         
-        if selectedTab.requiresLogin, RealmService.shared.isAccessTokenPresent() == false {
+        if selectedTab.requiresLogin, !TokenStore.hasAccessToken {
             presentLoginAlert()
             return false
         }

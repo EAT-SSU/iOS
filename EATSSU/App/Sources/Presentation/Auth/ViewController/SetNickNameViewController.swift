@@ -312,9 +312,7 @@ extension SetNickNameViewController {
         ) { result in
             switch result {
             case .success:
-                if let user = UserInfoManager.shared.getCurrentUserInfo() {
-                    UserInfoManager.shared.updateNickname(for: user, nickname: nickname)
-                }
+                UserInfoManager.shared.updateNickname(nickname)
                 completion(true)
                 
             case .failure:
@@ -374,13 +372,10 @@ extension SetNickNameViewController {
             switch result {
             case .success:
                 print("학과 등록 성공: ID \(departmentInfo.id)")
-                if let user = UserInfoManager.shared.getCurrentUserInfo() {
-                    UserInfoManager.shared.updateDepartment(for: user,
-                                                            collegeId: collegeInfo.id,
-                                                            collegeName: collegeInfo.name,
-                                                            departmentId: departmentInfo.id,
-                                                            departmentName: departmentInfo.name)
-                }
+                UserInfoManager.shared.updateDepartment(collegeId: collegeInfo.id,
+                                                        collegeName: collegeInfo.name,
+                                                        departmentId: departmentInfo.id,
+                                                        departmentName: departmentInfo.name)
                 // 학과 정보 갱신 후 유저 속성 재식별
                 AnalyticsIdentityManager.identify()
                 completion(true)

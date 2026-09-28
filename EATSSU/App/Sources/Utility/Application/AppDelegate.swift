@@ -13,14 +13,14 @@ import FirebaseMessaging
 import KakaoSDKCommon
 import NMapsMap
 import PostHog
-import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     // MARK: - UIApplicationDelegate Methods
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        configureRealm()
+        // 토큰·사용자 정보를 읽기 전에 로컬 저장소 준비 (Realm → Keychain 이전 포함)
+        LocalStorageMigrator.prepareIfNeeded()
         setupNotificationPermissions()
         startNetworkMonitoring()
         configureFirebase()
@@ -114,19 +114,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                userInfo["fcm_options"] != nil
     }
 
-    private func configureRealm() {
-        let config = Realm.Configuration(
-            // 데이터베이스의 버전을 설정 - 구조를 변경할 때마다 이 숫자를 1씩 증가
-            schemaVersion: 1,
-            migrationBlock: { migration, oldSchemaVersion in
-                if oldSchemaVersion < 1 {
-                    // UserInfo에 새 속성들이 추가된 경우, Realm이 자동으로 처리
-                }
-            }
-        )
-        Realm.Configuration.defaultConfiguration = config
-    }
-    
     /// 푸시 알림 권한을 요청하고 설정을 처리합니다.
     private func setupNotificationPermissions() {
         _Concurrency.Task {

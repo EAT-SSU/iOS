@@ -16,8 +16,13 @@ enum KeychainHelper {
     private static let service = Bundle.main.bundleIdentifier ?? "com.eatssu.keychain"
 
     /// 값을 저장한다. 같은 key가 있으면 덮어쓴다.
+    /// - Parameter accessibility: 기기 잠금 상태에 따른 접근 가능 시점 (기본값: 첫 잠금 해제 이후)
     @discardableResult
-    static func save(_ value: String, forKey key: String) -> Bool {
+    static func save(
+        _ value: String,
+        forKey key: String,
+        accessibility: CFString = kSecAttrAccessibleAfterFirstUnlock
+    ) -> Bool {
         guard let data = value.data(using: .utf8) else { return false }
 
         let query: [String: Any] = [
@@ -29,7 +34,7 @@ enum KeychainHelper {
 
         var attributes = query
         attributes[kSecValueData as String] = data
-        attributes[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+        attributes[kSecAttrAccessible as String] = accessibility
 
         return SecItemAdd(attributes as CFDictionary, nil) == errSecSuccess
     }
@@ -51,5 +56,17 @@ enum KeychainHelper {
             return nil
         }
         return value
+    }
+
+    /// 값을 삭제한다. 없는 key여도 성공으로 본다.
+    @discardableResult
+    static func delete(forKey key: String) -> Bool {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecAttrService as String: service
+        ]
+        let status = SecItemDelete(query as CFDictionary)
+        return status == errSecSuccess || status == errSecItemNotFound
     }
 }
