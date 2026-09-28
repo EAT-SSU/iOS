@@ -39,16 +39,22 @@ actor TokenRefresher {
             isRefreshing = false
         }
 
+        let requestedRefreshToken = TokenStore.refreshToken
         do {
-            let requestedRefreshToken = TokenStore.refreshToken
             let data = try await performReissuance()
 
-            // 재발급을 기다리는 사이 로그아웃·재로그인됐다면 이전 계정 토큰을 되살리지 않는다
-            guard TokenStore.refreshToken == requestedRefreshToken else {
+            switch TokenStore.replace(
+                expectedRefreshToken: requestedRefreshToken,
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken
+            ) {
+            case .saved:
+                break
+            case .sessionChanged:
+                // 재발급을 기다리는 사이 로그아웃·재로그인됐다면 이전 계정 토큰을 되살리지 않는다
                 throw TokenRefresherError.discarded
-            }
-            // 저장에 실패하면 토큰이 비므로 재발급 실패와 같게 로그인 화면으로 보낸다
-            guard TokenStore.save(accessToken: data.accessToken, refreshToken: data.refreshToken) else {
+            case .saveFailed:
+                // 저장에 실패하면 토큰이 비므로 재발급 실패와 같게 로그인 화면으로 보낸다
                 throw TokenRefresherError.sessionExpired
             }
 #if DEBUG
@@ -58,10 +64,15 @@ actor TokenRefresher {
             waitingContinuations.forEach { $0.resume() }
             waitingContinuations.removeAll()
         } catch {
+            // 그사이 다른 계정으로 로그인했다면, 이전 계정 요청의 실패(401 등)가
+            // 새 계정의 세션 만료로 번지지 않게 한다
+            let currentRefreshToken = TokenStore.refreshToken
+            let isAnotherSession = !currentRefreshToken.isEmpty && currentRefreshToken != requestedRefreshToken
+            let propagatedError: Error = isAnotherSession ? TokenRefresherError.discarded : error
             // 대기 중인 모든 요청에 실패 전파
-            waitingContinuations.forEach { $0.resume(throwing: error) }
+            waitingContinuations.forEach { $0.resume(throwing: propagatedError) }
             waitingContinuations.removeAll()
-            throw error
+            throw propagatedError
         }
     }
 

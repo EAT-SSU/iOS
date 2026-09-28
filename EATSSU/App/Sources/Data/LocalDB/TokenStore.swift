@@ -36,6 +36,13 @@ enum TokenStore {
         !accessToken.isEmpty
     }
 
+    enum ReplaceResult {
+        case saved
+        /// 요청 이후 로그아웃·재로그인되어 저장하지 않음
+        case sessionChanged
+        case saveFailed
+    }
+
     /// 토큰 두 개를 함께 저장한다.
     /// 하나라도 실패하면 서로 다른 세대의 토큰이 섞이지 않도록 둘 다 지우고 false를 반환한다.
     @discardableResult
@@ -43,6 +50,34 @@ enum TokenStore {
         lock.lock()
         defer { lock.unlock() }
 
+        return saveLocked(accessToken: accessToken, refreshToken: refreshToken)
+    }
+
+    /// 재발급 결과를 저장한다. 요청할 때의 refreshToken이 그대로일 때만 저장하며,
+    /// 비교와 저장을 한 잠금 안에서 처리해 그 사이 로그아웃이 끼어들지 못하게 한다.
+    static func replace(expectedRefreshToken: String, accessToken: String, refreshToken: String) -> ReplaceResult {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard valueLocked(forKey: Key.refreshToken, cache: &cachedRefreshToken) == expectedRefreshToken else {
+            return .sessionChanged
+        }
+        return saveLocked(accessToken: accessToken, refreshToken: refreshToken) ? .saved : .saveFailed
+    }
+
+    static func clear() {
+        lock.lock()
+        defer { lock.unlock() }
+
+        KeychainHelper.delete(forKey: Key.accessToken)
+        KeychainHelper.delete(forKey: Key.refreshToken)
+        cachedAccessToken = ""
+        cachedRefreshToken = ""
+    }
+
+    // MARK: - lock을 잡은 상태에서만 호출
+
+    private static func saveLocked(accessToken: String, refreshToken: String) -> Bool {
         let isAccessSaved = KeychainHelper.save(accessToken, forKey: Key.accessToken, accessibility: accessibility)
         let isRefreshSaved = KeychainHelper.save(refreshToken, forKey: Key.refreshToken, accessibility: accessibility)
         guard isAccessSaved && isRefreshSaved else {
@@ -57,20 +92,14 @@ enum TokenStore {
         return true
     }
 
-    static func clear() {
-        lock.lock()
-        defer { lock.unlock() }
-
-        KeychainHelper.delete(forKey: Key.accessToken)
-        KeychainHelper.delete(forKey: Key.refreshToken)
-        cachedAccessToken = ""
-        cachedRefreshToken = ""
-    }
-
     private static func value(forKey key: String, cache: inout String?) -> String {
         lock.lock()
         defer { lock.unlock() }
 
+        return valueLocked(forKey: key, cache: &cache)
+    }
+
+    private static func valueLocked(forKey key: String, cache: inout String?) -> String {
         if let cache { return cache }
         // 읽기 실패(첫 잠금 해제 전 등)는 캐시하지 않아, 잠금 해제 후 다시 읽을 수 있게 한다
         guard let stored = KeychainHelper.read(forKey: key) else { return "" }
