@@ -177,6 +177,8 @@
 "map.map" = "Map";
 /// MainMapView - "전체"
 "map.all" = "All";
+/// 축제 제휴 안내 말풍선
+"map.festivalBannerMessage" = "See 2026 festival partner stores!\nNot valid with other partner deals.";
 /// "축제"
 "map.festival" = "Festival";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
