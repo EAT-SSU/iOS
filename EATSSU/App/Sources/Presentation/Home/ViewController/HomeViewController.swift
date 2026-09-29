@@ -121,7 +121,7 @@ final class HomeViewController: BaseViewController {
 
     /// 리뷰 작성 후 데이터 새로고침
     func refreshAfterReview() {
-        tabmanController.dateFetchData(for: currentDate)
+        tabmanController.reloadData(for: currentDate)
     }
     
     /// 하단 탭바에서 학식 탭 클릭 시 오늘 날짜로 초기화
