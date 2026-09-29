@@ -238,7 +238,8 @@ final class CustomTabBarContainerController: UITabBarController {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let sceneDelegate = windowScene.delegate as? SceneDelegate,
            let window = sceneDelegate.window {
-            window.replaceRootViewController(loginVC)
+            // 신규 가입자는 로그인 화면에서 닉네임 설정으로 push되므로 네비게이션으로 감싼다
+            window.replaceRootViewController(UINavigationController(rootViewController: loginVC))
         }
     }
 }
