@@ -93,6 +93,9 @@ final class HomeRestaurantViewController: BaseViewController {
 
     // 고정 메뉴 데이터 (간식코너)
     var fixMenuTableViewData: [String: [Menus]] = [:]
+
+    // 메뉴 조회에 실패한 식당. 빈 목록을 "영업 시간 아님"과 구분해 안내한다
+    private var failedRestaurants: Set<String> = []
     
     // MARK: - UI Components
 
@@ -227,6 +230,7 @@ final class HomeRestaurantViewController: BaseViewController {
     private func hideSnackCorner() {
         isSelectable = false
         fixMenuTableViewData[RestaurantIdentifier.snackCorner.rawValue] = []
+        setLoadFailed(false, for: RestaurantIdentifier.snackCorner.rawValue)
         
         if let sectionIndex = getSectionIndex(for: RestaurantIdentifier.snackCorner.rawValue) {
             restaurantView.restaurantTableView.reloadSections(
@@ -264,7 +268,11 @@ extension HomeRestaurantViewController: UITableViewDataSource {
             ? (fixMenuTableViewData[sectionKey]?.map { .fix($0) } ?? [])
             : (changeMenuTableViewData[sectionKey]?.map { .change($0) } ?? [])
 
-        cell.configure(with: menuList, at: indexPath) { [weak self] indexPath, menuIndex in
+        let emptyMessage = failedRestaurants.contains(sectionKey)
+            ? TextLiteral.Home.menuLoadFailed
+            : TextLiteral.Home.notBusinessHour
+
+        cell.configure(with: menuList, emptyMessage: emptyMessage, at: indexPath) { [weak self] indexPath, menuIndex in
             self?.handleMenuTap(section: indexPath.section, menuIndex: menuIndex)
         }
         return cell
@@ -429,13 +437,22 @@ extension HomeRestaurantViewController: UITableViewDelegate {
 // MARK: - Network
 
 extension HomeRestaurantViewController {
+    private func setLoadFailed(_ didFail: Bool, for restaurant: String) {
+        if didFail {
+            failedRestaurants.insert(restaurant)
+        } else {
+            failedRestaurants.remove(restaurant)
+        }
+    }
+
     // 변경 메뉴 요청 API 호출
     func fetchChangeMenuData(date: String, restaurant: String, time: String) async {
         
         // UI 업데이트에 사용할 메뉴 목록과 애니메이션 타입을 저장할 변수
         let menusToUpdate: [ChangeMenuTableResponse]
         let animation: UITableView.RowAnimation
-        
+        var didFail = false
+
         do {
             // 비동기 네트워크 요청을 통해 메뉴 데이터 가져오기
             let menus: [ChangeMenuTableResponse] = try await withCheckedThrowingContinuation { continuation in
@@ -459,11 +476,13 @@ extension HomeRestaurantViewController {
             print("\(restaurant) 변경 메뉴 조회 실패: \(error.localizedDescription)")
             menusToUpdate = []
             animation = .none
+            didFail = true
         }
-        
+
         // 메인 스레드에서 UI 업데이트
         await MainActor.run {
             self.changeMenuTableViewData[restaurant] = menusToUpdate
+            self.setLoadFailed(didFail, for: restaurant)
             
             if let sectionIndex = self.getSectionIndex(for: restaurant) {
                 self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: animation)
@@ -475,6 +494,7 @@ extension HomeRestaurantViewController {
     func fetchFixedMenuData(restaurant: String) async {
         var menuData: [Menus] = []
         var animation: UITableView.RowAnimation = .none
+        var didFail = false
 
         do {
             let response: FixedMenuTableResponse = try await withCheckedThrowingContinuation { continuation in
@@ -493,11 +513,13 @@ extension HomeRestaurantViewController {
             animation = .fade
         } catch {
             print("\(restaurant) 고정 메뉴 조회 실패: \(error.localizedDescription)")
+            didFail = true
         }
-        
+
         // 메인 스레드에서 UI 업데이트
         await MainActor.run {
             self.fixMenuTableViewData[restaurant] = menuData
+            self.setLoadFailed(didFail, for: restaurant)
             if let sectionIndex = self.getSectionIndex(for: restaurant) {
                 self.restaurantView.restaurantTableView.reloadSections(IndexSet(integer: sectionIndex), with: animation)
             }

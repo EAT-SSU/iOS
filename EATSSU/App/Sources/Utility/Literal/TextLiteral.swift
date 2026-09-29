@@ -452,6 +452,11 @@ enum TextLiteral {
             Localization.localized("home.notBusinessHour", fallback: "영업 시간이 아니에요.")
         }
 
+        /// RestaurantMenuGroupCell - "메뉴를 불러오지 못했어요."
+        static var menuLoadFailed: String {
+            Localization.localized("home.menuLoadFailed", fallback: "메뉴를 불러오지 못했어요.")
+        }
+
         /// RestaurantTableViewHeader - "기숙사 식당"
         static var dormitoryRestaurant: String {
             Localization.localized("home.dormitoryRestaurant", fallback: "기숙사 식당")

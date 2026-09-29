@@ -107,14 +107,21 @@ final class RestaurantMenuGroupCell: BaseTableViewCell {
 
     /// 메뉴 데이터를 이용해 스택뷰를 구성
     /// - Parameter menus: 메뉴 리스트 (MenuTypeInfo 배열)
+    /// - Parameter emptyMessage: 메뉴가 없을 때 보여줄 문구 (영업 시간 아님 / 조회 실패)
     /// - Parameter indexPath: 현재 테이블뷰 indexPath (섹션, row)
     /// - Parameter onMenuTap: 터치 시 실행할 클로저 (section, index 전달)
-    func configure(with menus: [MenuTypeInfo], at indexPath: IndexPath, onMenuTap: @escaping (IndexPath, Int) -> Void) {
+    func configure(
+        with menus: [MenuTypeInfo],
+        emptyMessage: String = TextLiteral.Home.notBusinessHour,
+        at indexPath: IndexPath,
+        onMenuTap: @escaping (IndexPath, Int) -> Void
+    ) {
         // 이전 뷰들 제거 (주의: prepareForReuse와 중복 제거됨 → 안정성 보장용)
         menuStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         // 메뉴가 없을 경우 → 안내 텍스트 표시
         if menus.isEmpty {
+            emptyLabel.text = emptyMessage
             emptyLabel.isHidden = false
             menuStackView.isHidden = true
         } else {
