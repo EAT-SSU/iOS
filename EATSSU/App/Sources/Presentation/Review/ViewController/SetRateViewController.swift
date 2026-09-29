@@ -173,14 +173,9 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         self.selectedList = list
         self.validMenuIDList = idList
         self.likedStates = Array(repeating: false, count: list.count)
-        
-        if idList.count == 1 {
-            self.reviewType = .fixed
-            self.menuID = idList.first
-        } else {
-            self.reviewType = .variable
-        }
-        
+        // 리뷰 종류(식단/메뉴)는 init에서 정한다. 메뉴 개수로 바꾸면
+        // 메뉴가 1개인 식단 리뷰가 메뉴 리뷰로 전송된다
+
         setRateView.menuTableView.reloadData()
     }
 
@@ -345,6 +340,12 @@ final class SetRateViewController: BaseViewController, UINavigationControllerDel
         }
     }
     
+    /// 제출을 진행하지 못했을 때 다시 제출할 수 있게 되돌린다
+    private func restoreSubmitState() {
+        isReviewSubmitted = false
+        setRateView.nextButton.isEnabled = true
+    }
+
     /// 리뷰 작성/수정 완료 후 이전 화면
     private func moveToReviewVC() {
         if let myReviewVC = navigationController?.viewControllers.first(where: { $0 is MyReviewViewController }) as? MyReviewViewController {
@@ -404,6 +405,7 @@ extension SetRateViewController {
     private func sendFixReview() {
         guard let reviewId = reviewId else {
             showToast(message: TextLiteral.Review.noReviewInfoForFix)
+            restoreSubmitState()
             return
         }
 
@@ -452,6 +454,7 @@ extension SetRateViewController {
     private func sendMealReview() {
         guard let mealId = mealID else {
             showToast(message: TextLiteral.Review.noMealInfo)
+            restoreSubmitState()
             return
         }
 
@@ -503,6 +506,7 @@ extension SetRateViewController {
     private func sendMenuReview() {
         guard let menuId = menuID ?? validMenuIDList.first else {
             showToast(message: TextLiteral.Review.noMenuInfo)
+            restoreSubmitState()
             return
         }
 
