@@ -178,6 +178,8 @@
 "map.map" = "マップ";
 /// MainMapView - "전체"
 "map.all" = "すべて";
+/// 축제 제휴 안내 말풍선
+"map.festivalBannerMessage" = "2026学園祭の提携店をチェック！\n既存の提携とは併用できません。";
 /// "축제"
 "map.festival" = "学園祭";
 /// NoDepartmentSheetVC - "학과를 입력하고\n나만의 제휴를 확인해보세요!"
