@@ -192,6 +192,8 @@ final class HomeRestaurantViewController: BaseViewController {
             guard let self else { return }
 
             let isHoliday = await self.isHoliday(date: date)
+            // 공휴일을 조회하는 사이 다른 날짜로 바뀌었다면 반영하지 않는다
+            guard !_Concurrency.Task.isCancelled else { return }
 
             if !FirebaseRemoteConfig.shared.isVacationPeriod,
                !weekday.isWeekend,
@@ -481,6 +483,8 @@ extension HomeRestaurantViewController {
 
         // 메인 스레드에서 UI 업데이트
         await MainActor.run {
+            // 네트워크 요청은 취소되지 않으므로, 다른 날짜로 바뀐 뒤 도착한 응답은 버린다
+            guard !_Concurrency.Task.isCancelled else { return }
             self.changeMenuTableViewData[restaurant] = menusToUpdate
             self.setLoadFailed(didFail, for: restaurant)
             
@@ -518,6 +522,8 @@ extension HomeRestaurantViewController {
 
         // 메인 스레드에서 UI 업데이트
         await MainActor.run {
+            // 네트워크 요청은 취소되지 않으므로, 다른 날짜로 바뀐 뒤 도착한 응답은 버린다
+            guard !_Concurrency.Task.isCancelled else { return }
             self.fixMenuTableViewData[restaurant] = menuData
             self.setLoadFailed(didFail, for: restaurant)
             if let sectionIndex = self.getSectionIndex(for: restaurant) {
