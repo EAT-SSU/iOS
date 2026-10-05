@@ -163,6 +163,12 @@ final class CustomTimeTabController: BaseViewController {
         dateSubject.send(date)
     }
 
+    /// 같은 날짜라도 다시 조회한다 (리뷰 작성 후 평점 갱신 등)
+    /// 날짜 파이프라인은 같은 날짜를 거르므로 거치지 않고 바로 요청한다
+    func reloadData(for date: Date) {
+        performDateUpdate(date)
+    }
+
     private func setupPageViewController() {
         addChild(pageViewController)
         view.addSubview(pageViewController.view)

@@ -178,12 +178,11 @@ final class SetNickNameViewController: BaseViewController {
                 myPageVC.showToast(message: TextLiteral.Auth.updateSuccess, type: .success)
             }
         } else {
-            let homeVC = HomeViewController()
+            // 로그인 완료와 같은 탭바 화면으로 이동 (홈만 올리면 지도·찜·마이 탭이 없다)
+            let customTabVC = CustomTabBarContainerController()
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                keyWindow.replaceRootViewController(
-                    UINavigationController(rootViewController: homeVC)
-                )
+                keyWindow.replaceRootViewController(customTabVC)
             }
         }
     }
