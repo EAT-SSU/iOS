@@ -196,6 +196,8 @@ final class MenuLikeViewController: BaseViewController {
             )
             emptyView.isHidden = !(menus.isEmpty && !didFail)
         }
+        // 안내 문구는 흰 배경 테이블 뒤에 있으므로, 보일 때는 테이블을 숨긴다 (제휴 찜 목록과 같은 방식)
+        tableView.isHidden = !emptyView.isHidden
         tableView.reloadData()
     }
 
