@@ -705,7 +705,23 @@
 "like.emptyTitle" = "아직 찜한 제휴가 없어요.";
 /// "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!"
 "like.emptySubtitle" = "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!";
-/// "메뉴 찜은 준비 중이에요."
-"like.menuComingSoonTitle" = "메뉴 찜은 준비 중이에요.";
-/// "곧 만나볼 수 있어요!"
-"like.menuComingSoonSubtitle" = "곧 만나볼 수 있어요!";
+/// "찜하고 싶은 메뉴를 검색하세요."
+"like.menuSearchPlaceholder" = "찜하고 싶은 메뉴를 검색하세요.";
+/// "아직 찜한 메뉴가 없어요."
+"like.menuEmptyTitle" = "아직 찜한 메뉴가 없어요.";
+/// "좋아하는 메뉴를 검색해서 등록해 보세요!"
+"like.menuEmptySubtitle" = "좋아하는 메뉴를 검색해서 등록해 보세요!";
+/// "내가 찜한 메뉴"
+"like.menuListTitle" = "내가 찜한 메뉴";
+/// "찜한 메뉴에 추가했어요."
+"like.menuAddedToast" = "찜한 메뉴에 추가했어요.";
+/// "찜한 메뉴에서 삭제했어요."
+"like.menuRemovedToast" = "찜한 메뉴에서 삭제했어요.";
+/// "처리하지 못했어요. 잠시 후 다시 시도해주세요."
+"like.menuUpdateFailed" = "처리하지 못했어요. 잠시 후 다시 시도해주세요.";
+/// "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."
+"like.menuLoadFailed" = "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요.";
+/// "일치하는 메뉴가 없어요."
+"like.menuSearchEmptyTitle" = "일치하는 메뉴가 없어요.";
+/// "다른 메뉴명으로 검색해주세요!"
+"like.menuSearchEmptySubtitle" = "다른 메뉴명으로 검색해주세요!";

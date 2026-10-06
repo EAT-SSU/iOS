@@ -1430,14 +1430,54 @@ enum TextLiteral {
             Localization.localized("like.emptySubtitle", fallback: "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!")
         }
 
-        /// "메뉴 찜은 준비 중이에요."
-        static var menuComingSoonTitle: String {
-            Localization.localized("like.menuComingSoonTitle", fallback: "메뉴 찜은 준비 중이에요.")
+        /// "찜하고 싶은 메뉴를 검색하세요."
+        static var menuSearchPlaceholder: String {
+            Localization.localized("like.menuSearchPlaceholder", fallback: "찜하고 싶은 메뉴를 검색하세요.")
         }
 
-        /// "곧 만나볼 수 있어요!"
-        static var menuComingSoonSubtitle: String {
-            Localization.localized("like.menuComingSoonSubtitle", fallback: "곧 만나볼 수 있어요!")
+        /// "아직 찜한 메뉴가 없어요."
+        static var menuEmptyTitle: String {
+            Localization.localized("like.menuEmptyTitle", fallback: "아직 찜한 메뉴가 없어요.")
+        }
+
+        /// "좋아하는 메뉴를 검색해서 등록해 보세요!"
+        static var menuEmptySubtitle: String {
+            Localization.localized("like.menuEmptySubtitle", fallback: "좋아하는 메뉴를 검색해서 등록해 보세요!")
+        }
+
+        /// "내가 찜한 메뉴"
+        static var menuListTitle: String {
+            Localization.localized("like.menuListTitle", fallback: "내가 찜한 메뉴")
+        }
+
+        /// "찜한 메뉴에 추가했어요."
+        static var menuAddedToast: String {
+            Localization.localized("like.menuAddedToast", fallback: "찜한 메뉴에 추가했어요.")
+        }
+
+        /// "찜한 메뉴에서 삭제했어요."
+        static var menuRemovedToast: String {
+            Localization.localized("like.menuRemovedToast", fallback: "찜한 메뉴에서 삭제했어요.")
+        }
+
+        /// "처리하지 못했어요. 잠시 후 다시 시도해주세요."
+        static var menuUpdateFailed: String {
+            Localization.localized("like.menuUpdateFailed", fallback: "처리하지 못했어요. 잠시 후 다시 시도해주세요.")
+        }
+
+        /// "메뉴를 불러오지 못했어요. 잠시 후 다시 시도해주세요."
+        static var menuLoadFailed: String {
+            Localization.localized("like.menuLoadFailed", fallback: "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요.")
+        }
+
+        /// "일치하는 메뉴가 없어요."
+        static var menuSearchEmptyTitle: String {
+            Localization.localized("like.menuSearchEmptyTitle", fallback: "일치하는 메뉴가 없어요.")
+        }
+
+        /// "다른 메뉴명으로 검색해주세요!"
+        static var menuSearchEmptySubtitle: String {
+            Localization.localized("like.menuSearchEmptySubtitle", fallback: "다른 메뉴명으로 검색해주세요!")
         }
     }
 }

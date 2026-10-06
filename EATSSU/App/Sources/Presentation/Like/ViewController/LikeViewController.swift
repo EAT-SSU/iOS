@@ -16,12 +16,13 @@ final class LikeViewController: BaseViewController {
 
     // MARK: - Properties
 
-    private(set) var currentTab: LikeTab = .partnership
+    /// 기본은 메뉴 찜. 지도의 플로팅 하트로 진입할 때만 제휴 찜을 연다
+    private(set) var currentTab: LikeTab = .menu
 
     /// 지도의 플로팅 하트로 진입한 경우 true. 뒤로가기가 지도 탭 복귀로 동작한다
     private var showsBackToMap = false
 
-    private let menuViewController = MenuLikePlaceholderViewController()
+    private let menuViewController = MenuLikeViewController()
     private let partnershipViewController = LikedPartnershipViewController()
     private var pages: [UIViewController] { [menuViewController, partnershipViewController] }
 
@@ -102,7 +103,10 @@ final class LikeViewController: BaseViewController {
 
     /// 탭바에서 찜 탭을 다시 눌렀을 때 현재 페이지 갱신
     func reloadContent() {
-        if currentTab == .partnership {
+        switch currentTab {
+        case .menu:
+            menuViewController.reload()
+        case .partnership:
             partnershipViewController.reload()
         }
     }
