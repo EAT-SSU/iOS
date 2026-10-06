@@ -14,5 +14,6 @@ enum AccountStorage {
         UserInfoManager.shared.clear()
         // 찜 목록·순서
         PartnershipLikeManager.shared.reset()
+        MenuFavoriteManager.shared.reset()
     }
 }
