@@ -23,6 +23,8 @@ enum MyRouter {
     case getLikedPartnerships
     case colleges
     case departments(collegeId: Int)
+    /// 유저 언어 설정 변경. 메뉴 찜 검색·목록의 메뉴명 번역 기준 (KO/EN/JA/VI)
+    case updateLanguage(language: String)
 }
 
 extension MyRouter: TargetType {
@@ -50,6 +52,8 @@ extension MyRouter: TargetType {
             "/users/lookup/colleges"
         case .departments:
             "/users/lookup/departments"
+        case .updateLanguage:
+            "/users/language"
         }
     }
 
@@ -63,6 +67,8 @@ extension MyRouter: TargetType {
             .delete
         case .inquiry:
             .post
+        case .updateLanguage:
+            .patch
         }
     }
 
@@ -102,6 +108,9 @@ extension MyRouter: TargetType {
         case let .departments(collegeId):
                 .requestParameters(parameters: ["collegeId": collegeId],
                                    encoding: URLEncoding.queryString)
+        case let .updateLanguage(language):
+                .requestParameters(parameters: ["language": language],
+                                   encoding: JSONEncoding.default)
         }
     }
 

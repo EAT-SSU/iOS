@@ -120,6 +120,7 @@ final class LanguageSettingViewController: BaseViewController {
         }
 
         AppLanguageManager.shared.changeLanguage(to: language)
+        ServerLanguageSync.sync(language)
         didChangeLanguage = true
 
         AnalyticsService.logEvent("change_language", parameters: ["language": language.rawValue])

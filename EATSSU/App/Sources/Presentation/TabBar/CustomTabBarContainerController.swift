@@ -42,6 +42,8 @@ final class CustomTabBarContainerController: UITabBarController {
         setupTabBar()
         setupViewControllers()
         delegate = self
+        // 로그인 상태의 모든 진입(앱 실행·로그인·가입·언어 변경 후 재구성)이 이 화면을 거치므로 여기서 서버 언어를 맞춘다
+        ServerLanguageSync.sync()
     }
     
     // MARK: - Setup
