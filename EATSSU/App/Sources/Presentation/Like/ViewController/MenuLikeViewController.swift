@@ -297,7 +297,12 @@ extension MenuLikeViewController: UITableViewDataSource {
         switch mode {
         case .favorites:
             let menu = MenuFavoriteManager.shared.favorites[indexPath.row]
-            cell.configure(name: menu.menuName, restaurant: nil, isFavorite: true, style: .favorite)
+            cell.configure(
+                name: menu.menuName,
+                restaurant: restaurantTitle(for: menu.restaurant),
+                isFavorite: true,
+                style: .favorite
+            )
         case .search(let keyword, let menus, _):
             let menu = menus[indexPath.row]
             cell.configure(

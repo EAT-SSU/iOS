@@ -11,7 +11,7 @@ import SnapKit
 
 import EATSSUDesign
 
-/// 메뉴 찜 한 줄: 메뉴명 · (검색 결과) 식당명 · 하트
+/// 메뉴 찜 한 줄: 메뉴명 · 식당명 · 하트
 final class MenuFavoriteCell: UITableViewCell {
 
     // MARK: - Types
