@@ -1205,15 +1205,6 @@ enum TextLiteral {
     // MARK: - Notification
     
     enum Notification {
-        /// 🤔 오늘 밥 뭐 먹지…
-        static var dailyWeekdayNotificationTitle: String {
-            Localization.localized("notification.dailyWeekdayNotificationTitle", fallback: "🤔 오늘 밥 뭐 먹지…")
-        }
-
-        /// 오늘의 학식을 확인해보세요!
-        static var dailyWeekdayNotificationBody: String {
-            Localization.localized("notification.dailyWeekdayNotificationBody", fallback: "오늘의 학식을 확인해보세요!")
-        }
         /// 알림 권한 필요
         static var permissionDeniedMessage: String {
             Localization.localized(

@@ -114,14 +114,17 @@ final class MyPageViewController: BaseViewController {
         let fixAction = UIAlertAction(title: TextLiteral.MyPage.logout,
                                       style: .default,
                                       handler: { _ in
-            AnalyticsIdentityManager.reset()
-            AccountStorage.reset()
+            // 서버에 로그아웃 API가 없어, 계정 토큰을 지우기 전에 이 기기의 푸시 토큰을 삭제해야 알림이 멈춘다
+            PushTokenManager.shared.unregisterBeforeLogout {
+                AnalyticsIdentityManager.reset()
+                AccountStorage.reset()
 
-            let loginViewController = LoginViewController()
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
-            {
-                keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
+                let loginViewController = LoginViewController()
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow })
+                {
+                    keyWindow.replaceRootViewController(UINavigationController(rootViewController: loginViewController))
+                }
             }
         })
         
@@ -372,6 +375,8 @@ extension MyPageViewController: UITableViewDelegate {
                     // 스위치 상태 업데이트
                     self.switchState = newState
                     self.saveSwitchStateToUserDefaults()
+                    // 서버는 푸시 토큰 등록 여부로 알림 허용을 판단한다 (ON: 등록, OFF: 삭제)
+                    PushTokenManager.shared.sync()
                     
                     // UI 업데이트
                     if let cell = self.mypageView.myPageTableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell {

@@ -56,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         } else {
             LaunchSourceManager.shared.setSource(.localNotification)
         }
-        
+
         completionHandler()
     }
     
@@ -116,6 +116,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     /// 푸시 알림 권한을 요청하고 설정을 처리합니다.
     private func setupNotificationPermissions() {
+        // 11시 알림은 서버 푸시로 옮겨, 이전 버전이 예약한 로컬 알림은 지운다
+        NotificationManager.shared.removeLegacyDailyNotifications()
         _Concurrency.Task {
             let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
             do {
@@ -126,20 +128,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
                 if granted {
                     if !hasExistingSetting || isAppPermissionGranted {
-                        NotificationManager.shared.scheduleWeekday11AMNotification()
                         UserDefaults.standard.set(true, forKey: userSettingKey)
-                    } else {
-                        NotificationManager.shared.cancelWeekday11AMNotification()
                     }
                 } else {
-                    NotificationManager.shared.cancelWeekday11AMNotification()
                     UserDefaults.standard.set(false, forKey: userSettingKey)
                 }
             } catch {
                 print("알림 권한 요청 실패: \(error)")
-                NotificationManager.shared.cancelWeekday11AMNotification()
                 UserDefaults.standard.set(false, forKey: userSettingKey) 
             }
+            // 권한·토글 결과에 맞게 서버 푸시 토큰 등록/삭제 (로그인 상태일 때만 동작)
+            PushTokenManager.shared.sync()
         }
     }
 
@@ -236,14 +235,7 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase registration token: \(String(describing: fcmToken))")
         
-        let dataDict: [String: String] = ["token": fcmToken ?? ""]
-        NotificationCenter.default.post(
-            name: Notification.Name("FCMToken"),
-            object: nil,
-            userInfo: dataDict
-        )
-        
-        // TODO: 필요시 서버에 토큰 전송
-        // 앱 시작시와 토큰이 새로 생성될 때마다 호출됩니다.
+        // 앱 시작 시와 토큰이 새로 생성될 때마다 호출되므로 서버 등록 상태를 맞춘다 (로그인 상태일 때만 동작)
+        PushTokenManager.shared.sync()
     }
 }
