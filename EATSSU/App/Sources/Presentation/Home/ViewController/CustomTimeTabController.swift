@@ -25,6 +25,8 @@ final class CustomTimeTabController: BaseViewController {
     var todayDate: Date = .init()
 
     private var isProgrammaticScroll = false
+    /// 화면 구성 전에 선택된 시간대. 구성할 때 현재 시각 기준 시간대 대신 사용한다
+    private var pendingIndex: Int?
     private var cancellables = Set<AnyCancellable>()
     private let dateSubject = PassthroughSubject<Date, Never>()
     
@@ -187,7 +189,8 @@ final class CustomTimeTabController: BaseViewController {
             scrollView = scroll
         }
 
-        let initialIndex = getInitialTabIndex()
+        let initialIndex = pendingIndex ?? getInitialTabIndex()
+        pendingIndex = nil
         pageViewController.setViewControllers([viewControllers[initialIndex]], direction: .forward, animated: false)
         self.selectedIndex = initialIndex
     }
@@ -255,6 +258,18 @@ final class CustomTimeTabController: BaseViewController {
     }
 
     // MARK: - External API
+
+    /// 외부에서 시간대 탭 선택 (0: 아침, 1: 점심, 2: 저녁)
+    func select(index: Int) {
+        guard viewControllers.indices.contains(index) else { return }
+        guard isViewLoaded else {
+            pendingIndex = index
+            return
+        }
+        guard selectedIndex != index else { return }
+        isProgrammaticScroll = true
+        selectedIndex = index
+    }
 
     func updateDate(to date: Date) {
        todayDate = date

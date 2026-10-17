@@ -23,6 +23,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // 앱의 최초 실행 소스를 판별
         detectLaunchSource(connectionOptions: connectionOptions)
+        // 앱이 꺼진 상태에서 알림을 눌러 실행: 탭바가 준비되면 해당 학식 화면으로 이동
+        if let response = connectionOptions.notificationResponse {
+            PushRouter.shared.handle(userInfo: response.notification.request.content.userInfo)
+        }
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         // 스플래시 화면 설정
@@ -67,6 +71,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 앱이 완전히 포그라운드에 진입했을 때 실행 경로 로깅 처리
         handleForegroundTransition()
         checkAndNotifyNewDay()
+        // 백그라운드에서 알림을 눌러 들어온 경우: 새로운 날 처리(오늘로 초기화) 뒤에 알림의 날짜로 이동한다
+        PushRouter.shared.applyPendingRoute()
 
     }
 

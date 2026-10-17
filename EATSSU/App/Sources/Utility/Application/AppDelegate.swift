@@ -57,6 +57,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             LaunchSourceManager.shared.setSource(.localNotification)
         }
 
+        // 학식 알림이면 해당 날짜·시간대의 학식 화면으로 이동
+        PushRouter.shared.handle(userInfo: userInfo)
+
         completionHandler()
     }
     
