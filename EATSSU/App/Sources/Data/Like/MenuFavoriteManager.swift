@@ -57,8 +57,12 @@ final class MenuFavoriteManager {
 
     // MARK: - Query
 
+    /// 이 세션에서 바꾼 상태 > (목록 확보 후) 찜 목록 > 검색 응답의 isFavorite 순으로 판단한다.
+    /// 목록 갱신으로 세션 상태가 비워져도, 화면이 들고 있던 이전 검색 결과의 하트가 되돌아가지 않게 한다
     func isFavorite(_ menu: MenuSearchDTO) -> Bool {
-        toggledStates[menu.menuId] ?? menu.isFavorite
+        if let toggled = toggledStates[menu.menuId] { return toggled }
+        guard hasLoaded else { return menu.isFavorite }
+        return favorites.contains { $0.menuId == menu.menuId }
     }
 
     func isPending(menuId: Int) -> Bool {
@@ -80,7 +84,12 @@ final class MenuFavoriteManager {
             case .success(let favorites):
                 // 조회 중에 찜 상태가 바뀌었으면 이 응답은 이미 낡은 것이므로 로컬 상태를 유지한다
                 guard version == self.stateVersion else {
-                    completion(.success(self.favorites))
+                    // 아직 목록을 한 번도 못 받았으면 로컬에는 방금 바꾼 메뉴만 있으므로 다시 받아온다
+                    if self.hasLoaded {
+                        completion(.success(self.favorites))
+                    } else {
+                        self.refresh(completion: completion)
+                    }
                     return
                 }
                 self.favorites = favorites
