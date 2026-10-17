@@ -272,8 +272,11 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
         }
         
         // 다른 탭에서 찜 탭으로 오면 메뉴 찜부터 보여준다 (지도의 플로팅 하트는 showLikedPartnerships로 따로 진입)
+        // 제휴 찜 편집처럼 위에 push된 화면이 남아 있으면 그 흐름을 유지한다
         if selectedTab == .like, index != selectedIndex,
-           let likeVC = (viewController as? UINavigationController)?.viewControllers.first as? LikeViewController {
+           let navController = viewController as? UINavigationController,
+           navController.viewControllers.count == 1,
+           let likeVC = navController.viewControllers.first as? LikeViewController {
             likeVC.prepare(tab: .menu, showsBackToMap: false)
         }
 
