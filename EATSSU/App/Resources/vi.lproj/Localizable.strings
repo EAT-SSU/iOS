@@ -705,7 +705,25 @@
 "like.emptyTitle" = "Chưa có ưu đãi yêu thích.";
 /// "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!"
 "like.emptySubtitle" = "Hãy thêm ưu đãi bạn quan tâm để xem nhanh!";
-/// "메뉴 찜은 준비 중이에요."
-"like.menuComingSoonTitle" = "Món ăn yêu thích đang được chuẩn bị.";
-/// "곧 만나볼 수 있어요!"
-"like.menuComingSoonSubtitle" = "Sắp ra mắt!";
+/// "찜하고 싶은 메뉴를 검색하세요."
+"like.menuSearchPlaceholder" = "Tìm món để thêm vào mục yêu thích.";
+/// "아직 찜한 메뉴가 없어요."
+"like.menuEmptyTitle" = "Chưa có món ăn yêu thích.";
+/// "좋아하는 메뉴를 검색해서 등록해 보세요!"
+"like.menuEmptySubtitle" = "Tìm và lưu món ăn bạn thích!";
+/// "내가 찜한 메뉴"
+"like.menuListTitle" = "Món ăn yêu thích của tôi";
+/// "찜한 메뉴에 추가했어요."
+"like.menuAddedToast" = "Đã thêm vào mục yêu thích.";
+/// "찜한 메뉴에서 삭제했어요."
+"like.menuRemovedToast" = "Đã xóa khỏi mục yêu thích.";
+/// "처리하지 못했어요. 잠시 후 다시 시도해주세요."
+"like.menuUpdateFailed" = "Không thể xử lý. Vui lòng thử lại.";
+/// "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."
+"like.menuLoadFailed" = "Không thể tải danh sách món ăn.\nVui lòng thử lại.";
+/// "일치하는 메뉴가 없어요."
+"like.menuSearchEmptyTitle" = "Không tìm thấy món ăn phù hợp.";
+/// "다른 메뉴명으로 검색해주세요!"
+"like.menuSearchEmptySubtitle" = "Hãy thử tìm bằng tên món ăn khác!";
+/// "2글자 이상 입력해주세요."
+"like.menuSearchTooShort" = "Vui lòng nhập ít nhất 2 ký tự.";

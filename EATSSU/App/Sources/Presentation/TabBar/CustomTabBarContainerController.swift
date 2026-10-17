@@ -42,6 +42,8 @@ final class CustomTabBarContainerController: UITabBarController {
         setupTabBar()
         setupViewControllers()
         delegate = self
+        // 로그인 상태의 모든 진입(앱 실행·로그인·가입·언어 변경 후 재구성)이 이 화면을 거치므로 여기서 서버 언어를 맞춘다
+        ServerLanguageSync.sync()
     }
     
     // MARK: - Setup
@@ -269,6 +271,15 @@ extension CustomTabBarContainerController: UITabBarControllerDelegate {
             )
         }
         
+        // 다른 탭에서 찜 탭으로 오면 메뉴 찜부터 보여준다 (지도의 플로팅 하트는 showLikedPartnerships로 따로 진입)
+        // 제휴 찜 편집처럼 위에 push된 화면이 남아 있으면 그 흐름을 유지한다
+        if selectedTab == .like, index != selectedIndex,
+           let navController = viewController as? UINavigationController,
+           navController.viewControllers.count == 1,
+           let likeVC = navController.viewControllers.first as? LikeViewController {
+            likeVC.prepare(tab: .menu, showsBackToMap: false)
+        }
+
         // 같은 탭 다시 클릭 시 처리
         if let navController = viewController as? UINavigationController, index == selectedIndex {
             switch selectedTab {
