@@ -42,6 +42,9 @@ final class MenuFavoriteManager {
     /// 찜 상태가 바뀔 때마다 증가. 변경 이전에 시작된 목록 조회 응답이 최신 로컬 상태를 덮어쓰지 않게 한다
     private var stateVersion = 0
 
+    /// `reset()`마다 증가. 초기화 전에 시작된 찜 요청의 응답이 다음 계정의 상태에 반영되지 않게 한다
+    private var sessionVersion = 0
+
     /// 로그아웃·탈퇴·세션 만료 시 호출. 다른 계정의 찜 상태가 남지 않게 비운다
     func reset() {
         favorites = []
@@ -49,6 +52,7 @@ final class MenuFavoriteManager {
         toggledStates = [:]
         pendingMenuIds = []
         stateVersion += 1
+        sessionVersion += 1
     }
 
     // MARK: - Query
@@ -112,15 +116,16 @@ final class MenuFavoriteManager {
     ) {
         guard !pendingMenuIds.contains(menuId) else { return }
         pendingMenuIds.insert(menuId)
-        // 요청 시작 시점에 버전을 올려, 이보다 먼저 시작된 목록 조회 응답이 변경 전 상태를 되살리지 못하게 한다
-        stateVersion += 1
 
+        let session = sessionVersion
         let target: MenuFavoriteRouter = isFavorite ? .add(menuId: menuId) : .remove(menuId: menuId)
         NetworkService.shared.request(target, responseType: Bool.self, useAuth: true) { [weak self] result in
-            guard let self else { return }
+            // 요청 중에 로그아웃 등으로 초기화됐으면 이전 계정의 응답이므로 버린다
+            guard let self, session == self.sessionVersion else { return }
             self.pendingMenuIds.remove(menuId)
             switch result {
             case .success:
+                // 서버 변경이 성공한 시점에 버전을 올린다. 실패한 요청은 진행 중인 목록 조회를 무효화하지 않는다
                 self.stateVersion += 1
                 self.toggledStates[menuId] = isFavorite
                 self.favorites.removeAll { $0.menuId == menuId }
