@@ -725,3 +725,5 @@
 "like.menuSearchEmptyTitle" = "一致するメニューがありません。";
 /// "다른 메뉴명으로 검색해주세요!"
 "like.menuSearchEmptySubtitle" = "別のメニュー名で検索してください！";
+/// "2글자 이상 입력해주세요."
+"like.menuSearchTooShort" = "2文字以上入力してください。";

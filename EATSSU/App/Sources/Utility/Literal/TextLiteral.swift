@@ -1479,5 +1479,10 @@ enum TextLiteral {
         static var menuSearchEmptySubtitle: String {
             Localization.localized("like.menuSearchEmptySubtitle", fallback: "다른 메뉴명으로 검색해주세요!")
         }
+
+        /// "2글자 이상 입력해주세요."
+        static var menuSearchTooShort: String {
+            Localization.localized("like.menuSearchTooShort", fallback: "2글자 이상 입력해주세요.")
+        }
     }
 }

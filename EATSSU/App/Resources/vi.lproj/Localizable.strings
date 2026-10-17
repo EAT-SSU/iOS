@@ -725,3 +725,5 @@
 "like.menuSearchEmptyTitle" = "Không tìm thấy món ăn phù hợp.";
 /// "다른 메뉴명으로 검색해주세요!"
 "like.menuSearchEmptySubtitle" = "Hãy thử tìm bằng tên món ăn khác!";
+/// "2글자 이상 입력해주세요."
+"like.menuSearchTooShort" = "Vui lòng nhập ít nhất 2 ký tự.";

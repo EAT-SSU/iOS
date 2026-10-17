@@ -724,3 +724,5 @@
 "like.menuSearchEmptyTitle" = "No matching menu items found.";
 /// "다른 메뉴명으로 검색해주세요!"
 "like.menuSearchEmptySubtitle" = "Try searching for a different menu name!";
+/// "2글자 이상 입력해주세요."
+"like.menuSearchTooShort" = "Please enter at least 2 characters.";

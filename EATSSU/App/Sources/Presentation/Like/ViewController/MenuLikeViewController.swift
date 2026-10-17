@@ -326,6 +326,11 @@ extension MenuLikeViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        // 1글자로 검색을 시도하면 2글자부터 검색된다는 것을 알린다 (빈 검색어는 키보드만 내린다)
+        let length = currentKeyword.count
+        if length > 0, length < MenuFavoriteManager.minimumKeywordLength {
+            showToast(message: TextLiteral.Like.menuSearchTooShort, type: .danger)
+        }
         return true
     }
 
