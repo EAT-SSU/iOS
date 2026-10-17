@@ -44,6 +44,9 @@ final class MenuFavoriteCell: UITableViewCell {
 
     var onTapHeart: (() -> Void)?
 
+    /// 마지막으로 적용한 여백. 같으면 제약을 다시 만들지 않는다
+    private var appliedInsets: (inset: CGFloat, vertical: CGFloat)?
+
     // MARK: - UI Components
 
     private let nameLabel = UILabel()
@@ -100,6 +103,9 @@ final class MenuFavoriteCell: UITableViewCell {
     }
 
     private func applyLayout(inset: CGFloat, verticalInset: CGFloat) {
+        // 스타일이 바뀔 때만 제약을 다시 만든다 (재사용 셀은 대부분 같은 스타일)
+        guard appliedInsets?.inset != inset || appliedInsets?.vertical != verticalInset else { return }
+        appliedInsets = (inset, verticalInset)
         // 24pt 아이콘이 디자인 위치에 오도록 44pt 터치 영역의 중심을 아이콘 중심에 맞춘다
         let heartCenterTrailing = inset + Layout.heartSize / 2
         heartButton.snp.remakeConstraints {
