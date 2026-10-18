@@ -38,10 +38,23 @@ final class PushTokenManager {
     /// 요청 중에 다시 맞춰야 할 일이 생겼는지 (예: 토글을 빠르게 껐다 켬). 응답 후 한 번 더 맞춘다
     private var needsResync = false
 
+    /// 로그아웃 처리 중. 로그아웃 삭제 요청 뒤에 등록 요청이 다시 나가지 않게 막는다
+    private var isLoggingOut = false
+
+    /// 진행 중인 요청이 끝나면 실행할 작업 (로그아웃 삭제 요청을 진행 중인 등록 요청 뒤로 보낸다)
+    private var onSyncFinished: (() -> Void)?
+
+    /// `reset()`마다 증가. 초기화 전에 보낸 요청의 응답이 다음 계정의 상태를 바꾸지 않게 한다
+    private var sessionVersion = 0
+
     /// 로그아웃·탈퇴·세션 만료 시 호출. 다음 로그인 계정에 다시 등록되게 한다
     func reset() {
+        sessionVersion += 1
         lastSynced = nil
+        isSyncing = false
         needsResync = false
+        isLoggingOut = false
+        onSyncFinished = nil
     }
 
     // MARK: - Sync
@@ -53,19 +66,24 @@ final class PushTokenManager {
             DispatchQueue.main.async { self.sync() }
             return
         }
-        guard TokenStore.hasAccessToken, let token = Messaging.messaging().fcmToken, !token.isEmpty else { return }
+        guard !isLoggingOut,
+              TokenStore.hasAccessToken,
+              let token = Messaging.messaging().fcmToken, !token.isEmpty else { return }
         // 이전 요청의 응답 전에 바뀐 상태는 응답 후 반영한다. 응답 전에 비교하면 아직 반영되지 않은 상태와 비교하게 된다
         guard !isSyncing else {
             needsResync = true
             return
         }
         isSyncing = true
+        let session = sessionVersion
 
         Task { @MainActor in
             let shouldRegister = await Self.isNotificationEnabled()
-            // 확인하는 사이 로그아웃됐거나 이미 같은 상태면 보내지 않는다
+            // 확인하는 사이 계정이 초기화됐으면 이 요청은 이전 계정의 것이므로 버린다
+            guard session == sessionVersion else { return }
+            // 로그아웃이 시작됐거나 이미 같은 상태면 보내지 않는다
             let isAlreadySynced = lastSynced.map { $0.token == token && $0.isRegistered == shouldRegister } ?? false
-            guard TokenStore.hasAccessToken, !isAlreadySynced else {
+            guard !isLoggingOut, TokenStore.hasAccessToken, !isAlreadySynced else {
                 finishSync()
                 return
             }
@@ -73,6 +91,7 @@ final class PushTokenManager {
             let target: PushTokenRouter = shouldRegister ? .register(token: token) : .unregister(token: token)
             // 앱 수명 동안 유지되는 싱글턴이라 self를 그대로 캡처한다
             NetworkService.shared.request(target, responseType: Bool.self, useAuth: true) { result in
+                guard session == self.sessionVersion else { return }
                 switch result {
                 case .success:
                     self.lastSynced = (token, shouldRegister)
@@ -87,6 +106,11 @@ final class PushTokenManager {
 
     private func finishSync() {
         isSyncing = false
+        if let onSyncFinished {
+            self.onSyncFinished = nil
+            onSyncFinished()
+            return
+        }
         guard needsResync else { return }
         needsResync = false
         sync()
@@ -94,12 +118,16 @@ final class PushTokenManager {
 
     /// 로그아웃 직전 호출. 계정 토큰이 지워지기 전에 서버의 푸시 토큰을 삭제하고 completion을 부른다.
     /// 서버에 로그아웃 API가 없어, 이 요청이 없으면 로그아웃한 기기로 이전 계정의 알림이 계속 간다.
-    /// 실패하거나 응답이 늦어도 `unregisterTimeout` 뒤에는 로그아웃을 진행한다.
+    ///
+    /// - 진행 중인 등록 요청이 있으면 그 응답 뒤에 삭제를 보내, 서버에 등록이 삭제보다 늦게 도착하지 않게 한다
+    /// - 실패하거나 응답이 늦어도 `unregisterTimeout` 뒤에는 로그아웃을 진행한다
     func unregisterBeforeLogout(completion: @escaping () -> Void) {
         guard TokenStore.hasAccessToken, let token = Messaging.messaging().fcmToken, !token.isEmpty else {
             completion()
             return
         }
+        isLoggingOut = true
+        needsResync = false
 
         var didComplete = false
         let finish = {
@@ -107,14 +135,21 @@ final class PushTokenManager {
             didComplete = true
             completion()
         }
-
-        NetworkService.shared.request(PushTokenRouter.unregister(token: token), responseType: Bool.self, useAuth: true) { result in
-            if case .failure(let error) = result {
-                print("로그아웃 푸시 토큰 삭제 실패: \(error.localizedDescription)")
-            }
-            finish()
-        }
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.unregisterTimeout, execute: finish)
+
+        let unregister = {
+            NetworkService.shared.request(PushTokenRouter.unregister(token: token), responseType: Bool.self, useAuth: true) { result in
+                if case .failure(let error) = result {
+                    print("로그아웃 푸시 토큰 삭제 실패: \(error.localizedDescription)")
+                }
+                finish()
+            }
+        }
+        if isSyncing {
+            onSyncFinished = unregister
+        } else {
+            unregister()
+        }
     }
 
     // MARK: - Private
