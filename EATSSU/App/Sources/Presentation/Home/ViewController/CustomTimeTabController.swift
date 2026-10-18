@@ -259,6 +259,11 @@ final class CustomTimeTabController: BaseViewController {
 
     // MARK: - External API
 
+    /// 현재 시각 기준 시간대 탭 (0: 아침, 1: 점심, 2: 저녁)
+    var currentTimeIndex: Int {
+        getInitialTabIndex()
+    }
+
     /// 외부에서 시간대 탭 선택 (0: 아침, 1: 점심, 2: 저녁)
     func select(index: Int) {
         guard viewControllers.indices.contains(index) else { return }

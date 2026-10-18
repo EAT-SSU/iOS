@@ -143,9 +143,7 @@ final class HomeViewController: BaseViewController {
         currentDate = date
         homeCalendarView.setSelected(date: date)
         tabmanController.updateDate(to: date)
-        if let mealTimeIndex {
-            tabmanController.select(index: mealTimeIndex)
-        }
+        tabmanController.select(index: mealTimeIndex ?? tabmanController.currentTimeIndex)
     }
 
     // MARK: - Private Functions

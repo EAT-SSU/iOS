@@ -8,9 +8,9 @@
 import UIKit
 
 /// 학식 알림을 눌렀을 때 이동할 학식 화면 (날짜 + 시간대)
-struct PushRoute: Equatable {
+struct PushRoute {
     /// 학식 탭 시간대 순서 (아침·점심·저녁)
-    enum MealTime: String, CaseIterable {
+    enum MealTime: String {
         case morning = "MORNING"
         case lunch = "LUNCH"
         case dinner = "DINNER"
@@ -57,12 +57,15 @@ final class PushRouter {
 
     private init() {}
 
-    private var pendingRoute: PushRoute?
+    private var pendingRoute: (route: PushRoute, receivedAt: Date)?
+
+    /// 보관한 이동의 유효 시간. 로그인 화면에서 알림을 누른 뒤 한참 지나 로그인하면 예전 날짜로 튀지 않게 한다
+    private static let pendingRouteLifetime: TimeInterval = 5 * 60
 
     /// 알림 응답을 받으면 호출. 앱이 이미 활성 상태면 바로, 아니면 `sceneDidBecomeActive`에서 적용한다
     func handle(userInfo: [AnyHashable: Any]) {
         guard let route = PushRoute(userInfo: userInfo) else { return }
-        pendingRoute = route
+        pendingRoute = (route, Date())
         if UIApplication.shared.applicationState == .active {
             applyPendingRoute()
         }
@@ -73,10 +76,14 @@ final class PushRouter {
     /// 다음 런루프에서 실행해, 같은 시점에 예약된 "새로운 날 → 오늘로 초기화"(`didEnterNewDay`) 처리보다 뒤에 적용되게 한다
     func applyPendingRoute() {
         DispatchQueue.main.async { [weak self] in
-            guard let self, let route = self.pendingRoute,
-                  let tabBarController = Self.currentTabBarController() else { return }
+            guard let self, let pending = self.pendingRoute else { return }
+            guard Date().timeIntervalSince(pending.receivedAt) < Self.pendingRouteLifetime else {
+                self.pendingRoute = nil
+                return
+            }
+            guard let tabBarController = Self.currentTabBarController() else { return }
             self.pendingRoute = nil
-            tabBarController.showHomeMenu(on: route.date, mealTime: route.mealTime)
+            tabBarController.showHomeMenu(on: pending.route.date, mealTime: pending.route.mealTime)
         }
     }
 

@@ -145,8 +145,9 @@ final class CustomTabBarContainerController: UITabBarController {
     public func showHomeMenu(on date: Date, mealTime: PushRoute.MealTime?) {
         guard let navController = getNavController(at: Tab.home.rawValue),
               let homeVC = navController.viewControllers.first as? HomeViewController else { return }
-        // 알림 확인 중 떠 있던 시트·알럿을 닫고, 학식 탭 위에 push된 화면도 정리한다
+        // 알림 확인 중 떠 있던 시트·알럿·다이얼로그를 닫고, 학식 탭 위에 push된 화면도 정리한다
         presentedViewController?.dismiss(animated: false)
+        view.subviews.filter { $0 is EATSSUDialogView }.forEach { $0.removeFromSuperview() }
         navController.popToRootViewController(animated: false)
         selectedIndex = Tab.home.rawValue
         homeVC.show(date: date, mealTimeIndex: mealTime?.tabIndex)
