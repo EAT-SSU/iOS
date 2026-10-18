@@ -15,5 +15,7 @@ enum AccountStorage {
         // 찜 목록·순서
         PartnershipLikeManager.shared.reset()
         MenuFavoriteManager.shared.reset()
+        // 다음 로그인 계정에 푸시 토큰을 다시 등록하도록
+        PushTokenManager.shared.reset()
     }
 }
