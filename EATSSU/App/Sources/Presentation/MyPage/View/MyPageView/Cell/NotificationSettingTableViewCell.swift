@@ -77,14 +77,16 @@ final class NotificationSettingTableViewCell: UITableViewCell {
     private func setupLayout() {
         labelStackView.addArrangedSubviews([pushNotificationTitleLabel, dailyNotificationInfoLabel])
 
-        labelStackView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(24)
-            make.centerY.equalToSuperview()
-        }
-
         toggleSwitch.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(24)
             make.centerY.equalToSuperview()
+        }
+
+        labelStackView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(24)
+            make.centerY.equalToSuperview()
+            // 설명 문구가 길어도(영어·베트남어) 토글과 겹치지 않게 한다
+            make.trailing.lessThanOrEqualTo(toggleSwitch.snp.leading).offset(-12)
         }
     }
 

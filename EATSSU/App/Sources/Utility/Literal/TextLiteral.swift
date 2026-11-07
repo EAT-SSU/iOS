@@ -648,9 +648,9 @@ enum TextLiteral {
         /// Push Notification key for UserDefaults
         static let pushNotificationUserSettingKey: String = "pushNotificationUserSettingKey"
 
-        /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
+        /// NotificationSettingTableViewCell - "찜한 메뉴가 오늘 식단에 나오면 알려드려요"
         static var pushNotificationDescription: String {
-            Localization.localized("myPage.pushNotificationDescription", fallback: "매일 오전 11시에 알림을 보내드려요")
+            Localization.localized("myPage.pushNotificationDescription", fallback: "찜한 메뉴가 오늘 식단에 나오면 알려드려요")
         }
         
         /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
