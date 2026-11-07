@@ -138,6 +138,14 @@ final class HomeViewController: BaseViewController {
         tabmanController.updateDate(to: today)
     }
     
+    /// 학식 알림으로 진입: 해당 날짜와 시간대(없으면 현재 시각 기준 시간대)로 이동
+    func show(date: Date, mealTimeIndex: Int?) {
+        currentDate = date
+        homeCalendarView.setSelected(date: date)
+        tabmanController.updateDate(to: date)
+        tabmanController.select(index: mealTimeIndex ?? tabmanController.currentTimeIndex)
+    }
+
     // MARK: - Private Functions
 
     private func presentPromotionPopupIfNeeded() {

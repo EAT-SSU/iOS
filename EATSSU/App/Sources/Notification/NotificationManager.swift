@@ -16,55 +16,12 @@ class NotificationManager {
 
     // MARK: - Methods
 
-    /// 평일 11시에 앱의 유입을 유도하는 푸시 알림을 발송하는 메소드
+    /// 이전 버전이 기기에 예약해 둔 평일 11시 로컬 알림을 지운다
     ///
-    /// - Title : 🤔 오늘 밥 뭐 먹지…
-    /// - Body : 오늘의 학식을 확인해보세요!
-    func scheduleWeekday11AMNotification() {
-        let center = UNUserNotificationCenter.current()
-
-        // 알림 콘텐츠 설정
-        let content = UNMutableNotificationContent()
-
-        content.title = TextLiteral.Notification.dailyWeekdayNotificationTitle
-        content.body = TextLiteral.Notification.dailyWeekdayNotificationBody
-        content.sound = .default
-
-        // 반복할 요일 및 시간 설정 (평일 오전 11시)
-        let weekdays = [2, 3, 4, 5, 6] // 월, 화, 수, 목, 금 (Calendar에서 1이 일요일)
-
-        for weekday in weekdays {
-            var dateComponents = DateComponents()
-            dateComponents.hour = 11
-            dateComponents.minute = 0
-            dateComponents.weekday = weekday
-
-            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-
-            // 고유한 식별자를 위해 weekday를 사용
-            let identifier = "weekdayNotification-\(weekday)"
-            let request = UNNotificationRequest(
-                identifier: identifier, content: content, trigger: trigger
-            )
-
-            // 알림 등록
-            center.add(request) { error in
-                if let error {
-                    print("알림 등록 간 에러 메시지: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
-
-    /// 평일 11시에 앱의 유입을 유도하는 푸시 알림을 취소하는 메소드
-    func cancelWeekday11AMNotification() {
-        let weekdays = [2, 3, 4, 5, 6]
-
-        for weekday in weekdays {
-            let identifier = "weekdayNotification-\(weekday)"
-            let center = UNUserNotificationCenter.current()
-            center.removePendingNotificationRequests(withIdentifiers: [identifier])
-        }
+    /// 11시 학식 알림은 서버 푸시(찜 알림 / 일반 학식 알림, 하루 1건)로 옮겨, 업데이트 후에도 로컬 알림이 남아 있으면 중복으로 온다.
+    func removeLegacyDailyNotifications() {
+        let identifiers = [2, 3, 4, 5, 6].map { "weekdayNotification-\($0)" }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     /// 앱 실행 시 알림 발송 권한을 요청하는 팝업 호출 메소드
@@ -77,7 +34,7 @@ class NotificationManager {
         return await UNUserNotificationCenter.current().notificationSettings()
     }
 
-    /// 알림 권한 상태에 따라 적절한 액션을 수행하고 결과를 반환
+    /// 알림 권한 상태를 확인해 토글의 다음 상태를 반환. 서버 반영은 `PushTokenManager.sync()`가 한다
     func handleNotificationToggle(currentState: Bool) async throws -> Bool {
         let settings = await checkNotificationSetting()
         
@@ -86,21 +43,12 @@ class NotificationManager {
             throw NotificationError.permissionDenied
             
         case .authorized, .provisional, .ephemeral:
-            let newState = !currentState
-            
-            if newState {
-                scheduleWeekday11AMNotification()
-            } else {
-                cancelWeekday11AMNotification()
-            }
-            
-            return newState
-            
+            return !currentState
+
         case .notDetermined:
             let granted = try await requestNotificationPermission()
             
             if granted {
-                scheduleWeekday11AMNotification()
                 return true
             } else {
                 throw NotificationError.permissionDenied

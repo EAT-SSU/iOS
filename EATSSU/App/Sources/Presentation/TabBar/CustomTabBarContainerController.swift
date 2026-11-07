@@ -42,8 +42,15 @@ final class CustomTabBarContainerController: UITabBarController {
         setupTabBar()
         setupViewControllers()
         delegate = self
-        // 로그인 상태의 모든 진입(앱 실행·로그인·가입·언어 변경 후 재구성)이 이 화면을 거치므로 여기서 서버 언어를 맞춘다
+        // 로그인 상태의 모든 진입(앱 실행·로그인·가입·언어 변경 후 재구성)이 이 화면을 거치므로 여기서 서버 언어·푸시 토큰을 맞춘다
         ServerLanguageSync.sync()
+        PushTokenManager.shared.sync()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // 앱이 꺼진 상태에서 알림으로 실행된 경우, 스플래시·로그인을 거쳐 탭바가 나타난 뒤 이동한다
+        PushRouter.shared.applyPendingRoute()
     }
     
     // MARK: - Setup
@@ -134,6 +141,18 @@ final class CustomTabBarContainerController: UITabBarController {
         setTab(index: Tab.map.rawValue)
     }
     
+    /// 학식 알림 → 학식 탭의 해당 날짜·시간대로 이동 (상세 화면이 아니라 학식 탭 자체)
+    public func showHomeMenu(on date: Date, mealTime: PushRoute.MealTime?) {
+        guard let navController = getNavController(at: Tab.home.rawValue),
+              let homeVC = navController.viewControllers.first as? HomeViewController else { return }
+        // 알림 확인 중 떠 있던 시트·알럿·다이얼로그를 닫고, 학식 탭 위에 push된 화면도 정리한다
+        presentedViewController?.dismiss(animated: false)
+        view.subviews.filter { $0 is EATSSUDialogView }.forEach { $0.removeFromSuperview() }
+        navController.popToRootViewController(animated: false)
+        selectedIndex = Tab.home.rawValue
+        homeVC.show(date: date, mealTimeIndex: mealTime?.tabIndex)
+    }
+
     /// 특정 인덱스의 네비게이션 컨트롤러를 반환
     public func getNavController(at index: Int) -> UINavigationController? {
         guard index < tabViewControllers.count else { return nil }

@@ -459,10 +459,6 @@
 
 // MARK: - Notification
 
-/// 🤔 오늘 밥 뭐 먹지…
-"notification.dailyWeekdayNotificationTitle" = "🤔 今日何を食べよう…";
-/// 오늘의 학식을 확인해보세요!
-"notification.dailyWeekdayNotificationBody" = "今日の学食メニューをチェックしましょう！";
 /// 알림 권한 필요
 "notification_error_permission_denied_message" = "通知権限が必要です";
 /// 알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.
