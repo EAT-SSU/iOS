@@ -158,9 +158,15 @@ final class PushTokenManager {
             return
         }
         onSyncFinished = unregister
+        let session = sessionVersion
         // 등록 응답이 늦으면 기다리던 삭제가 로그아웃(reset)으로 사라져 서버에 등록만 남는다. 그 전에 삭제를 보낸다
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.unregisterTimeout) {
             guard !didSendUnregister else { return }
+            // 기다리는 사이 세션 만료로 계정이 초기화됐으면 이 세션의 삭제 요청은 보내지 않고 로그아웃만 마친다
+            guard session == self.sessionVersion else {
+                finish()
+                return
+            }
             self.onSyncFinished = nil
             unregister()
         }
