@@ -61,6 +61,7 @@ final class NotificationCell: UITableViewCell {
         iconContainerView.layer.cornerRadius = Layout.iconSize / 2
         iconContainerView.layer.borderWidth = 1
         iconContainerView.layer.borderColor = UIColor.primary.cgColor
+        iconContainerView.clipsToBounds = true
         iconImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = EATSSUDesignFontFamily.Pretendard.bold.font(size: 14)

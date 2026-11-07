@@ -134,6 +134,8 @@ final class NotificationInboxViewController: BaseViewController {
         emptyView.isHidden = !isEmpty
         tableView.isHidden = isEmpty
         noticeLabel.isHidden = notifications.isEmpty
+        // 디자인: 알림이 없으면 "모두 읽음"도 보이지 않는다
+        readAllButton.isHidden = notifications.isEmpty
         readAllButton.isEnabled = hasUnread
         // 마지막 행이 하단 안내 문구에 가리지 않게 한다
         let noticeHeight = noticeLabel.intrinsicContentSize.height + Layout.noticeBottomInset * 2

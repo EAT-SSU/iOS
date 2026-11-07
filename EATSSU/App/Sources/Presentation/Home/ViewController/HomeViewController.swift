@@ -38,6 +38,8 @@ final class HomeViewController: BaseViewController {
     private let notificationButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(EATSSUDesignAsset.Images.icBell.image, for: .normal)
+        button.accessibilityLabel = TextLiteral.Notification.inboxTitle
+        button.accessibilityIdentifier = "home.notificationButton"
         return button
     }()
 
