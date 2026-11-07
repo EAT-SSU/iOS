@@ -115,7 +115,7 @@ final class MyPageViewController: BaseViewController {
                                       style: .default,
                                       handler: { _ in
             // 서버에 로그아웃 API가 없어, 계정 토큰을 지우기 전에 이 기기의 푸시 토큰을 삭제해야 알림이 멈춘다
-            // 삭제 응답을 기다리는 동안(최대 3초) 다른 화면 조작으로 작업이 시작되지 않게 터치를 막는다
+            // 삭제 응답을 기다리는 동안(최대 6초) 다른 화면 조작으로 작업이 시작되지 않게 터치를 막는다
             let window = self.view.window
             window?.isUserInteractionEnabled = false
             PushTokenManager.shared.unregisterBeforeLogout {

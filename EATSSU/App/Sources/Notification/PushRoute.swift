@@ -63,7 +63,13 @@ final class PushRouter {
     private static let pendingRouteLifetime: TimeInterval = 5 * 60
 
     /// 알림 응답을 받으면 호출. 앱이 이미 활성 상태면 바로, 아니면 `sceneDidBecomeActive`에서 적용한다
+    ///
+    /// `userNotificationCenter(_:didReceive:)`는 메인 큐 호출이 보장되지 않아, `pendingRoute` 읽기·쓰기를 메인 큐로 통일한다
     func handle(userInfo: [AnyHashable: Any]) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { self.handle(userInfo: userInfo) }
+            return
+        }
         guard let route = PushRoute(userInfo: userInfo) else { return }
         pendingRoute = (route, Date())
         if UIApplication.shared.applicationState == .active {

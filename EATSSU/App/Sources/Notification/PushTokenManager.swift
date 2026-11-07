@@ -119,8 +119,12 @@ final class PushTokenManager {
     /// 로그아웃 직전 호출. 계정 토큰이 지워지기 전에 서버의 푸시 토큰을 삭제하고 completion을 부른다.
     /// 서버에 로그아웃 API가 없어, 이 요청이 없으면 로그아웃한 기기로 이전 계정의 알림이 계속 간다.
     ///
-    /// - 진행 중인 등록 요청이 있으면 그 응답 뒤에 삭제를 보내, 서버에 등록이 삭제보다 늦게 도착하지 않게 한다
-    /// - 실패하거나 응답이 늦어도 `unregisterTimeout` 뒤에는 로그아웃을 진행한다
+    /// - 진행 중인 등록 요청이 있으면 그 응답 뒤에 삭제를 보내, 서버에 등록이 삭제보다 늦게 도착하지 않게 한다.
+    ///   등록 응답이 `unregisterTimeout` 안에 오지 않으면 더 기다리지 않고 삭제를 보낸다
+    /// - 삭제 요청이 실패하거나 응답이 늦어도 보낸 뒤 `unregisterTimeout`이 지나면 로그아웃을 진행한다 (최대 2배 대기)
+    ///
+    /// 삭제 요청은 반드시 completion 전에 보낸다. 인증 헤더는 요청을 보낼 때 `TokenStore`에서 읽으므로,
+    /// completion에서 계정 토큰이 지워진 뒤에는 인증 없는 요청이 나간다
     func unregisterBeforeLogout(completion: @escaping () -> Void) {
         guard TokenStore.hasAccessToken, let token = Messaging.messaging().fcmToken, !token.isEmpty else {
             completion()
@@ -135,19 +139,29 @@ final class PushTokenManager {
             didComplete = true
             completion()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + Self.unregisterTimeout, execute: finish)
 
+        var didSendUnregister = false
         let unregister = {
+            guard !didSendUnregister else { return }
+            didSendUnregister = true
             NetworkService.shared.request(PushTokenRouter.unregister(token: token), responseType: Bool.self, useAuth: true) { result in
                 if case .failure(let error) = result {
                     print("로그아웃 푸시 토큰 삭제 실패: \(error.localizedDescription)")
                 }
                 finish()
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + Self.unregisterTimeout, execute: finish)
         }
-        if isSyncing {
-            onSyncFinished = unregister
-        } else {
+
+        guard isSyncing else {
+            unregister()
+            return
+        }
+        onSyncFinished = unregister
+        // 등록 응답이 늦으면 기다리던 삭제가 로그아웃(reset)으로 사라져 서버에 등록만 남는다. 그 전에 삭제를 보낸다
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.unregisterTimeout) {
+            guard !didSendUnregister else { return }
+            self.onSyncFinished = nil
             unregister()
         }
     }
