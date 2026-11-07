@@ -33,6 +33,14 @@ final class HomeViewController: BaseViewController {
         return imageView
     }()
 
+    /// 알림함 진입 버튼. 안 읽은 알림이 있으면 점이 있는 아이콘을 보여준다
+    /// 디자인: 24×24 아이콘, 우측 24, 로고와 세로 중앙 정렬. 터치 영역은 44
+    private let notificationButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(EATSSUDesignAsset.Images.icBell.image, for: .normal)
+        return button
+    }()
+
     private let tabmanController = CustomTimeTabController()
     private let homeCalendarView = HomeCalendarView()
 
@@ -45,6 +53,7 @@ final class HomeViewController: BaseViewController {
         configureUI()
         setLayout()
         registerTabman()
+        addUnreadBadgeObservers()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -62,6 +71,9 @@ final class HomeViewController: BaseViewController {
         addNewDayObserver()
         
         self.tabBarController?.tabBar.isHidden = false
+        // 알림함은 로그인한 사용자만 쓸 수 있어 비로그인이면 아이콘을 숨긴다
+        notificationButton.isHidden = !TokenStore.hasAccessToken
+        refreshUnreadBadge()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -88,6 +100,7 @@ final class HomeViewController: BaseViewController {
 
     override func configureUI() {
         view.addSubview(logoImageView)
+        view.addSubview(notificationButton)
         view.addSubview(homeCalendarView)
     }
 
@@ -98,10 +111,48 @@ final class HomeViewController: BaseViewController {
             make.height.equalTo(28)
         }
 
+        notificationButton.snp.makeConstraints { make in
+            make.centerY.equalTo(logoImageView)
+            // 44 터치 영역 안에 24 아이콘이 가운데 오므로 우측 여백 24 = 14 + 10
+            make.trailing.equalToSuperview().inset(14)
+            make.size.equalTo(44)
+        }
+
         homeCalendarView.snp.makeConstraints { make in
             make.top.equalTo(logoImageView.snp.bottom).offset(13)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(80)
+        }
+    }
+
+    override func setButtonEvent() {
+        notificationButton.addTarget(self, action: #selector(didTapNotificationButton), for: .touchUpInside)
+    }
+
+    // MARK: - Notification Inbox
+
+    @objc private func didTapNotificationButton() {
+        navigationController?.pushViewController(NotificationInboxViewController(), animated: true)
+    }
+
+    /// 안 읽은 알림 여부를 다시 확인하는 시점: 화면 진입, 앱 활성화, 사용 중 푸시 도착, 알림 읽음 처리
+    private func addUnreadBadgeObservers() {
+        let names: [Notification.Name] = [
+            UIApplication.didBecomeActiveNotification,
+            .didReceivePushNotification,
+            .didUpdateNotificationReadState
+        ]
+        names.forEach {
+            NotificationCenter.default.addObserver(self, selector: #selector(refreshUnreadBadge), name: $0, object: nil)
+        }
+    }
+
+    @objc private func refreshUnreadBadge() {
+        guard TokenStore.hasAccessToken else { return }
+        NotificationInboxService.fetchHasUnread { [weak self] result in
+            guard let self, case .success(let hasUnread) = result else { return }
+            let image = hasUnread ? EATSSUDesignAsset.Images.icBellUnread.image : EATSSUDesignAsset.Images.icBell.image
+            self.notificationButton.setImage(image, for: .normal)
         }
     }
 
