@@ -243,7 +243,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "Cài đặt thông báo đẩy";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "Báo khi món đã lưu có trong thực đơn hôm nay.";
+"myPage.pushNotificationDescription" = "Báo khi món đã lưu lên thực đơn hôm nay.";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "Đã xảy ra lỗi khi cập nhật cài đặt thông báo.";
 
