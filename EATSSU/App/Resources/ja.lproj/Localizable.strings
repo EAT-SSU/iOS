@@ -243,7 +243,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "プッシュ通知設定";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "毎日午前11時に通知をお送りします。";
+"myPage.pushNotificationDescription" = "お気に入りメニューが今日出たら通知します";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "通知設定中にエラーが発生しました。";
 
@@ -467,6 +467,25 @@
 "notification_error_unknown_message" = "不明なエラー";
 /// 다시 시도해주세요.
 "notification_error_unknown_description" = "もう一度お試しください。";
+
+// MARK: - Notification Inbox (알림함)
+
+/// "알림"
+"notification.inboxTitle" = "通知";
+/// "모두 읽음"
+"notification.readAll" = "すべて既読";
+/// "새로운 알림이 없어요."
+"notification.emptyTitle" = "新しい通知はありません。";
+/// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+"notification.emptySubtitle" = "お気に入りのメニューが出たらお知らせします！";
+/// "7일 전 알림까지 확인할 수 있어요"
+"notification.retentionNotice" = "7日前までの通知を確認できます";
+/// "방금 전"
+"notification.justNow" = "たった今";
+/// "%d시간 전"
+"notification.hoursAgo" = "%d時間前";
+/// "알림을 불러오지 못했어요."
+"notification.loadFailed" = "通知を読み込めませんでした。";
 
 
 // MARK: - Restaurant

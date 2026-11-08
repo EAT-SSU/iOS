@@ -40,4 +40,15 @@ final class PushRouteTests: XCTestCase {
         let route = try XCTUnwrap(PushRoute(userInfo: ["type": "MENU_FAVORITE", "date": "20261005", "timePart": "BRUNCH"]))
         XCTAssertNil(route.mealTime)
     }
+
+    func test_알림함_id는_문자열로_오며_없거나_이상하면_비운다() throws {
+        let withId = try XCTUnwrap(PushRoute(userInfo: ["type": "MENU_FAVORITE", "date": "20261005", "timePart": "LUNCH", "notificationId": "42"]))
+        XCTAssertEqual(withId.notificationId, 42)
+
+        let withoutId = try XCTUnwrap(PushRoute(userInfo: ["type": "MENU_FAVORITE", "date": "20261005"]))
+        XCTAssertNil(withoutId.notificationId)
+
+        let invalidId = try XCTUnwrap(PushRoute(userInfo: ["type": "MENU_FAVORITE", "date": "20261005", "notificationId": "abc"]))
+        XCTAssertNil(invalidId.notificationId)
+    }
 }
