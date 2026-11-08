@@ -9,20 +9,8 @@ import UIKit
 
 /// 학식 알림을 눌렀을 때 이동할 학식 화면 (날짜 + 시간대)
 struct PushRoute {
-    /// 학식 탭 시간대 순서 (아침·점심·저녁)
-    enum MealTime: String {
-        case morning = "MORNING"
-        case lunch = "LUNCH"
-        case dinner = "DINNER"
-
-        var tabIndex: Int {
-            switch self {
-            case .morning: 0
-            case .lunch: 1
-            case .dinner: 2
-            }
-        }
-    }
+    /// 학식 탭 시간대 (아침·점심·저녁). 찜 탭 "오늘 식단에서 찜하기"와 같은 타입을 쓴다
+    typealias MealTime = MealTimePart
 
     let date: Date
     /// 찜 알림에만 있다. 없으면(일반 학식 알림) 현재 시각 기준 시간대를 그대로 쓴다
@@ -35,22 +23,13 @@ struct PushRoute {
         guard let type = userInfo["type"] as? String,
               Self.supportedTypes.contains(type),
               let dateString = userInfo["date"] as? String,
-              let date = Self.dateFormatter.date(from: dateString) else { return nil }
+              let date = DateFormatter.serverDay.date(from: dateString) else { return nil }
         self.date = date
         self.mealTime = (userInfo["timePart"] as? String).flatMap(MealTime.init(rawValue:))
         self.notificationId = (userInfo["notificationId"] as? String).flatMap(Int.init)
     }
 
     private static let supportedTypes: Set<String> = ["MENU_FAVORITE", "DAILY_MENU"]
-
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = .current
-        formatter.dateFormat = "yyyyMMdd"
-        return formatter
-    }()
 }
 
 /// 알림을 누른 시점에 화면이 준비돼 있지 않을 수 있어(앱 실행 직후 스플래시·로그인 등) 이동할 곳을 보관했다가 적용한다

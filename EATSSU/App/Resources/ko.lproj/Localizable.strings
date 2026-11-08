@@ -500,6 +500,8 @@
 "restaurant.snackCorner" = "스낵 코너";
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (교직원 전용)";
+/// "교직원 식당" (칩 등 좁은 곳)
+"restaurant.facultyRestaurantShort" = "교직원 식당";
 
 // MARK: - Review Translation
 
@@ -742,3 +744,21 @@
 "like.menuSearchEmptySubtitle" = "다른 메뉴명으로 검색해주세요!";
 /// "2글자 이상 입력해주세요."
 "like.menuSearchTooShort" = "2글자 이상 입력해주세요.";
+/// "오늘 식단에서 찜하기"
+"like.todayMenuToggle" = "오늘 식단에서 찜하기";
+/// "메뉴를 선택해 찜할 수 있어요."
+"like.todayMenuHint" = "메뉴를 선택해 찜할 수 있어요.";
+/// "변경"
+"like.change" = "변경";
+/// "메뉴 찜하기"
+"like.favoriteMenus" = "메뉴 찜하기";
+/// "선택한 %d개 메뉴 찜하기"
+"like.favoriteSelectedMenus" = "선택한 %d개 메뉴 찜하기";
+/// "메뉴 변경"
+"like.slotSheetTitle" = "메뉴 변경";
+/// "식당 종류"
+"like.restaurantSection" = "식당 종류";
+/// "시간대"
+"like.mealTimeSection" = "시간대";
+/// "적용하기"
+"like.apply" = "적용하기";
