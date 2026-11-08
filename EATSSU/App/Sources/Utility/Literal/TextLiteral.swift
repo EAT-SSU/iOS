@@ -1233,6 +1233,38 @@ enum TextLiteral {
                 fallback: "다시 시도해주세요."
             )
         }
+
+        // MARK: 알림 허용 안내 다이얼로그
+
+        /// "잇슈의 유용한 소식을 받아보세요"
+        static var welcomeTitle: String {
+            Localization.localized("notification.welcomeTitle", fallback: "잇슈의 유용한 소식을 받아보세요")
+        }
+
+        /// "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요."
+        static var welcomeMessage: String {
+            Localization.localized("notification.welcomeMessage", fallback: "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요.")
+        }
+
+        /// "나중에"
+        static var later: String {
+            Localization.localized("notification.later", fallback: "나중에")
+        }
+
+        /// "알림 허용하기"
+        static var allow: String {
+            Localization.localized("notification.allow", fallback: "알림 허용하기")
+        }
+
+        /// "알림 권한이 꺼져 있어요"
+        static var settingsTitle: String {
+            Localization.localized("notification.settingsTitle", fallback: "알림 권한이 꺼져 있어요")
+        }
+
+        /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
+        static var settingsMessage: String {
+            Localization.localized("notification.settingsMessage", fallback: "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요.")
+        }
     }
     
     // MARK: - Restaurant

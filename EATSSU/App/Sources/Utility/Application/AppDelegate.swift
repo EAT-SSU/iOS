@@ -121,28 +121,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     private func setupNotificationPermissions() {
         // 11시 알림은 서버 푸시로 옮겨, 이전 버전이 예약한 로컬 알림은 지운다
         NotificationManager.shared.removeLegacyDailyNotifications()
-        _Concurrency.Task {
-            let userSettingKey = TextLiteral.MyPage.pushNotificationUserSettingKey
-            do {
-                let granted = try await NotificationManager.shared.requestNotificationPermission()
-                
-                let hasExistingSetting = UserDefaults.standard.object(forKey: userSettingKey) != nil
-                let isAppPermissionGranted = UserDefaults.standard.bool(forKey: userSettingKey)
-
-                if granted {
-                    if !hasExistingSetting || isAppPermissionGranted {
-                        UserDefaults.standard.set(true, forKey: userSettingKey)
-                    }
-                } else {
-                    UserDefaults.standard.set(false, forKey: userSettingKey)
-                }
-            } catch {
-                print("알림 권한 요청 실패: \(error)")
-                UserDefaults.standard.set(false, forKey: userSettingKey) 
-            }
-            // 권한·토글 결과에 맞게 서버 푸시 토큰 등록/삭제 (로그인 상태일 때만 동작)
-            PushTokenManager.shared.sync()
-        }
+        // 시스템 알림 권한은 앱 실행 시 바로 묻지 않는다. 가입 직후 안내 다이얼로그(`NotificationPermissionPrompt`)나
+        // 마이페이지 토글에서 사용자가 선택했을 때 요청한다
+        // 권한·토글 상태에 맞게 서버 푸시 토큰 등록/삭제 (로그인 상태일 때만 동작)
+        PushTokenManager.shared.sync()
     }
 
     /// 네트워크 모니터링을 시작합니다.
