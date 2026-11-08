@@ -1099,6 +1099,11 @@ enum TextLiteral {
             Localization.localized("review.todayMenu", fallback: "오늘의 메뉴")
         }
 
+        /// "오늘의 메뉴를 찜해보세요!" (오늘 식단일 때만 보이는 찜 탭 이동 버튼)
+        static var todayMenuFavoritePrompt: String {
+            Localization.localized("review.todayMenuFavoritePrompt", fallback: "오늘의 메뉴를 찜해보세요!")
+        }
+
         /// ReviewRateViewCell - "5점"
         static var fiveStars: String {
             Localization.localized("review.fiveStars", fallback: "5점")
@@ -1264,6 +1269,16 @@ enum TextLiteral {
         /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
         static var settingsMessage: String {
             Localization.localized("notification.settingsMessage", fallback: "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요.")
+        }
+
+        /// "메뉴 찜 알림을 허용해주세요"
+        static var favoriteRequestTitle: String {
+            Localization.localized("notification.favoriteRequestTitle", fallback: "메뉴 찜 알림을 허용해주세요")
+        }
+
+        /// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
+        static var favoriteRequestMessage: String {
+            Localization.localized("notification.favoriteRequestMessage", fallback: "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요.")
         }
 
         // MARK: 알림함

@@ -101,6 +101,12 @@ final class LikeViewController: BaseViewController {
         }
     }
 
+    /// 리뷰 화면 → 메뉴 찜 탭. "오늘 식단에서 찜하기" 카드를 해당 식당·시간대로 펼친다
+    func showTodayMenu(slot: TodayMenuSlot) {
+        prepare(tab: .menu, showsBackToMap: false)
+        menuViewController.showTodayMenu(slot: slot)
+    }
+
     /// 탭바에서 찜 탭을 다시 눌렀을 때 현재 페이지 갱신
     func reloadContent() {
         switch currentTab {

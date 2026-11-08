@@ -34,6 +34,19 @@ struct TodayMenuSlot: Equatable {
         Self.isAvailable(restaurant: restaurant, mealTime: mealTime)
     }
 
+    /// 리뷰 화면 "오늘의 메뉴를 찜해보세요!"에 연결할 식당·시간대
+    ///
+    /// 변동 식단(`VARIABLE`)이고, 식단 날짜가 오늘이며, 찜 대상 식당(스낵코너 제외)일 때만 값이 있다.
+    /// 어제·내일 식단에서는 버튼을 보여주지 않는다 (기능 명세)
+    static func forReview(menuType: String, restaurantCode: String?, timePart: String?, date: Date?, now: Date = Date()) -> TodayMenuSlot? {
+        guard menuType == "VARIABLE",
+              let date, Calendar.current.isDate(date, inSameDayAs: now),
+              let restaurant = Restaurant.allCases.first(where: { $0.identifier == restaurantCode }),
+              selectableRestaurants.contains(restaurant),
+              let mealTime = timePart.flatMap(MealTimePart.init(rawValue:)) else { return nil }
+        return TodayMenuSlot(restaurant: restaurant, mealTime: mealTime)
+    }
+
     /// "학생 식당 · 점심"
     var title: String {
         "\(restaurant.shortTitle) · \(mealTime.title)"

@@ -18,6 +18,14 @@ final class ReviewRateViewCell: UITableViewCell {
     
     /// 리뷰 작성 버튼 탭 핸들러
     var handler: (() -> Void)?
+
+    /// "오늘의 메뉴를 찜해보세요!" 탭 핸들러
+    var onTapTodayMenuFavorite: (() -> Void)?
+
+    /// 찜 버튼이 보일 때 셀에 더해지는 높이 (버튼 위 12.5 + 버튼 41). 디자인 기준
+    static let todayMenuFavoriteExtraHeight: CGFloat = 53.5
+
+    private var rateSectionTopConstraint: Constraint?
     
     /// 전체 평균 별점
     var totalRate: Double = 0
@@ -69,6 +77,47 @@ final class ReviewRateViewCell: UITableViewCell {
         return stack
     }()
     
+    // MARK: - UI Components - Today Menu Favorite
+
+    /// 오늘 식단일 때만 보이는 찜 탭 이동 버튼. 디자인: 높이 41, 모서리 8, gray300 테두리, 하트(좌 11) · Medium 12 · 화살표(우 14)
+    private let todayMenuFavoriteButton: UIControl = {
+        let control = UIControl()
+        control.backgroundColor = .white
+        control.layer.cornerRadius = 8
+        control.layer.borderWidth = 1
+        control.layer.borderColor = UIColor.gray300.cgColor
+        control.isHidden = true
+        // 하위 라벨 대신 버튼 하나로 읽히게 한다 (VoiceOver · UI 테스트)
+        control.isAccessibilityElement = true
+        control.accessibilityTraits = .button
+        control.accessibilityLabel = TextLiteral.Review.todayMenuFavoritePrompt
+        control.accessibilityIdentifier = "review.todayMenuFavoriteButton"
+        return control
+    }()
+
+    private let favoriteHeartImageView: UIImageView = {
+        let imageView = UIImageView(image: EATSSUDesignAsset.Images.icLikeLine.image)
+        imageView.tintColor = .gray400
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+
+    private let favoriteTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = TextLiteral.Review.todayMenuFavoritePrompt
+        label.font = .caption2
+        label.textColor = .gray700
+        return label
+    }()
+
+    private let favoriteChevronImageView: UIImageView = {
+        let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .medium)
+        let imageView = UIImageView(image: UIImage(systemName: "chevron.right", withConfiguration: config))
+        imageView.tintColor = .gray400
+        imageView.contentMode = .center
+        return imageView
+    }()
+
     // MARK: - UI Components - Rating Section
     
     /// 별점 섹션 컨테이너
@@ -156,6 +205,25 @@ final class ReviewRateViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Today Menu Favorite
+
+    /// 오늘 식단의 리뷰 화면에서만 찜 탭 이동 버튼을 보여준다
+    func setTodayMenuFavoriteButtonVisible(_ visible: Bool) {
+        todayMenuFavoriteButton.isHidden = !visible
+        rateSectionTopConstraint?.deactivate()
+        rateSectionContainer.snp.makeConstraints { make in
+            if visible {
+                rateSectionTopConstraint = make.top.equalTo(todayMenuFavoriteButton.snp.bottom).offset(24).constraint
+            } else {
+                rateSectionTopConstraint = make.top.equalTo(menuContainer.snp.bottom).offset(24).constraint
+            }
+        }
+    }
+
+    @objc private func didTapTodayMenuFavorite() {
+        onTapTodayMenuFavorite?()
+    }
+
     // MARK: - Helper Methods
     
     /// 별점 레이블 생성 헬퍼
@@ -217,8 +285,10 @@ final class ReviewRateViewCell: UITableViewCell {
         fiveChartBar = fiveBar.container
         fiveForeground = fiveBar.foreground
 
-        contentView.addSubviews(menuContainer, rateSectionContainer)
+        contentView.addSubviews(menuContainer, todayMenuFavoriteButton, rateSectionContainer)
         menuContainer.addSubviews(menuTitleStackView, menuLabel)
+        todayMenuFavoriteButton.addSubviews(favoriteHeartImageView, favoriteTitleLabel, favoriteChevronImageView)
+        todayMenuFavoriteButton.addTarget(self, action: #selector(didTapTodayMenuFavorite), for: .touchUpInside)
         rateSectionContainer.addSubviews(
             totalRateStackView,
             yAxisStackView,
@@ -253,8 +323,30 @@ final class ReviewRateViewCell: UITableViewCell {
             make.bottom.equalToSuperview().inset(16)
         }
 
+        todayMenuFavoriteButton.snp.makeConstraints { make in
+            make.top.equalTo(menuContainer.snp.bottom).offset(12.5)
+            make.leading.trailing.equalTo(menuContainer)
+            make.height.equalTo(41)
+        }
+        favoriteHeartImageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(11)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(16)
+        }
+        favoriteTitleLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(33)
+            make.centerY.equalToSuperview()
+            make.trailing.lessThanOrEqualTo(favoriteChevronImageView.snp.leading).offset(-8)
+        }
+        favoriteChevronImageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(14)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(16)
+        }
+
         rateSectionContainer.snp.makeConstraints { make in
-            make.top.equalTo(menuLabel.snp.bottom).offset(40)
+            // 메뉴 박스 아래 24 (찜 버튼이 보이면 버튼 아래 24)
+            rateSectionTopConstraint = make.top.equalTo(menuContainer.snp.bottom).offset(24).constraint
             make.centerX.equalToSuperview().offset(16)
             make.width.equalToSuperview().inset(16)
         }

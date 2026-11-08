@@ -134,6 +134,14 @@ final class CustomTabBarContainerController: UITabBarController {
         setTab(index: Tab.like.rawValue)
     }
 
+    /// 리뷰 화면 "오늘의 메뉴를 찜해보세요!" → 찜 탭(메뉴 찜)으로 전환해 해당 식당·시간대 카드를 펼친다
+    public func showTodayMenuFavorite(slot: TodayMenuSlot) {
+        guard let likeVC = getNavController(at: Tab.like.rawValue)?.viewControllers.first as? LikeViewController else { return }
+        getNavController(at: Tab.like.rawValue)?.popToRootViewController(animated: false)
+        likeVC.showTodayMenu(slot: slot)
+        setTab(index: Tab.like.rawValue)
+    }
+
     /// 찜 탭의 뒤로가기 → 지도 탭 복귀
     public func returnToMapTab() {
         setTab(index: Tab.map.rawValue)

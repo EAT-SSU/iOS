@@ -55,6 +55,10 @@ final class HomeRestaurantViewController: BaseViewController {
     // 리뷰 작성 뷰로 데이터 전달할 델리게이트
     var delegate: ReviewMenuTypeInfoDelegate?
 
+    /// 마지막으로 조회한 식단의 날짜·시간대. 리뷰 화면이 "오늘 식단인지" 판단하는 데 넘긴다
+    private var displayedDate: Date?
+    private var displayedTimePart: String?
+
     // 고정 메뉴 더미 데이터 (주말/방학 대비용)
     private let fixedDummy = FixedMenuInfoData.Dummy()
 
@@ -159,6 +163,8 @@ final class HomeRestaurantViewController: BaseViewController {
 
     // 날짜와 시간에 따라 메뉴 데이터 fetch
     func fetchData(date: Date, time: String) {
+        displayedDate = date
+        displayedTimePart = time
         // 새로운 데이터 요청 전, 이전 요청들을 모두 취소
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
@@ -294,6 +300,9 @@ extension HomeRestaurantViewController: UITableViewDataSource {
         if section < sectionHeaderRestaurant.count {
             reviewMenuTypeInfo.restaurantName = sectionHeaderRestaurant[section]
         }
+        reviewMenuTypeInfo.date = displayedDate
+        reviewMenuTypeInfo.restaurantCode = restaurant
+        reviewMenuTypeInfo.timePart = displayedTimePart
 
         if !isSnackCorner {
             guard let menus = changeMenuTableViewData[restaurant],

@@ -410,6 +410,8 @@
 "review.reviewCount" = "%d Reviews";
 /// ReviewRateViewCell - "오늘의 메뉴"
 "review.todayMenu" = "Today's Menu";
+/// "오늘의 메뉴를 찜해보세요!"
+"review.todayMenuFavoritePrompt" = "Save today's menu to favorites!";
 /// ReviewRateViewCell - "5점"
 "review.fiveStars" = "5 Stars";
 /// ReviewRateViewCell - "4점"
@@ -480,6 +482,10 @@
 "notification.settingsTitle" = "Notifications are off";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
 "notification.settingsMessage" = "To use menu favorites, allow EAT-SSU notifications in Settings.";
+/// "메뉴 찜 알림을 허용해주세요"
+"notification.favoriteRequestTitle" = "Allow menu favorite alerts";
+/// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
+"notification.favoriteRequestMessage" = "We'll let you know first when a saved menu is served.";
 // MARK: - Notification Inbox (알림함)
 
 /// "알림"

@@ -34,6 +34,9 @@ final class ReviewViewController: BaseViewController {
 
     /// 리뷰 작성 대상 메뉴가 속한 식당 이름 (예: "학생 식당")
     private var restaurantName: String?
+
+    /// "오늘의 메뉴를 찜해보세요!"로 열 찜 탭 식당·시간대. 오늘 식단의 변동 메뉴일 때만 있다
+    private var todayMenuSlot: TodayMenuSlot?
     
     /// 메뉴 이름 리스트
     private var menuNameList: [String] = []
@@ -430,7 +433,8 @@ extension ReviewViewController: UITableViewDelegate {
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
-            return 251.adjusted
+            let extra: CGFloat = todayMenuSlot == nil ? 0 : ReviewRateViewCell.todayMenuFavoriteExtraHeight
+            return (251 + extra).adjusted
         case 1:
             return UITableView.automaticDimension
         case 2:
@@ -515,6 +519,10 @@ extension ReviewViewController: UITableViewDataSource {
         cell.handler = { [weak self] in
             guard let self else { return }
             self.userTapReviewButton()
+        }
+        cell.setTodayMenuFavoriteButtonVisible(todayMenuSlot != nil)
+        cell.onTapTodayMenuFavorite = { [weak self] in
+            self?.openTodayMenuFavorite()
         }
         
         cell.reloadInputViews()
@@ -890,5 +898,25 @@ extension ReviewViewController: ReviewMenuTypeInfoDelegate {
         menuID = menuTypeData.menuID
         menuIDList = menuTypeData.changeMenuIDList
         restaurantName = menuTypeData.restaurantName
+        todayMenuSlot = TodayMenuSlot.forReview(
+            menuType: menuTypeData.menuType,
+            restaurantCode: menuTypeData.restaurantCode,
+            timePart: menuTypeData.timePart,
+            date: menuTypeData.date
+        )
+    }
+}
+
+// MARK: - Today Menu Favorite
+
+extension ReviewViewController {
+
+    /// "오늘의 메뉴를 찜해보세요!": 알림을 받을 수 있는 상태면 찜 탭의 해당 식당·시간대 카드로 이동하고,
+    /// 아니면 그 자리에서 알림 허용 안내를 띄운다 (기능 명세)
+    private func openTodayMenuFavorite() {
+        guard let slot = todayMenuSlot, let tabBar = tabBarContainer else { return }
+        NotificationPermissionPrompt.ensureFavoriteNotificationAllowed(on: tabBar) {
+            tabBar.showTodayMenuFavorite(slot: slot)
+        }
     }
 }
