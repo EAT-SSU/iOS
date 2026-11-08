@@ -481,6 +481,8 @@
 "restaurant.snackCorner" = "Quầy đồ ăn nhẹ";
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (Chỉ dành cho giảng viên/nhân viên)";
+/// "교직원 식당" (칩 등 좁은 곳)
+"restaurant.facultyRestaurantShort" = "Nhà ăn giảng viên";
 
 // MARK: - Review Translation
 
@@ -723,3 +725,21 @@
 "like.menuSearchEmptySubtitle" = "Hãy thử tìm bằng tên món ăn khác!";
 /// "2글자 이상 입력해주세요."
 "like.menuSearchTooShort" = "Vui lòng nhập ít nhất 2 ký tự.";
+/// "오늘 식단에서 찜하기"
+"like.todayMenuToggle" = "Lưu từ thực đơn hôm nay";
+/// "메뉴를 선택해 찜할 수 있어요."
+"like.todayMenuHint" = "Chọn món để lưu.";
+/// "변경"
+"like.change" = "Đổi";
+/// "메뉴 찜하기"
+"like.favoriteMenus" = "Lưu món";
+/// "선택한 %d개 메뉴 찜하기"
+"like.favoriteSelectedMenus" = "Lưu %d món đã chọn";
+/// "메뉴 변경"
+"like.slotSheetTitle" = "Đổi thực đơn";
+/// "식당 종류"
+"like.restaurantSection" = "Nhà ăn";
+/// "시간대"
+"like.mealTimeSection" = "Bữa ăn";
+/// "적용하기"
+"like.apply" = "Áp dụng";

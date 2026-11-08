@@ -1262,6 +1262,11 @@ enum TextLiteral {
         static var facultyRestaurant: String {
             Localization.localized("restaurant.facultyRestaurant", fallback: "FACULTY (교직원 전용)")
         }
+
+        /// "교직원 식당" (칩 등 좁은 곳)
+        static var facultyRestaurantShort: String {
+            Localization.localized("restaurant.facultyRestaurantShort", fallback: "교직원 식당")
+        }
     }
 
     // MARK: - Academic
@@ -1474,6 +1479,53 @@ enum TextLiteral {
         /// "2글자 이상 입력해주세요."
         static var menuSearchTooShort: String {
             Localization.localized("like.menuSearchTooShort", fallback: "2글자 이상 입력해주세요.")
+        }
+
+        // MARK: 오늘 식단에서 찜하기
+
+        /// "오늘 식단에서 찜하기"
+        static var todayMenuToggle: String {
+            Localization.localized("like.todayMenuToggle", fallback: "오늘 식단에서 찜하기")
+        }
+
+        /// "메뉴를 선택해 찜할 수 있어요."
+        static var todayMenuHint: String {
+            Localization.localized("like.todayMenuHint", fallback: "메뉴를 선택해 찜할 수 있어요.")
+        }
+
+        /// "변경"
+        static var change: String {
+            Localization.localized("like.change", fallback: "변경")
+        }
+
+        /// "메뉴 찜하기" (선택 없음)
+        static var favoriteMenus: String {
+            Localization.localized("like.favoriteMenus", fallback: "메뉴 찜하기")
+        }
+
+        /// "선택한 %d개 메뉴 찜하기"
+        static func favoriteSelectedMenus(_ count: Int) -> String {
+            Localization.formatted("like.favoriteSelectedMenus", fallback: "선택한 %d개 메뉴 찜하기", count)
+        }
+
+        /// "메뉴 변경" (바텀시트 제목)
+        static var slotSheetTitle: String {
+            Localization.localized("like.slotSheetTitle", fallback: "메뉴 변경")
+        }
+
+        /// "식당 종류"
+        static var restaurantSection: String {
+            Localization.localized("like.restaurantSection", fallback: "식당 종류")
+        }
+
+        /// "시간대"
+        static var mealTimeSection: String {
+            Localization.localized("like.mealTimeSection", fallback: "시간대")
+        }
+
+        /// "적용하기"
+        static var apply: String {
+            Localization.localized("like.apply", fallback: "적용하기")
         }
     }
 }

@@ -9,20 +9,8 @@ import UIKit
 
 /// 학식 알림을 눌렀을 때 이동할 학식 화면 (날짜 + 시간대)
 struct PushRoute {
-    /// 학식 탭 시간대 순서 (아침·점심·저녁)
-    enum MealTime: String {
-        case morning = "MORNING"
-        case lunch = "LUNCH"
-        case dinner = "DINNER"
-
-        var tabIndex: Int {
-            switch self {
-            case .morning: 0
-            case .lunch: 1
-            case .dinner: 2
-            }
-        }
-    }
+    /// 학식 탭 시간대 (아침·점심·저녁). 찜 탭 "오늘 식단에서 찜하기"와 같은 타입을 쓴다
+    typealias MealTime = MealTimePart
 
     let date: Date
     /// 찜 알림에만 있다. 없으면(일반 학식 알림) 현재 시각 기준 시간대를 그대로 쓴다
