@@ -648,9 +648,9 @@ enum TextLiteral {
         /// Push Notification key for UserDefaults
         static let pushNotificationUserSettingKey: String = "pushNotificationUserSettingKey"
 
-        /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
+        /// NotificationSettingTableViewCell - "찜한 메뉴가 오늘 식단에 나오면 알려드려요"
         static var pushNotificationDescription: String {
-            Localization.localized("myPage.pushNotificationDescription", fallback: "매일 오전 11시에 알림을 보내드려요")
+            Localization.localized("myPage.pushNotificationDescription", fallback: "찜한 메뉴가 오늘 식단에 나오면 알려드려요")
         }
         
         /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
@@ -1279,6 +1279,48 @@ enum TextLiteral {
         /// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
         static var favoriteRequestMessage: String {
             Localization.localized("notification.favoriteRequestMessage", fallback: "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요.")
+        }
+
+        // MARK: 알림함
+
+        /// "알림"
+        static var inboxTitle: String {
+            Localization.localized("notification.inboxTitle", fallback: "알림")
+        }
+
+        /// "모두 읽음"
+        static var readAll: String {
+            Localization.localized("notification.readAll", fallback: "모두 읽음")
+        }
+
+        /// "새로운 알림이 없어요."
+        static var emptyTitle: String {
+            Localization.localized("notification.emptyTitle", fallback: "새로운 알림이 없어요.")
+        }
+
+        /// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+        static var emptySubtitle: String {
+            Localization.localized("notification.emptySubtitle", fallback: "찜한 메뉴가 나오면 알림으로 알려드릴게요!")
+        }
+
+        /// "7일 전 알림까지 확인할 수 있어요"
+        static var retentionNotice: String {
+            Localization.localized("notification.retentionNotice", fallback: "7일 전 알림까지 확인할 수 있어요")
+        }
+
+        /// "방금 전" (1시간 미만)
+        static var justNow: String {
+            Localization.localized("notification.justNow", fallback: "방금 전")
+        }
+
+        /// "%d시간 전" (하루 미만)
+        static func hoursAgo(_ hours: Int) -> String {
+            Localization.formatted("notification.hoursAgo", fallback: "%d시간 전", hours)
+        }
+
+        /// "알림을 불러오지 못했어요."
+        static var loadFailed: String {
+            Localization.localized("notification.loadFailed", fallback: "알림을 불러오지 못했어요.")
         }
     }
     

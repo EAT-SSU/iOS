@@ -242,7 +242,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "Push Notification Settings";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "We'll send you a notification every day at 11:00 AM.";
+"myPage.pushNotificationDescription" = "Alerts when a saved menu is served today.";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "An error occurred while updating notification settings.";
 
@@ -486,6 +486,24 @@
 "notification.favoriteRequestTitle" = "Allow menu favorite alerts";
 /// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
 "notification.favoriteRequestMessage" = "We'll let you know first when a saved menu is served.";
+// MARK: - Notification Inbox (알림함)
+
+/// "알림"
+"notification.inboxTitle" = "Notifications";
+/// "모두 읽음"
+"notification.readAll" = "Mark all as read";
+/// "새로운 알림이 없어요."
+"notification.emptyTitle" = "No new notifications.";
+/// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+"notification.emptySubtitle" = "We'll notify you when a saved menu is served!";
+/// "7일 전 알림까지 확인할 수 있어요"
+"notification.retentionNotice" = "Notifications from the last 7 days are shown";
+/// "방금 전"
+"notification.justNow" = "Just now";
+/// "%d시간 전"
+"notification.hoursAgo" = "%dh ago";
+/// "알림을 불러오지 못했어요."
+"notification.loadFailed" = "Couldn't load notifications.";
 
 
 // MARK: - Restaurant

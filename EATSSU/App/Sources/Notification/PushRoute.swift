@@ -15,8 +15,10 @@ struct PushRoute {
     let date: Date
     /// 찜 알림에만 있다. 없으면(일반 학식 알림) 현재 시각 기준 시간대를 그대로 쓴다
     let mealTime: MealTime?
+    /// 알림함 항목 id. 있으면 알림을 누른 시점에 읽음 처리한다 (서버가 알림함을 지원하기 전 푸시에는 없다)
+    let notificationId: Int?
 
-    /// 서버 푸시 data: `type`(MENU_FAVORITE / DAILY_MENU), `date`(yyyyMMdd), `timePart`(찜 알림만)
+    /// 서버 푸시 data: `type`(MENU_FAVORITE / DAILY_MENU), `date`(yyyyMMdd), `timePart`(찜 알림만), `notificationId`(문자열)
     init?(userInfo: [AnyHashable: Any]) {
         guard let type = userInfo["type"] as? String,
               Self.supportedTypes.contains(type),
@@ -24,6 +26,7 @@ struct PushRoute {
               let date = DateFormatter.serverDay.date(from: dateString) else { return nil }
         self.date = date
         self.mealTime = (userInfo["timePart"] as? String).flatMap(MealTime.init(rawValue:))
+        self.notificationId = (userInfo["notificationId"] as? String).flatMap(Int.init)
     }
 
     private static let supportedTypes: Set<String> = ["MENU_FAVORITE", "DAILY_MENU"]
@@ -69,6 +72,10 @@ final class PushRouter {
             guard let tabBarController = Self.currentTabBarController() else { return }
             self.pendingRoute = nil
             tabBarController.showHomeMenu(on: pending.route.date, mealTime: pending.route.mealTime)
+            // 푸시를 눌러 들어왔으면 알림함에서도 읽은 것으로 표시한다
+            if let notificationId = pending.route.notificationId {
+                NotificationInboxService.markRead(notificationId: notificationId)
+            }
         }
     }
 
