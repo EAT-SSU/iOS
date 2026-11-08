@@ -232,10 +232,11 @@ final class TodayMenuFavoriteCardView: UIView {
         }
     }
 
-    func configure(slot: TodayMenuSlot, items: [MenuChipFlowView.Item], selectedIds: Set<Int>) {
+    /// - Parameter showsNoMenu: 메뉴를 받아왔는데 비어 있을 때만 true. 불러오는 중이거나 실패했을 때는 칩 자리를 비워 둔다
+    func configure(slot: TodayMenuSlot, items: [MenuChipFlowView.Item], selectedIds: Set<Int>, showsNoMenu: Bool) {
         slotLabel.text = slot.title
         chipFlowView.configure(items: items, selectedIds: selectedIds)
-        noMenuLabel.isHidden = !items.isEmpty
+        noMenuLabel.isHidden = !(items.isEmpty && showsNoMenu)
         chipFlowView.isHidden = items.isEmpty
         updateSubmitButton()
     }

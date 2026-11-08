@@ -65,6 +65,8 @@ final class MenuLikeViewController: BaseViewController {
     /// 오늘 식단에서 찜하기: 현재 식당·시간대와 그 메뉴
     private var todaySlot: TodayMenuSlot = .default
     private var todayMenus: [BriefMenus] = []
+    /// 오늘 메뉴를 성공적으로 받아왔는지. 불러오는 중·실패 상태에서는 "메뉴 없음" 문구를 보여주지 않는다
+    private var hasLoadedTodayMenus = false
     private var todayMenuGeneration = 0
     private var isSubmittingTodayMenus = false
 
@@ -188,16 +190,6 @@ final class MenuLikeViewController: BaseViewController {
         }
     }
 
-    /// 리뷰 화면의 "오늘의 메뉴를 찜해보세요!"로 들어온 경우: 해당 식당·시간대로 카드를 펼친 상태로 보여준다
-    func showTodayMenu(slot: TodayMenuSlot) {
-        searchBar.textField.resignFirstResponder()
-        searchBar.textField.text = nil
-        mode = .favorites
-        todaySlot = slot
-        todayMenus = []
-        setTodayMenuExpanded(true)
-    }
-
     // MARK: - Search
 
     @objc private func textDidChange() {
@@ -279,11 +271,9 @@ final class MenuLikeViewController: BaseViewController {
     private func updateFavoritesHeaderHeight() {
         guard tableView.tableHeaderView === favoritesHeaderView, tableView.bounds.width > 0 else { return }
         let width = tableView.bounds.width
-        // 칩 줄 수는 폭에 따라 달라지므로, 폭을 먼저 맞춰 한 번 레이아웃한 뒤 높이를 잰다
-        if abs(favoritesHeaderView.bounds.width - width) > 0.5 {
-            favoritesHeaderView.frame.size.width = width
-            favoritesHeaderView.layoutIfNeeded()
-        }
+        // 칩 줄 수는 폭에 따라 달라지고 칩 높이는 레이아웃 때 계산되므로, 폭을 맞춰 한 번 레이아웃한 뒤 높이를 잰다
+        favoritesHeaderView.frame.size.width = width
+        favoritesHeaderView.layoutIfNeeded()
         let target = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
         let height = favoritesHeaderView.systemLayoutSizeFitting(
             target,
@@ -339,9 +329,10 @@ final class MenuLikeViewController: BaseViewController {
         todayMenuGeneration += 1
         let generation = todayMenuGeneration
         let slot = todaySlot
+        hasLoadedTodayMenus = false
         NetworkService.shared.request(
             HomeRouter.getChangeMenuTableResponse(
-                date: Self.yyyyMMddFormatter.string(from: Date()),
+                date: DateFormatter.serverDay.string(from: Date()),
                 restaurant: slot.restaurant.identifier,
                 time: slot.mealTime.rawValue,
                 language: ChangeMenuTableResponse.mealLanguageParameter
@@ -351,9 +342,10 @@ final class MenuLikeViewController: BaseViewController {
             guard let self, generation == self.todayMenuGeneration, slot == self.todaySlot else { return }
             switch result {
             case .success(let meals):
-                // 한 시간대에 식단이 여러 개여도 메뉴는 한 번씩만 보여준다
+                // 학식 탭과 같은 메뉴를 보여준다(영어면 번역된 대표메뉴만). 한 시간대에 식단이 여러 개여도 메뉴는 한 번씩만
                 var seen = Set<Int>()
-                self.todayMenus = meals.flatMap(\.briefMenus).filter { !$0.name.isEmpty && seen.insert($0.menuId).inserted }
+                self.todayMenus = meals.flatMap(\.displayMenus).filter { !$0.name.isEmpty && seen.insert($0.menuId).inserted }
+                self.hasLoadedTodayMenus = true
             case .failure(let error):
                 print("오늘 식단 조회 실패 \(slot.restaurant.identifier)/\(slot.mealTime.rawValue): \(error.localizedDescription)")
                 self.todayMenus = []
@@ -364,12 +356,17 @@ final class MenuLikeViewController: BaseViewController {
         }
     }
 
-    private func renderTodayMenuCard() {
+    private func renderTodayMenuCard(selectedIds: Set<Int>? = nil) {
         let favoriteIds = Set(MenuFavoriteManager.shared.favorites.map(\.menuId))
         let items = todayMenus.map {
             MenuChipFlowView.Item(id: $0.menuId, title: $0.name, isLocked: favoriteIds.contains($0.menuId))
         }
-        todayMenuCard.configure(slot: todaySlot, items: items, selectedIds: todayMenuCard.selectedIds)
+        todayMenuCard.configure(
+            slot: todaySlot,
+            items: items,
+            selectedIds: selectedIds ?? todayMenuCard.selectedIds,
+            showsNoMenu: hasLoadedTodayMenus
+        )
     }
 
     private func presentSlotSheet() {
@@ -386,21 +383,26 @@ final class MenuLikeViewController: BaseViewController {
     }
 
     /// 선택한 메뉴를 한 번에 찜한다. 이미 찜한 메뉴는 칩에서 고를 수 없으므로 새 메뉴만 서버로 간다
+    ///
+    /// 다른 곳(검색 결과 하트)에서 요청이 진행 중인 메뉴는 `setFavorite`가 completion 없이 돌아오므로 이번 제출에서 뺀다.
+    /// 실패한 메뉴는 선택을 남겨 두어 사용자가 다시 시도할 수 있게 한다
     private func submitTodayMenus() {
         guard !isSubmittingTodayMenus else { return }
-        let selected = todayMenus.filter { todayMenuCard.selectedIds.contains($0.menuId) }
+        let manager = MenuFavoriteManager.shared
+        let selected = todayMenus.filter {
+            todayMenuCard.selectedIds.contains($0.menuId) && !manager.isPending(menuId: $0.menuId)
+        }
         guard !selected.isEmpty else { return }
         isSubmittingTodayMenus = true
 
-        let manager = MenuFavoriteManager.shared
         let restaurant = todaySlot.restaurant.identifier
         let group = DispatchGroup()
-        var failureCount = 0
+        var failedIds = Set<Int>()
         for menu in selected {
             group.enter()
             manager.setFavorite(true, menuId: menu.menuId, menuName: menu.name, restaurant: restaurant) { result in
                 if case .failure(let error) = result {
-                    failureCount += 1
+                    failedIds.insert(menu.menuId)
                     print("오늘 식단 찜 실패 menuId=\(menu.menuId): \(error.localizedDescription)")
                 }
                 group.leave()
@@ -409,25 +411,15 @@ final class MenuLikeViewController: BaseViewController {
         group.notify(queue: .main) { [weak self] in
             guard let self else { return }
             self.isSubmittingTodayMenus = false
-            self.todayMenuCard.clearSelection()
-            self.renderTodayMenuCard()
+            self.renderTodayMenuCard(selectedIds: failedIds)
             self.render()
-            if failureCount == 0 {
+            if failedIds.isEmpty {
                 self.showToast(message: TextLiteral.Like.menuAddedToast, type: .success)
             } else {
                 self.showToast(message: TextLiteral.Like.menuUpdateFailed, type: .danger)
             }
         }
     }
-
-    private static let yyyyMMddFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = .current
-        formatter.dateFormat = "yyyyMMdd"
-        return formatter
-    }()
 
     // MARK: - Favorite
 

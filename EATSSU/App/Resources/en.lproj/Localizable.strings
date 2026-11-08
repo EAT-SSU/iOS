@@ -733,7 +733,7 @@
 /// "메뉴 찜하기"
 "like.favoriteMenus" = "Save menus";
 /// "선택한 %d개 메뉴 찜하기"
-"like.favoriteSelectedMenus" = "Save %d selected menus";
+"like.favoriteSelectedMenus" = "Save %d selected";
 /// "메뉴 변경"
 "like.slotSheetTitle" = "Change menu";
 /// "식당 종류"

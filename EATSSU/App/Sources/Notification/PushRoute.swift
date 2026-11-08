@@ -21,21 +21,12 @@ struct PushRoute {
         guard let type = userInfo["type"] as? String,
               Self.supportedTypes.contains(type),
               let dateString = userInfo["date"] as? String,
-              let date = Self.dateFormatter.date(from: dateString) else { return nil }
+              let date = DateFormatter.serverDay.date(from: dateString) else { return nil }
         self.date = date
         self.mealTime = (userInfo["timePart"] as? String).flatMap(MealTime.init(rawValue:))
     }
 
     private static let supportedTypes: Set<String> = ["MENU_FAVORITE", "DAILY_MENU"]
-
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = .current
-        formatter.dateFormat = "yyyyMMdd"
-        return formatter
-    }()
 }
 
 /// 알림을 누른 시점에 화면이 준비돼 있지 않을 수 있어(앱 실행 직후 스플래시·로그인 등) 이동할 곳을 보관했다가 적용한다
