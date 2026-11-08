@@ -467,6 +467,19 @@
 /// 다시 시도해주세요.
 "notification_error_unknown_description" = "Please try again.";
 
+// MARK: - Notification Permission Prompt (알림 허용 안내)
+/// "잇슈의 유용한 소식을 받아보세요"
+"notification.welcomeTitle" = "Get helpful updates from EAT-SSU";
+/// "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요."
+"notification.welcomeMessage" = "We'll notify you about today's meals and your saved menus.";
+/// "나중에"
+"notification.later" = "Later";
+/// "알림 허용하기"
+"notification.allow" = "Allow notifications";
+/// "알림 권한이 꺼져 있어요"
+"notification.settingsTitle" = "Notifications are off";
+/// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
+"notification.settingsMessage" = "To use menu favorites, allow EAT-SSU notifications in Settings.";
 // MARK: - Notification Inbox (알림함)
 
 /// "알림"
