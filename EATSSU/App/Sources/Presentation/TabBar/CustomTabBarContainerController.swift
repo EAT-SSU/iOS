@@ -45,12 +45,18 @@ final class CustomTabBarContainerController: UITabBarController {
         // 로그인 상태의 모든 진입(앱 실행·로그인·가입·언어 변경 후 재구성)이 이 화면을 거치므로 여기서 서버 언어·푸시 토큰을 맞춘다
         ServerLanguageSync.sync()
         PushTokenManager.shared.sync()
+        #if DEBUG
+            // 개발용: dev 스웨거 Authorize에 붙여 넣을 수 있도록 로그인 토큰을 출력한다
+            print("🔑 accessToken(개발용):", TokenStore.accessToken)
+        #endif
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         // 앱이 꺼진 상태에서 알림으로 실행된 경우, 스플래시·로그인을 거쳐 탭바가 나타난 뒤 이동한다
         PushRouter.shared.applyPendingRoute()
+        // 가입(로그인) 직후 기기 알림 권한이 미결정이면 알림 허용 안내를 띄운다
+        NotificationPermissionPrompt.presentWelcomeIfNeeded(on: self)
     }
     
     // MARK: - Setup

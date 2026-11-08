@@ -121,6 +121,8 @@ final class LoginViewController: BaseViewController {
 
     /// 닉네임 설정이 필요한지 확인 후, 필요하면 닉네임 설정 화면으로, 아니면 홈 화면으로 이동한다.
     private func handleNicknameCheck(info: MyInfoResponse) {
+        // 로그인·가입 직후 탭바가 뜨면 알림 허용 안내를 띄운다 (기기 권한이 미결정일 때만 실제로 보인다)
+        NotificationPermissionPrompt.isPendingAfterLogin = true
         if let nickname = info.nickname {
             // 사용자의 닉네임을 업데이트하고 홈 화면으로 이동
             UserInfoManager.shared.updateUserInfo(
