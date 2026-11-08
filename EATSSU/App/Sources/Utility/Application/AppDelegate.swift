@@ -228,6 +228,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 extension AppDelegate {
     // Foreground에서도 알림이 보이도록 설정
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // 앱 사용 중에 알림이 오면 학식 탭 알림 아이콘에 점을 띄운다
+        NotificationCenter.default.post(name: .didReceivePushNotification, object: nil)
         completionHandler([.banner, .sound, .badge])
     }
 }

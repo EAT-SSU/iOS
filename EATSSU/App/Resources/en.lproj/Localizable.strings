@@ -467,6 +467,25 @@
 /// 다시 시도해주세요.
 "notification_error_unknown_description" = "Please try again.";
 
+// MARK: - Notification Inbox (알림함)
+
+/// "알림"
+"notification.inboxTitle" = "Notifications";
+/// "모두 읽음"
+"notification.readAll" = "Mark all as read";
+/// "새로운 알림이 없어요."
+"notification.emptyTitle" = "No new notifications.";
+/// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+"notification.emptySubtitle" = "We'll notify you when a saved menu is served!";
+/// "7일 전 알림까지 확인할 수 있어요"
+"notification.retentionNotice" = "Notifications from the last 7 days are shown";
+/// "방금 전"
+"notification.justNow" = "Just now";
+/// "%d시간 전"
+"notification.hoursAgo" = "%dh ago";
+/// "알림을 불러오지 못했어요."
+"notification.loadFailed" = "Couldn't load notifications.";
+
 
 // MARK: - Restaurant
 
