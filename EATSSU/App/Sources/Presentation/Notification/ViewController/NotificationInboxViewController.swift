@@ -146,14 +146,13 @@ final class NotificationInboxViewController: BaseViewController {
     // MARK: - Actions
 
     @objc private func didTapReadAll() {
-        let previous = notifications
         notifications = notifications.map { Self.marked($0, isRead: true) }
         render()
         NotificationInboxService.markAllRead { [weak self] result in
             guard let self, case .failure(let error) = result else { return }
             print("알림 모두 읽음 실패: \(error.localizedDescription)")
-            self.notifications = previous
-            self.render()
+            // 요청 중에 개별 읽음 처리가 끼어들 수 있어, 이전 화면 상태로 되돌리는 대신 서버 상태를 다시 받는다
+            self.loadNotifications()
         }
     }
 

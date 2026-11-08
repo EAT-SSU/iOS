@@ -46,6 +46,9 @@ final class HomeViewController: BaseViewController {
     private let tabmanController = CustomTimeTabController()
     private let homeCalendarView = HomeCalendarView()
 
+    /// 안 읽은 알림 조회 요청마다 증가. 연달아 보낸 요청의 응답 순서가 뒤바뀌어도 마지막 요청만 배지에 반영한다
+    private var unreadBadgeRequestID = 0
+
     // MARK: - Life Cycle
 
     override func viewDidLoad() {
@@ -150,9 +153,16 @@ final class HomeViewController: BaseViewController {
     }
 
     @objc private func refreshUnreadBadge() {
+        // 푸시 도착(`willPresent`) 알림은 메인 큐 호출이 보장되지 않아 메인으로 옮긴다
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { self.refreshUnreadBadge() }
+            return
+        }
         guard TokenStore.hasAccessToken else { return }
+        unreadBadgeRequestID += 1
+        let requestID = unreadBadgeRequestID
         NotificationInboxService.fetchHasUnread { [weak self] result in
-            guard let self, case .success(let hasUnread) = result else { return }
+            guard let self, requestID == self.unreadBadgeRequestID, case .success(let hasUnread) = result else { return }
             let image = hasUnread ? EATSSUDesignAsset.Images.icBellUnread.image : EATSSUDesignAsset.Images.icBell.image
             self.notificationButton.setImage(image, for: .normal)
         }
