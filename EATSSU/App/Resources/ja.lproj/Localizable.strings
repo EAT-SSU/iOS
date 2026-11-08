@@ -243,7 +243,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "プッシュ通知設定";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "毎日午前11時に通知をお送りします。";
+"myPage.pushNotificationDescription" = "お気に入りメニューが今日出たら通知します";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "通知設定中にエラーが発生しました。";
 
