@@ -411,6 +411,8 @@
 "review.reviewCount" = "レビュー %d件";
 /// ReviewRateViewCell - "오늘의 메뉴"
 "review.todayMenu" = "今日のメニュー";
+/// "오늘의 메뉴를 찜해보세요!"
+"review.todayMenuFavoritePrompt" = "今日のメニューをお気に入りに追加！";
 /// ReviewRateViewCell - "5점"
 "review.fiveStars" = "5点";
 /// ReviewRateViewCell - "4점"
@@ -481,6 +483,10 @@
 "notification.settingsTitle" = "通知がオフになっています";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
 "notification.settingsMessage" = "お気に入り機能を使うには、端末の設定でEAT-SSUの通知を許可してください。";
+/// "메뉴 찜 알림을 허용해주세요"
+"notification.favoriteRequestTitle" = "お気に入り通知を許可してください";
+/// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
+"notification.favoriteRequestMessage" = "お気に入りメニューが出たら最初にお知らせします。";
 
 
 // MARK: - Restaurant

@@ -190,6 +190,19 @@ final class MenuLikeViewController: BaseViewController {
         }
     }
 
+    /// 리뷰 화면의 "오늘의 메뉴를 찜해보세요!"로 들어온 경우: 해당 식당·시간대로 카드를 펼친 상태로 보여준다
+    func showTodayMenu(slot: TodayMenuSlot) {
+        if searchBar.textField.isFirstResponder || currentKeyword.isEmpty == false {
+            finishSearch()
+            searchBar.textField.resignFirstResponder()
+        }
+        todaySlot = slot
+        todayMenus = []
+        hasLoadedTodayMenus = false
+        todayMenuCard.clearSelection()
+        setTodayMenuExpanded(true)
+    }
+
     // MARK: - Search
 
     @objc private func textDidChange() {
@@ -310,7 +323,7 @@ final class MenuLikeViewController: BaseViewController {
             $0.height.equalTo(1)
             $0.bottom.equalToSuperview().inset(Layout.favoritesRowsBelowTitle - Layout.favoritesSeparatorBelowTitle - 1)
         }
-        todayMenuCard.setExpanded(false)
+        // 카드의 접힘/펼침 상태는 여기서 건드리지 않는다. 리뷰 화면에서 펼친 채로 들어오면 헤더가 나중에 만들어지기 때문
         return header
     }
 

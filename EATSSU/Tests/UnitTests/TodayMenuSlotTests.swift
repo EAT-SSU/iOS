@@ -32,6 +32,19 @@ final class TodayMenuSlotTests: XCTestCase {
         XCTAssertTrue(TodayMenuSlot.isAvailable(restaurant: .facultyRestaurant, mealTime: .lunch))
     }
 
+    func test_리뷰_화면_버튼은_오늘_변동식단_찜_대상_식당일_때만() {
+        let now = Date()
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
+        XCTAssertEqual(
+            TodayMenuSlot.forReview(menuType: "VARIABLE", restaurantCode: "DODAM", timePart: "DINNER", date: now, now: now),
+            TodayMenuSlot(restaurant: .dodamRestaurant, mealTime: .dinner)
+        )
+        XCTAssertNil(TodayMenuSlot.forReview(menuType: "VARIABLE", restaurantCode: "DODAM", timePart: "DINNER", date: yesterday, now: now), "어제 식단")
+        XCTAssertNil(TodayMenuSlot.forReview(menuType: "FIXED", restaurantCode: "SNACK_CORNER", timePart: "LUNCH", date: now, now: now), "스낵코너")
+        XCTAssertNil(TodayMenuSlot.forReview(menuType: "VARIABLE", restaurantCode: "HAKSIK", timePart: nil, date: now, now: now), "시간대 없음")
+        XCTAssertNil(TodayMenuSlot.forReview(menuType: "VARIABLE", restaurantCode: "FOOD_COURT", timePart: "LUNCH", date: now, now: now), "앱에 없는 식당")
+    }
+
     func test_시간대_탭_인덱스와_서버_값() {
         XCTAssertEqual(MealTimePart(rawValue: "LUNCH")?.tabIndex, 1)
         XCTAssertEqual(MealTimePart.allCases.map(\.tabIndex), [0, 1, 2])

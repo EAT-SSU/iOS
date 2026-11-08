@@ -411,6 +411,8 @@
 "review.reviewCount" = "%d đánh giá";
 /// ReviewRateViewCell - "오늘의 메뉴"
 "review.todayMenu" = "Thực đơn hôm nay";
+/// "오늘의 메뉴를 찜해보세요!"
+"review.todayMenuFavoritePrompt" = "Lưu thực đơn hôm nay vào yêu thích!";
 /// ReviewRateViewCell - "5점"
 "review.fiveStars" = "5 điểm";
 /// ReviewRateViewCell - "4점"
@@ -481,6 +483,10 @@
 "notification.settingsTitle" = "Thông báo đang tắt";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
 "notification.settingsMessage" = "Để dùng tính năng lưu món, hãy bật thông báo EAT-SSU trong Cài đặt.";
+/// "메뉴 찜 알림을 허용해주세요"
+"notification.favoriteRequestTitle" = "Cho phép thông báo món đã lưu";
+/// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
+"notification.favoriteRequestMessage" = "Chúng tôi sẽ báo đầu tiên khi món đã lưu được phục vụ.";
 
 
 // MARK: - Restaurant

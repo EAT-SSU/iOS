@@ -57,6 +57,39 @@ enum NotificationPermissionPrompt {
         }
     }
 
+    /// 찜 기능을 쓰려는데 알림이 꺼져 있을 때(마이페이지 토글 OFF 또는 권한 미결정): 허용 요청
+    static func presentFavoriteRequest(on tabBar: CustomTabBarContainerController) {
+        tabBar.showDialog(
+            title: TextLiteral.Notification.favoriteRequestTitle,
+            message: TextLiteral.Notification.favoriteRequestMessage,
+            cancelButtonTitle: TextLiteral.Common.cancel,
+            confirmButtonTitle: TextLiteral.Notification.allow,
+            cancelAction: nil,
+            confirmAction: { requestPermission(on: tabBar) }
+        )
+    }
+
+    /// 메뉴 찜 알림을 받을 수 있는 상태인지에 따라 안내 다이얼로그를 띄우거나 `allowed`를 실행한다
+    /// - 기기 권한 거부 → 설정 이동 안내 / 토글 OFF 또는 권한 미결정 → 허용 요청 / 그 외 → allowed
+    static func ensureFavoriteNotificationAllowed(on tabBar: CustomTabBarContainerController, allowed: @escaping () -> Void) {
+        Task { @MainActor in
+            let settings = await NotificationManager.shared.checkNotificationSetting()
+            let isToggleOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+            switch settings.authorizationStatus {
+            case .denied:
+                presentSettingsDialog(on: tabBar)
+            case .notDetermined:
+                presentFavoriteRequest(on: tabBar)
+            default:
+                if isToggleOn {
+                    allowed()
+                } else {
+                    presentFavoriteRequest(on: tabBar)
+                }
+            }
+        }
+    }
+
     /// 기기 알림 권한이 꺼져 있을 때: 설정 앱으로 안내
     static func presentSettingsDialog(on tabBar: CustomTabBarContainerController) {
         tabBar.showDialog(
