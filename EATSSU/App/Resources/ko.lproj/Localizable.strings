@@ -243,7 +243,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "푸시 알림 설정";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "매일 오전 11시에 알림을 보내드려요";
+"myPage.pushNotificationDescription" = "찜한 메뉴가 오늘 식단에 나오면 알려드려요";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "알림 설정 중 오류가 발생했습니다.";
 
@@ -481,6 +481,24 @@
 "notification.settingsTitle" = "알림 권한이 꺼져 있어요";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
 "notification.settingsMessage" = "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요.";
+// MARK: - Notification Inbox (알림함)
+
+/// "알림"
+"notification.inboxTitle" = "알림";
+/// "모두 읽음"
+"notification.readAll" = "모두 읽음";
+/// "새로운 알림이 없어요."
+"notification.emptyTitle" = "새로운 알림이 없어요.";
+/// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+"notification.emptySubtitle" = "찜한 메뉴가 나오면 알림으로 알려드릴게요!";
+/// "7일 전 알림까지 확인할 수 있어요"
+"notification.retentionNotice" = "7일 전 알림까지 확인할 수 있어요";
+/// "방금 전"
+"notification.justNow" = "방금 전";
+/// "%d시간 전"
+"notification.hoursAgo" = "%d시간 전";
+/// "알림을 불러오지 못했어요."
+"notification.loadFailed" = "알림을 불러오지 못했어요.";
 
 
 // MARK: - Restaurant
@@ -495,6 +513,8 @@
 "restaurant.snackCorner" = "스낵 코너";
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (교직원 전용)";
+/// "교직원 식당" (칩 등 좁은 곳)
+"restaurant.facultyRestaurantShort" = "교직원 식당";
 
 // MARK: - Review Translation
 
@@ -737,3 +757,21 @@
 "like.menuSearchEmptySubtitle" = "다른 메뉴명으로 검색해주세요!";
 /// "2글자 이상 입력해주세요."
 "like.menuSearchTooShort" = "2글자 이상 입력해주세요.";
+/// "오늘 식단에서 찜하기"
+"like.todayMenuToggle" = "오늘 식단에서 찜하기";
+/// "메뉴를 선택해 찜할 수 있어요."
+"like.todayMenuHint" = "메뉴를 선택해 찜할 수 있어요.";
+/// "변경"
+"like.change" = "변경";
+/// "메뉴 찜하기"
+"like.favoriteMenus" = "메뉴 찜하기";
+/// "선택한 %d개 메뉴 찜하기"
+"like.favoriteSelectedMenus" = "선택한 %d개 메뉴 찜하기";
+/// "메뉴 변경"
+"like.slotSheetTitle" = "메뉴 변경";
+/// "식당 종류"
+"like.restaurantSection" = "식당 종류";
+/// "시간대"
+"like.mealTimeSection" = "시간대";
+/// "적용하기"
+"like.apply" = "적용하기";

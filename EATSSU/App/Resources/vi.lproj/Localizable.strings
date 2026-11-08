@@ -243,7 +243,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "Cài đặt thông báo đẩy";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "Chúng tôi sẽ gửi thông báo cho bạn mỗi ngày lúc 11:00.";
+"myPage.pushNotificationDescription" = "Báo khi món đã lưu lên thực đơn hôm nay.";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "Đã xảy ra lỗi khi cập nhật cài đặt thông báo.";
 
@@ -481,6 +481,24 @@
 "notification.settingsTitle" = "Thông báo đang tắt";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
 "notification.settingsMessage" = "Để dùng tính năng lưu món, hãy bật thông báo EAT-SSU trong Cài đặt.";
+// MARK: - Notification Inbox (알림함)
+
+/// "알림"
+"notification.inboxTitle" = "Thông báo";
+/// "모두 읽음"
+"notification.readAll" = "Đánh dấu đã đọc tất cả";
+/// "새로운 알림이 없어요."
+"notification.emptyTitle" = "Không có thông báo mới.";
+/// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+"notification.emptySubtitle" = "Chúng tôi sẽ báo khi món đã lưu được phục vụ!";
+/// "7일 전 알림까지 확인할 수 있어요"
+"notification.retentionNotice" = "Hiển thị thông báo trong 7 ngày gần nhất";
+/// "방금 전"
+"notification.justNow" = "Vừa xong";
+/// "%d시간 전"
+"notification.hoursAgo" = "%d giờ trước";
+/// "알림을 불러오지 못했어요."
+"notification.loadFailed" = "Không thể tải thông báo.";
 
 
 // MARK: - Restaurant
@@ -495,6 +513,8 @@
 "restaurant.snackCorner" = "Quầy đồ ăn nhẹ";
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (Chỉ dành cho giảng viên/nhân viên)";
+/// "교직원 식당" (칩 등 좁은 곳)
+"restaurant.facultyRestaurantShort" = "Nhà ăn giảng viên";
 
 // MARK: - Review Translation
 
@@ -737,3 +757,21 @@
 "like.menuSearchEmptySubtitle" = "Hãy thử tìm bằng tên món ăn khác!";
 /// "2글자 이상 입력해주세요."
 "like.menuSearchTooShort" = "Vui lòng nhập ít nhất 2 ký tự.";
+/// "오늘 식단에서 찜하기"
+"like.todayMenuToggle" = "Lưu từ thực đơn hôm nay";
+/// "메뉴를 선택해 찜할 수 있어요."
+"like.todayMenuHint" = "Chọn món để lưu.";
+/// "변경"
+"like.change" = "Đổi";
+/// "메뉴 찜하기"
+"like.favoriteMenus" = "Lưu món";
+/// "선택한 %d개 메뉴 찜하기"
+"like.favoriteSelectedMenus" = "Lưu %d món đã chọn";
+/// "메뉴 변경"
+"like.slotSheetTitle" = "Đổi thực đơn";
+/// "식당 종류"
+"like.restaurantSection" = "Nhà ăn";
+/// "시간대"
+"like.mealTimeSection" = "Bữa ăn";
+/// "적용하기"
+"like.apply" = "Áp dụng";

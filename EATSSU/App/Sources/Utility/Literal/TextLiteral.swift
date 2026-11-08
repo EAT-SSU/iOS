@@ -648,9 +648,9 @@ enum TextLiteral {
         /// Push Notification key for UserDefaults
         static let pushNotificationUserSettingKey: String = "pushNotificationUserSettingKey"
 
-        /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
+        /// NotificationSettingTableViewCell - "찜한 메뉴가 오늘 식단에 나오면 알려드려요"
         static var pushNotificationDescription: String {
-            Localization.localized("myPage.pushNotificationDescription", fallback: "매일 오전 11시에 알림을 보내드려요")
+            Localization.localized("myPage.pushNotificationDescription", fallback: "찜한 메뉴가 오늘 식단에 나오면 알려드려요")
         }
         
         /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
@@ -1265,6 +1265,48 @@ enum TextLiteral {
         static var settingsMessage: String {
             Localization.localized("notification.settingsMessage", fallback: "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요.")
         }
+
+        // MARK: 알림함
+
+        /// "알림"
+        static var inboxTitle: String {
+            Localization.localized("notification.inboxTitle", fallback: "알림")
+        }
+
+        /// "모두 읽음"
+        static var readAll: String {
+            Localization.localized("notification.readAll", fallback: "모두 읽음")
+        }
+
+        /// "새로운 알림이 없어요."
+        static var emptyTitle: String {
+            Localization.localized("notification.emptyTitle", fallback: "새로운 알림이 없어요.")
+        }
+
+        /// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+        static var emptySubtitle: String {
+            Localization.localized("notification.emptySubtitle", fallback: "찜한 메뉴가 나오면 알림으로 알려드릴게요!")
+        }
+
+        /// "7일 전 알림까지 확인할 수 있어요"
+        static var retentionNotice: String {
+            Localization.localized("notification.retentionNotice", fallback: "7일 전 알림까지 확인할 수 있어요")
+        }
+
+        /// "방금 전" (1시간 미만)
+        static var justNow: String {
+            Localization.localized("notification.justNow", fallback: "방금 전")
+        }
+
+        /// "%d시간 전" (하루 미만)
+        static func hoursAgo(_ hours: Int) -> String {
+            Localization.formatted("notification.hoursAgo", fallback: "%d시간 전", hours)
+        }
+
+        /// "알림을 불러오지 못했어요."
+        static var loadFailed: String {
+            Localization.localized("notification.loadFailed", fallback: "알림을 불러오지 못했어요.")
+        }
     }
     
     // MARK: - Restaurant
@@ -1293,6 +1335,11 @@ enum TextLiteral {
         /// "FACULTY (교직원 전용)"
         static var facultyRestaurant: String {
             Localization.localized("restaurant.facultyRestaurant", fallback: "FACULTY (교직원 전용)")
+        }
+
+        /// "교직원 식당" (칩 등 좁은 곳)
+        static var facultyRestaurantShort: String {
+            Localization.localized("restaurant.facultyRestaurantShort", fallback: "교직원 식당")
         }
     }
 
@@ -1506,6 +1553,53 @@ enum TextLiteral {
         /// "2글자 이상 입력해주세요."
         static var menuSearchTooShort: String {
             Localization.localized("like.menuSearchTooShort", fallback: "2글자 이상 입력해주세요.")
+        }
+
+        // MARK: 오늘 식단에서 찜하기
+
+        /// "오늘 식단에서 찜하기"
+        static var todayMenuToggle: String {
+            Localization.localized("like.todayMenuToggle", fallback: "오늘 식단에서 찜하기")
+        }
+
+        /// "메뉴를 선택해 찜할 수 있어요."
+        static var todayMenuHint: String {
+            Localization.localized("like.todayMenuHint", fallback: "메뉴를 선택해 찜할 수 있어요.")
+        }
+
+        /// "변경"
+        static var change: String {
+            Localization.localized("like.change", fallback: "변경")
+        }
+
+        /// "메뉴 찜하기" (선택 없음)
+        static var favoriteMenus: String {
+            Localization.localized("like.favoriteMenus", fallback: "메뉴 찜하기")
+        }
+
+        /// "선택한 %d개 메뉴 찜하기"
+        static func favoriteSelectedMenus(_ count: Int) -> String {
+            Localization.formatted("like.favoriteSelectedMenus", fallback: "선택한 %d개 메뉴 찜하기", count)
+        }
+
+        /// "메뉴 변경" (바텀시트 제목)
+        static var slotSheetTitle: String {
+            Localization.localized("like.slotSheetTitle", fallback: "메뉴 변경")
+        }
+
+        /// "식당 종류"
+        static var restaurantSection: String {
+            Localization.localized("like.restaurantSection", fallback: "식당 종류")
+        }
+
+        /// "시간대"
+        static var mealTimeSection: String {
+            Localization.localized("like.mealTimeSection", fallback: "시간대")
+        }
+
+        /// "적용하기"
+        static var apply: String {
+            Localization.localized("like.apply", fallback: "적용하기")
         }
     }
 }

@@ -242,7 +242,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "Push Notification Settings";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "We'll send you a notification every day at 11:00 AM.";
+"myPage.pushNotificationDescription" = "Alerts when a saved menu is served today.";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "An error occurred while updating notification settings.";
 
@@ -480,6 +480,24 @@
 "notification.settingsTitle" = "Notifications are off";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
 "notification.settingsMessage" = "To use menu favorites, allow EAT-SSU notifications in Settings.";
+// MARK: - Notification Inbox (알림함)
+
+/// "알림"
+"notification.inboxTitle" = "Notifications";
+/// "모두 읽음"
+"notification.readAll" = "Mark all as read";
+/// "새로운 알림이 없어요."
+"notification.emptyTitle" = "No new notifications.";
+/// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
+"notification.emptySubtitle" = "We'll notify you when a saved menu is served!";
+/// "7일 전 알림까지 확인할 수 있어요"
+"notification.retentionNotice" = "Notifications from the last 7 days are shown";
+/// "방금 전"
+"notification.justNow" = "Just now";
+/// "%d시간 전"
+"notification.hoursAgo" = "%dh ago";
+/// "알림을 불러오지 못했어요."
+"notification.loadFailed" = "Couldn't load notifications.";
 
 
 // MARK: - Restaurant
@@ -494,6 +512,8 @@
 "restaurant.snackCorner" = "Snack Corner";
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (Faculty Only)";
+/// "교직원 식당" (칩 등 좁은 곳)
+"restaurant.facultyRestaurantShort" = "Faculty";
 
 // MARK: - Review Translation
 
@@ -736,3 +756,21 @@
 "like.menuSearchEmptySubtitle" = "Try searching for a different menu name!";
 /// "2글자 이상 입력해주세요."
 "like.menuSearchTooShort" = "Please enter at least 2 characters.";
+/// "오늘 식단에서 찜하기"
+"like.todayMenuToggle" = "Save from today's menu";
+/// "메뉴를 선택해 찜할 수 있어요."
+"like.todayMenuHint" = "Select menus to save.";
+/// "변경"
+"like.change" = "Change";
+/// "메뉴 찜하기"
+"like.favoriteMenus" = "Save menus";
+/// "선택한 %d개 메뉴 찜하기"
+"like.favoriteSelectedMenus" = "Save %d selected";
+/// "메뉴 변경"
+"like.slotSheetTitle" = "Change menu";
+/// "식당 종류"
+"like.restaurantSection" = "Restaurant";
+/// "시간대"
+"like.mealTimeSection" = "Meal time";
+/// "적용하기"
+"like.apply" = "Apply";

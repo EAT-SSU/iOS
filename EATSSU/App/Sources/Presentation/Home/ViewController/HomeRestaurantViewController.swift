@@ -218,15 +218,8 @@ final class HomeRestaurantViewController: BaseViewController {
     
     // 날짜를 yyyyMMdd 문자열로 변환
     private func changeDateFormat(date: Date) -> String {
-        return Self.yyyyMMddDateFormatter.string(from: date)
+        return DateFormatter.serverDay.string(from: date)
     }
-    
-    ///"yyyyMMdd 포맷팅하기 위한 DateFormatter 인스턴스
-    private static let yyyyMMddDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd"
-        return formatter
-    }()
     
     /// 스낵코너 메뉴를 비우고 UI를 갱신
     private func hideSnackCorner() {

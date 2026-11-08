@@ -60,6 +60,14 @@ enum Restaurant: String, CaseIterable {
         }
     }
 
+    /// 칩처럼 좁은 곳에 쓰는 이름. 교직원 식당만 "FACULTY (교직원 전용)" 대신 짧은 이름을 쓴다
+    var shortTitle: String {
+        switch self {
+        case .facultyRestaurant: TextLiteral.Restaurant.facultyRestaurantShort
+        default: title
+        }
+    }
+
     /// Firebase Remote Config `cafeteria_information`의 `name`과 매칭하기 위한 한국어 이름
     // TODO: Remote Config에 id가 추가되면 이름 대신 id로 매칭하도록 변경
     var koreanName: String {
