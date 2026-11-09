@@ -18,6 +18,13 @@ struct PushRoute {
     /// 알림함 항목 id. 있으면 알림을 누른 시점에 읽음 처리한다 (서버가 알림함을 지원하기 전 푸시에는 없다)
     let notificationId: Int?
 
+    /// 앱이 직접 만드는 이동 (예: 11시 로컬 알림 → 오늘 학식)
+    init(date: Date, mealTime: MealTime?, notificationId: Int?) {
+        self.date = date
+        self.mealTime = mealTime
+        self.notificationId = notificationId
+    }
+
     /// 서버 푸시 data: `type`(MENU_FAVORITE / DAILY_MENU), `date`(yyyyMMdd), `timePart`(찜 알림만), `notificationId`(문자열)
     init?(userInfo: [AnyHashable: Any]) {
         guard let type = userInfo["type"] as? String,
@@ -53,6 +60,15 @@ final class PushRouter {
             return
         }
         guard let route = PushRoute(userInfo: userInfo) else { return }
+        handle(route: route)
+    }
+
+    /// 해석이 끝난 이동을 보관하고, 앱이 활성 상태면 바로 적용한다
+    func handle(route: PushRoute) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { self.handle(route: route) }
+            return
+        }
         pendingRoute = (route, Date())
         if UIApplication.shared.applicationState == .active {
             applyPendingRoute()

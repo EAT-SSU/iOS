@@ -379,8 +379,9 @@ extension MyPageViewController: UITableViewDelegate {
                     // 스위치 상태 업데이트
                     self.switchState = newState
                     self.saveSwitchStateToUserDefaults()
-                    // 서버는 푸시 토큰 등록 여부로 알림 허용을 판단한다 (ON: 등록, OFF: 삭제)
+                    // 서버는 푸시 토큰 등록 여부로 알림 허용을 판단한다 (ON: 등록, OFF: 삭제). 11시 로컬 알림도 함께 맞춘다
                     PushTokenManager.shared.sync()
+                    DailyMenuNotificationScheduler.sync()
                     
                     // UI 업데이트
                     if let cell = self.mypageView.myPageTableView.cellForRow(at: indexPath) as? NotificationSettingTableViewCell {
