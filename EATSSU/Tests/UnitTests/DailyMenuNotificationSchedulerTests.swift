@@ -13,12 +13,30 @@ import UserNotifications
 /// 평일 11시 로컬 알림의 예약 조건·식별자 규칙 검증
 final class DailyMenuNotificationSchedulerTests: XCTestCase {
 
-    func test_토글이_켜져_있고_권한이_허용돼야_예약한다() {
-        XCTAssertTrue(DailyMenuNotificationScheduler.shouldSchedule(authorization: .authorized, isToggleOn: true))
-        XCTAssertTrue(DailyMenuNotificationScheduler.shouldSchedule(authorization: .provisional, isToggleOn: true))
-        XCTAssertFalse(DailyMenuNotificationScheduler.shouldSchedule(authorization: .authorized, isToggleOn: false))
-        XCTAssertFalse(DailyMenuNotificationScheduler.shouldSchedule(authorization: .denied, isToggleOn: true))
-        XCTAssertFalse(DailyMenuNotificationScheduler.shouldSchedule(authorization: .notDetermined, isToggleOn: true))
+    /// 찜 알림 수신 날짜는 실제 UserDefaults에 저장되므로 테스트 전 값을 보관했다가 되돌린다
+    private let favoritePushReceivedDayKey = DailyMenuNotificationScheduler.favoritePushReceivedDayKey
+    private var savedFavoritePushReceivedDay: String?
+
+    override func setUp() {
+        super.setUp()
+        savedFavoritePushReceivedDay = UserDefaults.standard.string(forKey: favoritePushReceivedDayKey)
+    }
+
+    override func tearDown() {
+        if let savedFavoritePushReceivedDay {
+            UserDefaults.standard.set(savedFavoritePushReceivedDay, forKey: favoritePushReceivedDayKey)
+        } else {
+            UserDefaults.standard.removeObject(forKey: favoritePushReceivedDayKey)
+        }
+        super.tearDown()
+    }
+
+    func test_토글이_켜져_있고_권한이_허용돼야_알림을_보낸다() {
+        XCTAssertTrue(NotificationManager.isNotificationAllowed(authorization: .authorized, isToggleOn: true))
+        XCTAssertTrue(NotificationManager.isNotificationAllowed(authorization: .provisional, isToggleOn: true))
+        XCTAssertFalse(NotificationManager.isNotificationAllowed(authorization: .authorized, isToggleOn: false))
+        XCTAssertFalse(NotificationManager.isNotificationAllowed(authorization: .denied, isToggleOn: true))
+        XCTAssertFalse(NotificationManager.isNotificationAllowed(authorization: .notDetermined, isToggleOn: true))
     }
 
     func test_월요일부터_금요일까지_하나씩_예약한다() {

@@ -53,11 +53,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // FCM 알림인지 확인
         if isFCMNotification(userInfo) {
             LaunchSourceManager.shared.setSource(.remoteNotification)
-            if isFavoritePush(userInfo) {
-                DailyMenuNotificationScheduler.didReceiveFavoritePush()
+            // 학식 알림이면 해당 날짜·시간대의 학식 화면으로 이동. 찜 알림이면 같은 날 11시 로컬 알림은 지운다
+            if let route = PushRoute(userInfo: userInfo) {
+                if PushRoute.isFavorite(userInfo: userInfo) {
+                    DailyMenuNotificationScheduler.didReceiveFavoritePush(on: route.date)
+                }
+                PushRouter.shared.handle(route: route)
             }
-            // 학식 알림이면 해당 날짜·시간대의 학식 화면으로 이동
-            PushRouter.shared.handle(userInfo: userInfo)
         } else {
             LaunchSourceManager.shared.setSource(.localNotification)
             // 11시 로컬 알림은 오늘 학식 화면으로 이동
@@ -121,11 +123,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         return userInfo["gcm.message_id"] != nil ||
                userInfo["google.c.a.e"] != nil ||
                userInfo["fcm_options"] != nil
-    }
-
-    /// 찜 알림(서버 푸시)인지 확인하는 메서드
-    private func isFavoritePush(_ userInfo: [AnyHashable: Any]) -> Bool {
-        (userInfo["type"] as? String) == "MENU_FAVORITE"
     }
 
     /// 알림 권한·토글 상태에 맞게 알림 예약과 서버 등록을 맞춥니다.
@@ -227,9 +224,10 @@ extension AppDelegate {
                 completionHandler([])
                 return
             }
-        } else if isFavoritePush(request.content.userInfo) {
+        } else if PushRoute.isFavorite(userInfo: request.content.userInfo),
+                  let route = PushRoute(userInfo: request.content.userInfo) {
             // 찜 알림이 먼저 왔으면 같은 날 11시 로컬 알림은 지우거나 거른다
-            DailyMenuNotificationScheduler.didReceiveFavoritePush()
+            DailyMenuNotificationScheduler.didReceiveFavoritePush(on: route.date)
         }
         // 앱 사용 중에 알림이 오면 학식 탭 알림 아이콘에 점을 띄운다
         NotificationCenter.default.post(name: .didReceivePushNotification, object: nil)

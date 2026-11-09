@@ -26,6 +26,28 @@ class NotificationManager {
         return await UNUserNotificationCenter.current().notificationSettings()
     }
 
+    /// 알림을 보내도 되는 상태인지: 마이페이지 알림 토글 ON + 기기 알림 권한 허용
+    /// 서버 푸시 토큰 등록(`PushTokenManager`)과 11시 로컬 알림(`DailyMenuNotificationScheduler`)이 같은 규칙을 쓴다
+    static func isNotificationAllowed(authorization: UNAuthorizationStatus, isToggleOn: Bool) -> Bool {
+        guard isToggleOn else { return false }
+        switch authorization {
+        case .authorized, .provisional, .ephemeral:
+            return true
+        case .denied, .notDetermined:
+            return false
+        @unknown default:
+            return false
+        }
+    }
+
+    /// 현재 토글·권한 상태로 `isNotificationAllowed`를 판단한다
+    func isNotificationEnabled() async -> Bool {
+        let isToggleOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+        guard isToggleOn else { return false }
+        let settings = await checkNotificationSetting()
+        return Self.isNotificationAllowed(authorization: settings.authorizationStatus, isToggleOn: isToggleOn)
+    }
+
     /// 알림 권한 상태를 확인해 토글의 다음 상태를 반환. 서버 반영은 `PushTokenManager.sync()`가 한다
     func handleNotificationToggle(currentState: Bool) async throws -> Bool {
         let settings = await checkNotificationSetting()

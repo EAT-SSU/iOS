@@ -26,7 +26,7 @@ enum DailyMenuNotificationScheduler {
     static let hour = 11
 
     /// 당일 찜 알림(서버 푸시)을 받은 날짜(yyyyMMdd). 같은 날 로컬 알림은 띄우지 않는다
-    private static let favoritePushReceivedDayKey = "dailyMenuNotification.favoritePushReceivedDay"
+    static let favoritePushReceivedDayKey = "dailyMenuNotification.favoritePushReceivedDay"
 
     // MARK: - Decision
 
@@ -43,28 +43,19 @@ enum DailyMenuNotificationScheduler {
         identifier.hasPrefix(identifierPrefix)
     }
 
-    /// 예약 조건: 마이페이지 알림 토글 ON + 기기 권한 허용
-    static func shouldSchedule(authorization: UNAuthorizationStatus, isToggleOn: Bool) -> Bool {
-        guard isToggleOn else { return false }
-        switch authorization {
-        case .authorized, .provisional, .ephemeral:
-            return true
-        case .denied, .notDetermined:
-            return false
-        @unknown default:
-            return false
-        }
-    }
-
     // MARK: - Sync
 
-    /// 현재 토글·권한 상태에 맞게 예약하거나 취소한다
+    /// 진행 중인 맞춤 작업. 다음 호출은 이 작업이 끝난 뒤 실행해, 토글을 빠르게 껐다 켜도 예약·취소 순서가 뒤바뀌지 않게 한다
+    @MainActor private static var syncTask: Task<Void, Never>?
+
+    /// 현재 토글·권한 상태(`NotificationManager.isNotificationAllowed`)에 맞게 예약하거나 취소한다
     /// 호출 시점: 앱 실행, 알림 권한 결과, 마이페이지 알림 토글 변경, 언어 변경(문구 갱신)
+    @MainActor
     static func sync() {
-        Task {
-            let settings = await UNUserNotificationCenter.current().notificationSettings()
-            let isToggleOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
-            if shouldSchedule(authorization: settings.authorizationStatus, isToggleOn: isToggleOn) {
+        let previous = syncTask
+        syncTask = Task {
+            await previous?.value
+            if await NotificationManager.shared.isNotificationEnabled() {
                 await schedule()
             } else {
                 cancel()
@@ -96,17 +87,22 @@ enum DailyMenuNotificationScheduler {
         }
     }
 
+    /// 예약을 지우고, 오늘 이미 떠 있는 알림도 알림 센터에서 내린다
     static func cancel() {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: weekdays.map(identifier(weekday:)))
+        let identifiers = weekdays.map(identifier(weekday:))
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
+        center.removeDeliveredNotifications(withIdentifiers: identifiers)
     }
 
     // MARK: - 찜 알림과 중복 제거
 
-    /// 찜 알림(서버 푸시)을 받았을 때 호출. 같은 날 이미 떠 있는 로컬 알림을 알림 센터에서 지우고,
-    /// 아직 안 떴다면 `shouldPresent`가 거르도록 날짜를 기억한다
+    /// 찜 알림(서버 푸시)을 받았을 때 호출. 알림의 식단 날짜(`date`) 기준으로 같은 날 이미 떠 있는 로컬 알림을
+    /// 알림 센터에서 지우고, 아직 안 떴다면 `shouldPresent`가 거르도록 날짜를 기억한다
     ///
+    /// 받은 시각이 아니라 알림의 날짜를 써야, 어제 온 푸시를 오늘 눌렀을 때 오늘 로컬 알림까지 거르지 않는다.
     /// 앱이 백그라운드에 있고 사용자가 푸시를 누르지 않으면 이 코드가 실행되지 않아 두 알림이 함께 남을 수 있다
-    static func didReceiveFavoritePush(on date: Date = Date()) {
+    static func didReceiveFavoritePush(on date: Date) {
         UserDefaults.standard.set(DateFormatter.serverDay.string(from: date), forKey: favoritePushReceivedDayKey)
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [identifier(for: date)])
     }

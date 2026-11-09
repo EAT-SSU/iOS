@@ -36,7 +36,13 @@ struct PushRoute {
         self.notificationId = (userInfo["notificationId"] as? String).flatMap(Int.init)
     }
 
-    private static let supportedTypes: Set<String> = ["MENU_FAVORITE", "DAILY_MENU"]
+    private static let favoriteType = "MENU_FAVORITE"
+    private static let supportedTypes: Set<String> = [favoriteType, "DAILY_MENU"]
+
+    /// 찜 알림(서버 푸시)인지. 알림 날짜가 있어야 하므로 해석에 성공한 경우만 true
+    static func isFavorite(userInfo: [AnyHashable: Any]) -> Bool {
+        (userInfo["type"] as? String) == favoriteType && PushRoute(userInfo: userInfo) != nil
+    }
 }
 
 /// 알림을 누른 시점에 화면이 준비돼 있지 않을 수 있어(앱 실행 직후 스플래시·로그인 등) 이동할 곳을 보관했다가 적용한다

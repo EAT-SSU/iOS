@@ -29,6 +29,12 @@ final class PushRouteTests: XCTestCase {
         XCTAssertNil(route.mealTime)
     }
 
+    func test_찜_알림_여부는_타입과_날짜가_모두_맞아야_한다() {
+        XCTAssertTrue(PushRoute.isFavorite(userInfo: ["type": "MENU_FAVORITE", "date": "20261109", "timePart": "LUNCH"]))
+        XCTAssertFalse(PushRoute.isFavorite(userInfo: ["type": "DAILY_MENU", "date": "20261109"]))
+        XCTAssertFalse(PushRoute.isFavorite(userInfo: ["type": "MENU_FAVORITE"]))
+    }
+
     func test_알_수_없는_타입이나_잘못된_날짜는_무시한다() {
         XCTAssertNil(PushRoute(userInfo: ["type": "PROMOTION", "date": "20261005"]))
         XCTAssertNil(PushRoute(userInfo: ["type": "MENU_FAVORITE", "date": "2026-10-05"]))

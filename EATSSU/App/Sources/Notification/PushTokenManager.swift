@@ -174,17 +174,8 @@ final class PushTokenManager {
 
     // MARK: - Private
 
-    /// 마이페이지 알림 토글 ON + 기기 알림 권한 허용
+    /// 마이페이지 알림 토글 ON + 기기 알림 권한 허용 (규칙은 `NotificationManager.isNotificationAllowed`)
     private static func isNotificationEnabled() async -> Bool {
-        guard UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey) else { return false }
-        let settings = await UNUserNotificationCenter.current().notificationSettings()
-        switch settings.authorizationStatus {
-        case .authorized, .provisional, .ephemeral:
-            return true
-        case .denied, .notDetermined:
-            return false
-        @unknown default:
-            return false
-        }
+        await NotificationManager.shared.isNotificationEnabled()
     }
 }
