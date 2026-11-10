@@ -65,6 +65,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {
         // 백그라운드에서 포그라운드로 전환 시 필요한 작업 수행
         TokenManager.refreshIfNeededAsync()
+        // 설정 앱에서 알림 권한을 바꾸고 돌아온 경우를 반영해 11시 로컬 알림 예약과 서버 푸시 토큰 등록을 다시 맞춘다
+        DailyMenuNotificationScheduler.sync()
+        PushTokenManager.shared.sync()
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
