@@ -53,12 +53,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // FCM 알림인지 확인
         if isFCMNotification(userInfo) {
             LaunchSourceManager.shared.setSource(.remoteNotification)
+            // 학식 알림이면 해당 날짜·시간대의 학식 화면으로 이동. 찜 알림이면 같은 날 11시 로컬 알림은 지운다
+            if let route = PushRoute(userInfo: userInfo) {
+                if PushRoute.isFavorite(userInfo: userInfo) {
+                    DailyMenuNotificationScheduler.didReceiveFavoritePush(on: route.date)
+                }
+                PushRouter.shared.handle(route: route)
+            }
         } else {
             LaunchSourceManager.shared.setSource(.localNotification)
+            // 11시 로컬 알림은 오늘 학식 화면으로 이동
+            if DailyMenuNotificationScheduler.isDailyMenuNotification(identifier: notification.request.identifier) {
+                PushRouter.shared.handle(route: PushRoute(date: Date(), mealTime: nil, notificationId: nil))
+            }
         }
-
-        // 학식 알림이면 해당 날짜·시간대의 학식 화면으로 이동
-        PushRouter.shared.handle(userInfo: userInfo)
 
         completionHandler()
     }
@@ -117,13 +125,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                userInfo["fcm_options"] != nil
     }
 
-    /// 푸시 알림 권한을 요청하고 설정을 처리합니다.
+    /// 알림 권한·토글 상태에 맞게 알림 예약과 서버 등록을 맞춥니다.
     private func setupNotificationPermissions() {
-        // 11시 알림은 서버 푸시로 옮겨, 이전 버전이 예약한 로컬 알림은 지운다
-        NotificationManager.shared.removeLegacyDailyNotifications()
         // 시스템 알림 권한은 앱 실행 시 바로 묻지 않는다. 가입 직후 안내 다이얼로그(`NotificationPermissionPrompt`)나
         // 마이페이지 토글에서 사용자가 선택했을 때 요청한다
-        // 권한·토글 상태에 맞게 서버 푸시 토큰 등록/삭제 (로그인 상태일 때만 동작)
+        // 권한·토글 상태에 맞게 평일 11시 로컬 알림을 예약/취소하고, 서버 푸시 토큰을 등록/삭제한다 (토큰은 로그인 상태일 때만)
+        DailyMenuNotificationScheduler.sync()
         PushTokenManager.shared.sync()
     }
 
@@ -210,6 +217,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 extension AppDelegate {
     // Foreground에서도 알림이 보이도록 설정
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let request = notification.request
+        if DailyMenuNotificationScheduler.isDailyMenuNotification(identifier: request.identifier) {
+            // 11시 로컬 알림: 같은 날 찜 알림을 이미 받았으면 중복이라 띄우지 않는다
+            guard DailyMenuNotificationScheduler.shouldPresent() else {
+                completionHandler([])
+                return
+            }
+        } else if PushRoute.isFavorite(userInfo: request.content.userInfo),
+                  let route = PushRoute(userInfo: request.content.userInfo) {
+            // 찜 알림이 먼저 왔으면 같은 날 11시 로컬 알림은 지우거나 거른다
+            DailyMenuNotificationScheduler.didReceiveFavoritePush(on: route.date)
+        }
         // 앱 사용 중에 알림이 오면 학식 탭 알림 아이콘에 점을 띄운다
         NotificationCenter.default.post(name: .didReceivePushNotification, object: nil)
         completionHandler([.banner, .sound, .badge])

@@ -121,6 +121,8 @@ final class LanguageSettingViewController: BaseViewController {
 
         AppLanguageManager.shared.changeLanguage(to: language)
         ServerLanguageSync.sync(language)
+        // 예약된 11시 로컬 알림 문구를 새 언어로 다시 등록한다
+        DailyMenuNotificationScheduler.sync()
         didChangeLanguage = true
 
         AnalyticsService.logEvent("change_language", parameters: ["language": language.rawValue])

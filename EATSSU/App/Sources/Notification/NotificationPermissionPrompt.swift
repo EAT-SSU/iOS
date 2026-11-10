@@ -39,7 +39,7 @@ enum NotificationPermissionPrompt {
     }
 
     /// "알림 허용하기": 미결정이면 시스템 권한 요청, 이미 거부돼 있으면 설정 이동 안내
-    /// 허용되면 마이페이지 토글을 켜고 서버에 푸시 토큰을 등록한다
+    /// 허용되면 마이페이지 토글을 켜고, 서버 푸시 토큰 등록과 11시 로컬 알림 예약을 맞춘다
     static func requestPermission(on tabBar: CustomTabBarContainerController) {
         Task { @MainActor in
             let settings = await NotificationManager.shared.checkNotificationSetting()
@@ -48,11 +48,13 @@ enum NotificationPermissionPrompt {
                 let granted = (try? await NotificationManager.shared.requestNotificationPermission()) ?? false
                 UserDefaults.standard.set(granted, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
                 PushTokenManager.shared.sync()
+                DailyMenuNotificationScheduler.sync()
             case .denied:
                 presentSettingsDialog(on: tabBar)
             default:
                 UserDefaults.standard.set(true, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
                 PushTokenManager.shared.sync()
+                DailyMenuNotificationScheduler.sync()
             }
         }
     }
