@@ -21,7 +21,8 @@ final class TodayMenuSlotSheetViewController: UIViewController {
 
     // MARK: - Constants
 
-    static let preferredHeight: CGFloat = 360
+    /// 디자인 360에 식당 버튼을 1×4 → 2×2로 바꾸며 늘어난 한 줄(버튼 36 + 간격 5)을 더한 값
+    static let preferredHeight: CGFloat = 401
 
     private enum Layout {
         static let horizontalInset: CGFloat = 24
@@ -32,6 +33,8 @@ final class TodayMenuSlotSheetViewController: UIViewController {
         static let chipsTop: CGFloat = 15
         static let chipHeight: CGFloat = 36
         static let chipSpacing: CGFloat = 5
+        /// 식당 버튼은 다국어에서 이름이 길어져 2열 2행으로 둔다
+        static let restaurantColumns = 2
         static let mealTimeLabelTop: CGFloat = 15
         static let applyHeight: CGFloat = 52
         static let applyCornerRadius: CGFloat = 12
@@ -123,12 +126,20 @@ final class TodayMenuSlotSheetViewController: UIViewController {
             $0.spacing = Layout.chipSpacing
             $0.distribution = .fillEqually
         }
+        // 식당 버튼: 세로 스택 안에 가로 줄을 넣어 2×2로 배치한다
+        restaurantStackView.axis = .vertical
 
         restaurantChips = TodayMenuSlot.selectableRestaurants.enumerated().map { index, restaurant in
             let chip = makeChip(title: restaurant.shortTitle, tag: index)
             chip.addTarget(self, action: #selector(didTapRestaurant(_:)), for: .touchUpInside)
-            restaurantStackView.addArrangedSubview(chip)
             return chip
+        }
+        stride(from: 0, to: restaurantChips.count, by: Layout.restaurantColumns).forEach { start in
+            let row = UIStackView(arrangedSubviews: Array(restaurantChips[start..<min(start + Layout.restaurantColumns, restaurantChips.count)]))
+            row.axis = .horizontal
+            row.spacing = Layout.chipSpacing
+            row.distribution = .fillEqually
+            restaurantStackView.addArrangedSubview(row)
         }
         mealTimeChips = MealTimePart.allCases.enumerated().map { index, mealTime in
             let chip = makeChip(title: mealTime.title, tag: index)
@@ -164,7 +175,8 @@ final class TodayMenuSlotSheetViewController: UIViewController {
         restaurantStackView.snp.makeConstraints {
             $0.top.equalTo(restaurantLabel.snp.bottom).offset(Layout.chipsTop)
             $0.leading.trailing.equalToSuperview().inset(Layout.horizontalInset)
-            $0.height.equalTo(Layout.chipHeight)
+            let rows = CGFloat((restaurantChips.count + Layout.restaurantColumns - 1) / Layout.restaurantColumns)
+            $0.height.equalTo(Layout.chipHeight * rows + Layout.chipSpacing * (rows - 1))
         }
         mealTimeLabel.snp.makeConstraints {
             $0.top.equalTo(restaurantStackView.snp.bottom).offset(Layout.mealTimeLabelTop)
