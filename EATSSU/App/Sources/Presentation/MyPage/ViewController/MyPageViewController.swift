@@ -46,6 +46,10 @@ final class MyPageViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        // 리뷰 화면·가입 직후 다이얼로그에서 알림을 허용하면 저장 값이 바뀌므로, 화면에 돌아올 때마다 토글을 다시 읽는다
+        loadSwitchStateFromUserDefaults()
+        mypageView.myPageTableView.reloadData()
         
         let userInfo = UserInfoManager.shared.getCurrentUserInfo()
 
