@@ -39,37 +39,42 @@ enum NotificationPermissionPrompt {
     }
 
     /// "알림 허용하기": 미결정이면 시스템 권한 요청, 이미 거부돼 있으면 설정 이동 안내
-    /// 허용되면 마이페이지 토글을 켜고 수신 동의 토스트를 띄운 뒤, 서버 푸시 토큰 등록과 11시 로컬 알림 예약을 맞춘다
-    /// - Parameter completion: 허용 여부. 시스템 팝업에서 거부하거나 기기 권한이 꺼져 있으면 false
-    static func requestPermission(on tabBar: CustomTabBarContainerController, completion: ((Bool) -> Void)? = nil) {
+    /// 허용되면 마이페이지 토글을 켜고 서버 푸시 토큰 등록·11시 로컬 알림 예약을 맞춘 뒤, 마이페이지 토글과 같은 수신 동의 토스트를 띄운다
+    /// - Parameter onGranted: 허용된 경우 토스트 직전에 실행 (예: 찜 탭 카드로 이동). 거부·권한 꺼짐·오류면 실행하지 않는다
+    static func requestPermission(on tabBar: CustomTabBarContainerController, onGranted: (() -> Void)? = nil) {
         Task { @MainActor in
             let settings = await NotificationManager.shared.checkNotificationSetting()
+            let granted: Bool
             switch settings.authorizationStatus {
             case .notDetermined:
-                let granted = (try? await NotificationManager.shared.requestNotificationPermission()) ?? false
-                UserDefaults.standard.set(granted, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
-                PushTokenManager.shared.sync()
-                DailyMenuNotificationScheduler.sync()
-                if granted { showAgreeToast(on: tabBar) }
-                completion?(granted)
+                do {
+                    granted = try await NotificationManager.shared.requestNotificationPermission()
+                } catch {
+                    // 시스템 요청 자체가 실패한 경우. 거부와 구분해 저장 값은 건드리지 않고 마이페이지와 같은 오류 토스트를 띄운다
+                    visibleScreen(of: tabBar).showToast(message: TextLiteral.MyPage.notiSettingError, type: .danger)
+                    return
+                }
             case .denied:
                 presentSettingsDialog(on: tabBar)
-                completion?(false)
+                return
             default:
-                UserDefaults.standard.set(true, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
-                PushTokenManager.shared.sync()
-                DailyMenuNotificationScheduler.sync()
-                showAgreeToast(on: tabBar)
-                completion?(true)
+                granted = true
             }
+            UserDefaults.standard.set(granted, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+            PushTokenManager.shared.sync()
+            DailyMenuNotificationScheduler.sync()
+            guard granted else { return }
+            onGranted?()
+            // 이동이 끝난 뒤 지금 보이는 탭 화면에 띄워, 마이페이지 토글 토스트와 같은 위치에 나오게 한다
+            visibleScreen(of: tabBar).showToast(message: NotificationManager.toggleToastMessage(isOn: true), type: .info)
         }
     }
 
-    /// 마이페이지 토글을 켤 때와 같은 "EAT-SSU 수신 동의 (일시)" 토스트. 탭이 바뀌어도 보이도록 탭바 컨테이너에 띄운다
-    private static func showAgreeToast(on tabBar: CustomTabBarContainerController) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-        tabBar.showToast(message: TextLiteral.MyPage.agreeNoti(date: formatter.string(from: Date())), type: .info)
+    /// 현재 선택된 탭의 맨 위 화면. 탭바 컨테이너 자체에 띄우면 안전 영역이 달라 토스트 위치가 탭 화면과 어긋난다
+    private static func visibleScreen(of tabBar: CustomTabBarContainerController) -> UIViewController {
+        (tabBar.selectedViewController as? UINavigationController)?.topViewController
+            ?? tabBar.selectedViewController
+            ?? tabBar
     }
 
     /// 찜 기능을 쓰려는데 알림이 꺼져 있을 때(마이페이지 토글 OFF 또는 권한 미결정): 허용 요청
@@ -81,11 +86,7 @@ enum NotificationPermissionPrompt {
             cancelButtonTitle: TextLiteral.Common.cancel,
             confirmButtonTitle: TextLiteral.Notification.allow,
             cancelAction: nil,
-            confirmAction: {
-                requestPermission(on: tabBar) { granted in
-                    if granted { allowed() }
-                }
-            }
+            confirmAction: { requestPermission(on: tabBar, onGranted: allowed) }
         )
     }
 
