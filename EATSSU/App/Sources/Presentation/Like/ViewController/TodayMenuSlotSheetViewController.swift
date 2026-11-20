@@ -15,15 +15,25 @@ import EATSSUDesign
 ///
 /// 디자인(390 기준): 높이 360, 손잡이 30×2(위 14), 제목 Bold 16(위 33), 구역 제목 SemiBold 16
 /// 칩 높이 36 · 간격 5 · 폭 균등, 적용하기 52(좌우 24, 모서리 12, 안전 영역 바닥)
+/// 식당 버튼은 디자인의 1×4 대신 2×2로 두고(다국어 긴 이름 대응, QA 요청) 늘어난 줄만큼 높이를 더한다 (`preferredHeight`)
 /// 식당마다 운영하지 않는 시간대는 비활성(gray100 배경, gray300 글자). 식당과 시간대를 모두 고르고
 /// 현재 값과 다를 때만 적용하기가 켜진다
 final class TodayMenuSlotSheetViewController: UIViewController {
 
     // MARK: - Constants
 
-    static let preferredHeight: CGFloat = 360
+    /// 디자인 높이 360(식당 버튼 한 줄 기준)에, 2열 배치로 늘어난 줄 수만큼 (버튼 36 + 간격 5)를 더한 값
+    static var preferredHeight: CGFloat {
+        Layout.designHeight + CGFloat(max(restaurantRowCount - 1, 0)) * (Layout.chipHeight + Layout.chipSpacing)
+    }
+
+    /// 식당 버튼 줄 수 (4곳 ÷ 2열 = 2줄)
+    private static var restaurantRowCount: Int {
+        (TodayMenuSlot.selectableRestaurants.count + Layout.restaurantColumns - 1) / Layout.restaurantColumns
+    }
 
     private enum Layout {
+        static let designHeight: CGFloat = 360
         static let horizontalInset: CGFloat = 24
         static let grabberTop: CGFloat = 14
         static let grabberSize = CGSize(width: 30, height: 2)
@@ -32,6 +42,8 @@ final class TodayMenuSlotSheetViewController: UIViewController {
         static let chipsTop: CGFloat = 15
         static let chipHeight: CGFloat = 36
         static let chipSpacing: CGFloat = 5
+        /// 식당 버튼은 다국어에서 이름이 길어져 2열 2행으로 둔다
+        static let restaurantColumns = 2
         static let mealTimeLabelTop: CGFloat = 15
         static let applyHeight: CGFloat = 52
         static let applyCornerRadius: CGFloat = 12
@@ -77,7 +89,8 @@ final class TodayMenuSlotSheetViewController: UIViewController {
                     return Self.preferredHeight - bottomInset
                 }]
             } else {
-                sheet.detents = [.medium()]
+                // iOS 15는 높이를 지정할 수 없다. medium(화면 절반)은 작은 기기에서 내용(401)보다 낮아 적용 버튼이 겹치므로 large를 쓴다
+                sheet.detents = [.large()]
             }
             sheet.prefersGrabberVisible = false
         }
@@ -118,24 +131,28 @@ final class TodayMenuSlotSheetViewController: UIViewController {
         mealTimeLabel.font = .subtitle2
         mealTimeLabel.textColor = .gray700
 
-        [restaurantStackView, mealTimeStackView].forEach {
-            $0.axis = .horizontal
-            $0.spacing = Layout.chipSpacing
-            $0.distribution = .fillEqually
-        }
-
         restaurantChips = TodayMenuSlot.selectableRestaurants.enumerated().map { index, restaurant in
             let chip = makeChip(title: restaurant.shortTitle, tag: index)
             chip.addTarget(self, action: #selector(didTapRestaurant(_:)), for: .touchUpInside)
-            restaurantStackView.addArrangedSubview(chip)
             return chip
         }
         mealTimeChips = MealTimePart.allCases.enumerated().map { index, mealTime in
             let chip = makeChip(title: mealTime.title, tag: index)
             chip.addTarget(self, action: #selector(didTapMealTime(_:)), for: .touchUpInside)
-            mealTimeStackView.addArrangedSubview(chip)
             return chip
         }
+
+        // 식당 버튼: 세로 스택 안에 2개씩 묶은 가로 줄을 넣어 2×2로 배치한다
+        restaurantStackView.axis = .vertical
+        restaurantStackView.spacing = Layout.chipSpacing
+        restaurantStackView.distribution = .fillEqually
+        stride(from: 0, to: restaurantChips.count, by: Layout.restaurantColumns).forEach { start in
+            let end = min(start + Layout.restaurantColumns, restaurantChips.count)
+            restaurantStackView.addArrangedSubview(Self.makeChipRow(Array(restaurantChips[start..<end])))
+        }
+        // 시간대 버튼: 가로 한 줄
+        Self.configureChipRow(mealTimeStackView)
+        mealTimeChips.forEach(mealTimeStackView.addArrangedSubview)
 
         applyButton.setTitle(TextLiteral.Like.apply, for: .normal)
         applyButton.titleLabel?.font = .subtitle1
@@ -164,7 +181,8 @@ final class TodayMenuSlotSheetViewController: UIViewController {
         restaurantStackView.snp.makeConstraints {
             $0.top.equalTo(restaurantLabel.snp.bottom).offset(Layout.chipsTop)
             $0.leading.trailing.equalToSuperview().inset(Layout.horizontalInset)
-            $0.height.equalTo(Layout.chipHeight)
+            let rows = CGFloat(Self.restaurantRowCount)
+            $0.height.equalTo(Layout.chipHeight * rows + Layout.chipSpacing * max(rows - 1, 0))
         }
         mealTimeLabel.snp.makeConstraints {
             $0.top.equalTo(restaurantStackView.snp.bottom).offset(Layout.mealTimeLabelTop)
@@ -180,6 +198,18 @@ final class TodayMenuSlotSheetViewController: UIViewController {
             $0.height.equalTo(Layout.applyHeight)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+    }
+
+    private static func makeChipRow(_ chips: [UIButton]) -> UIStackView {
+        let row = UIStackView(arrangedSubviews: chips)
+        configureChipRow(row)
+        return row
+    }
+
+    private static func configureChipRow(_ row: UIStackView) {
+        row.axis = .horizontal
+        row.spacing = Layout.chipSpacing
+        row.distribution = .fillEqually
     }
 
     private func makeChip(title: String, tag: Int) -> UIButton {
