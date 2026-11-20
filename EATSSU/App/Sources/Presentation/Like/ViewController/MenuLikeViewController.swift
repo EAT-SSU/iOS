@@ -31,6 +31,11 @@ final class MenuLikeViewController: BaseViewController {
             if case .favorites = self { return true }
             return false
         }
+
+        /// 검색창과 테이블 사이 여백. 찜 목록 모드 21, 검색 모드 15
+        var tableTopOffset: CGFloat {
+            isFavorites ? Layout.cardTop : Layout.searchResultsTop
+        }
     }
 
     // MARK: - Constants
@@ -38,6 +43,7 @@ final class MenuLikeViewController: BaseViewController {
     /// 디자인(탭 밑줄 아래 기준): 검색창 top 24 · 좌우 24 · 카드는 검색창 아래 21
     /// 찜 목록: 제목 중심 카드 아래 28.5, 구분선 제목 중심 아래 23(좌우 26), 첫 행 제목 중심 아래 30
     /// 검색 결과: 첫 행 검색창 아래 15
+    /// 검색창 아래 여백(21·15)은 테이블 바깥에 둬서 스크롤해도 콘텐츠가 검색창에 붙지 않는다
     private enum Layout {
         static let searchBarTop: CGFloat = 24
         static let horizontalInset: CGFloat = 24
@@ -79,10 +85,9 @@ final class MenuLikeViewController: BaseViewController {
     private lazy var favoritesHeaderView = makeFavoritesHeaderView()
     private let favoritesTitleLabel = UILabel()
     private let favoritesSeparator = UIView()
-    private let searchResultsHeaderView = UIView(
-        frame: CGRect(x: 0, y: 0, width: 0, height: Layout.searchResultsTop)
-    )
     private var emptyViewTopConstraint: Constraint?
+    /// 검색창과 테이블 사이 여백. 찜 목록 모드 21, 검색 모드 15
+    private var tableTopConstraint: Constraint?
 
     // MARK: - View Setup
 
@@ -118,13 +123,13 @@ final class MenuLikeViewController: BaseViewController {
         }
 
         tableView.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom)
+            tableTopConstraint = $0.top.equalTo(searchBar.snp.bottom).offset(mode.tableTopOffset).constraint
             $0.leading.trailing.bottom.equalToSuperview()
         }
 
-        // 찜한 메뉴가 없을 때 안내 문구는 카드 아래 영역의 가운데 위쪽에 둔다
+        // 안내 문구 영역: 찜 목록 모드는 카드 아래, 검색 모드는 검색창 바로 아래 (여백 변화와 무관하게 검색창 기준)
         emptyView.snp.makeConstraints {
-            emptyViewTopConstraint = $0.top.equalTo(tableView).constraint
+            emptyViewTopConstraint = $0.top.equalTo(searchBar.snp.bottom).constraint
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }
@@ -257,22 +262,29 @@ final class MenuLikeViewController: BaseViewController {
             emptyView.isHidden = !showsEmpty
             tableView.isHidden = false
         case .searchIdle:
-            setTableHeader(searchResultsHeaderView)
+            setTableHeader(nil)
             emptyView.isHidden = true
             tableView.isHidden = true
         case .search(_, let menus, let didFail):
-            setTableHeader(searchResultsHeaderView)
+            setTableHeader(nil)
             emptyView.configure(
                 title: TextLiteral.Like.menuSearchEmptyTitle,
                 subtitle: TextLiteral.Like.menuSearchEmptySubtitle
             )
             emptyView.isHidden = !(menus.isEmpty && !didFail)
-            // 안내 문구는 흰 배경 테이블 뒤에 있으므로, 보일 때는 테이블을 숨긴다 (제휴 찜 목록과 같은 방식)
+            // 안내 문구가 보일 때는 빈 테이블을 숨겨 스크롤·탭이 안내 문구 영역에 걸리지 않게 한다 (제휴 찜 목록과 같은 방식)
             tableView.isHidden = !emptyView.isHidden
         }
-        emptyViewTopConstraint?.update(offset: mode.isFavorites ? favoritesHeaderView.bounds.height : 0)
+        tableTopConstraint?.update(offset: mode.tableTopOffset)
         tableView.reloadData()
         updateFavoritesHeaderHeight()
+        updateEmptyViewTop()
+    }
+
+    /// 안내 문구 영역의 시작점. 찜 목록 모드는 여백 + 카드 헤더 아래, 검색 모드는 검색창 바로 아래
+    private func updateEmptyViewTop() {
+        let offset = mode.isFavorites ? Layout.cardTop + favoritesHeaderView.bounds.height : 0
+        emptyViewTopConstraint?.update(offset: offset)
     }
 
     private func setTableHeader(_ header: UIView?) {
@@ -296,7 +308,7 @@ final class MenuLikeViewController: BaseViewController {
         guard abs(favoritesHeaderView.bounds.height - height) > 0.5 else { return }
         favoritesHeaderView.frame = CGRect(x: 0, y: 0, width: width, height: height)
         tableView.tableHeaderView = favoritesHeaderView
-        emptyViewTopConstraint?.update(offset: height)
+        updateEmptyViewTop()
     }
 
     private func makeFavoritesHeaderView() -> UIView {
@@ -310,7 +322,8 @@ final class MenuLikeViewController: BaseViewController {
 
         header.addSubviews(todayMenuCard, favoritesTitleLabel, favoritesSeparator)
         todayMenuCard.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(Layout.cardTop)
+            // 검색창 아래 여백은 테이블 top 제약이 담당한다
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(Layout.horizontalInset)
         }
         favoritesTitleLabel.snp.makeConstraints {
