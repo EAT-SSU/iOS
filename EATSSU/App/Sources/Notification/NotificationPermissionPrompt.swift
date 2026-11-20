@@ -39,40 +39,59 @@ enum NotificationPermissionPrompt {
     }
 
     /// "알림 허용하기": 미결정이면 시스템 권한 요청, 이미 거부돼 있으면 설정 이동 안내
-    /// 허용되면 마이페이지 토글을 켜고, 서버 푸시 토큰 등록과 11시 로컬 알림 예약을 맞춘다
-    static func requestPermission(on tabBar: CustomTabBarContainerController) {
+    /// 허용되면 마이페이지 토글을 켜고 서버 푸시 토큰 등록·11시 로컬 알림 예약을 맞춘 뒤, 마이페이지 토글과 같은 수신 동의 토스트를 띄운다
+    /// - Parameter onGranted: 허용된 경우 토스트 직전에 실행 (예: 찜 탭 카드로 이동). 거부·권한 꺼짐·오류면 실행하지 않는다
+    static func requestPermission(on tabBar: CustomTabBarContainerController, onGranted: (() -> Void)? = nil) {
         Task { @MainActor in
             let settings = await NotificationManager.shared.checkNotificationSetting()
+            let granted: Bool
             switch settings.authorizationStatus {
             case .notDetermined:
-                let granted = (try? await NotificationManager.shared.requestNotificationPermission()) ?? false
-                UserDefaults.standard.set(granted, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
-                PushTokenManager.shared.sync()
-                DailyMenuNotificationScheduler.sync()
+                do {
+                    granted = try await NotificationManager.shared.requestNotificationPermission()
+                } catch {
+                    // 시스템 요청 자체가 실패한 경우. 거부와 구분해 저장 값은 건드리지 않고 마이페이지와 같은 오류 토스트를 띄운다
+                    visibleScreen(of: tabBar).showToast(message: TextLiteral.MyPage.notiSettingError, type: .danger)
+                    return
+                }
             case .denied:
                 presentSettingsDialog(on: tabBar)
+                return
             default:
-                UserDefaults.standard.set(true, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
-                PushTokenManager.shared.sync()
-                DailyMenuNotificationScheduler.sync()
+                granted = true
             }
+            UserDefaults.standard.set(granted, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+            PushTokenManager.shared.sync()
+            DailyMenuNotificationScheduler.sync()
+            guard granted else { return }
+            onGranted?()
+            // 이동이 끝난 뒤 지금 보이는 탭 화면에 띄워, 마이페이지 토글 토스트와 같은 위치에 나오게 한다
+            visibleScreen(of: tabBar).showToast(message: NotificationManager.toggleToastMessage(isOn: true), type: .info)
         }
     }
 
+    /// 현재 선택된 탭의 맨 위 화면. 탭바 컨테이너 자체에 띄우면 안전 영역이 달라 토스트 위치가 탭 화면과 어긋난다
+    private static func visibleScreen(of tabBar: CustomTabBarContainerController) -> UIViewController {
+        (tabBar.selectedViewController as? UINavigationController)?.topViewController
+            ?? tabBar.selectedViewController
+            ?? tabBar
+    }
+
     /// 찜 기능을 쓰려는데 알림이 꺼져 있을 때(마이페이지 토글 OFF 또는 권한 미결정): 허용 요청
-    static func presentFavoriteRequest(on tabBar: CustomTabBarContainerController) {
+    /// - Parameter allowed: 허용되면 바로 실행 (예: 찜 탭 카드로 이동)
+    static func presentFavoriteRequest(on tabBar: CustomTabBarContainerController, allowed: @escaping () -> Void) {
         tabBar.showDialog(
             title: TextLiteral.Notification.favoriteRequestTitle,
             message: TextLiteral.Notification.favoriteRequestMessage,
             cancelButtonTitle: TextLiteral.Common.cancel,
             confirmButtonTitle: TextLiteral.Notification.allow,
             cancelAction: nil,
-            confirmAction: { requestPermission(on: tabBar) }
+            confirmAction: { requestPermission(on: tabBar, onGranted: allowed) }
         )
     }
 
     /// 메뉴 찜 알림을 받을 수 있는 상태인지에 따라 안내 다이얼로그를 띄우거나 `allowed`를 실행한다
-    /// - 기기 권한 거부 → 설정 이동 안내 / 토글 OFF 또는 권한 미결정 → 허용 요청 / 그 외 → allowed
+    /// - 기기 권한 거부 → 설정 이동 안내 / 토글 OFF 또는 권한 미결정 → 허용 요청 후 허용되면 allowed / 그 외 → 바로 allowed
     static func ensureFavoriteNotificationAllowed(on tabBar: CustomTabBarContainerController, allowed: @escaping () -> Void) {
         Task { @MainActor in
             let settings = await NotificationManager.shared.checkNotificationSetting()
@@ -81,12 +100,12 @@ enum NotificationPermissionPrompt {
             case .denied:
                 presentSettingsDialog(on: tabBar)
             case .notDetermined:
-                presentFavoriteRequest(on: tabBar)
+                presentFavoriteRequest(on: tabBar, allowed: allowed)
             default:
                 if isToggleOn {
                     allowed()
                 } else {
-                    presentFavoriteRequest(on: tabBar)
+                    presentFavoriteRequest(on: tabBar, allowed: allowed)
                 }
             }
         }

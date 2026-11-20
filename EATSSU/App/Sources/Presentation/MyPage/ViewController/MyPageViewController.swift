@@ -22,7 +22,11 @@ final class MyPageViewController: BaseViewController {
     }
 
     private var nickName = ""
-    private var switchState = false
+    /// 마이페이지 알림 토글 값. 리뷰 화면·가입 직후 다이얼로그도 같은 키를 쓰므로 캐시하지 않고 저장소를 바로 읽는다
+    private var switchState: Bool {
+        get { UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey) }
+        set { UserDefaults.standard.set(newValue, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey) }
+    }
     private let sections = MyPageSectionData.sections
     
     // MARK: - UI Components
@@ -35,7 +39,6 @@ final class MyPageViewController: BaseViewController {
         super.viewDidLoad()
         
         setTableViewDelegate()
-        loadSwitchStateFromUserDefaults()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,6 +49,9 @@ final class MyPageViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        // 리뷰 화면·가입 직후 다이얼로그에서 알림을 허용했을 수 있으므로 토글 행만 다시 그린다
+        reloadNotificationSettingRow()
         
         let userInfo = UserInfoManager.shared.getCurrentUserInfo()
 
@@ -138,16 +144,15 @@ final class MyPageViewController: BaseViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    /// UserDefaults에 스위치 상태 저장
-    private func saveSwitchStateToUserDefaults() {
-        print("사용자 푸시 알림 값을 앱 저장소에 보관합니다.")
-        UserDefaults.standard.set(switchState, forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
-    }
-    
-    /// UserDefaults에서 스위치 상태 불러오기
-    private func loadSwitchStateFromUserDefaults() {
-        print("사용자 푸시 알림 값을 앱 저장소에서 불러옵니다.")
-        switchState = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
+    /// 알림 토글 행만 다시 그린다 (다른 화면에서 토글 값이 바뀐 경우)
+    private func reloadNotificationSettingRow() {
+        let tableView = mypageView.myPageTableView
+        for (section, data) in sections.enumerated() {
+            guard let row = data.items.firstIndex(of: .notificationSetting) else { continue }
+            guard tableView.numberOfSections > section, tableView.numberOfRows(inSection: section) > row else { return }
+            tableView.reloadRows(at: [IndexPath(row: row, section: section)], with: .none)
+            return
+        }
     }
     
     /// indexPath로 현재 item을 가져오기
@@ -376,9 +381,8 @@ extension MyPageViewController: UITableViewDelegate {
                 
                 // 메인 스레드에서 UI 업데이트
                 await MainActor.run {
-                    // 스위치 상태 업데이트
+                    // 스위치 상태 업데이트 (저장소에 바로 기록된다)
                     self.switchState = newState
-                    self.saveSwitchStateToUserDefaults()
                     // 서버는 푸시 토큰 등록 여부로 알림 허용을 판단한다 (ON: 등록, OFF: 삭제). 11시 로컬 알림도 함께 맞춘다
                     PushTokenManager.shared.sync()
                     DailyMenuNotificationScheduler.sync()
@@ -388,16 +392,8 @@ extension MyPageViewController: UITableViewDelegate {
                         cell.toggleSwitch.setOn(newState, animated: true)
                     }
                     
-                    // 토스트 메시지
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-                    let formattedDate = dateFormatter.string(from: Date())
-                    
-                    let message = newState
-                    ? TextLiteral.MyPage.agreeNoti(date: formattedDate)
-                    : TextLiteral.MyPage.disagreeNoti(date: formattedDate)
-                    
-                    self.showToast(message: message, type: .info)
+                    // 토스트 메시지 (알림 허용 다이얼로그와 같은 문구)
+                    self.showToast(message: NotificationManager.toggleToastMessage(isOn: newState), type: .info)
                 }
                 
             } catch let error as NotificationManager.NotificationError {

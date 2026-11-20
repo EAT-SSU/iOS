@@ -40,6 +40,15 @@ class NotificationManager {
         }
     }
 
+    /// 알림 토글을 켜거나 껐을 때 띄우는 "EAT-SSU 수신 동의/거절 (yyyy-MM-dd HH:mm)" 토스트 문구
+    /// 마이페이지 토글과 알림 허용 다이얼로그가 같은 문구를 쓴다
+    static func toggleToastMessage(isOn: Bool, now: Date = Date()) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let date = formatter.string(from: now)
+        return isOn ? TextLiteral.MyPage.agreeNoti(date: date) : TextLiteral.MyPage.disagreeNoti(date: date)
+    }
+
     /// 현재 토글·권한 상태로 `isNotificationAllowed`를 판단한다
     func isNotificationEnabled() async -> Bool {
         let isToggleOn = UserDefaults.standard.bool(forKey: TextLiteral.MyPage.pushNotificationUserSettingKey)
