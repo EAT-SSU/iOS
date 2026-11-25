@@ -1256,7 +1256,7 @@ enum TextLiteral {
 
         /// "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요."
         static var welcomeMessage: String {
-            Localization.localized("notification.welcomeMessage", fallback: "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요.")
+            Localization.localized("notification.welcomeMessage", fallback: "오늘의 학식과 찜한 메뉴 소식을\n알림으로 빠르게 알려드릴게요.")
         }
 
         /// "나중에"
@@ -1269,14 +1269,14 @@ enum TextLiteral {
             Localization.localized("notification.allow", fallback: "알림 허용하기")
         }
 
-        /// "알림 권한이 꺼져 있어요"
+        /// "알림 권한 필요"
         static var settingsTitle: String {
-            Localization.localized("notification.settingsTitle", fallback: "알림 권한이 꺼져 있어요")
+            Localization.localized("notification.settingsTitle", fallback: "알림 권한 필요")
         }
 
-        /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
+        /// "알림을 받으려면 알림 권한을 활성화해야 합니다. / 설정에서 알림 권한을 허용해주세요." (두 줄)
         static var settingsMessage: String {
-            Localization.localized("notification.settingsMessage", fallback: "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요.")
+            Localization.localized("notification.settingsMessage", fallback: "알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.")
         }
 
         /// "메뉴 찜 알림을 허용해주세요"
@@ -1284,9 +1284,9 @@ enum TextLiteral {
             Localization.localized("notification.favoriteRequestTitle", fallback: "메뉴 찜 알림을 허용해주세요")
         }
 
-        /// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
+        /// "찜한 메뉴가 학식에 나오면 / 가장 먼저 알려드릴게요." (두 줄)
         static var favoriteRequestMessage: String {
-            Localization.localized("notification.favoriteRequestMessage", fallback: "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요.")
+            Localization.localized("notification.favoriteRequestMessage", fallback: "찜한 메뉴가 학식에 나오면\n가장 먼저 알려드릴게요.")
         }
 
         // MARK: 알림함
@@ -1523,9 +1523,9 @@ enum TextLiteral {
             Localization.localized("like.emptySubtitle", fallback: "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!")
         }
 
-        /// "찜하고 싶은 메뉴를 검색하세요."
+        /// "찜하고 싶은 메뉴를 검색해 보세요."
         static var menuSearchPlaceholder: String {
-            Localization.localized("like.menuSearchPlaceholder", fallback: "찜하고 싶은 메뉴를 검색하세요.")
+            Localization.localized("like.menuSearchPlaceholder", fallback: "찜하고 싶은 메뉴를 검색해 보세요.")
         }
 
         /// "아직 찜한 메뉴가 없어요."
@@ -1533,9 +1533,9 @@ enum TextLiteral {
             Localization.localized("like.menuEmptyTitle", fallback: "아직 찜한 메뉴가 없어요.")
         }
 
-        /// "좋아하는 메뉴를 검색해서 등록해 보세요!"
+        /// "검색창에서 메뉴를 찾아 추가해보세요!"
         static var menuEmptySubtitle: String {
-            Localization.localized("like.menuEmptySubtitle", fallback: "좋아하는 메뉴를 검색해서 등록해 보세요!")
+            Localization.localized("like.menuEmptySubtitle", fallback: "검색창에서 메뉴를 찾아 추가해보세요!")
         }
 
         /// "내가 찜한 메뉴"
@@ -1558,14 +1558,14 @@ enum TextLiteral {
             Localization.localized("like.menuUpdateFailed", fallback: "처리하지 못했어요. 잠시 후 다시 시도해주세요.")
         }
 
-        /// "메뉴를 불러오지 못했어요. 잠시 후 다시 시도해주세요."
+        /// "메뉴를 불러오지 못했어요."
         static var menuLoadFailed: String {
-            Localization.localized("like.menuLoadFailed", fallback: "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요.")
+            Localization.localized("like.menuLoadFailed", fallback: "메뉴를 불러오지 못했어요.")
         }
 
-        /// "일치하는 메뉴가 없어요."
+        /// "일치하는 메뉴가 없어요"
         static var menuSearchEmptyTitle: String {
-            Localization.localized("like.menuSearchEmptyTitle", fallback: "일치하는 메뉴가 없어요.")
+            Localization.localized("like.menuSearchEmptyTitle", fallback: "일치하는 메뉴가 없어요")
         }
 
         /// "다른 메뉴명으로 검색해주세요!"
@@ -1600,14 +1600,14 @@ enum TextLiteral {
             Localization.localized("like.favoriteMenus", fallback: "메뉴 찜하기")
         }
 
-        /// "선택한 %d개 메뉴 찜하기"
+        /// "선택한 메뉴 %d개 찜하기"
         static func favoriteSelectedMenus(_ count: Int) -> String {
-            Localization.formatted("like.favoriteSelectedMenus", fallback: "선택한 %d개 메뉴 찜하기", count)
+            Localization.formatted("like.favoriteSelectedMenus", fallback: "선택한 메뉴 %d개 찜하기", count)
         }
 
-        /// "메뉴 변경" (바텀시트 제목)
+        /// "식단 변경" (바텀시트 제목)
         static var slotSheetTitle: String {
-            Localization.localized("like.slotSheetTitle", fallback: "메뉴 변경")
+            Localization.localized("like.slotSheetTitle", fallback: "식단 변경")
         }
 
         /// "식당 종류"

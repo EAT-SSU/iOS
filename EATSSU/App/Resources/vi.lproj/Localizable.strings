@@ -243,7 +243,7 @@
 /// NotificationSettingTableViewCell - "푸시 알림 설정"
 "myPage.pushNotificationSetting" = "Cài đặt thông báo đẩy";
 /// NotificationSettingTableViewCell - "매일 오전 11시에 알림을 보내드려요"
-"myPage.pushNotificationDescription" = "Báo khi món đã lưu lên thực đơn hôm nay.";
+"myPage.pushNotificationDescription" = "Thông báo cho bạn khi món ăn yêu thích có trong thực đơn hôm nay.";
 /// MyPageVC - "알림 설정 중 오류가 발생했습니다."
 "myPage.notiSettingError" = "Đã xảy ra lỗi khi cập nhật cài đặt thông báo.";
 
@@ -412,7 +412,7 @@
 /// ReviewRateViewCell - "오늘의 메뉴"
 "review.todayMenu" = "Thực đơn hôm nay";
 /// "오늘의 메뉴를 찜해보세요!"
-"review.todayMenuFavoritePrompt" = "Lưu thực đơn hôm nay vào yêu thích!";
+"review.todayMenuFavoritePrompt" = "Lưu món bạn thích từ thực đơn hôm nay!";
 /// ReviewRateViewCell - "5점"
 "review.fiveStars" = "5 điểm";
 /// ReviewRateViewCell - "4점"
@@ -462,9 +462,9 @@
 // MARK: - Notification
 
 /// 🤔 오늘 밥 뭐 먹지…
-"notification.dailyWeekdayNotificationTitle" = "🤔 Hôm nay ăn gì đây…";
+"notification.dailyWeekdayNotificationTitle" = "🤔 Trưa nay ăn gì nhỉ?";
 /// 오늘의 학식을 확인해보세요!
-"notification.dailyWeekdayNotificationBody" = "Xem thực đơn nhà ăn hôm nay!";
+"notification.dailyWeekdayNotificationBody" = "Xem thực đơn hôm nay nhé!";
 /// 알림 권한 필요
 "notification_error_permission_denied_message" = "Cần quyền thông báo";
 /// 알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.
@@ -476,39 +476,39 @@
 
 // MARK: - Notification Permission Prompt (알림 허용 안내)
 /// "잇슈의 유용한 소식을 받아보세요"
-"notification.welcomeTitle" = "Nhận thông báo hữu ích từ EAT-SSU";
+"notification.welcomeTitle" = "Nhận thông tin hữu ích từ EAT-SSU";
 /// "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요."
-"notification.welcomeMessage" = "Chúng tôi sẽ báo nhanh về bữa ăn hôm nay và món bạn đã lưu.";
+"notification.welcomeMessage" = "Chúng tôi sẽ nhanh chóng thông báo cho bạn về thực đơn hôm nay và món ăn yêu thích.";
 /// "나중에"
 "notification.later" = "Để sau";
 /// "알림 허용하기"
 "notification.allow" = "Cho phép thông báo";
 /// "알림 권한이 꺼져 있어요"
-"notification.settingsTitle" = "Thông báo đang tắt";
+"notification.settingsTitle" = "Cần quyền thông báo";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
-"notification.settingsMessage" = "Để dùng tính năng lưu món, hãy bật thông báo EAT-SSU trong Cài đặt.";
+"notification.settingsMessage" = "Để nhận thông báo, bạn cần bật quyền thông báo.\nVui lòng cho phép thông báo trong Cài đặt.";
 /// "메뉴 찜 알림을 허용해주세요"
-"notification.favoriteRequestTitle" = "Cho phép thông báo món đã lưu";
+"notification.favoriteRequestTitle" = "Vui lòng cho phép thông báo món ăn yêu thích";
 /// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
-"notification.favoriteRequestMessage" = "Chúng tôi sẽ báo đầu tiên khi món đã lưu được phục vụ.";
+"notification.favoriteRequestMessage" = "Chúng tôi sẽ báo cho bạn sớm nhất\nkhi món yêu thích có trong thực đơn.";
 // MARK: - Notification Inbox (알림함)
 
 /// "알림"
 "notification.inboxTitle" = "Thông báo";
 /// "모두 읽음"
-"notification.readAll" = "Đánh dấu đã đọc tất cả";
+"notification.readAll" = "Đánh dấu tất cả đã đọc";
 /// "새로운 알림이 없어요."
-"notification.emptyTitle" = "Không có thông báo mới.";
+"notification.emptyTitle" = "Chưa có thông báo mới";
 /// "찜한 메뉴가 나오면 알림으로 알려드릴게요!"
-"notification.emptySubtitle" = "Chúng tôi sẽ báo khi món đã lưu được phục vụ!";
+"notification.emptySubtitle" = "Có món bạn thích, chúng tôi sẽ báo ngay!";
 /// "7일 전 알림까지 확인할 수 있어요"
-"notification.retentionNotice" = "Hiển thị thông báo trong 7 ngày gần nhất";
+"notification.retentionNotice" = "Xem thông báo trong 7 ngày qua";
 /// "방금 전"
 "notification.justNow" = "Vừa xong";
 /// "%d시간 전"
 "notification.hoursAgo" = "%d giờ trước";
 /// "알림을 불러오지 못했어요."
-"notification.loadFailed" = "Không thể tải thông báo.";
+"notification.loadFailed" = "Không tải được thông báo.";
 
 
 // MARK: - Restaurant
@@ -746,37 +746,37 @@
 /// "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!"
 "like.emptySubtitle" = "Hãy thêm ưu đãi bạn quan tâm để xem nhanh!";
 /// "찜하고 싶은 메뉴를 검색하세요."
-"like.menuSearchPlaceholder" = "Tìm món để thêm vào mục yêu thích.";
+"like.menuSearchPlaceholder" = "Tìm món ăn bạn muốn yêu thích.";
 /// "아직 찜한 메뉴가 없어요."
 "like.menuEmptyTitle" = "Chưa có món ăn yêu thích.";
 /// "좋아하는 메뉴를 검색해서 등록해 보세요!"
-"like.menuEmptySubtitle" = "Tìm và lưu món ăn bạn thích!";
+"like.menuEmptySubtitle" = "Tìm món ăn trong ô tìm kiếm và thêm vào.";
 /// "내가 찜한 메뉴"
 "like.menuListTitle" = "Món ăn yêu thích của tôi";
 /// "찜한 메뉴에 추가했어요."
-"like.menuAddedToast" = "Đã thêm vào mục yêu thích.";
+"like.menuAddedToast" = "Đã thêm vào món ăn yêu thích.";
 /// "찜한 메뉴에서 삭제했어요."
-"like.menuRemovedToast" = "Đã xóa khỏi mục yêu thích.";
+"like.menuRemovedToast" = "Đã xóa khỏi món ăn yêu thích.";
 /// "처리하지 못했어요. 잠시 후 다시 시도해주세요."
-"like.menuUpdateFailed" = "Không thể xử lý. Vui lòng thử lại.";
+"like.menuUpdateFailed" = "Không thể xử lý. Vui lòng thử lại sau.";
 /// "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."
-"like.menuLoadFailed" = "Không thể tải danh sách món ăn.\nVui lòng thử lại.";
+"like.menuLoadFailed" = "Không thể tải món ăn.";
 /// "일치하는 메뉴가 없어요."
-"like.menuSearchEmptyTitle" = "Không tìm thấy món ăn phù hợp.";
+"like.menuSearchEmptyTitle" = "Không có món ăn phù hợp.";
 /// "다른 메뉴명으로 검색해주세요!"
-"like.menuSearchEmptySubtitle" = "Hãy thử tìm bằng tên món ăn khác!";
+"like.menuSearchEmptySubtitle" = "Hãy thử tên món ăn khác.";
 /// "2글자 이상 입력해주세요."
-"like.menuSearchTooShort" = "Vui lòng nhập ít nhất 2 ký tự.";
+"like.menuSearchTooShort" = "Nhập ít nhất 2 ký tự.";
 /// "오늘 식단에서 찜하기"
-"like.todayMenuToggle" = "Lưu từ thực đơn hôm nay";
+"like.todayMenuToggle" = "Thêm món từ thực đơn hôm nay";
 /// "메뉴를 선택해 찜할 수 있어요."
-"like.todayMenuHint" = "Chọn món để lưu.";
+"like.todayMenuHint" = "Chọn món để thêm vào yêu thích.";
 /// "변경"
 "like.change" = "Đổi";
 /// "메뉴 찜하기"
-"like.favoriteMenus" = "Lưu món";
+"like.favoriteMenus" = "Thêm món yêu thích";
 /// "선택한 %d개 메뉴 찜하기"
-"like.favoriteSelectedMenus" = "Lưu %d món đã chọn";
+"like.favoriteSelectedMenus" = "Thêm %d món đã chọn";
 /// "메뉴 변경"
 "like.slotSheetTitle" = "Đổi thực đơn";
 /// "식당 종류"
