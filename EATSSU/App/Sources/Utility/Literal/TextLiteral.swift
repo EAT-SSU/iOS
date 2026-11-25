@@ -1360,9 +1360,9 @@ enum TextLiteral {
             Localization.localized("restaurant.facultyRestaurant", fallback: "FACULTY (교직원 전용)")
         }
 
-        /// "교직원식당" (칩 등 좁은 곳)
+        /// "교직원 식당" (칩 등 좁은 곳)
         static var facultyRestaurantShort: String {
-            Localization.localized("restaurant.facultyRestaurantShort", fallback: "교직원식당")
+            Localization.localized("restaurant.facultyRestaurantShort", fallback: "교직원 식당")
         }
     }
 

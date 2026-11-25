@@ -524,7 +524,7 @@
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (교직원 전용)";
 /// "교직원 식당" (칩 등 좁은 곳)
-"restaurant.facultyRestaurantShort" = "교직원식당";
+"restaurant.facultyRestaurantShort" = "교직원 식당";
 
 // MARK: - Review Translation
 
