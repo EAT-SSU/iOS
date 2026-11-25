@@ -31,6 +31,7 @@ class EATSSUDialogView: BaseUIView {
         label.font = .header2
         label.textColor = .gray700
         label.textAlignment = .center
+        label.numberOfLines = 0
         return label
     }()
     

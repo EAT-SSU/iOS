@@ -478,19 +478,19 @@
 /// "잇슈의 유용한 소식을 받아보세요"
 "notification.welcomeTitle" = "잇슈의 유용한 소식을 받아보세요";
 /// "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요."
-"notification.welcomeMessage" = "오늘의 학식과 찜한 메뉴 소식을 알림으로 빠르게 알려드릴게요.";
+"notification.welcomeMessage" = "오늘의 학식과 찜한 메뉴 소식을\n알림으로 빠르게 알려드릴게요.";
 /// "나중에"
 "notification.later" = "나중에";
 /// "알림 허용하기"
 "notification.allow" = "알림 허용하기";
 /// "알림 권한이 꺼져 있어요"
-"notification.settingsTitle" = "알림 권한이 꺼져 있어요";
+"notification.settingsTitle" = "알림 권한 필요";
 /// "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요."
-"notification.settingsMessage" = "메뉴 찜 기능을 이용하려면 기기 설정에서 잇슈 알림을 허용해주세요.";
+"notification.settingsMessage" = "알림을 받으려면 알림 권한을 활성화해야 합니다.\n설정에서 알림 권한을 허용해주세요.";
 /// "메뉴 찜 알림을 허용해주세요"
 "notification.favoriteRequestTitle" = "메뉴 찜 알림을 허용해주세요";
 /// "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요."
-"notification.favoriteRequestMessage" = "찜한 메뉴가 학식에 나오면 가장 먼저 알려드릴게요.";
+"notification.favoriteRequestMessage" = "찜한 메뉴가 학식에 나오면\n가장 먼저 알려드릴게요.";
 // MARK: - Notification Inbox (알림함)
 
 /// "알림"
@@ -524,7 +524,7 @@
 /// "FACULTY (교직원 전용)"
 "restaurant.facultyRestaurant" = "FACULTY (교직원 전용)";
 /// "교직원 식당" (칩 등 좁은 곳)
-"restaurant.facultyRestaurantShort" = "교직원 식당";
+"restaurant.facultyRestaurantShort" = "교직원식당";
 
 // MARK: - Review Translation
 
@@ -746,11 +746,11 @@
 /// "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!"
 "like.emptySubtitle" = "관심 있는 제휴를 찜하고 빠르게 확인해 보세요!";
 /// "찜하고 싶은 메뉴를 검색하세요."
-"like.menuSearchPlaceholder" = "찜하고 싶은 메뉴를 검색하세요.";
+"like.menuSearchPlaceholder" = "찜하고 싶은 메뉴를 검색해 보세요.";
 /// "아직 찜한 메뉴가 없어요."
 "like.menuEmptyTitle" = "아직 찜한 메뉴가 없어요.";
 /// "좋아하는 메뉴를 검색해서 등록해 보세요!"
-"like.menuEmptySubtitle" = "좋아하는 메뉴를 검색해서 등록해 보세요!";
+"like.menuEmptySubtitle" = "검색창에서 메뉴를 찾아 추가해보세요!";
 /// "내가 찜한 메뉴"
 "like.menuListTitle" = "내가 찜한 메뉴";
 /// "찜한 메뉴에 추가했어요."
@@ -760,9 +760,9 @@
 /// "처리하지 못했어요. 잠시 후 다시 시도해주세요."
 "like.menuUpdateFailed" = "처리하지 못했어요. 잠시 후 다시 시도해주세요.";
 /// "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."
-"like.menuLoadFailed" = "메뉴를 불러오지 못했어요.\n잠시 후 다시 시도해주세요.";
+"like.menuLoadFailed" = "메뉴를 불러오지 못했어요.";
 /// "일치하는 메뉴가 없어요."
-"like.menuSearchEmptyTitle" = "일치하는 메뉴가 없어요.";
+"like.menuSearchEmptyTitle" = "일치하는 메뉴가 없어요";
 /// "다른 메뉴명으로 검색해주세요!"
 "like.menuSearchEmptySubtitle" = "다른 메뉴명으로 검색해주세요!";
 /// "2글자 이상 입력해주세요."
@@ -776,9 +776,9 @@
 /// "메뉴 찜하기"
 "like.favoriteMenus" = "메뉴 찜하기";
 /// "선택한 %d개 메뉴 찜하기"
-"like.favoriteSelectedMenus" = "선택한 %d개 메뉴 찜하기";
+"like.favoriteSelectedMenus" = "선택한 메뉴 %d개 찜하기";
 /// "메뉴 변경"
-"like.slotSheetTitle" = "메뉴 변경";
+"like.slotSheetTitle" = "식단 변경";
 /// "식당 종류"
 "like.restaurantSection" = "식당 종류";
 /// "시간대"
