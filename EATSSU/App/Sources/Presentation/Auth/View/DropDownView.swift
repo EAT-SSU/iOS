@@ -22,6 +22,13 @@ final class DropDownView: BaseUIView {
     private static var currentlyOpenDropdown: DropDownView?
     private let placeholderTitle: String
 
+    private enum Layout {
+        /// 목록 한 줄 높이. 목록 전체 높이 계산(최대 200)과 같은 값을 써야 마지막 항목이 잘리지 않는다
+        static let rowHeight: CGFloat = 44
+        /// 버튼 제목과 같은 좌우 여백
+        static let horizontalInset: CGFloat = 12
+    }
+
     // MARK: - UI Components
 
     private let button = UIButton(type: .system)
@@ -99,6 +106,8 @@ final class DropDownView: BaseUIView {
         tableView.layer.shadowRadius = 4
         tableView.isScrollEnabled = true
         tableView.separatorStyle = .none
+        // 시스템 기본 행 높이(OS 버전마다 다름)에 맡기지 않고 높이 계산과 같은 값으로 고정
+        tableView.rowHeight = Layout.rowHeight
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
@@ -110,7 +119,7 @@ final class DropDownView: BaseUIView {
             $0.top.equalTo(origin.y + 48 + 6)
             $0.leading.equalTo(origin.x)
             $0.width.equalTo(self.bounds.width)
-            $0.height.equalTo(min(items.count * 44, 200))
+            $0.height.equalTo(min(CGFloat(items.count) * Layout.rowHeight, 200))
         }
 
         dropdownTableView = tableView
@@ -164,7 +173,7 @@ final class DropDownView: BaseUIView {
             ])
         )
         config.baseBackgroundColor = .gray100
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 32)
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: Layout.horizontalInset, bottom: 0, trailing: 32)
         config.titleAlignment = .leading
 
         button.configuration = config
@@ -189,6 +198,10 @@ extension DropDownView: UITableViewDelegate, UITableViewDataSource {
         config.text = items[indexPath.row]
         config.textProperties.color = .gray700
         config.textProperties.font = EATSSUDesignFontFamily.Pretendard.regular.font(size: 14)
+        // 시스템 기본 여백(OS 버전마다 다름) 대신 버튼 제목과 같은 위치에 맞춘다
+        config.directionalLayoutMargins = NSDirectionalEdgeInsets(
+            top: 0, leading: Layout.horizontalInset, bottom: 0, trailing: Layout.horizontalInset
+        )
         cell.contentConfiguration = config
         return cell
     }
