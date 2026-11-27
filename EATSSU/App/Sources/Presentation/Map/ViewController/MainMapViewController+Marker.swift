@@ -182,12 +182,14 @@ extension MainMapViewController {
     }
 
     /// 커스텀 detent 시트 공통 표시. 표시 후 safe area 확정 시 invalidateDetents()로 높이가 보정됨
+    /// 시트는 내용 높이 하나로 고정한다. 위로 끌어도 large로 커지지 않게 large detent는 두지 않는다 (QA 요청)
     private func presentSheet(_ viewController: UIViewController, heightProvider: @escaping () -> CGFloat?) {
         if let sheet = viewController.sheetPresentationController {
             if #available(iOS 16.0, *) {
                 let customDetent = UISheetPresentationController.Detent.custom { _ in heightProvider() }
-                sheet.detents = [customDetent, .large()]
+                sheet.detents = [customDetent]
             } else {
+                // iOS 15는 높이를 지정할 수 없어 내용이 medium보다 길 때 볼 수 있도록 large를 유지한다
                 sheet.detents = [.medium(), .large()]
             }
             sheet.prefersGrabberVisible = true
