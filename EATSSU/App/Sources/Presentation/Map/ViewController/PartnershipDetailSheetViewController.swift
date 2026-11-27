@@ -118,7 +118,7 @@ final class PartnershipDetailSheetViewController: BaseViewController {
             $0.leading.trailing.equalToSuperview().inset(24)
         }
 
-        // large로 확장 시에도 버튼 바가 시트 하단에 붙어있도록 bottom 고정
+        // 시트 높이가 내용보다 커져도(iOS 15 large 등) 버튼 바가 시트 하단에 붙어있도록 bottom 고정
         mapAppButtonBar.snp.makeConstraints {
             $0.top.greaterThanOrEqualTo(infoListStackView.snp.bottom).offset(MapAppButtonBar.Layout.topSpacing)
             $0.leading.trailing.equalToSuperview()
